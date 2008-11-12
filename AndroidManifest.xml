@@ -36,11 +36,16 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".samples.SampleOSMContributor">
+        <activity android:name=".samples.GPSCaptureActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        <service android:name=".contributor.GPSCaptureService" android:label="GPSCaptureService">
+            <intent-filter>
+                <action android:name="org.andnav.osm.contributor.GPSCaptureInterface" />
+            </intent-filter>
+        </service>
     </application>
 </manifest> 

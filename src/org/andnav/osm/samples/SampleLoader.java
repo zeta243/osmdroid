@@ -54,7 +54,7 @@ public class SampleLoader extends ListActivity {
 				this.startActivity(new Intent(this, SampleExtensive.class));
 				break;
 			case 1:
-				this.startActivity(new Intent(this, SampleOSMContributor.class));
+				this.startActivity(new Intent(this, GPSCaptureActivity.class));
 				break;
 			case 2:
 				this.startActivity(new Intent(this, SampleWithMinimapItemizedoverlay.class));
