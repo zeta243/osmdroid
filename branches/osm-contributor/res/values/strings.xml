@@ -3,6 +3,18 @@
     <string name="hello">Hello World, OpenStreetMapViewer</string>
     <string name="app_name">OSMViewer</string>
     <string name="app_name_itemizedoverlay">OSMViewer ItemizedOverlay</string>
+    <string name="app_name_osm_contributor">OSM GPS Tracer</string>
     
     <string name="unknown">Unknown</string>
+    
+    <string name="start_gps_trace_btn">Start GPS Trace</string>
+    <string name="stop_gps_trace_btn">Stop GPS Trace</string>
+    <string name="new_segment_btn">New Segment</string>
+    <string name="current_location_label">Location:</string>
+    <string name="current_speed_label">Speed:</string>
+    <string name="current_bearing_label">Bearing:</string>
+    <string name="num_satellites_label">Satellites:</string>
+    <string name="accuracy_label">Accuracy:</string>
+    
+    <string name="default_gps_capture_name">(Trace Name)</string>
 </resources>
