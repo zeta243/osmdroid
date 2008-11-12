@@ -17,4 +17,5 @@
     <string name="accuracy_label">Accuracy:</string>
     
     <string name="default_gps_capture_name">(Trace Name)</string>
+    <string name="gps_capture_completed">GPS Capture Saved to SD Card</string>
 </resources>
