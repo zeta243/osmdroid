@@ -1,6 +1,7 @@
 package org.andnav.osm.samples;
 
 import java.util.Calendar;
+import java.util.List;
 
 import org.andnav.osm.OpenStreetMapActivity;
 import org.andnav.osm.R;
@@ -10,6 +11,8 @@ import org.andnav.osm.util.TypeConverter;
 import org.andnav.osm.util.constants.OpenStreetMapConstants;
 import org.andnav.osm.views.OpenStreetMapView;
 import org.andnav.osm.views.controller.OpenStreetMapViewController;
+import org.andnav.osm.views.overlay.OpenStreetMapViewLinearOverlay;
+import org.andnav.osm.views.overlay.OpenStreetMapViewOverlay;
 import org.andnav.osm.views.overlay.OpenStreetMapViewSimpleLocationOverlay;
 import org.andnav.osm.views.util.OpenStreetMapRendererInfo;
 
@@ -36,6 +39,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 
 
@@ -68,6 +72,7 @@ public class GPSCaptureActivity extends OpenStreetMapActivity implements OpenStr
 	private EditText mTraceNameEditor;
 	
 	private Location mLastLocation;
+	private Location mLatestLocation;
 	
 	private RelativeLayout mOSMLayout;
 	private OpenStreetMapView mOSMView;
@@ -110,7 +115,10 @@ public class GPSCaptureActivity extends OpenStreetMapActivity implements OpenStr
 		@Override
 		public void updateLocation(Location location) throws RemoteException {
 			mHandler.sendMessage(mHandler.obtainMessage(UPDATE_LOCATION, 0));
-			mLastLocation = location;
+			
+			mLastLocation = mLatestLocation;
+			mLatestLocation = location;
+			
 		}
     };
     
@@ -119,7 +127,7 @@ public class GPSCaptureActivity extends OpenStreetMapActivity implements OpenStr
         @Override public void handleMessage(Message msg) {
             switch (msg.what) {
                 case UPDATE_LOCATION:
-                	if (mLastLocation != null)
+                	if (mLatestLocation != null)
                 	{
                 		/*
                 		String latlong = String.format("%3.5f, %3.5f", mLastLocation.getLatitude(), mLastLocation.getLongitude());
@@ -135,9 +143,28 @@ public class GPSCaptureActivity extends OpenStreetMapActivity implements OpenStr
 						}
                         mAccuracyValue.setText(mLastLocation.getAccuracy() + "");
                         */
-                        mMyLocationOverlay.setLocation(TypeConverter.locationToGeoPoint(mLastLocation));
+                		
+                        mMyLocationOverlay.setLocation(TypeConverter.locationToGeoPoint(mLatestLocation));
                         mOSMView.invalidate();
-                        mOSMView.setMapCenter(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                        mOSMView.setMapCenter(mLatestLocation.getLatitude(), mLatestLocation.getLongitude());
+                        
+                        if (mLastLocation != null && mLatestLocation != null)
+                        {              
+                            List <OpenStreetMapViewOverlay> overlays = mOSMView.getOverlays();
+                            
+                	        overlays.add(new OpenStreetMapViewLinearOverlay(GPSCaptureActivity.this,
+                	        		TypeConverter.locationToGeoPoint(mLastLocation),
+                	        		TypeConverter.locationToGeoPoint(mLatestLocation)));
+                	        
+                	        // Trim them a bit - we dont want too many
+                	        while (overlays.size() > 50)
+                	        {
+                	        	overlays.remove(1);
+                	        }
+                	        
+                        }
+                    	// mLastLocation;
+                    	// mLatestLocation;
                 	}
                     break;
                 default:
@@ -319,11 +346,21 @@ public class GPSCaptureActivity extends OpenStreetMapActivity implements OpenStr
 			mTraceNameEditor.setEnabled(true);
 			mTraceNameEditor.setText("(Trace Name)");
 			mTraceNameEditor.selectAll();
+			
+			Toast t = Toast.makeText(this, R.string.gps_capture_completed, Toast.LENGTH_SHORT);
+			t.show();
     	}
     	else
     	{
     		// Start Capture
     		try {
+    			// Remove all overlays (except overlay 0 - which is the "current location")
+    			List <OpenStreetMapViewOverlay> overlays = mOSMView.getOverlays();
+    	        while (overlays.size() > 1)
+    	        {
+    	        	overlays.remove(1);
+    	        }
+    	        
     			String captureName = mTraceNameEditor.getText().toString();
     			if (captureName.equals("(Trace Name)"))
     			{
