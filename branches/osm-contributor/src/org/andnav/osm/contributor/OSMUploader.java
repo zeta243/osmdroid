@@ -24,14 +24,12 @@ import org.andnav.osm.contributor.util.RecordedGeoPoint;
 import org.andnav.osm.contributor.util.RecordedRouteGPXFormatter;
 import org.andnav.osm.contributor.util.Util;
 import org.andnav.osm.contributor.util.constants.OpenStreetMapContributorConstants;
-import org.andnav.osm.util.BoundingBoxE6;
 import org.andnav.osm.util.constants.OpenStreetMapConstants;
-
-import android.util.Log;
 
 
 /**
  * Small java class that allows to upload gpx files to www.openstreetmap.org via its api call.
+ * Designed not to throw any exceptions!
  * 
  * @author cdaller
  * @author Nicolas Gramlich
@@ -86,7 +84,6 @@ public class OSMUploader implements OpenStreetMapConstants, OpenStreetMapContrib
 		uploadAsync(OSM_USERNAME, OSM_PASSWORD, description, tags, addDateTags, recordedGeoPoints, pseudoFileNameFormat.format(new GregorianCalendar().getTime()) + "_" + OSM_USERNAME + ".gpx");
 	}
 
-
 	/**
 	 * NOTE: This method is not blocking! (Code runs in thread)
 	 * @param username <code>not null</code> and <code>not empty</code>. Valid OSM-username
@@ -94,7 +91,7 @@ public class OSMUploader implements OpenStreetMapConstants, OpenStreetMapContrib
 	 * @param description <code>not null</code>
 	 * @param tags if <code>null</code> addDateTags is treated as <code>true</code>
 	 * @param addDateTags adds Date Tags to the existing Tags (i.e. "<code>October 2008</code>")
-	 * @param gpxInputStream the InputStream containing the gpx-data.
+	 * @param recordedGeoPoints a list of RecordedGeoPoints to be submitted as a gpx-file.
 	 * @param pseudoFileName ending with "<code>.gpx</code>"
 	 * @throws IOException
 	 */
@@ -112,64 +109,99 @@ public class OSMUploader implements OpenStreetMapConstants, OpenStreetMapContrib
 				
 				final InputStream gpxInputStream = new ByteArrayInputStream(RecordedRouteGPXFormatter.create(recordedGeoPoints).getBytes());
 				
-				String tagsToUse = tags;
-				if(addDateTags || tagsToUse == null)
-					if(tagsToUse == null)
-						tagsToUse = autoTagFormat.format(new GregorianCalendar().getTime());
-					else
-						tagsToUse = tagsToUse + " " + autoTagFormat.format(new GregorianCalendar().getTime());
-				
-//				Log.d(DEBUGTAG, "Uploading " + pseudoFileName + " to openstreetmap.org");
-				try {
-					//String urlGpxName = URLEncoder.encode(gpxName.replaceAll("\\.;&?,/","_"), "UTF-8");
-					final String urlDesc = (description == null) ? DEFAULT_DESCRIPTION : description.replaceAll("\\.;&?,/","_");
-					final String urlTags = (tagsToUse == null) ? DEFAULT_TAGS : tagsToUse.replaceAll("\\\\.;&?,/","_");
-					final URL url = new URL("http://www.openstreetmap.org/api/" + API_VERSION + "/gpx/create");
-//					Log.d(DEBUGTAG, "Destination Url: " + url);
-					final HttpURLConnection con = (HttpURLConnection) url.openConnection();
-					con.setConnectTimeout(15000);
-					con.setRequestMethod("POST");
-					con.setDoOutput(true);
-					con.addRequestProperty("Authorization", "Basic "+encodeBase64(username+":"+password));
-					con.addRequestProperty("Content-Type", "multipart/form-data; boundary="+BOUNDARY);
-					con.addRequestProperty("Connection", "close"); // counterpart of keep-alive
-					con.addRequestProperty("Expect", "");
-
-					con.connect();
-					DataOutputStream out  = new DataOutputStream(new BufferedOutputStream(con.getOutputStream()));
-					//            DataOutputStream out  = new DataOutputStream(System.out);
-
-					writeContentDispositionFile(out, "file", gpxInputStream, pseudoFileName);
-					writeContentDisposition(out, "description", urlDesc);
-					writeContentDisposition(out, "tags", urlTags);
-					
-					writeContentDisposition(out, "public", "1");
-
-					out.writeBytes("--" + BOUNDARY + "--" + LINE_END);
-					out.flush();
-
-					final int retCode = con.getResponseCode();
-					String retMsg = con.getResponseMessage();
-//					Log.d(DEBUGTAG, "\nreturn code: "+retCode + " " + retMsg);
-					if (retCode != 200) {
-						// Look for a detailed error message from the server
-						if (con.getHeaderField("Error") != null)
-							retMsg += "\n" + con.getHeaderField("Error");
-						con.disconnect();
-						throw new RuntimeException(retCode+" "+retMsg);
-					}
-					out.close();
-					con.disconnect();
-				} catch(Exception e) {
-//					Log.e(DEBUGTAG, "OSMUpload Error", e);
-				}
-			}
-			
+				upload(username, password, description, tags, addDateTags, pseudoFileName, gpxInputStream);
+			}			
 		}, "OSMUpload-Thread").start();
 	}
 	
-	public static void upload(final String username, final String password, final String description, final String tags, final boolean addDateTags, final ArrayList<RecordedGeoPoint> recordedGeoPoints, final String pseudoFileName) throws IOException{
-		uploadAsync(username, password, description, tags, addDateTags, recordedGeoPoints, pseudoFileName);
+	/**
+	 * NOTE: This method is not blocking! (Code runs in thread)
+	 * @param username <code>not null</code> and <code>not empty</code>. Valid OSM-username
+	 * @param password <code>not null</code> and <code>not empty</code>. Valid password to the OSM-username.
+	 * @param description <code>not null</code>
+	 * @param tags if <code>null</code> addDateTags is treated as <code>true</code>
+	 * @param addDateTags adds Date Tags to the existing Tags (i.e. "<code>October 2008</code>")
+	 * @param gpxInputStream the InputStream containing the gpx-data.
+	 * @param pseudoFileName ending with "<code>.gpx</code>"
+	 * @throws IOException
+	 */
+	public static void uploadAsync(final String username, final String password, final String description, final String tags, final boolean addDateTags, final InputStream gpxInputStream, final String pseudoFileName) {
+		if(username == null || username.length() == 0) return;
+		if(password == null || password.length() == 0) return;
+		if(description == null || description.length() == 0) return;
+		if(tags == null || tags.length() == 0) return;
+		if(pseudoFileName == null || pseudoFileName.endsWith(".gpx")) return;
+
+		new Thread(new Runnable(){
+			@Override
+			public void run() {
+				upload(username, password, description, tags, addDateTags, pseudoFileName, gpxInputStream);
+			}			
+		}, "OSMUpload-Thread").start();
+	}
+	
+	/**
+	 * Blocking version called by the uploadAsync-methods.
+	 * @param username
+	 * @param password
+	 * @param description
+	 * @param tags
+	 * @param addDateTags
+	 * @param pseudoFileName
+	 * @param gpxInputStream
+	 */
+	private static void upload(final String username, final String password, final String description, final String tags, final boolean addDateTags, final String pseudoFileName, final InputStream gpxInputStream) {
+		String tagsToUse = tags;
+		if(addDateTags || tagsToUse == null)
+			if(tagsToUse == null)
+				tagsToUse = autoTagFormat.format(new GregorianCalendar().getTime());
+			else
+				tagsToUse = tagsToUse + " " + autoTagFormat.format(new GregorianCalendar().getTime());
+		
+//		Log.d(DEBUGTAG, "Uploading " + pseudoFileName + " to openstreetmap.org");
+		try {
+			//String urlGpxName = URLEncoder.encode(gpxName.replaceAll("\\.;&?,/","_"), "UTF-8");
+			final String urlDesc = (description == null) ? DEFAULT_DESCRIPTION : description.replaceAll("\\.;&?,/","_");
+			final String urlTags = (tagsToUse == null) ? DEFAULT_TAGS : tagsToUse.replaceAll("\\\\.;&?,/","_");
+			final URL url = new URL("http://www.openstreetmap.org/api/" + API_VERSION + "/gpx/create");
+//			Log.d(DEBUGTAG, "Destination Url: " + url);
+			final HttpURLConnection con = (HttpURLConnection) url.openConnection();
+			con.setConnectTimeout(15000);
+			con.setRequestMethod("POST");
+			con.setDoOutput(true);
+			con.addRequestProperty("Authorization", "Basic "+encodeBase64(username+":"+password));
+			con.addRequestProperty("Content-Type", "multipart/form-data; boundary="+BOUNDARY);
+			con.addRequestProperty("Connection", "close"); // counterpart of keep-alive
+			con.addRequestProperty("Expect", "");
+
+			con.connect();
+			DataOutputStream out  = new DataOutputStream(new BufferedOutputStream(con.getOutputStream()));
+			//            DataOutputStream out  = new DataOutputStream(System.out);
+
+			writeContentDispositionFile(out, "file", gpxInputStream, pseudoFileName);
+			writeContentDisposition(out, "description", urlDesc);
+			writeContentDisposition(out, "tags", urlTags);
+			
+			writeContentDisposition(out, "public", "1");
+
+			out.writeBytes("--" + BOUNDARY + "--" + LINE_END);
+			out.flush();
+
+			final int retCode = con.getResponseCode();
+			String retMsg = con.getResponseMessage();
+//			Log.d(DEBUGTAG, "\nreturn code: "+retCode + " " + retMsg);
+			if (retCode != 200) {
+				// Look for a detailed error message from the server
+				if (con.getHeaderField("Error") != null)
+					retMsg += "\n" + con.getHeaderField("Error");
+				con.disconnect();
+				throw new RuntimeException(retCode+" "+retMsg);
+			}
+			out.close();
+			con.disconnect();
+		} catch(Exception e) {
+//			Log.e(DEBUGTAG, "OSMUpload Error", e);
+		}
 	}
 
 	/**
@@ -211,6 +243,11 @@ public class OSMUploader implements OpenStreetMapConstants, OpenStreetMapContrib
 		out.writeBytes(value + LINE_END);
 	}
 
+	/**
+	 * Encodes a String to a Base64 encoded String.
+	 * @param s
+	 * @return
+	 */
 	private static String encodeBase64(final String s) {
 		StringBuilder out = new StringBuilder();
 		for (int i = 0; i < (s.length()+2)/3; ++i) {
