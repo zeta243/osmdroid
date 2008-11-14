@@ -21,35 +21,24 @@ import android.util.Log;
  * @author Nicolas Gramlich
  *
  */
-public class OpenStreetMapTileDownloader extends OpenStreetMapTileHandler implements OpenStreetMapConstants, OpenStreetMapViewConstants {
-	// ===========================================================
-	// Constants
-	// ===========================================================
+public class OpenStreetMapTileCreator extends OpenStreetMapTileHandler implements OpenStreetMapConstants, OpenStreetMapViewConstants {
 
-
-	// ===========================================================
-	// Getter & Setter
-	// ===========================================================
-
-	// ===========================================================
-	// Methods from SuperClass/Interfaces
-	// ===========================================================
-
-	// ===========================================================
-	// Methods
-	// ===========================================================
-
-	public OpenStreetMapTileDownloader(Context ctx,
+	public OpenStreetMapTileCreator(Context ctx,
 			OpenStreetMapRendererInfo rendererInfo,
 			OpenStreetMapTileFilesystemProvider mapTileFSProvider) {
+		
 		super(ctx, rendererInfo, mapTileFSProvider);
+		
 	}
 
 	/** Sets the Child-ImageView of this to the URL passed. */
-	public void getRemoteImageAsync(final String aURLString, final Handler callback) {
+	public void generateImageAsync(int[] coords, int zoomLevel, final String aURLString, final Handler callback) {
 		this.mThreadPool.execute(new Runnable(){
 			@Override
 			public void run() {
+				
+				
+				
 				InputStream in = null;
 				OutputStream out = null;
 
@@ -67,13 +56,13 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapTileHandler implem
 
 					final byte[] data = dataStream.toByteArray();
 
-					OpenStreetMapTileDownloader.this.mMapTileFSProvider.saveFile(aURLString, data);
+					OpenStreetMapTileCreator.this.mMapTileFSProvider.saveFile(aURLString, data);
 					if(DEBUGMODE)
 						Log.i(DEBUGTAG, "Maptile saved to: " + aURLString);
 
 					final Message successMessage = Message.obtain(callback, MAPTILEDOWNLOADER_SUCCESS_ID);
 					successMessage.sendToTarget();
-					OpenStreetMapTileDownloader.this.mPending.remove(aURLString);
+					OpenStreetMapTileCreator.this.mPending.remove(aURLString);
 				} catch (Exception e) {
 					final Message failMessage = Message.obtain(callback, MAPTILEDOWNLOADER_FAIL_ID);
 					failMessage.sendToTarget();
@@ -92,12 +81,13 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapTileHandler implem
 	}
 	
 	public void requestMapTileAsync(int[] coords, int zoomLevel, final Handler callback) {
+		
 		final String aURLString = mRendererInfo.getTileURLString(coords, zoomLevel);
 		if(this.mPending.contains(aURLString))
 			return;
 	
 		this.mPending.add(aURLString);
-		getRemoteImageAsync(aURLString, callback);
+		generateImageAsync(coords, zoomLevel, aURLString, callback);
 	}
 
 	// ===========================================================
