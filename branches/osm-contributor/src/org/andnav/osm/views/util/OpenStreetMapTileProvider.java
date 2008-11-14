@@ -48,10 +48,10 @@ public class OpenStreetMapTileProvider implements OpenStreetMapConstants, OpenSt
 		
 		switch (renderInfo.PROVIDER_TYPE)
 		{
-		    case (LOCAL_PROVIDER):
+		    case LOCAL_PROVIDER:
 		    	this.mTileMaker = new OpenStreetMapTileCreator(ctx, renderInfo, this.mFSTileProvider);
 		    	break;
-		    case (DOWNLOAD_PROVIDER):
+		    case DOWNLOAD_PROVIDER:
 		    default:
 			    this.mTileMaker = new OpenStreetMapTileDownloader(ctx, renderInfo, this.mFSTileProvider);
 			    break;
