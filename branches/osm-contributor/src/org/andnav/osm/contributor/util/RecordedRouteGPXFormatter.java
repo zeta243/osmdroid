@@ -17,23 +17,7 @@ import org.andnav.osm.util.constants.OpenStreetMapConstants;
 public class RecordedRouteGPXFormatter implements OpenStreetMapContributorConstants, OpenStreetMapConstants{
 	// ===========================================================
 	// Constants
-	// ===========================================================
-	
-	private static final String XML_VERSION = "<?xml version=\"1.0\"?>";
-	private static final String GPX_VERSION = "1.1";
-	private static final String GPX_TAG = "<gpx version=\"" + GPX_VERSION + "\" creator=\"%s\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://www.topografix.com/GPX/1/1\" xsi:schemaLocation=\"http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd\">";
-	private static final String GPX_TAG_CLOSE = "</gpx>";
-	private static final String GPX_TAG_TIME = "<time>%s</time>";
-	private static final String GPX_TAG_TRACK = "<trk>";
-	private static final String GPX_TAG_TRACK_CLOSE = "</trk>";
-	private static final String GPX_TAG_TRACK_NAME = "<name>%s</name>";
-	private static final String GPX_TAG_TRACK_SEGMENT = "<trkseg>";
-	private static final String GPX_TAG_TRACK_SEGMENT_CLOSE = "</trkseg>";
-	private static final String GPX_TAG_TRACK_SEGMENT_POINT = "<trkpt lat=\"%f\" lon=\"%f\">";
-	private static final String GPX_TAG_TRACK_SEGMENT_POINT_CLOSE = "</trkpt>";
-	private static final String GPX_TAG_TRACK_SEGMENT_POINT_TIME = "<time>%s</time>";
-	private static final String GPX_TAG_TRACK_SEGMENT_POINT_SAT = "<sat>%d</sat>";
-	
+	// ===========================================================	
 	
 	private static final SimpleDateFormat formatterCompleteDateTime = new SimpleDateFormat("yyyyMMdd'_'HHmmss");
 
