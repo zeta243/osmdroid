@@ -4,6 +4,7 @@ package org.andnav.osm.views.util;
 import org.andnav.osm.R;
 import org.andnav.osm.util.constants.OpenStreetMapConstants;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
+import org.andnav.osm.views.util.OpenStreetMapTileProviderType;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -25,9 +26,6 @@ public class OpenStreetMapTileProvider implements OpenStreetMapConstants, OpenSt
 	// ===========================================================
 	// Fields
 	// ===========================================================
-	
-	public static final int DOWNLOAD_PROVIDER = 1;
-	public static final int LOCAL_PROVIDER    = 2;
 	
 	protected final Bitmap mLoadingMapTile;
 	protected Context mCtx;
