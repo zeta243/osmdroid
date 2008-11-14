@@ -10,13 +10,13 @@ import org.andnav.osm.views.util.OpenStreetMapTileProviderType;
  *
  */
 public enum OpenStreetMapRendererInfo {
-	OSMARENDER("http://tah.openstreetmap.org/Tiles/tile/", "OsmaRender", ".png", 17, 256, DOWNLOAD_PROVIDER),
-	MAPNIK("http://tile.openstreetmap.org/", "Mapnik", ".png", 18, 256, DOWNLOAD_PROVIDER),
-	CYCLEMAP("http://b.andy.sandbox.cloudmade.com/tiles/cycle/", "Cycle Map", ".png", 17, 256, DOWNLOAD_PROVIDER),
-	OPENARIELMAP("http://tile.openaerialmap.org/tiles/1.0.0/openaerialmap-900913/", "OpenArialMap (Satellite)", ".jpg", 13, 256, DOWNLOAD_PROVIDER),
-	CLOUDMADESMALLTILES("http://tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/2/64/", "Cloudmade (Small tiles)", ".jpg", 13, 64, DOWNLOAD_PROVIDER),
-	CLOUDMADESTANDARDTILES("http://tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/2/256/", "Cloudmade (Standard tiles)", ".jpg", 18, 256, DOWNLOAD_PROVIDER),
-	INTERNAL("http://internal/", "Internal", "", 18, 256, LOCAL_PROVIDER); // TODO Are url and name needed ?
+	OSMARENDER("http://tah.openstreetmap.org/Tiles/tile/", "OsmaRender", ".png", 17, 256, OpenStreetMapTileProviderType.DOWNLOAD_PROVIDER),
+	MAPNIK("http://tile.openstreetmap.org/", "Mapnik", ".png", 18, 256, OpenStreetMapTileProviderType.DOWNLOAD_PROVIDER),
+	CYCLEMAP("http://b.andy.sandbox.cloudmade.com/tiles/cycle/", "Cycle Map", ".png", 17, 256, OpenStreetMapTileProviderType.DOWNLOAD_PROVIDER),
+	OPENARIELMAP("http://tile.openaerialmap.org/tiles/1.0.0/openaerialmap-900913/", "OpenArialMap (Satellite)", ".jpg", 13, 256, OpenStreetMapTileProviderType.DOWNLOAD_PROVIDER),
+	CLOUDMADESMALLTILES("http://tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/2/64/", "Cloudmade (Small tiles)", ".jpg", 13, 64, OpenStreetMapTileProviderType.DOWNLOAD_PROVIDER),
+	CLOUDMADESTANDARDTILES("http://tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/2/256/", "Cloudmade (Standard tiles)", ".jpg", 18, 256, OpenStreetMapTileProviderType.DOWNLOAD_PROVIDER),
+	INTERNAL("http://internal/", "Internal", "", 18, 256, OpenStreetMapTileProviderType.LOCAL_PROVIDER); // URL and name are still needed - they are used as keys by the FS/memory tile caches
 	
 	// ===========================================================
 	// Fields
