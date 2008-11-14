@@ -92,14 +92,6 @@ public abstract class OpenStreetMapActivity extends Activity implements OpenStre
 	protected void onDestroy() {
 		super.onDestroy();
 		// getLocationManager().removeUpdates(mLocationListener);
-		
-//		if(this.mDoGPSRecordingAndContributing){
-//			try {
-//				OSMUploader.uploadAsync(this.mRouteRecorder.getRecordedGeoPoints());
-//			} catch (IOException e) {
-//				Log.e(DEBUGTAG, "Error uploading route to openstreemaps.", e);
-//			}
-//		}
 	}
 
 	// ===========================================================
