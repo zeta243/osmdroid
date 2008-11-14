@@ -61,13 +61,7 @@ public class GPSCaptureActivity extends OpenStreetMapActivity implements OpenStr
 	private boolean  mStartOnConnect = false;
 	private Button   mStartStopButton;
 	private Button   mNewSegmentButton;
-	/*
-	private TextView mCurrentLocationValue;
-	private TextView mCurrentSpeedValue;
-	private TextView mCurrentBearingValue;
-	private TextView mNumSatellitesValue;
-	private TextView mAccuracyValue;
-	*/
+
 	private EditText mTraceNameEditor;
 	
 	private Location mLastLocation;
@@ -127,22 +121,7 @@ public class GPSCaptureActivity extends OpenStreetMapActivity implements OpenStr
             switch (msg.what) {
                 case UPDATE_LOCATION:
                 	if (mLatestLocation != null)
-                	{
-                		/*
-                		String latlong = String.format("%3.5f, %3.5f", mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                        mCurrentLocationValue.setText(latlong);
-                        mCurrentSpeedValue.setText(mLastLocation.getSpeed() + "");
-                        mCurrentBearingValue.setText(mLastLocation.getBearing() + "");
-                        
-                        try {
-							mNumSatellitesValue.setText(mCaptureService.getNumSatellites() + "");
-						} catch (RemoteException e) {
-							Log.e(TAG, "Could not get number of Satellites");
-							e.printStackTrace();
-						}
-                        mAccuracyValue.setText(mLastLocation.getAccuracy() + "");
-                        */
-                		
+                	{                		
                         mMyLocationOverlay.setLocation(TypeConverter.locationToGeoPoint(mLatestLocation));
                         mOSMView.invalidate();
                         mOSMView.setMapCenter(mLatestLocation.getLatitude(), mLatestLocation.getLongitude());
@@ -162,8 +141,6 @@ public class GPSCaptureActivity extends OpenStreetMapActivity implements OpenStr
                 	        }
                 	        
                         }
-                    	// mLastLocation;
-                    	// mLatestLocation;
                 	}
                     break;
                 default:
@@ -180,17 +157,7 @@ public class GPSCaptureActivity extends OpenStreetMapActivity implements OpenStr
         super.onCreate(savedInstanceState, false);
         
         setContentView(R.layout.main);
-
-//        try {
-//        	Intent svc = new Intent(this, GPSCaptureService.class);
-//        	Log.d(TAG, "Starting Service");
-//        	startService(svc);
-//        }
-//        catch (Exception e)
-//        {
-//        	Log.d(TAG, "Service Problem", e);
-//        }
-        
+      
     	if (savedInstanceState != null)
     	{
     	    if (savedInstanceState.getBoolean("captureStarted"))
@@ -235,15 +202,6 @@ public class GPSCaptureActivity extends OpenStreetMapActivity implements OpenStr
         		}
         	}
         });
-
-        /*
-    	mCurrentLocationValue = (TextView)findViewById(R.id.CurrentLocationValue);
-    	mCurrentSpeedValue    = (TextView)findViewById(R.id.CurrentSpeedValue);
-    	mCurrentBearingValue  = (TextView)findViewById(R.id.CurrentBearingValue);
-    	
-    	mNumSatellitesValue = (TextView)findViewById(R.id.NumSatellitesValue);
-    	mAccuracyValue      = (TextView)findViewById(R.id.AccuracyValue);
-    	*/
         
     	mTraceNameEditor = (EditText)findViewById(R.id.traceNameEditor);
     	mTraceNameEditor.selectAll();
@@ -309,22 +267,6 @@ public class GPSCaptureActivity extends OpenStreetMapActivity implements OpenStr
         {
             mOSMView.setMapCenter(lastLocation.getLatitude(), lastLocation.getLongitude());
         }
-        
-//        /* MiniMap */
-//        {
-//	        /* Create another OpenStreetMapView, that will act as the MiniMap for the 'MainMap'. They will share the TileProvider. */
-//	        mOsmvMinimap = new OpenStreetMapView(this, OpenStreetMapRendererInfo.CLOUDMADESTANDARDTILES, mOSMView);
-//	        final int aZoomDiff = 3; // Use OpenStreetMapViewConstants.NOT_SET to disable autozooming of this minimap
-//	        mOSMView.setMiniMap(mOsmvMinimap, aZoomDiff);
-//	        
-//	        
-//	        /* Create RelativeLayout.LayoutParams that position the MiniMap on the top-right corner of the RelativeLayout. */
-//	        RelativeLayout.LayoutParams minimapParams = new RelativeLayout.LayoutParams(90, 90);
-//	        minimapParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
-//	        minimapParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-//	        minimapParams.setMargins(5,5,5,5);
-//	        mOSMLayout.addView(mOsmvMinimap, minimapParams);
-//        }
     }
     
     private void startStopTrace(Button b)
