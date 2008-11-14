@@ -11,8 +11,8 @@ import org.andnav.osm.util.constants.OpenStreetMapConstants;
 import org.andnav.osm.views.controller.OpenStreetMapViewController;
 import org.andnav.osm.views.overlay.OpenStreetMapViewOverlay;
 import org.andnav.osm.views.util.OpenStreetMapRendererInfo;
-import org.andnav.osm.views.util.OpenStreetMapTileDownloader;
 import org.andnav.osm.views.util.OpenStreetMapTileFilesystemProvider;
+import org.andnav.osm.views.util.OpenStreetMapTileHandler;
 import org.andnav.osm.views.util.OpenStreetMapTileProvider;
 import org.andnav.osm.views.util.Util;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
@@ -80,7 +80,7 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 	public OpenStreetMapView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.mRendererInfo = DEFAULTRENDERER;
-		this.mTileProvider = new OpenStreetMapTileProvider(context, new SimpleInvalidationHandler());
+		this.mTileProvider = new OpenStreetMapTileProvider(context, mRendererInfo, new SimpleInvalidationHandler());
 	}
 
 	/**
@@ -93,7 +93,7 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 	public OpenStreetMapView(final Context context, final OpenStreetMapRendererInfo aRendererInfo) {
 		super(context);
 		this.mRendererInfo = aRendererInfo;
-		this.mTileProvider = new OpenStreetMapTileProvider(context, new SimpleInvalidationHandler());
+		this.mTileProvider = new OpenStreetMapTileProvider(context, mRendererInfo, new SimpleInvalidationHandler());
 	}
 
 	/**
@@ -278,6 +278,7 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 		this.setZoomLevel(this.mZoomLevel); // Invalidates the map and zooms to
 											// the maximum level of the
 											// renderer.
+		this.mTileProvider.setRenderer(aRenderer);
 	}
 
 	/**
@@ -488,11 +489,10 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 				mapTileCoords[MAPTILE_LONGITUDE_INDEX] = MyMath.mod(
 						centerMapTileCoords[MAPTILE_LONGITUDE_INDEX] + x, mapTileUpperBound);
 				/* Construct a URLString, which represents the MapTile. */
-				final String tileURLString = this.mRendererInfo.getTileURLString(mapTileCoords,
-						zoomLevel);
 
 				/* Draw the MapTile 'i tileSizePx' above of the centerMapTile */
-				final Bitmap currentMapTile = this.mTileProvider.getMapTile(tileURLString);
+				final Bitmap currentMapTile = this.mTileProvider.getMapTile(mapTileCoords, zoomLevel);
+				
 				final int tileLeft = this.mTouchMapOffsetX + centerMapTileScreenLeft
 						+ (x * tileSizePx);
 				final int tileTop = this.mTouchMapOffsetY + centerMapTileScreenTop
@@ -768,7 +768,7 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 		@Override
 		public void handleMessage(final Message msg) {
 			switch (msg.what) {
-				case OpenStreetMapTileDownloader.MAPTILEDOWNLOADER_SUCCESS_ID:
+				case OpenStreetMapTileHandler.MAPTILEDOWNLOADER_SUCCESS_ID:
 				case OpenStreetMapTileFilesystemProvider.MAPTILEFSLOADER_SUCCESS_ID:
 					OpenStreetMapView.this.invalidate();
 					break;
