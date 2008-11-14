@@ -37,7 +37,21 @@ public class GPSFileWriter {
 		File f = new File(baseDir + "/", mFileName);
 		// f.mkdirs();
 		mOutputStream = new FileOutputStream(f);
+		
+		/* TODO Please format the UTC-time-strings using:
+		 * org.andnav.osm.contributor.util.Util.convertTimestampToUTCString(long timestamp);
+		 */
+		
+		/* TODO Is there an effort using "new String("Hello world")" ?
+		 * Also please avoid concatenating strings using the "+"-Operator. 
+		 * User StringBuilder instead. Its much more efficient!
+		 */
 
+		/* TODO Please reuse the constants from: 
+		 * org.andnav.osm.contributor.util.constants.OpenStreetMapContributorConstants
+		 * 
+		 * For an example how to construct the Strings have a look at:
+		 * org.andnav.osm.contributor.util.RecordedRouteGPXFormatter.create(...) */ 
 		mOutputStream.write(
 new String(
 "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
