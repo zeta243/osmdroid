@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:id="@+id/MainView"
+    >
+<TextView  
+    android:layout_width="fill_parent" 
+    android:layout_height="wrap_content" 
+    android:text="@string/hello"
+    />
+    
+ 
+<TableLayout android:layout_height="wrap_content" android:id="@+id/CurrentReadingTable" android:layout_width="fill_parent">
+  <TableRow android:layout_height="wrap_content" android:id="@+id/CurrentLocationRow" android:layout_width="fill_parent">
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/CurrentLocationLabel" android:text="@string/current_location_label"></TextView><TextView android:layout_height="wrap_content" android:id="@+id/CurrentLocationValue" android:layout_width="fill_parent" android:text="0.0000, 0.0000"></TextView>
+  </TableRow><TableRow android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/CurrentSpeedRow"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/CurrentSpeedLabel" android:text="@string/current_speed_label"></TextView><TextView android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/CurrentSpeedValue" android:text="0.0 m/s"></TextView>
+</TableRow><TableRow android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/CurrentBearingRow"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/CurrentBearingLabel" android:text="@string/current_bearing_label"></TextView><TextView android:layout_height="wrap_content" android:layout_width="fill_parent" android:text="0.0 degrees" android:id="@+id/CurrentBearingValue"></TextView>
+</TableRow><TableRow android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/NumSatellitesRow"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/NumSatellitesLabel" android:text="@string/num_satellites_label"></TextView><TextView android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/NumSatellitesValue" android:text="0"></TextView>
+</TableRow><TableRow android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/AccuracyRow"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/AccuracyLabel" android:text="@string/accuracy_label"></TextView><TextView android:layout_height="wrap_content" android:layout_width="fill_parent" android:id="@+id/AccuracyValue" android:text="-1"></TextView>
+</TableRow>
+</TableLayout>
+
+</LinearLayout>

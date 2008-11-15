@@ -1,6 +1,5 @@
 package org.andnav.osm.samples;
 
-import org.andnav.osm.OSMMapActivity;
 import org.andnav.osm.R;
 import org.andnav.osm.adt.util.TypeConverter;
 import org.andnav.osm.util.constants.OSMConstants;
@@ -9,7 +8,11 @@ import org.andnav.osm.views.controller.OSMMapViewController;
 import org.andnav.osm.views.overlay.OSMMapViewSimpleLocationOverlay;
 import org.andnav.osm.views.tiles.OSMMapTileProviderInfo;
 
+import android.app.Activity;
+import android.content.Context;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,7 +28,7 @@ import android.widget.RelativeLayout.LayoutParams;
  * @author Nicolas Gramlich
  *
  */
-public class SampleExtensive extends OSMMapActivity implements OSMConstants{
+public class SampleExtensive extends Activity implements OSMConstants{
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -41,7 +44,8 @@ public class SampleExtensive extends OSMMapActivity implements OSMConstants{
 	// ===========================================================
 
 	private OSMMapView mOsmv, mOsmvMinimap; 
-	private OSMMapViewSimpleLocationOverlay mMyLocationOverlay; 
+	private OSMMapViewSimpleLocationOverlay mMyLocationOverlay;
+	private SampleLocationListener mLocationListener; 
 
 	// ===========================================================
 	// Constructors
@@ -50,7 +54,7 @@ public class SampleExtensive extends OSMMapActivity implements OSMConstants{
 	/** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState, false); // Pass true here to actually contribute to OSM!
+        super.onCreate(savedInstanceState);
         
         final RelativeLayout rl = new RelativeLayout(this);
         
@@ -117,9 +121,20 @@ public class SampleExtensive extends OSMMapActivity implements OSMConstants{
 	        rl.addView(mOsmvMinimap, minimapParams);
         }
         
+        this.mLocationListener = new SampleLocationListener();
+        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 20, this.mLocationListener);
+        
         this.setContentView(rl);
     }
 
+    @Override
+    public void onDestroy()
+    {
+        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        lm.removeUpdates(this.mLocationListener);
+    }
+    
 	// ===========================================================
 	// Getter & Setter
 	// ===========================================================
@@ -127,17 +142,6 @@ public class SampleExtensive extends OSMMapActivity implements OSMConstants{
 	// ===========================================================
 	// Methods from SuperClass/Interfaces
 	// ===========================================================
-    
-	@Override
-	public void onLocationChanged(final Location pLoc) {
-		this.mMyLocationOverlay.setLocation(TypeConverter.locationToGeoPoint(pLoc));
-	}
-
-	@Override
-	public void onLocationLost() {
-		// We'll do nothing here. 
-	}
-	
     
     @Override
 	public boolean onCreateOptionsMenu(final Menu pMenu) {
@@ -209,4 +213,18 @@ public class SampleExtensive extends OSMMapActivity implements OSMConstants{
 	// ===========================================================
 	// Inner and Anonymous Classes
 	// ===========================================================
+	
+  private class SampleLocationListener implements LocationListener {
+  public void onLocationChanged(final Location loc) {
+          if (loc != null){
+        	      SampleExtensive.this.mMyLocationOverlay.setLocation(TypeConverter.locationToGeoPoint(loc));
+          }
+  }
+
+  public void onStatusChanged(String a, int i, Bundle b) {
+  }
+  
+  public void onProviderEnabled(String a) { /* ignore  */ }
+  public void onProviderDisabled(String a) { /* ignore  */ }
+}
 }
