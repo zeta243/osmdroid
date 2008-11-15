@@ -1,4 +1,7 @@
-package org.andnav.osm.views.tiles.renderer.mapnik;
+package org.andnav.osm.views.tiles.renderer.mapnik.symbolizer;
+
+import org.andnav.osm.views.tiles.renderer.mapnik.MapnikColour;
+import org.andnav.osm.views.tiles.renderer.mapnik.MapnikStroke;
 
 // Original from include/mapnik/line_symbolizer.hpp
 

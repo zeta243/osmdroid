@@ -7,19 +7,24 @@ public class MapnikColour {
 
 	private int m_abgr;
 
-	MapnikColour() {
+	public MapnikColour() {
 		m_abgr = 0xffffffff;
 	}
 
-	MapnikColour(int red, int green, int blue, int alpha) {
+	public MapnikColour(int red, int green, int blue, int alpha) {
+		m_abgr = ((alpha & 0xff) << 24 | (blue & 0xff) << 16 | (green & 0xff) << 8 | (red & 0xff));
+	}
+	
+	public MapnikColour(int red, int green, int blue) {
+		int alpha = 0xff;
 		m_abgr = ((alpha & 0xff) << 24 | (blue & 0xff) << 16 | (green & 0xff) << 8 | (red & 0xff));
 	}
 
-	MapnikColour(int abgr) {
+	public MapnikColour(int abgr) {
 		m_abgr = abgr;
 	}
 
-	MapnikColour(MapnikColour c) {
+	public MapnikColour(MapnikColour c) {
 		m_abgr = c.m_abgr;
 	}
 

@@ -1,24 +1,26 @@
-package org.andnav.osm.views.tiles.renderer.mapnik;
+package org.andnav.osm.views.tiles.renderer.mapnik.symbolizer;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.andnav.osm.views.tiles.renderer.mapnik.MapnikImageData;
+
 // Original from include/mapnik/symbolizer.hpp
 //               src/symbolizer.cpp
 
-public abstract class MapnikSymbolizerWithImage {
+public class MapnikSymbolizerWithImage implements MapnikSymbolizerWithImageInterface {
 
 	protected MapnikImageData mImage;
 	protected String mImageFilename;
 	
-	protected MapnikSymbolizerWithImage(MapnikImageData image)
+	public MapnikSymbolizerWithImage(MapnikImageData image)
 	{
 		mImage = image;
 	}
 	
-	protected MapnikSymbolizerWithImage(String filename, String type, int width, int height) throws IOException, FileNotFoundException
+	public MapnikSymbolizerWithImage(String filename, String type, int width, int height) throws IOException, FileNotFoundException
 	{
 		mImageFilename = filename;
 		
@@ -31,12 +33,12 @@ public abstract class MapnikSymbolizerWithImage {
 		mImage.setBytes(imageData);
 	}
 	
-	protected MapnikSymbolizerWithImage(MapnikSymbolizerWithImage symbolizer)
+	public MapnikSymbolizerWithImage(MapnikSymbolizerWithImage symbolizer)
 	{
 		mImage = symbolizer.mImage;
 		mImageFilename = symbolizer.mImageFilename;
 	}
-	
+
 	public MapnikImageData getImage()
 	{
 		return mImage;
