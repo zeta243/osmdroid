@@ -19,5 +19,7 @@ interface GPSCaptureInterface
     
     boolean registerCallback(in GPSCaptureCallback c);
     boolean deRegisterCallback(in GPSCaptureCallback c);
+    
+    boolean uploadCaptureToOSM(String captureName, String description, String tags);
 }
 
