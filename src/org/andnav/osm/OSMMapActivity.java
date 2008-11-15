@@ -1,7 +1,7 @@
 // Created by plusminus on 00:14:42 - 02.10.2008
 package org.andnav.osm;
 
-import org.andnav.osm.util.constants.OpenStreetMapConstants;
+import org.andnav.osm.util.constants.OSMConstants;
 
 import android.app.Activity;
 import android.location.Location;
@@ -12,7 +12,7 @@ import android.os.Bundle;
  * @author Nicolas Gramlich
  *
  */
-public abstract class OpenStreetMapActivity extends Activity implements OpenStreetMapConstants {
+public abstract class OSMMapActivity extends Activity implements OSMConstants {
 	// ===========================================================
 	// Constants
 	// ===========================================================

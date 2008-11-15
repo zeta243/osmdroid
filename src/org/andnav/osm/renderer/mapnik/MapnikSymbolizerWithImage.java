@@ -4,8 +4,6 @@ package org.andnav.osm.renderer.mapnik;
 
 public class MapnikSymbolizerWithImage {
 
-	
-	
 	/*
     class symbolizer_with_image {
         public:

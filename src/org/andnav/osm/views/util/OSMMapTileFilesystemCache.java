@@ -17,7 +17,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.andnav.osm.exceptions.EmptyCacheException;
-import org.andnav.osm.util.constants.OpenStreetMapConstants;
+import org.andnav.osm.util.constants.OSMConstants;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
 
 import android.content.ContentValues;
@@ -36,7 +36,7 @@ import android.util.Log;
  * @author Nicolas Gramlich
  *
  */
-public class OpenStreetMapTileFilesystemProvider implements OpenStreetMapConstants, OpenStreetMapViewConstants{
+public class OSMMapTileFilesystemCache implements OSMConstants, OpenStreetMapViewConstants{
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -59,7 +59,7 @@ public class OpenStreetMapTileFilesystemProvider implements OpenStreetMapConstan
 	protected final int mMaxFSCacheByteSize;
 	protected int mCurrentFSCacheByteSize;
 	protected ExecutorService mThreadPool = Executors.newFixedThreadPool(2);
-	protected final OpenStreetMapTileCache mCache;
+	protected final OSMMapTileMemoryCache mCache;
 
 	protected HashSet<String> mPending = new HashSet<String>();
 
@@ -72,7 +72,7 @@ public class OpenStreetMapTileFilesystemProvider implements OpenStreetMapConstan
 	 * @param aMaxFSCacheByteSize the size of the cached MapTiles will not exceed this size.
 	 * @param aCache to load fs-tiles to.
 	 */
-	public OpenStreetMapTileFilesystemProvider(final Context ctx, final int aMaxFSCacheByteSize, final OpenStreetMapTileCache aCache) {
+	public OSMMapTileFilesystemCache(final Context ctx, final int aMaxFSCacheByteSize, final OSMMapTileMemoryCache aCache) {
 		this.mCtx = ctx;
 		this.mMaxFSCacheByteSize = aMaxFSCacheByteSize;
 		this.mDatabase = new OpenStreetMapTileFilesystemProviderDataBase(ctx);
@@ -95,8 +95,8 @@ public class OpenStreetMapTileFilesystemProvider implements OpenStreetMapConstan
 		if(this.mPending.contains(aTileURLString))
 			return;
 
-		final String formattedTileURLString = OpenStreetMapTileNameFormatter.format(aTileURLString);
-		final InputStream in = new BufferedInputStream(OpenStreetMapTileFilesystemProvider.this.mCtx.openFileInput(formattedTileURLString), 8192);
+		final String formattedTileURLString = OSMMapTileNameFormatter.format(aTileURLString);
+		final InputStream in = new BufferedInputStream(OSMMapTileFilesystemCache.this.mCtx.openFileInput(formattedTileURLString), 8192);
 
 		this.mPending.add(aTileURLString);
 
@@ -106,7 +106,7 @@ public class OpenStreetMapTileFilesystemProvider implements OpenStreetMapConstan
 				OutputStream out = null;
 				try {
 					// File exists, otherwise a FileNotFoundException would have been thrown
-					OpenStreetMapTileFilesystemProvider.this.mDatabase.incrementUse(formattedTileURLString);
+					OSMMapTileFilesystemCache.this.mDatabase.incrementUse(formattedTileURLString);
 
 					final ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
 					out = new BufferedOutputStream(dataStream, StreamUtils.IO_BUFFER_SIZE);
@@ -116,7 +116,7 @@ public class OpenStreetMapTileFilesystemProvider implements OpenStreetMapConstan
 					final byte[] data = dataStream.toByteArray();
 					final Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length); // , BITMAPLOADOPTIONS);
 
-					OpenStreetMapTileFilesystemProvider.this.mCache.putTile(aTileURLString, bmp);
+					OSMMapTileFilesystemCache.this.mCache.putTile(aTileURLString, bmp);
 
 					final Message successMessage = Message.obtain(callback, MAPTILEFSLOADER_SUCCESS_ID);
 					successMessage.sendToTarget();
@@ -133,13 +133,13 @@ public class OpenStreetMapTileFilesystemProvider implements OpenStreetMapConstan
 					StreamUtils.closeStream(out);
 				}
 
-				OpenStreetMapTileFilesystemProvider.this.mPending.remove(aTileURLString);
+				OSMMapTileFilesystemCache.this.mPending.remove(aTileURLString);
 			}
 		});
 	}
 
 	public void saveFile(final String aURLString, final byte[] someData) throws IOException{
-		final String filename = OpenStreetMapTileNameFormatter.format(aURLString);
+		final String filename = OSMMapTileNameFormatter.format(aURLString);
 
 		final FileOutputStream fos = this.mCtx.openFileOutput(filename, Context.MODE_WORLD_READABLE);
 		final BufferedOutputStream bos = new BufferedOutputStream(fos, StreamUtils.IO_BUFFER_SIZE);

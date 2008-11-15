@@ -1,13 +1,13 @@
 package org.andnav.osm.samples;
 
-import org.andnav.osm.OpenStreetMapActivity;
+import org.andnav.osm.OSMMapActivity;
 import org.andnav.osm.R;
 import org.andnav.osm.util.TypeConverter;
-import org.andnav.osm.util.constants.OpenStreetMapConstants;
-import org.andnav.osm.views.OpenStreetMapView;
-import org.andnav.osm.views.controller.OpenStreetMapViewController;
-import org.andnav.osm.views.overlay.OpenStreetMapViewSimpleLocationOverlay;
-import org.andnav.osm.views.util.OpenStreetMapRendererInfo;
+import org.andnav.osm.util.constants.OSMConstants;
+import org.andnav.osm.views.OSMMapView;
+import org.andnav.osm.views.controller.OSMViewController;
+import org.andnav.osm.views.overlay.OSMMapViewSimpleLocationOverlay;
+import org.andnav.osm.views.util.OSMMapTileProviderInfo;
 
 import android.location.Location;
 import android.os.Bundle;
@@ -25,7 +25,7 @@ import android.widget.RelativeLayout.LayoutParams;
  * @author Nicolas Gramlich
  *
  */
-public class SampleExtensive extends OpenStreetMapActivity implements OpenStreetMapConstants{
+public class SampleExtensive extends OSMMapActivity implements OSMConstants{
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -40,8 +40,8 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
 	// Fields
 	// ===========================================================
 
-	private OpenStreetMapView mOsmv, mOsmvMinimap; 
-	private OpenStreetMapViewSimpleLocationOverlay mMyLocationOverlay; 
+	private OSMMapView mOsmv, mOsmvMinimap; 
+	private OSMMapViewSimpleLocationOverlay mMyLocationOverlay; 
 
 	// ===========================================================
 	// Constructors
@@ -54,13 +54,13 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
         
         final RelativeLayout rl = new RelativeLayout(this);
         
-        this.mOsmv = new OpenStreetMapView(this, OpenStreetMapRendererInfo.MAPNIK);
+        this.mOsmv = new OSMMapView(this, OSMMapTileProviderInfo.MAPNIK);
         rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
         
         /* SingleLocation-Overlay */
         {
 	        /* Create a static Overlay showing a single location. (Gets updated in onLocationChanged(Location loc)! */
-	        this.mMyLocationOverlay = new OpenStreetMapViewSimpleLocationOverlay(this);
+	        this.mMyLocationOverlay = new OSMMapViewSimpleLocationOverlay(this);
 	        this.mOsmv.getOverlays().add(mMyLocationOverlay);
         }
         
@@ -104,7 +104,7 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
         /* MiniMap */
         {
 	        /* Create another OpenStreetMapView, that will act as the MiniMap for the 'MainMap'. They will share the TileProvider. */
-	        mOsmvMinimap = new OpenStreetMapView(this, OpenStreetMapRendererInfo.CLOUDMADESTANDARDTILES, this.mOsmv);
+	        mOsmvMinimap = new OSMMapView(this, OSMMapTileProviderInfo.CLOUDMADESTANDARDTILES, this.mOsmv);
 	        final int aZoomDiff = 3; // Use OpenStreetMapViewConstants.NOT_SET to disable autozooming of this minimap
 	        this.mOsmv.setMiniMap(mOsmvMinimap, aZoomDiff);
 	        
@@ -146,8 +146,8 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
     	
     	final SubMenu subMenu = pMenu.addSubMenu(0, MENU_RENDERER_ID, Menu.NONE, "Choose Renderer");
     	{
-	    	for(int i = 0; i < OpenStreetMapRendererInfo.values().length; i ++)
-	    		subMenu.add(0, 1000 + i, Menu.NONE, OpenStreetMapRendererInfo.values()[i].NAME);
+	    	for(int i = 0; i < OSMMapTileProviderInfo.values().length; i ++)
+	    		subMenu.add(0, 1000 + i, Menu.NONE, OSMMapTileProviderInfo.values()[i].NAME);
     	}
     	
     	pMenu.add(0, MENU_ANIMATION_ID, Menu.NONE, "Run Animation");
@@ -186,7 +186,7 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
 				return true;
 				
 			case MENU_ANIMATION_ID:
-				this.mOsmv.getController().animateTo(52370816, 9735936, OpenStreetMapViewController.AnimationType.MIDDLEPEAKSPEED, OpenStreetMapViewController.ANIMATION_SMOOTHNESS_HIGH, OpenStreetMapViewController.ANIMATION_DURATION_DEFAULT); // Hannover
+				this.mOsmv.getController().animateTo(52370816, 9735936, OSMViewController.AnimationType.MIDDLEPEAKSPEED, OSMViewController.ANIMATION_SMOOTHNESS_HIGH, OSMViewController.ANIMATION_DURATION_DEFAULT); // Hannover
 				// Stop the Animation after 500ms  (just to show that it works)
 //				new Handler().postDelayed(new Runnable(){
 //					@Override
@@ -197,7 +197,7 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
 				return true;
 				
 			default: 
-				this.mOsmv.setRenderer(OpenStreetMapRendererInfo.values()[item.getItemId() - 1000]);
+				this.mOsmv.setRenderer(OSMMapTileProviderInfo.values()[item.getItemId() - 1000]);
 		}
 		return false;
 	}

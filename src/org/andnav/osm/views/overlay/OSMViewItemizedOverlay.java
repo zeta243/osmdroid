@@ -4,8 +4,8 @@ package org.andnav.osm.views.overlay;
 import java.util.List;
 
 import org.andnav.osm.R;
-import org.andnav.osm.views.OpenStreetMapView;
-import org.andnav.osm.views.OpenStreetMapView.OpenStreetMapViewProjection;
+import org.andnav.osm.views.OSMMapView;
+import org.andnav.osm.views.OSMMapView.OpenStreetMapViewProjection;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -15,14 +15,14 @@ import android.graphics.drawable.Drawable;
 import android.view.MotionEvent;
 
 /**
- * Draws a list of {@link OpenStreetMapViewOverlayItem} as markers to a map.
+ * Draws a list of {@link OSMMapViewOverlayItem} as markers to a map.
  * The item with the lowest index is drawn as last and therefore the 'topmost' marker. It also gets checked for onTap first.    
  * This class is generic, because you then you get your custom item-class passed back in onTap(). 
  * @author Nicolas Gramlich
  *
  * @param <T>
  */
-public class OpenStreetMapViewItemizedOverlay<T extends OpenStreetMapViewOverlayItem> extends OpenStreetMapViewOverlay {
+public class OSMViewItemizedOverlay<T extends OSMMapViewOverlayItem> extends OSMMapViewOverlay {
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -43,11 +43,11 @@ public class OpenStreetMapViewItemizedOverlay<T extends OpenStreetMapViewOverlay
 	// Constructors
 	// ===========================================================
 
-	public OpenStreetMapViewItemizedOverlay(final Context ctx, final List<T> aList, final OnItemTapListener<T> aOnItemTapListener) {		
+	public OSMViewItemizedOverlay(final Context ctx, final List<T> aList, final OnItemTapListener<T> aOnItemTapListener) {		
         this(ctx, aList, null, null, aOnItemTapListener);
 	}
 	
-	public OpenStreetMapViewItemizedOverlay(final Context ctx, final List<T> aList, final Drawable pMarker, final Point pMarkerHotspot, final OnItemTapListener<T> aOnItemTapListener) {
+	public OSMViewItemizedOverlay(final Context ctx, final List<T> aList, final Drawable pMarker, final Point pMarkerHotspot, final OnItemTapListener<T> aOnItemTapListener) {
 		assert(ctx != null);
 		assert(aList != null);
 		
@@ -73,12 +73,12 @@ public class OpenStreetMapViewItemizedOverlay<T extends OpenStreetMapViewOverlay
 	// ===========================================================
 	
 	@Override
-	protected void onDrawFinished(Canvas c, OpenStreetMapView osmv) {
+	protected void onDrawFinished(Canvas c, OSMMapView osmv) {
 		return;
 	}
 	
 	@Override
-	public void onDraw(final Canvas c, final OpenStreetMapView mapView) {
+	public void onDraw(final Canvas c, final OSMMapView mapView) {
 		final OpenStreetMapViewProjection pj = mapView.getProjection();
 		
 		final Point curScreenCoords = new Point();
@@ -104,7 +104,7 @@ public class OpenStreetMapViewItemizedOverlay<T extends OpenStreetMapViewOverlay
 	}
 	
 	@Override
-	public boolean onSingleTapUp(final MotionEvent event, final OpenStreetMapView mapView) {
+	public boolean onSingleTapUp(final MotionEvent event, final OSMMapView mapView) {
 		final OpenStreetMapViewProjection pj = mapView.getProjection();
 		final int eventX = (int)event.getX();
 		final int eventY = (int)event.getY();

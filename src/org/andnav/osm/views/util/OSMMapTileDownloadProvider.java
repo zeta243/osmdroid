@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
-import org.andnav.osm.util.constants.OpenStreetMapConstants;
+import org.andnav.osm.util.constants.OSMConstants;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
 
 import android.content.Context;
@@ -21,7 +21,7 @@ import android.util.Log;
  * @author Nicolas Gramlich
  *
  */
-public class OpenStreetMapTileDownloader extends OpenStreetMapTileHandler implements OpenStreetMapConstants, OpenStreetMapViewConstants {
+public class OSMMapTileDownloadProvider extends OSMMapTileAbstractProvider implements OSMConstants, OpenStreetMapViewConstants {
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -39,9 +39,9 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapTileHandler implem
 	// Methods
 	// ===========================================================
 
-	public OpenStreetMapTileDownloader(Context ctx,
-			OpenStreetMapRendererInfo rendererInfo,
-			OpenStreetMapTileFilesystemProvider mapTileFSProvider) {
+	public OSMMapTileDownloadProvider(Context ctx,
+			OSMMapTileProviderInfo rendererInfo,
+			OSMMapTileFilesystemCache mapTileFSProvider) {
 		super(ctx, rendererInfo, mapTileFSProvider);
 	}
 
@@ -67,13 +67,13 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapTileHandler implem
 
 					final byte[] data = dataStream.toByteArray();
 
-					OpenStreetMapTileDownloader.this.mMapTileFSProvider.saveFile(aURLString, data);
+					OSMMapTileDownloadProvider.this.mMapTileFSCache.saveFile(aURLString, data);
 					if(DEBUGMODE)
 						Log.i(DEBUGTAG, "Maptile saved to: " + aURLString);
 
 					final Message successMessage = Message.obtain(callback, MAPTILEDOWNLOADER_SUCCESS_ID);
 					successMessage.sendToTarget();
-					OpenStreetMapTileDownloader.this.mPending.remove(aURLString);
+					OSMMapTileDownloadProvider.this.mPending.remove(aURLString);
 				} catch (Exception e) {
 					final Message failMessage = Message.obtain(callback, MAPTILEDOWNLOADER_FAIL_ID);
 					failMessage.sendToTarget();

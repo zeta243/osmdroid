@@ -8,7 +8,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
-import org.andnav.osm.util.constants.OpenStreetMapConstants;
+import org.andnav.osm.util.constants.OSMConstants;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
 
 import android.content.Context;
@@ -21,24 +21,52 @@ import android.util.Log;
  * @author Nicolas Gramlich
  *
  */
-public class OpenStreetMapTileCreator extends OpenStreetMapTileHandler implements OpenStreetMapConstants, OpenStreetMapViewConstants {
+public class OSMMapTileCreator extends OSMMapTileAbstractProvider implements OSMConstants, OpenStreetMapViewConstants {
 
-	public OpenStreetMapTileCreator(Context ctx,
-			OpenStreetMapRendererInfo rendererInfo,
-			OpenStreetMapTileFilesystemProvider mapTileFSProvider) {
-		
+	// ===========================================================
+	// Constants
+	// ===========================================================
+
+	// ===========================================================
+	// Fields
+	// ===========================================================
+
+	// ===========================================================
+	// Constructors
+	// ===========================================================
+	
+	public OSMMapTileCreator(Context ctx, OSMMapTileProviderInfo rendererInfo, OSMMapTileFilesystemCache mapTileFSProvider) {
 		super(ctx, rendererInfo, mapTileFSProvider);
-		
+
 	}
+
+	// ===========================================================
+	// Getter & Setter
+	// ===========================================================
+
+	// ===========================================================
+	// Methods from SuperClass/Interfaces
+	// ===========================================================
+	
+	@Override
+	public void requestMapTileAsync(int[] coords, int zoomLevel, final Handler callback) {
+		final String aURLString = mRendererInfo.getTileURLString(coords, zoomLevel);
+		if(this.mPending.contains(aURLString))
+			return;
+	
+		this.mPending.add(aURLString);
+		generateImageAsync(coords, zoomLevel, aURLString, callback);
+	}
+
+	// ===========================================================
+	// Methods
+	// ===========================================================
 
 	/** Sets the Child-ImageView of this to the URL passed. */
 	public void generateImageAsync(int[] coords, int zoomLevel, final String aURLString, final Handler callback) {
 		this.mThreadPool.execute(new Runnable(){
 			@Override
 			public void run() {
-				
-				
-				
 				InputStream in = null;
 				OutputStream out = null;
 
@@ -56,13 +84,13 @@ public class OpenStreetMapTileCreator extends OpenStreetMapTileHandler implement
 
 					final byte[] data = dataStream.toByteArray();
 
-					OpenStreetMapTileCreator.this.mMapTileFSProvider.saveFile(aURLString, data);
+					OSMMapTileCreator.this.mMapTileFSCache.saveFile(aURLString, data);
 					if(DEBUGMODE)
 						Log.i(DEBUGTAG, "Maptile saved to: " + aURLString);
 
 					final Message successMessage = Message.obtain(callback, MAPTILEDOWNLOADER_SUCCESS_ID);
 					successMessage.sendToTarget();
-					OpenStreetMapTileCreator.this.mPending.remove(aURLString);
+					OSMMapTileCreator.this.mPending.remove(aURLString);
 				} catch (Exception e) {
 					final Message failMessage = Message.obtain(callback, MAPTILEDOWNLOADER_FAIL_ID);
 					failMessage.sendToTarget();
@@ -80,16 +108,6 @@ public class OpenStreetMapTileCreator extends OpenStreetMapTileHandler implement
 		});
 	}
 	
-	public void requestMapTileAsync(int[] coords, int zoomLevel, final Handler callback) {
-		
-		final String aURLString = mRendererInfo.getTileURLString(coords, zoomLevel);
-		if(this.mPending.contains(aURLString))
-			return;
-	
-		this.mPending.add(aURLString);
-		generateImageAsync(coords, zoomLevel, aURLString, callback);
-	}
-
 	// ===========================================================
 	// Inner and Anonymous Classes
 	// ===========================================================

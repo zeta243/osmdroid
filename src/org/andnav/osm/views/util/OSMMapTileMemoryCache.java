@@ -1,13 +1,18 @@
-// Created by plusminus on 08:19:56 - 26.09.2008
+// Created by plusminus on 17:58:57 - 25.09.2008
 package org.andnav.osm.views.util;
 
+import java.util.HashMap;
+
+import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
+
+import android.graphics.Bitmap;
 
 /**
  * 
  * @author Nicolas Gramlich
  *
  */
-public class OpenStreetMapTileNameFormatter {
+public class OSMMapTileMemoryCache implements OpenStreetMapViewConstants{
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -15,14 +20,35 @@ public class OpenStreetMapTileNameFormatter {
 	// ===========================================================
 	// Fields
 	// ===========================================================
+	
+	protected HashMap<String, Bitmap> mCachedTiles;
 
 	// ===========================================================
 	// Constructors
 	// ===========================================================
+	
+	public OSMMapTileMemoryCache(){
+		this(CACHE_MAPTILECOUNT_DEFAULT);
+	}
+	
+	/**
+	 * @param aMaximumCacheSize Maximum amount of MapTiles to be hold within.
+	 */
+	public OSMMapTileMemoryCache(final int aMaximumCacheSize){
+		this.mCachedTiles = new LRUMapTileCache(aMaximumCacheSize);
+	}
 
 	// ===========================================================
 	// Getter & Setter
 	// ===========================================================
+	
+	public synchronized Bitmap getMapTile(final String aTileURLString) {
+		return this.mCachedTiles.get(aTileURLString);
+	}
+
+	public synchronized void putTile(final String aTileURLString, final Bitmap aTile) {
+		this.mCachedTiles.put(aTileURLString, aTile);
+	}
 
 	// ===========================================================
 	// Methods from SuperClass/Interfaces
@@ -31,21 +57,6 @@ public class OpenStreetMapTileNameFormatter {
 	// ===========================================================
 	// Methods
 	// ===========================================================
-	
-	/**
-	 * Formats a URL to a String that it can be saved to a file, without problems of special chars.
-	 * 
-	 * <PRE><b>Example:</b>
-	 * 
-	 * <code>http://a.tile.openstreetmap.org/0/0/0.png</code>
-	 * would become 
-	 * <code>a.tile.openstreetmap.org_0_0_0.png</code>
-	 * </PRE>
-	 * @return saveable formatted URL as a String
-	 */
-	public static String format(final String aTileURLString){
-		return aTileURLString.substring(7).replace("/", "_");
-	}
 
 	// ===========================================================
 	// Inner and Anonymous Classes

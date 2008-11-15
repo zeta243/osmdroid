@@ -2,8 +2,8 @@
 package org.andnav.osm.samples;
 
 import org.andnav.osm.R;
-import org.andnav.osm.views.OpenStreetMapView;
-import org.andnav.osm.views.util.OpenStreetMapRendererInfo;
+import org.andnav.osm.views.OSMMapView;
+import org.andnav.osm.views.util.OSMMapTileProviderInfo;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -28,7 +28,7 @@ public class SampleWithMinimapZoomcontrols extends Activity{
 	// Fields
 	// ===========================================================
 	
-	private OpenStreetMapView mOsmv, mOsmvMinimap; 
+	private OSMMapView mOsmv, mOsmvMinimap; 
 
 	// ===========================================================
 	// Constructors
@@ -40,7 +40,7 @@ public class SampleWithMinimapZoomcontrols extends Activity{
         
         final RelativeLayout rl = new RelativeLayout(this);
         
-        this.mOsmv = new OpenStreetMapView(this, OpenStreetMapRendererInfo.MAPNIK);
+        this.mOsmv = new OSMMapView(this, OSMMapTileProviderInfo.MAPNIK);
         rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
         
         
@@ -84,7 +84,7 @@ public class SampleWithMinimapZoomcontrols extends Activity{
         /* MiniMap */
         {
 	        /* Create another OpenStreetMapView, that will act as the MiniMap for the 'MainMap'. They will share the TileProvider. */
-	        mOsmvMinimap = new OpenStreetMapView(this, OpenStreetMapRendererInfo.CLOUDMADESTANDARDTILES, this.mOsmv);
+	        mOsmvMinimap = new OSMMapView(this, OSMMapTileProviderInfo.CLOUDMADESTANDARDTILES, this.mOsmv);
 	        final int aZoomDiff = 3; // Use OpenStreetMapViewConstants.NOT_SET to disable autozooming of this minimap
 	        this.mOsmv.setMiniMap(mOsmvMinimap, aZoomDiff);
 	        

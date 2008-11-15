@@ -2,9 +2,8 @@
 package org.andnav.osm.views.util;
 
 import org.andnav.osm.R;
-import org.andnav.osm.util.constants.OpenStreetMapConstants;
+import org.andnav.osm.util.constants.OSMConstants;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
-import org.andnav.osm.views.util.OpenStreetMapTileProviderType;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -18,7 +17,7 @@ import android.util.Log;
  * @author Nicolas Gramlich
  *
  */
-public class OpenStreetMapTileProvider implements OpenStreetMapConstants, OpenStreetMapViewConstants{
+public class OSMMapTileManager implements OSMConstants, OpenStreetMapViewConstants{
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -29,31 +28,31 @@ public class OpenStreetMapTileProvider implements OpenStreetMapConstants, OpenSt
 	
 	protected final Bitmap mLoadingMapTile;
 	protected Context mCtx;
-	protected OpenStreetMapTileCache mTileCache;
-	protected OpenStreetMapTileFilesystemProvider mFSTileProvider;
-	protected OpenStreetMapTileHandler mTileMaker;
+	protected OSMMapTileMemoryCache mTileCache;
+	protected OSMMapTileFilesystemCache mFSTileProvider;
+	protected OSMMapTileAbstractProvider mTileMaker;
 	private Handler mLoadCallbackHandler = new LoadCallbackHandler();
 	private Handler mDownloadFinishedListenerHander;
-	private OpenStreetMapRendererInfo mRendererInfo;
+	private OSMMapTileProviderInfo mRendererInfo;
 
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 	
-	public OpenStreetMapTileProvider(final Context ctx, OpenStreetMapRendererInfo renderInfo, final Handler aDownloadFinishedListener) {
+	public OSMMapTileManager(final Context ctx, OSMMapTileProviderInfo renderInfo, final Handler aDownloadFinishedListener) {
 		this.mCtx = ctx;
 		this.mLoadingMapTile = BitmapFactory.decodeResource(ctx.getResources(), R.drawable.maptile_loading);
-		this.mTileCache = new OpenStreetMapTileCache();
-		this.mFSTileProvider = new OpenStreetMapTileFilesystemProvider(ctx, 4 * 1024 * 1024, this.mTileCache); // 4MB FSCache
+		this.mTileCache = new OSMMapTileMemoryCache();
+		this.mFSTileProvider = new OSMMapTileFilesystemCache(ctx, 4 * 1024 * 1024, this.mTileCache); // 4MB FSCache
 		
 		switch (renderInfo.PROVIDER_TYPE)
 		{
 		    case LOCAL_PROVIDER:
-		    	this.mTileMaker = new OpenStreetMapTileCreator(ctx, renderInfo, this.mFSTileProvider);
+		    	this.mTileMaker = new OSMMapTileCreator(ctx, renderInfo, this.mFSTileProvider);
 		    	break;
 		    case DOWNLOAD_PROVIDER:
 		    default:
-			    this.mTileMaker = new OpenStreetMapTileDownloader(ctx, renderInfo, this.mFSTileProvider);
+			    this.mTileMaker = new OSMMapTileDownloadProvider(ctx, renderInfo, this.mFSTileProvider);
 			    break;
 		}
 		
@@ -90,7 +89,7 @@ public class OpenStreetMapTileProvider implements OpenStreetMapConstants, OpenSt
 				ret = this.mLoadingMapTile;
 			} catch (Exception e) {
 				if(DEBUGMODE)
-					Log.d(DEBUGTAG, "Error(" + e.getClass().getSimpleName() + ") loading MapTile from Filesystem: " + OpenStreetMapTileNameFormatter.format(aTileURLString));
+					Log.d(DEBUGTAG, "Error(" + e.getClass().getSimpleName() + ") loading MapTile from Filesystem: " + OSMMapTileNameFormatter.format(aTileURLString));
 			}
 			if(ret == null){ /* FS did not contain the MapTile, we need to download it asynchronous. */
 				if(DEBUGMODE)
@@ -111,22 +110,22 @@ public class OpenStreetMapTileProvider implements OpenStreetMapConstants, OpenSt
 		public void handleMessage(final Message msg) {
 			final int what = msg.what;
 			switch(what){
-				case OpenStreetMapTileHandler.MAPTILEDOWNLOADER_SUCCESS_ID:
-					OpenStreetMapTileProvider.this.mDownloadFinishedListenerHander.sendEmptyMessage(OpenStreetMapTileHandler.MAPTILEDOWNLOADER_SUCCESS_ID);
+				case OSMMapTileAbstractProvider.MAPTILEDOWNLOADER_SUCCESS_ID:
+					OSMMapTileManager.this.mDownloadFinishedListenerHander.sendEmptyMessage(OSMMapTileAbstractProvider.MAPTILEDOWNLOADER_SUCCESS_ID);
 					if(DEBUGMODE)
 						Log.i(DEBUGTAG, "MapTile download success.");
 					break;
-				case OpenStreetMapTileHandler.MAPTILEDOWNLOADER_FAIL_ID:
+				case OSMMapTileAbstractProvider.MAPTILEDOWNLOADER_FAIL_ID:
 					if(DEBUGMODE)
 						Log.e(DEBUGTAG, "MapTile download error.");
 					break;
 					
-				case OpenStreetMapTileFilesystemProvider.MAPTILEFSLOADER_SUCCESS_ID:
-					OpenStreetMapTileProvider.this.mDownloadFinishedListenerHander.sendEmptyMessage(OpenStreetMapTileFilesystemProvider.MAPTILEFSLOADER_SUCCESS_ID);
+				case OSMMapTileFilesystemCache.MAPTILEFSLOADER_SUCCESS_ID:
+					OSMMapTileManager.this.mDownloadFinishedListenerHander.sendEmptyMessage(OSMMapTileFilesystemCache.MAPTILEFSLOADER_SUCCESS_ID);
 					if(DEBUGMODE)
 						Log.i(DEBUGTAG, "MapTile fs->cache success.");
 					break;
-				case OpenStreetMapTileFilesystemProvider.MAPTILEFSLOADER_FAIL_ID:
+				case OSMMapTileFilesystemCache.MAPTILEFSLOADER_FAIL_ID:
 					if(DEBUGMODE)
 						Log.e(DEBUGTAG, "MapTile download error.");
 					break;
@@ -138,7 +137,7 @@ public class OpenStreetMapTileProvider implements OpenStreetMapConstants, OpenSt
 		getMapTile(coords, zoomLevel);
 	}
 	
-	public void setRenderer(OpenStreetMapRendererInfo aRendererInfo)
+	public void setRenderer(OSMMapTileProviderInfo aRendererInfo)
 	{
 		this.mRendererInfo = aRendererInfo;
 	}

@@ -7,13 +7,13 @@ import java.util.List;
 import org.andnav.osm.util.BoundingBoxE6;
 import org.andnav.osm.util.GeoPoint;
 import org.andnav.osm.util.MyMath;
-import org.andnav.osm.util.constants.OpenStreetMapConstants;
-import org.andnav.osm.views.controller.OpenStreetMapViewController;
-import org.andnav.osm.views.overlay.OpenStreetMapViewOverlay;
-import org.andnav.osm.views.util.OpenStreetMapRendererInfo;
-import org.andnav.osm.views.util.OpenStreetMapTileFilesystemProvider;
-import org.andnav.osm.views.util.OpenStreetMapTileHandler;
-import org.andnav.osm.views.util.OpenStreetMapTileProvider;
+import org.andnav.osm.util.constants.OSMConstants;
+import org.andnav.osm.views.controller.OSMViewController;
+import org.andnav.osm.views.overlay.OSMMapViewOverlay;
+import org.andnav.osm.views.util.OSMMapTileAbstractProvider;
+import org.andnav.osm.views.util.OSMMapTileFilesystemCache;
+import org.andnav.osm.views.util.OSMMapTileManager;
+import org.andnav.osm.views.util.OSMMapTileProviderInfo;
 import org.andnav.osm.views.util.Util;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
 
@@ -34,14 +34,14 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.GestureDetector.OnGestureListener;
 
-public class OpenStreetMapView extends View implements OpenStreetMapConstants,
+public class OSMMapView extends View implements OSMConstants,
 		OpenStreetMapViewConstants {
 
 	// ===========================================================
 	// Constants
 	// ===========================================================
 
-	final OpenStreetMapRendererInfo DEFAULTRENDERER = OpenStreetMapRendererInfo.MAPNIK;
+	final OSMMapTileProviderInfo DEFAULTRENDERER = OSMMapTileProviderInfo.MAPNIK;
 
 	// ===========================================================
 	// Fields
@@ -50,12 +50,12 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 	protected int mLatitudeE6 = 0, mLongitudeE6 = 0;
 	protected int mZoomLevel = 0;
 
-	protected OpenStreetMapRendererInfo mRendererInfo;
-	protected final OpenStreetMapTileProvider mTileProvider;
+	protected OSMMapTileProviderInfo mRendererInfo;
+	protected final OSMMapTileManager mTileProvider;
 
 	protected final GestureDetector mGestureDetector = new GestureDetector(new OpenStreetMapViewGestureDetectorListener());
 
-	protected final List<OpenStreetMapViewOverlay> mOverlays = new ArrayList<OpenStreetMapViewOverlay>();
+	protected final List<OSMMapViewOverlay> mOverlays = new ArrayList<OSMMapViewOverlay>();
 
 	protected final Paint mPaint = new Paint();
 	private int mTouchDownX;
@@ -63,9 +63,9 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 	private int mTouchMapOffsetX;
 	private int mTouchMapOffsetY;
 
-	private OpenStreetMapView mMiniMap, mMaxiMap;
+	private OSMMapView mMiniMap, mMaxiMap;
 
-	private OpenStreetMapViewController mController;
+	private OSMViewController mController;
 	private int mMiniMapOverriddenVisibility = NOT_SET;
 	private int mMiniMapZoomDiff = NOT_SET;
 
@@ -77,38 +77,38 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 	/**
 	 * XML Constructor (uses default Renderer)
 	 */
-	public OpenStreetMapView(Context context, AttributeSet attrs) {
+	public OSMMapView(Context context, AttributeSet attrs) {
 		super(context, attrs);
 		this.mRendererInfo = DEFAULTRENDERER;
-		this.mTileProvider = new OpenStreetMapTileProvider(context, mRendererInfo, new SimpleInvalidationHandler());
+		this.mTileProvider = new OSMMapTileManager(context, mRendererInfo, new SimpleInvalidationHandler());
 	}
 
 	/**
-	 * Standard Constructor for {@link OpenStreetMapView}.
+	 * Standard Constructor for {@link OSMMapView}.
 	 * 
 	 * @param context
 	 * @param aRendererInfo
-	 *            pass a {@link OpenStreetMapRendererInfo} you like.
+	 *            pass a {@link OSMMapTileProviderInfo} you like.
 	 */
-	public OpenStreetMapView(final Context context, final OpenStreetMapRendererInfo aRendererInfo) {
+	public OSMMapView(final Context context, final OSMMapTileProviderInfo aRendererInfo) {
 		super(context);
 		this.mRendererInfo = aRendererInfo;
-		this.mTileProvider = new OpenStreetMapTileProvider(context, mRendererInfo, new SimpleInvalidationHandler());
+		this.mTileProvider = new OSMMapTileManager(context, mRendererInfo, new SimpleInvalidationHandler());
 	}
 
 	/**
 	 * 
 	 * @param context
 	 * @param aRendererInfo
-	 *            pass a {@link OpenStreetMapRendererInfo} you like.
+	 *            pass a {@link OSMMapTileProviderInfo} you like.
 	 * @param osmv
-	 *            another {@link OpenStreetMapView}, to share the TileProvider
+	 *            another {@link OSMMapView}, to share the TileProvider
 	 *            with.<br/>
 	 *            May significantly improve the render speed, when using the
-	 *            same {@link OpenStreetMapRendererInfo}.
+	 *            same {@link OSMMapTileProviderInfo}.
 	 */
-	public OpenStreetMapView(final Context context, final OpenStreetMapRendererInfo aRendererInfo,
-			final OpenStreetMapView aMapToShareTheTileProviderWith) {
+	public OSMMapView(final Context context, final OSMMapTileProviderInfo aRendererInfo,
+			final OSMMapView aMapToShareTheTileProviderWith) {
 		super(context);
 		this.mRendererInfo = aRendererInfo;
 		this.mTileProvider = aMapToShareTheTileProviderWith.mTileProvider;
@@ -119,7 +119,7 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 	// ===========================================================
 
 	/**
-	 * This MapView takes control of the {@link OpenStreetMapView} passed as
+	 * This MapView takes control of the {@link OSMMapView} passed as
 	 * parameter.<br />
 	 * I.e. it zoomes it to x levels less than itself and centers it the same
 	 * coords.<br />
@@ -131,7 +131,7 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 	 *            3 is a good Value. Pass {@link OpenStreetMapViewConstants}
 	 *            .NOT_SET to disable autozooming of the minimap.
 	 */
-	public void setMiniMap(final OpenStreetMapView aOsmvMinimap, final int aZoomDiff) {
+	public void setMiniMap(final OSMMapView aOsmvMinimap, final int aZoomDiff) {
 		this.mMiniMapZoomDiff = aZoomDiff;
 		this.mMiniMap = aOsmvMinimap;
 		aOsmvMinimap.setMaxiMap(this);
@@ -177,23 +177,23 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 		this.mMiniMapOverriddenVisibility = aVisiblity;
 	}
 
-	protected void setMaxiMap(final OpenStreetMapView aOsmvMaxiMap) {
+	protected void setMaxiMap(final OSMMapView aOsmvMaxiMap) {
 		this.mMaxiMap = aOsmvMaxiMap;
 	}
 
-	public OpenStreetMapViewController getController() {
+	public OSMViewController getController() {
 		if (this.mController != null)
 			return this.mController;
 		else
-			return this.mController = new OpenStreetMapViewController(this);
+			return this.mController = new OSMViewController(this);
 	}
 
 	/**
 	 * You can add/remove/reorder your Overlays using the List of
-	 * {@link OpenStreetMapViewOverlay}. The first (index 0) Overlay gets drawn
+	 * {@link OSMMapViewOverlay}. The first (index 0) Overlay gets drawn
 	 * first, the one with the highest as the last one.
 	 */
-	public List<OpenStreetMapViewOverlay> getOverlays() {
+	public List<OSMMapViewOverlay> getOverlays() {
 		return this.mOverlays;
 	}
 
@@ -279,7 +279,7 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 		this.postInvalidate();
 	}
 
-	public void setRenderer(final OpenStreetMapRendererInfo aRenderer) {
+	public void setRenderer(final OSMMapTileProviderInfo aRenderer) {
 		this.mRendererInfo = aRenderer;
 		this.setZoomLevel(this.mZoomLevel); // Invalidates the map and zooms to
 											// the maximum level of the
@@ -356,13 +356,13 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 	// ===========================================================
 
 	public void onLongPress(MotionEvent e) {
-		for (OpenStreetMapViewOverlay osmvo : this.mOverlays)
+		for (OSMMapViewOverlay osmvo : this.mOverlays)
 			if (osmvo.onLongPress(e, this))
 				return;
 	}
 
 	public boolean onSingleTapUp(MotionEvent e) {
-		for (OpenStreetMapViewOverlay osmvo : this.mOverlays)
+		for (OSMMapViewOverlay osmvo : this.mOverlays)
 			if (osmvo.onSingleTapUp(e, this))
 				return true;
 
@@ -371,7 +371,7 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		for (OpenStreetMapViewOverlay osmvo : this.mOverlays)
+		for (OSMMapViewOverlay osmvo : this.mOverlays)
 			if (osmvo.onKeyDown(keyCode, event, this))
 				return true;
 
@@ -380,7 +380,7 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
-		for (OpenStreetMapViewOverlay osmvo : this.mOverlays)
+		for (OSMMapViewOverlay osmvo : this.mOverlays)
 			if (osmvo.onKeyUp(keyCode, event, this))
 				return true;
 
@@ -389,7 +389,7 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 
 	@Override
 	public boolean onTrackballEvent(MotionEvent event) {
-		for (OpenStreetMapViewOverlay osmvo : this.mOverlays)
+		for (OSMMapViewOverlay osmvo : this.mOverlays)
 			if (osmvo.onTrackballEvent(event, this))
 				return true;
 
@@ -398,7 +398,7 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 
 	@Override
 	public boolean onTouchEvent(final MotionEvent event) {
-		for (OpenStreetMapViewOverlay osmvo : this.mOverlays)
+		for (OSMMapViewOverlay osmvo : this.mOverlays)
 			if (osmvo.onTouchEvent(event, this))
 				return true;
 
@@ -513,7 +513,7 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 		}
 
 		/* Draw all Overlays. */
-		for (OpenStreetMapViewOverlay osmvo : this.mOverlays)
+		for (OSMMapViewOverlay osmvo : this.mOverlays)
 			osmvo.onManagedDraw(c, this);
 
 		this.mPaint.setStyle(Style.STROKE);
@@ -569,7 +569,7 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 
 	/**
 	 * This class may return valid results until the underlying
-	 * {@link OpenStreetMapView} gets modified in any way (i.e. new center).
+	 * {@link OSMMapView} gets modified in any way (i.e. new center).
 	 * 
 	 * @author Nicolas Gramlich
 	 */
@@ -584,31 +584,31 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 		final Point upperLeftCornerOfCenterMapTile;
 
 		public OpenStreetMapViewProjection() {
-			viewWidth = OpenStreetMapView.this.getWidth();
-			viewHeight = OpenStreetMapView.this.getHeight();
+			viewWidth = OSMMapView.this.getWidth();
+			viewHeight = OSMMapView.this.getHeight();
 
 			/*
 			 * Do some calculations and drag attributes to local variables to
 			 * save some performance.
 			 */
-			zoomLevel = OpenStreetMapView.this.mZoomLevel; // TODO Draw to
+			zoomLevel = OSMMapView.this.mZoomLevel; // TODO Draw to
 															// attributes and so
 															// make it only
 															// 'valid' for a
 															// short time.
-			tileSizePx = OpenStreetMapView.this.mRendererInfo.MAPTILE_SIZEPX;
+			tileSizePx = OSMMapView.this.mRendererInfo.MAPTILE_SIZEPX;
 
 			/*
 			 * Get the center MapTile which is above this.mLatitudeE6 and
 			 * this.mLongitudeE6 .
 			 */
 			centerMapTileCoords = Util.getMapTileFromCoordinates(
-					OpenStreetMapView.this.mLatitudeE6, OpenStreetMapView.this.mLongitudeE6,
+					OSMMapView.this.mLatitudeE6, OSMMapView.this.mLongitudeE6,
 					zoomLevel, null);
 			upperLeftCornerOfCenterMapTile = getUpperLeftCornerOfCenterMapTileInScreen(
 					centerMapTileCoords, tileSizePx, null);
 
-			bb = OpenStreetMapView.this.getDrawnBoundingBoxE6();
+			bb = OSMMapView.this.getDrawnBoundingBoxE6();
 		}
 
 		/**
@@ -620,8 +620,8 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 		 */
 		public GeoPoint fromPixels(float x, float y) {
 			/* Subtract the offset caused by touch. */
-			x -= OpenStreetMapView.this.mTouchMapOffsetX;
-			y -= OpenStreetMapView.this.mTouchMapOffsetY;
+			x -= OSMMapView.this.mTouchMapOffsetX;
+			y -= OSMMapView.this.mTouchMapOffsetY;
 
 			return bb.getGeoPointOfRelativePositionWithLinearInterpolation(x / viewWidth, y
 					/ viewHeight);
@@ -631,7 +631,7 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 
 		public float metersToEquatorPixels(final float aMeters) {
 			return aMeters / EQUATORCIRCUMFENCE
-					* OpenStreetMapView.this.mRendererInfo.MAPTILE_SIZEPX;
+					* OSMMapView.this.mRendererInfo.MAPTILE_SIZEPX;
 		}
 
 		/**
@@ -703,8 +703,8 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 					+ (int) (relativePositionInCenterMapTile[MAPTILE_LATITUDE_INDEX] * tileSizePx);
 
 			/* Add up the offset caused by touch. */
-			out.set(x + OpenStreetMapView.this.mTouchMapOffsetX, y
-					+ OpenStreetMapView.this.mTouchMapOffsetY);
+			out.set(x + OSMMapView.this.mTouchMapOffsetX, y
+					+ OSMMapView.this.mTouchMapOffsetY);
 			return out;
 		}
 
@@ -758,11 +758,11 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 
 				/* Add up the offset caused by touch. */
 				if (i == 0)
-					out.moveTo(x + OpenStreetMapView.this.mTouchMapOffsetX, y
-							+ OpenStreetMapView.this.mTouchMapOffsetY);
+					out.moveTo(x + OSMMapView.this.mTouchMapOffsetX, y
+							+ OSMMapView.this.mTouchMapOffsetY);
 				else
-					out.lineTo(x + OpenStreetMapView.this.mTouchMapOffsetX, y
-							+ OpenStreetMapView.this.mTouchMapOffsetY);
+					out.lineTo(x + OSMMapView.this.mTouchMapOffsetX, y
+							+ OSMMapView.this.mTouchMapOffsetY);
 			}
 
 			return out;
@@ -774,9 +774,9 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 		@Override
 		public void handleMessage(final Message msg) {
 			switch (msg.what) {
-				case OpenStreetMapTileHandler.MAPTILEDOWNLOADER_SUCCESS_ID:
-				case OpenStreetMapTileFilesystemProvider.MAPTILEFSLOADER_SUCCESS_ID:
-					OpenStreetMapView.this.invalidate();
+				case OSMMapTileAbstractProvider.MAPTILEDOWNLOADER_SUCCESS_ID:
+				case OSMMapTileFilesystemCache.MAPTILEFSLOADER_SUCCESS_ID:
+					OSMMapView.this.invalidate();
 					break;
 			}
 		}
@@ -798,7 +798,7 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 
 		@Override
 		public void onLongPress(MotionEvent e) {
-			OpenStreetMapView.this.onLongPress(e);
+			OSMMapView.this.onLongPress(e);
 		}
 
 		@Override
@@ -812,7 +812,7 @@ public class OpenStreetMapView extends View implements OpenStreetMapConstants,
 
 		@Override
 		public boolean onSingleTapUp(MotionEvent e) {
-			return OpenStreetMapView.this.onSingleTapUp(e);
+			return OSMMapView.this.onSingleTapUp(e);
 		}
 
 	}
