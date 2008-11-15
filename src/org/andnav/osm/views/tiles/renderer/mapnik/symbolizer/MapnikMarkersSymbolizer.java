@@ -2,7 +2,7 @@ package org.andnav.osm.views.tiles.renderer.mapnik.symbolizer;
 
 // Original from include/mapnik/markers_symbolizer.hpp
 
-public class MapnikMarkersSymbolizer {
+public class MapnikMarkersSymbolizer extends MapnikSymbolizer {
 
 	private boolean mAllowOverlap;
 	

@@ -2,7 +2,7 @@ package org.andnav.osm.views.tiles.renderer.mapnik.symbolizer;
 
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikColour;
 
-public class MapnikTextSymbolizer {
+public class MapnikTextSymbolizer extends MapnikSymbolizer {
 
 	public enum LabelPlacementEnum
 	{

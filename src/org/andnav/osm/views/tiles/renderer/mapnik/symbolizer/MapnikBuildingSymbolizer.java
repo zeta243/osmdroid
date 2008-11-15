@@ -4,7 +4,7 @@ import org.andnav.osm.views.tiles.renderer.mapnik.MapnikColour;
 
 // Original from include/mapnik/polygon_symbolizer.hpp
 
-public class MapnikBuildingSymbolizer {
+public class MapnikBuildingSymbolizer extends MapnikSymbolizer {
 
     MapnikColour mFill;
     double mHeight;

@@ -4,7 +4,7 @@ import org.andnav.osm.views.tiles.renderer.mapnik.MapnikColour;
 
 // Original from include/mapnik/polygon_symbolizer.hpp
 
-public class MapnikPolygonSymbolizer {
+public class MapnikPolygonSymbolizer extends MapnikSymbolizer {
 
 	private MapnikColour mFill;
 	private float mOpacity;
