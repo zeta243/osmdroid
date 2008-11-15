@@ -5,7 +5,7 @@ package org.andnav.osm.views.tiles.renderer;
  * Interface used by all implemented Renderers.
  * @author Nicolas Gramlich
  */
-public interface OSMAbstractRenderer {
+public interface IOSMRenderer {
 	// ===========================================================
 	// Final Fields
 	// ===========================================================
