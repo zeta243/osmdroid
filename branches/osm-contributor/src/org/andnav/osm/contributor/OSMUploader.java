@@ -23,8 +23,8 @@ import java.util.GregorianCalendar;
 import org.andnav.osm.contributor.util.RecordedGeoPoint;
 import org.andnav.osm.contributor.util.RecordedRouteGPXFormatter;
 import org.andnav.osm.contributor.util.Util;
-import org.andnav.osm.contributor.util.constants.OpenStreetMapContributorConstants;
-import org.andnav.osm.util.constants.OpenStreetMapConstants;
+import org.andnav.osm.contributor.util.constants.OSMContributorConstants;
+import org.andnav.osm.util.constants.OSMConstants;
 
 
 /**
@@ -34,7 +34,7 @@ import org.andnav.osm.util.constants.OpenStreetMapConstants;
  * @author cdaller
  * @author Nicolas Gramlich
  */
-public class OSMUploader implements OpenStreetMapConstants, OpenStreetMapContributorConstants{
+public class OSMUploader implements OSMConstants, OSMContributorConstants{
 	// ===========================================================
 	// Constants
 	// ===========================================================

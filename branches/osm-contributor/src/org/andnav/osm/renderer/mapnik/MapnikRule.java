@@ -4,7 +4,4 @@ package org.andnav.osm.renderer.mapnik;
 
 public class MapnikRule {
 
-	
-
-	
 }

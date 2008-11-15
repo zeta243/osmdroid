@@ -4,7 +4,7 @@ package org.andnav.osm.views.overlay;
 import java.util.List;
 
 import org.andnav.osm.R;
-import org.andnav.osm.views.OpenStreetMapView;
+import org.andnav.osm.views.OSMMapView;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -15,7 +15,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
 
-public class OpenStreetMapViewItemizedOverlayWithFocus<T extends OpenStreetMapViewOverlayItem> extends OpenStreetMapViewItemizedOverlay<T> {
+public class OSMMapViewItemizedOverlayWithFocus<T extends OSMMapViewOverlayItem> extends OSMViewItemizedOverlay<T> {
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -53,11 +53,11 @@ public class OpenStreetMapViewItemizedOverlayWithFocus<T extends OpenStreetMapVi
 	// Constructors
 	// ===========================================================
 	
-	public OpenStreetMapViewItemizedOverlayWithFocus(final Context ctx, final List<T> aList, final OnItemTapListener<T> aOnItemTapListener) {
+	public OSMMapViewItemizedOverlayWithFocus(final Context ctx, final List<T> aList, final OnItemTapListener<T> aOnItemTapListener) {
 		this(ctx, aList, null, null, null, null, NOT_SET, aOnItemTapListener);
 	}
 	
-	public OpenStreetMapViewItemizedOverlayWithFocus(final Context ctx, final List<T> aList, final Drawable pMarker, final Point pMarkerHotspot, final Drawable pMarkerFocusedBase, final Point pMarkerFocusedHotSpot, final int pFocusedBackgroundColor, final OnItemTapListener<T> aOnItemTapListener) {
+	public OSMMapViewItemizedOverlayWithFocus(final Context ctx, final List<T> aList, final Drawable pMarker, final Point pMarkerHotspot, final Drawable pMarkerFocusedBase, final Point pMarkerFocusedHotSpot, final int pFocusedBackgroundColor, final OnItemTapListener<T> aOnItemTapListener) {
 		super(ctx, aList, pMarkerFocusedBase, pMarkerHotspot, aOnItemTapListener);
 		
 		UNKNOWN = ctx.getString(R.string.unknown);
@@ -120,7 +120,7 @@ public class OpenStreetMapViewItemizedOverlayWithFocus<T extends OpenStreetMapVi
 	}
 	
 	@Override
-	protected void onDrawFinished(Canvas c, OpenStreetMapView osmv) {
+	protected void onDrawFinished(Canvas c, OSMMapView osmv) {
 		if(this.mFocusedItemIndex != NOT_SET){
 			/* Calculate and set the bounds of the marker. */
 			final int left = this.mFocusedScreenCoords.x - this.mMarkerFocusedHotSpot.x;

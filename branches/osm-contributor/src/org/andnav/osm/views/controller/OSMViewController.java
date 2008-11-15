@@ -3,7 +3,7 @@ package org.andnav.osm.views.controller;
 
 import org.andnav.osm.util.BoundingBoxE6;
 import org.andnav.osm.util.GeoPoint;
-import org.andnav.osm.views.OpenStreetMapView;
+import org.andnav.osm.views.OSMMapView;
 import org.andnav.osm.views.util.MyMath;
 import org.andnav.osm.views.util.constants.MathConstants;
 
@@ -12,7 +12,7 @@ import org.andnav.osm.views.util.constants.MathConstants;
  * @author Nicolas Gramlich
  *
  */
-public class OpenStreetMapViewController {
+public class OSMViewController {
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -29,14 +29,14 @@ public class OpenStreetMapViewController {
 	// Fields
 	// ===========================================================
 	
-	final OpenStreetMapView mOsmv;
+	final OSMMapView mOsmv;
 	private AbstractAnimationRunner mCurrentAnimationRunner;
 
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 	
-	public OpenStreetMapViewController(final OpenStreetMapView osmv) {
+	public OSMViewController(final OSMMapView osmv) {
 		this.mOsmv = osmv;
 	}
 
@@ -79,8 +79,8 @@ public class OpenStreetMapViewController {
 	}
 	
 	/**
-	 * Animates the underlying {@link OpenStreetMapView} that it centers the passed {@link GeoPoint} in the end.
-	 * Uses: {@link OpenStreetMapViewController.ANIMATION_SMOOTHNESS_DEFAULT} and {@link OpenStreetMapViewController.ANIMATION_DURATION_DEFAULT}.
+	 * Animates the underlying {@link OSMMapView} that it centers the passed {@link GeoPoint} in the end.
+	 * Uses: {@link OSMViewController.ANIMATION_SMOOTHNESS_DEFAULT} and {@link OSMViewController.ANIMATION_DURATION_DEFAULT}.
 	 * @param gp
 	 */
 	public void animateTo(final GeoPoint gp, final AnimationType aAnimationType){ 
@@ -88,18 +88,18 @@ public class OpenStreetMapViewController {
 	}
 	
 	/**
-	 * Animates the underlying {@link OpenStreetMapView} that it centers the passed {@link GeoPoint} in the end.
+	 * Animates the underlying {@link OSMMapView} that it centers the passed {@link GeoPoint} in the end.
 	 * @param gp GeoPoint to be centered in the end.
-	 * @param aSmoothness steps made during animation. I.e.: {@link OpenStreetMapViewController.ANIMATION_SMOOTHNESS_LOW}, {@link OpenStreetMapViewController.ANIMATION_SMOOTHNESS_DEFAULT}, {@link OpenStreetMapViewController.ANIMATION_SMOOTHNESS_HIGH}
-	 * @param aDuration in Milliseconds. I.e.: {@link OpenStreetMapViewController.ANIMATION_DURATION_SHORT}, {@link OpenStreetMapViewController.ANIMATION_DURATION_DEFAULT}, {@link OpenStreetMapViewController.ANIMATION_DURATION_LONG}
+	 * @param aSmoothness steps made during animation. I.e.: {@link OSMViewController.ANIMATION_SMOOTHNESS_LOW}, {@link OSMViewController.ANIMATION_SMOOTHNESS_DEFAULT}, {@link OSMViewController.ANIMATION_SMOOTHNESS_HIGH}
+	 * @param aDuration in Milliseconds. I.e.: {@link OSMViewController.ANIMATION_DURATION_SHORT}, {@link OSMViewController.ANIMATION_DURATION_DEFAULT}, {@link OSMViewController.ANIMATION_DURATION_LONG}
 	 */
 	public void animateTo(final GeoPoint gp, final AnimationType aAnimationType, final int aSmoothness, final int aDuration){
 		animateTo(gp.getLatitudeE6(), gp.getLongitudeE6(), aAnimationType, aSmoothness, aDuration);
 	}
 	
 	/**
-	 * Animates the underlying {@link OpenStreetMapView} that it centers the passed coordinates in the end.
-	 * Uses: {@link OpenStreetMapViewController.ANIMATION_SMOOTHNESS_DEFAULT} and {@link OpenStreetMapViewController.ANIMATION_DURATION_DEFAULT}.
+	 * Animates the underlying {@link OSMMapView} that it centers the passed coordinates in the end.
+	 * Uses: {@link OSMViewController.ANIMATION_SMOOTHNESS_DEFAULT} and {@link OSMViewController.ANIMATION_DURATION_DEFAULT}.
 	 * @param aLatitudeE6
 	 * @param aLongitudeE6
 	 */
@@ -108,11 +108,11 @@ public class OpenStreetMapViewController {
 	}
 	
 	/**
-	 * Animates the underlying {@link OpenStreetMapView} that it centers the passed coordinates in the end.
+	 * Animates the underlying {@link OSMMapView} that it centers the passed coordinates in the end.
 	 * @param aLatitudeE6
 	 * @param aLongitudeE6
-	 * @param aSmoothness steps made during animation. I.e.: {@link OpenStreetMapViewController.ANIMATION_SMOOTHNESS_LOW}, {@link OpenStreetMapViewController.ANIMATION_SMOOTHNESS_DEFAULT}, {@link OpenStreetMapViewController.ANIMATION_SMOOTHNESS_HIGH}
-	 * @param aDuration in Milliseconds. I.e.: {@link OpenStreetMapViewController.ANIMATION_DURATION_SHORT}, {@link OpenStreetMapViewController.ANIMATION_DURATION_DEFAULT}, {@link OpenStreetMapViewController.ANIMATION_DURATION_LONG}
+	 * @param aSmoothness steps made during animation. I.e.: {@link OSMViewController.ANIMATION_SMOOTHNESS_LOW}, {@link OSMViewController.ANIMATION_SMOOTHNESS_DEFAULT}, {@link OSMViewController.ANIMATION_SMOOTHNESS_HIGH}
+	 * @param aDuration in Milliseconds. I.e.: {@link OSMViewController.ANIMATION_DURATION_SHORT}, {@link OSMViewController.ANIMATION_DURATION_DEFAULT}, {@link OSMViewController.ANIMATION_DURATION_LONG}
 	 */
 	public void animateTo(final int aLatitudeE6, final int aLongitudeE6, final AnimationType aAnimationType, final int aSmoothness, final int aDuration){
 		this.stopAnimation(false); 
@@ -275,8 +275,8 @@ public class OpenStreetMapViewController {
 		// Constructors
 		// ===========================================================
 		
-		public AbstractAnimationRunner(OpenStreetMapViewController openStreetMapViewController, final int aTargetLatitudeE6, final int aTargetLongitudeE6){
-			this(aTargetLatitudeE6, aTargetLongitudeE6, OpenStreetMapViewController.ANIMATION_SMOOTHNESS_DEFAULT, OpenStreetMapViewController.ANIMATION_DURATION_DEFAULT);
+		public AbstractAnimationRunner(OSMViewController openStreetMapViewController, final int aTargetLatitudeE6, final int aTargetLongitudeE6){
+			this(aTargetLatitudeE6, aTargetLongitudeE6, OSMViewController.ANIMATION_SMOOTHNESS_DEFAULT, OSMViewController.ANIMATION_DURATION_DEFAULT);
 		}
 		
 		public AbstractAnimationRunner(final int aTargetLatitudeE6, final int aTargetLongitudeE6, final int aSmoothness, final int aDuration){
@@ -289,7 +289,7 @@ public class OpenStreetMapViewController {
 			
 			
 			/* Get the current mapview-center. */ 
-			final OpenStreetMapView mapview = OpenStreetMapViewController.this.mOsmv;
+			final OSMMapView mapview = OSMViewController.this.mOsmv;
 			int mapCenterLatE6 = mapview.getMapCenterLatitudeE6();
 			int mapCenterLonE6 = mapview.getMapCenterLongitudeE6();
 			
@@ -329,7 +329,7 @@ public class OpenStreetMapViewController {
 			super(aTargetLatitudeE6, aTargetLongitudeE6, aSmoothness, aDuration);
 			
 			/* Get the current mapview-center. */ 
-			final OpenStreetMapView mapview = OpenStreetMapViewController.this.mOsmv;
+			final OSMMapView mapview = OSMViewController.this.mOsmv;
 			int mapCenterLatE6 = mapview.getMapCenterLatitudeE6();
 			int mapCenterLonE6 = mapview.getMapCenterLongitudeE6();
 			
@@ -345,7 +345,7 @@ public class OpenStreetMapViewController {
 
 		@Override
 		public void onRunAnimation(){		
-			final OpenStreetMapView mapview = OpenStreetMapViewController.this.mOsmv;
+			final OSMMapView mapview = OSMViewController.this.mOsmv;
 			final int panPerStepLatitudeE6 = this.mPanPerStepLatitudeE6;
 			final int panPerStepLongitudeE6 = this.mPanPerStepLongitudeE6;
 			final int stepDuration = this.mStepDuration;
@@ -393,7 +393,7 @@ public class OpenStreetMapViewController {
 
 		@Override
 		public void onRunAnimation(){		
-			final OpenStreetMapView mapview = OpenStreetMapViewController.this.mOsmv;
+			final OSMMapView mapview = OSMViewController.this.mOsmv;
 			final int stepDuration = this.mStepDuration;
 			try {
 				int newMapCenterLatE6;
@@ -458,7 +458,7 @@ public class OpenStreetMapViewController {
 
 		@Override
 		public void onRunAnimation(){		
-			final OpenStreetMapView mapview = OpenStreetMapViewController.this.mOsmv;
+			final OSMMapView mapview = OSMViewController.this.mOsmv;
 			final int stepDuration = this.mStepDuration;
 			final float amountStretch = this.mAmountStretch;
 			try {

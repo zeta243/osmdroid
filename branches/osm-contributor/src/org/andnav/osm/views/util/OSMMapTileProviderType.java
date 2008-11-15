@@ -1,5 +1,5 @@
 package org.andnav.osm.views.util;
 
-public enum OpenStreetMapTileProviderType {
+public enum OSMMapTileProviderType {
 	LOCAL_PROVIDER, DOWNLOAD_PROVIDER;
 }

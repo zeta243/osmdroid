@@ -1,6 +1,6 @@
 package org.andnav.osm.samples;
 
-import org.andnav.osm.OpenStreetMapActivity;
+import org.andnav.osm.OSMMapActivity;
 
 import android.location.Location;
 import android.os.Bundle;
@@ -10,7 +10,7 @@ import android.widget.TextView;
  * Sample code to show how easy it is to contribute to the OpenStreetMap Project.
  * @author Nicolas Gramlich
  */
-public class SampleOSMContributor extends OpenStreetMapActivity {
+public class SampleOSMContributor extends OSMMapActivity {
 	
 	/** Called when the activity is first created. */
 	@Override

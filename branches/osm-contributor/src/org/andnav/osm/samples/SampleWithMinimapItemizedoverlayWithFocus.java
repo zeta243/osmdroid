@@ -4,11 +4,11 @@ package org.andnav.osm.samples;
 import java.util.ArrayList;
 
 import org.andnav.osm.util.GeoPoint;
-import org.andnav.osm.views.OpenStreetMapView;
-import org.andnav.osm.views.overlay.OpenStreetMapViewItemizedOverlay;
-import org.andnav.osm.views.overlay.OpenStreetMapViewItemizedOverlayWithFocus;
-import org.andnav.osm.views.overlay.OpenStreetMapViewOverlayItem;
-import org.andnav.osm.views.util.OpenStreetMapRendererInfo;
+import org.andnav.osm.views.OSMMapView;
+import org.andnav.osm.views.overlay.OSMMapViewItemizedOverlayWithFocus;
+import org.andnav.osm.views.overlay.OSMMapViewOverlayItem;
+import org.andnav.osm.views.overlay.OSMViewItemizedOverlay;
+import org.andnav.osm.views.util.OSMMapTileProviderInfo;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -36,8 +36,8 @@ public class SampleWithMinimapItemizedoverlayWithFocus extends Activity{
 	// Fields
 	// ===========================================================
 	
-	private OpenStreetMapView mOsmv, mOsmvMinimap; 
-	private OpenStreetMapViewItemizedOverlayWithFocus<OpenStreetMapViewOverlayItem> mMyLocationOverlay; 
+	private OSMMapView mOsmv, mOsmvMinimap; 
+	private OSMMapViewItemizedOverlayWithFocus<OSMMapViewOverlayItem> mMyLocationOverlay; 
 
 	// ===========================================================
 	// Constructors
@@ -49,23 +49,23 @@ public class SampleWithMinimapItemizedoverlayWithFocus extends Activity{
         
         final RelativeLayout rl = new RelativeLayout(this);
         
-        this.mOsmv = new OpenStreetMapView(this, OpenStreetMapRendererInfo.MAPNIK);
+        this.mOsmv = new OSMMapView(this, OSMMapTileProviderInfo.MAPNIK);
         rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
         
         
         /* Itemized Overlay */
         {
 	        /* Create a static ItemizedOverlay showing a some Markers on some cities. */
-        	final ArrayList<OpenStreetMapViewOverlayItem> items = new ArrayList<OpenStreetMapViewOverlayItem>();
-	        items.add(new OpenStreetMapViewOverlayItem("Hannover", "Tiny SampleDescription", new GeoPoint(52370816, 9735936))); // Hannover
-	        items.add(new OpenStreetMapViewOverlayItem("Berlin", "This is a relatively short SampleDescription.", new GeoPoint(52518333, 13408333))); // Berlin  
-	        items.add(new OpenStreetMapViewOverlayItem("Washington", "This SampleDescription is a pretty long one. Almost as long as a the great wall in china.", new GeoPoint(38895000, -77036667))); // Washington 
-	        items.add(new OpenStreetMapViewOverlayItem("San Francisco", "SampleDescription", new GeoPoint(37779300, -122419200))); // San Francisco
+        	final ArrayList<OSMMapViewOverlayItem> items = new ArrayList<OSMMapViewOverlayItem>();
+	        items.add(new OSMMapViewOverlayItem("Hannover", "Tiny SampleDescription", new GeoPoint(52370816, 9735936))); // Hannover
+	        items.add(new OSMMapViewOverlayItem("Berlin", "This is a relatively short SampleDescription.", new GeoPoint(52518333, 13408333))); // Berlin  
+	        items.add(new OSMMapViewOverlayItem("Washington", "This SampleDescription is a pretty long one. Almost as long as a the great wall in china.", new GeoPoint(38895000, -77036667))); // Washington 
+	        items.add(new OSMMapViewOverlayItem("San Francisco", "SampleDescription", new GeoPoint(37779300, -122419200))); // San Francisco
 	        
 	        /* OnTapListener for the Markers, shows a simpel Toast. */
-	        this.mMyLocationOverlay = new OpenStreetMapViewItemizedOverlayWithFocus<OpenStreetMapViewOverlayItem>(this, items, new OpenStreetMapViewItemizedOverlay.OnItemTapListener<OpenStreetMapViewOverlayItem>(){
+	        this.mMyLocationOverlay = new OSMMapViewItemizedOverlayWithFocus<OSMMapViewOverlayItem>(this, items, new OSMViewItemizedOverlay.OnItemTapListener<OSMMapViewOverlayItem>(){
 				@Override
-				public boolean onItemTap(int index, OpenStreetMapViewOverlayItem item) {
+				public boolean onItemTap(int index, OSMMapViewOverlayItem item) {
 					Toast.makeText(SampleWithMinimapItemizedoverlayWithFocus.this, "Item '" + item.mTitle + "' (index=" + index + ") got tapped", Toast.LENGTH_LONG).show();
 					return true; // We 'handled' this event.
 				}
@@ -80,7 +80,7 @@ public class SampleWithMinimapItemizedoverlayWithFocus extends Activity{
         /* MiniMap */
         {
 	        /* Create another OpenStreetMapView, that will act as the MiniMap for the 'MainMap'. They will share the TileProvider. */
-	        mOsmvMinimap = new OpenStreetMapView(this, OpenStreetMapRendererInfo.CLOUDMADESTANDARDTILES, this.mOsmv);
+	        mOsmvMinimap = new OSMMapView(this, OSMMapTileProviderInfo.CLOUDMADESTANDARDTILES, this.mOsmv);
 	        final int aZoomDiff = 3; // Use OpenStreetMapViewConstants.NOT_SET to disable autozooming of this minimap
 	        this.mOsmv.setMiniMap(mOsmvMinimap, aZoomDiff);
 	        

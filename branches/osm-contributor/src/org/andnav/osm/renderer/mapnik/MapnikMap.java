@@ -4,16 +4,14 @@ package org.andnav.osm.renderer.mapnik;
 
 public class MapnikMap {
 	
-	static final int MIN_MAPSIZE=16;
-	static final int MAX_MAPSIZE=MIN_MAPSIZE << 10;
-	
+	static final int MIN_MAPSIZE = 16;
+	static final int MAX_MAPSIZE = MIN_MAPSIZE << 10;
+
 	private int mWidth;
 	private int mHeight;
 	private String mSrc;
-	
+
 	private MapnikColour mBackground;
-	
-	
 	
 	/*
 

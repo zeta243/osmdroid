@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
-import org.andnav.osm.contributor.util.constants.OpenStreetMapContributorConstants;
+import org.andnav.osm.contributor.util.constants.OSMContributorConstants;
 import org.andnav.osm.util.BoundingBoxE6;
 
 /**
@@ -14,7 +14,7 @@ import org.andnav.osm.util.BoundingBoxE6;
  * @author Nicolas Gramlich
  *
  */
-public class Util implements OpenStreetMapContributorConstants{
+public class Util implements OSMContributorConstants{
 	// ===========================================================
 	// Constants
 	// ===========================================================

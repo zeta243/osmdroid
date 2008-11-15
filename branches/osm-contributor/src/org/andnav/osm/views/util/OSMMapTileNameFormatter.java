@@ -1,14 +1,13 @@
-// Created by plusminus on 00:02:58 - 03.10.2008
-package org.andnav.osm.views.overlay;
+// Created by plusminus on 08:19:56 - 26.09.2008
+package org.andnav.osm.views.util;
 
-import org.andnav.osm.util.GeoPoint;
 
 /**
- * Immutable class describing a GeoPoint with a Title and a Description.
+ * 
  * @author Nicolas Gramlich
  *
  */
-public class OpenStreetMapViewOverlayItem {
+public class OSMMapTileNameFormatter {
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -16,25 +15,10 @@ public class OpenStreetMapViewOverlayItem {
 	// ===========================================================
 	// Fields
 	// ===========================================================
-	
-	public final String mTitle;
-	public final String mDescription;
-	public final GeoPoint mGeoPoint;
 
 	// ===========================================================
 	// Constructors
 	// ===========================================================
-	
-	/**
-	 * @param aTitle this should be <b>singleLine</b> (no <code>'\n'</code> )
-	 * @param aDescription a <b>multiLine</b> description ( <code>'\n'</code> possible)
-	 * @param aGeoPoint
-	 */
-	public OpenStreetMapViewOverlayItem(final String aTitle, final String aDescription, final GeoPoint aGeoPoint) {
-		this.mTitle = aTitle;
-		this.mDescription = aDescription;
-		this.mGeoPoint = aGeoPoint;
-	}
 
 	// ===========================================================
 	// Getter & Setter
@@ -47,6 +31,21 @@ public class OpenStreetMapViewOverlayItem {
 	// ===========================================================
 	// Methods
 	// ===========================================================
+	
+	/**
+	 * Formats a URL to a String that it can be saved to a file, without problems of special chars.
+	 * 
+	 * <PRE><b>Example:</b>
+	 * 
+	 * <code>http://a.tile.openstreetmap.org/0/0/0.png</code>
+	 * would become 
+	 * <code>a.tile.openstreetmap.org_0_0_0.png</code>
+	 * </PRE>
+	 * @return saveable formatted URL as a String
+	 */
+	public static String format(final String aTileURLString){
+		return aTileURLString.substring(7).replace("/", "_");
+	}
 
 	// ===========================================================
 	// Inner and Anonymous Classes

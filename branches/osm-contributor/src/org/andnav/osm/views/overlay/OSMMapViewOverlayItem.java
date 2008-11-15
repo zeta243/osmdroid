@@ -1,18 +1,14 @@
-// Created by plusminus on 17:58:57 - 25.09.2008
-package org.andnav.osm.views.util;
+// Created by plusminus on 00:02:58 - 03.10.2008
+package org.andnav.osm.views.overlay;
 
-import java.util.HashMap;
-
-import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
-
-import android.graphics.Bitmap;
+import org.andnav.osm.util.GeoPoint;
 
 /**
- * 
+ * Immutable class describing a GeoPoint with a Title and a Description.
  * @author Nicolas Gramlich
  *
  */
-public class OpenStreetMapTileCache implements OpenStreetMapViewConstants{
+public class OSMMapViewOverlayItem {
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -21,34 +17,28 @@ public class OpenStreetMapTileCache implements OpenStreetMapViewConstants{
 	// Fields
 	// ===========================================================
 	
-	protected HashMap<String, Bitmap> mCachedTiles;
+	public final String mTitle;
+	public final String mDescription;
+	public final GeoPoint mGeoPoint;
 
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 	
-	public OpenStreetMapTileCache(){
-		this(CACHE_MAPTILECOUNT_DEFAULT);
-	}
-	
 	/**
-	 * @param aMaximumCacheSize Maximum amount of MapTiles to be hold within.
+	 * @param aTitle this should be <b>singleLine</b> (no <code>'\n'</code> )
+	 * @param aDescription a <b>multiLine</b> description ( <code>'\n'</code> possible)
+	 * @param aGeoPoint
 	 */
-	public OpenStreetMapTileCache(final int aMaximumCacheSize){
-		this.mCachedTiles = new LRUMapTileCache(aMaximumCacheSize);
+	public OSMMapViewOverlayItem(final String aTitle, final String aDescription, final GeoPoint aGeoPoint) {
+		this.mTitle = aTitle;
+		this.mDescription = aDescription;
+		this.mGeoPoint = aGeoPoint;
 	}
 
 	// ===========================================================
 	// Getter & Setter
 	// ===========================================================
-	
-	public synchronized Bitmap getMapTile(final String aTileURLString) {
-		return this.mCachedTiles.get(aTileURLString);
-	}
-
-	public synchronized void putTile(final String aTileURLString, final Bitmap aTile) {
-		this.mCachedTiles.put(aTileURLString, aTile);
-	}
 
 	// ===========================================================
 	// Methods from SuperClass/Interfaces

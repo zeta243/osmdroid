@@ -2,13 +2,13 @@
 package org.andnav.osm.contributor.util;
 
 import org.andnav.osm.util.GeoPoint;
-import org.andnav.osm.util.constants.OpenStreetMapConstants;
+import org.andnav.osm.util.constants.OSMConstants;
 
 /**
  * Extends the {@link GeoPoint} with a timeStamp.
  * @author Nicolas Gramlich
  */
-public class RecordedGeoPoint extends GeoPoint implements OpenStreetMapConstants{
+public class RecordedGeoPoint extends GeoPoint implements OSMConstants{
 	// ===========================================================
 	// Constants
 	// ===========================================================
