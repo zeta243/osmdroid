@@ -1,7 +1,7 @@
 // Created by plusminus on 17:53:07 - 25.09.2008
 package org.andnav.osm.views.util;
 
-import org.andnav.osm.util.BoundingBoxE6;
+import org.andnav.osm.adt.BoundingBoxE6;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
 
 /**

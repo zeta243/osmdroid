@@ -1,14 +1,13 @@
-// Created by plusminus on 12:29:23 - 21.09.2008
-package org.andnav.osm.contributor.util;
+// Created by plusminus on 08:19:56 - 26.09.2008
+package org.andnav.osm.views.tiles;
 
-import org.andnav.osm.adt.GeoPoint;
-import org.andnav.osm.util.constants.OSMConstants;
 
 /**
- * Extends the {@link GeoPoint} with a timeStamp.
+ * 
  * @author Nicolas Gramlich
+ *
  */
-public class RecordedGeoPoint extends GeoPoint implements OSMConstants{
+public class OSMMapTileNameFormatter {
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -17,42 +16,13 @@ public class RecordedGeoPoint extends GeoPoint implements OSMConstants{
 	// Fields
 	// ===========================================================
 
-	protected final long mTimeStamp;
-	protected final int mNumSatellites;
-
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 
-	public RecordedGeoPoint(final int latitudeE6, final int longitudeE6) {
-		this(latitudeE6, longitudeE6, System.currentTimeMillis(), NOT_SET);
-	}
-	
-	public RecordedGeoPoint(final int latitudeE6, final int longitudeE6, final long aTimeStamp, final int aNumSatellites) {
-		super(latitudeE6, longitudeE6);
-		this.mTimeStamp = aTimeStamp;
-		this.mNumSatellites = aNumSatellites;
-	}
-
 	// ===========================================================
 	// Getter & Setter
 	// ===========================================================
-	
-	public long getTimeStamp() {
-		return this.mTimeStamp;
-	}
-	
-	public double getLatitudeAsDouble(){
-		return this.getLatitudeE6() / 1E6;
-	}
-	
-	public double getLongitudeAsDouble(){
-		return this.getLongitudeE6() / 1E6;
-	}
-	
-	public int getNumSatellites(){
-		return this.mNumSatellites;
-	}
 
 	// ===========================================================
 	// Methods from SuperClass/Interfaces
@@ -61,6 +31,21 @@ public class RecordedGeoPoint extends GeoPoint implements OSMConstants{
 	// ===========================================================
 	// Methods
 	// ===========================================================
+	
+	/**
+	 * Formats a URL to a String that it can be saved to a file, without problems of special chars.
+	 * 
+	 * <PRE><b>Example:</b>
+	 * 
+	 * <code>http://a.tile.openstreetmap.org/0/0/0.png</code>
+	 * would become 
+	 * <code>a.tile.openstreetmap.org_0_0_0.png</code>
+	 * </PRE>
+	 * @return saveable formatted URL as a String
+	 */
+	public static String format(final String aTileURLString){
+		return aTileURLString.substring(7).replace("/", "_");
+	}
 
 	// ===========================================================
 	// Inner and Anonymous Classes

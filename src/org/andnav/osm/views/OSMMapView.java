@@ -4,16 +4,16 @@ package org.andnav.osm.views;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.andnav.osm.util.BoundingBoxE6;
-import org.andnav.osm.util.GeoPoint;
+import org.andnav.osm.adt.BoundingBoxE6;
+import org.andnav.osm.adt.GeoPoint;
 import org.andnav.osm.util.MyMath;
 import org.andnav.osm.util.constants.OSMConstants;
-import org.andnav.osm.views.controller.OSMViewController;
+import org.andnav.osm.views.controller.OSMMapViewController;
 import org.andnav.osm.views.overlay.OSMMapViewOverlay;
-import org.andnav.osm.views.util.OSMMapTileAbstractProvider;
-import org.andnav.osm.views.util.OSMMapTileFilesystemCache;
-import org.andnav.osm.views.util.OSMMapTileManager;
-import org.andnav.osm.views.util.OSMMapTileProviderInfo;
+import org.andnav.osm.views.tiles.OSMAbstractMapTileProvider;
+import org.andnav.osm.views.tiles.OSMMapTileFilesystemCache;
+import org.andnav.osm.views.tiles.OSMMapTileManager;
+import org.andnav.osm.views.tiles.OSMMapTileProviderInfo;
 import org.andnav.osm.views.util.Util;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
 
@@ -65,7 +65,7 @@ public class OSMMapView extends View implements OSMConstants,
 
 	private OSMMapView mMiniMap, mMaxiMap;
 
-	private OSMViewController mController;
+	private OSMMapViewController mController;
 	private int mMiniMapOverriddenVisibility = NOT_SET;
 	private int mMiniMapZoomDiff = NOT_SET;
 
@@ -181,11 +181,11 @@ public class OSMMapView extends View implements OSMConstants,
 		this.mMaxiMap = aOsmvMaxiMap;
 	}
 
-	public OSMViewController getController() {
+	public OSMMapViewController getController() {
 		if (this.mController != null)
 			return this.mController;
 		else
-			return this.mController = new OSMViewController(this);
+			return this.mController = new OSMMapViewController(this);
 	}
 
 	/**
@@ -774,7 +774,7 @@ public class OSMMapView extends View implements OSMConstants,
 		@Override
 		public void handleMessage(final Message msg) {
 			switch (msg.what) {
-				case OSMMapTileAbstractProvider.MAPTILEDOWNLOADER_SUCCESS_ID:
+				case OSMAbstractMapTileProvider.MAPTILEDOWNLOADER_SUCCESS_ID:
 				case OSMMapTileFilesystemCache.MAPTILEFSLOADER_SUCCESS_ID:
 					OSMMapView.this.invalidate();
 					break;

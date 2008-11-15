@@ -3,11 +3,11 @@ package org.andnav.osm.samples;
 
 import java.util.ArrayList;
 
-import org.andnav.osm.util.GeoPoint;
+import org.andnav.osm.adt.GeoPoint;
 import org.andnav.osm.views.OSMMapView;
 import org.andnav.osm.views.overlay.OSMMapViewOverlayItem;
-import org.andnav.osm.views.overlay.OSMViewItemizedOverlay;
-import org.andnav.osm.views.util.OSMMapTileProviderInfo;
+import org.andnav.osm.views.overlay.OSMMapViewItemizedOverlay;
+import org.andnav.osm.views.tiles.OSMMapTileProviderInfo;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -36,7 +36,7 @@ public class SampleWithMinimapItemizedoverlay extends Activity{
 	// ===========================================================
 	
 	private OSMMapView mOsmv, mOsmvMinimap; 
-	private OSMViewItemizedOverlay<OSMMapViewOverlayItem> mMyLocationOverlay; 
+	private OSMMapViewItemizedOverlay<OSMMapViewOverlayItem> mMyLocationOverlay; 
 
 	// ===========================================================
 	// Constructors
@@ -62,7 +62,7 @@ public class SampleWithMinimapItemizedoverlay extends Activity{
 	        items.add(new OSMMapViewOverlayItem("San Francisco", "SampleDescription", new GeoPoint(37779300, -122419200))); // San Francisco
 	        
 	        /* OnTapListener for the Markers, shows a simpel Toast. */
-	        this.mMyLocationOverlay = new OSMViewItemizedOverlay<OSMMapViewOverlayItem>(this, items, new OSMViewItemizedOverlay.OnItemTapListener<OSMMapViewOverlayItem>(){
+	        this.mMyLocationOverlay = new OSMMapViewItemizedOverlay<OSMMapViewOverlayItem>(this, items, new OSMMapViewItemizedOverlay.OnItemTapListener<OSMMapViewOverlayItem>(){
 				@Override
 				public boolean onItemTap(int index, OSMMapViewOverlayItem item) {
 					Toast.makeText(SampleWithMinimapItemizedoverlay.this, "Item '" + item.mTitle + "' (index=" + index + ") got tapped", Toast.LENGTH_LONG).show();

@@ -1,7 +1,7 @@
 // Created by plusminus on 00:02:58 - 03.10.2008
 package org.andnav.osm.views.overlay;
 
-import org.andnav.osm.util.GeoPoint;
+import org.andnav.osm.adt.GeoPoint;
 
 /**
  * Immutable class describing a GeoPoint with a Title and a Description.

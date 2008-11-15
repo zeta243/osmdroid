@@ -3,7 +3,7 @@ package org.andnav.osm.samples;
 
 import org.andnav.osm.R;
 import org.andnav.osm.views.OSMMapView;
-import org.andnav.osm.views.util.OSMMapTileProviderInfo;
+import org.andnav.osm.views.tiles.OSMMapTileProviderInfo;
 
 import android.app.Activity;
 import android.os.Bundle;
