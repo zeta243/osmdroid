@@ -5,7 +5,7 @@ import org.andnav.osm.views.tiles.renderer.mapnik.MapnikStroke;
 
 // Original from include/mapnik/line_symbolizer.hpp
 
-public class MapnikLineSymbolizer {
+public class MapnikLineSymbolizer extends MapnikSymbolizer {
 
 	private MapnikStroke mStroke;
 

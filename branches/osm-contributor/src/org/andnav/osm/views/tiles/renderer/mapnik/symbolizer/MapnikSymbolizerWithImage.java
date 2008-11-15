@@ -10,7 +10,7 @@ import org.andnav.osm.views.tiles.renderer.mapnik.MapnikImageData;
 // Original from include/mapnik/symbolizer.hpp
 //               src/symbolizer.cpp
 
-public class MapnikSymbolizerWithImage implements MapnikSymbolizerWithImageInterface {
+public class MapnikSymbolizerWithImage extends MapnikSymbolizer implements MapnikSymbolizerWithImageInterface {
 
 	protected MapnikImageData mImage;
 	protected String mImageFilename;
