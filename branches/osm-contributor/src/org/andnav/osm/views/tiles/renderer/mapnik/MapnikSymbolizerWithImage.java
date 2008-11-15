@@ -1,29 +1,54 @@
 package org.andnav.osm.views.tiles.renderer.mapnik;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 // Original from include/mapnik/symbolizer.hpp
+//               src/symbolizer.cpp
 
-public class MapnikSymbolizerWithImage {
+public abstract class MapnikSymbolizerWithImage {
 
-	/*
-    class symbolizer_with_image {
-        public:
-            boost::shared_ptr<ImageData32> get_image() const;
-            const std::string & get_filename() const;
-            void set_image( boost::shared_ptr<ImageData32> symbol);
-
-            virtual ~symbolizer_with_image() {};
-        protected:
-            symbolizer_with_image(boost::shared_ptr<ImageData32> img);
-            symbolizer_with_image(std::string const& file,
-                                   std::string const& type,
-                                   unsigned width,unsigned height);
-
-            symbolizer_with_image(symbolizer_with_image const& rhs);
-
-            boost::shared_ptr<ImageData32> image_;
-            std::string image_filename_;
-
-    };
-
-	 */
+	protected MapnikImageData mImage;
+	protected String mImageFilename;
+	
+	protected MapnikSymbolizerWithImage(MapnikImageData image)
+	{
+		mImage = image;
+	}
+	
+	protected MapnikSymbolizerWithImage(String filename, String type, int width, int height) throws IOException, FileNotFoundException
+	{
+		mImageFilename = filename;
+		
+		FileInputStream s = new FileInputStream(new File(filename));
+		
+		byte[] imageData = new byte[width * height * 4];
+		s.read(imageData, 0, width * height * 4);
+		
+		mImage = new MapnikImageData(width, height);
+		mImage.setBytes(imageData);
+	}
+	
+	protected MapnikSymbolizerWithImage(MapnikSymbolizerWithImage symbolizer)
+	{
+		mImage = symbolizer.mImage;
+		mImageFilename = symbolizer.mImageFilename;
+	}
+	
+	public MapnikImageData getImage()
+	{
+		return mImage;
+	}
+	
+	public String getFilename()
+	{
+		return mImageFilename;	
+	}
+	
+	public void setImage(MapnikImageData image)
+	{
+		mImage = image; 
+	}
 }
