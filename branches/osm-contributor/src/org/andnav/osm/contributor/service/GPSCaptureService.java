@@ -1,11 +1,15 @@
 package org.andnav.osm.contributor.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import org.andnav.osm.R;
+import org.andnav.osm.contributor.OSMUploader;
 import org.andnav.osm.contributor.util.GPXFileWriter;
 
 import android.app.Service;
@@ -29,11 +33,14 @@ public class GPSCaptureService extends Service implements LocationListener {
 	private Thread mGpsLocationProcessor;
 	private boolean mRunning = false;
 	private boolean mFailed = false;
-	WakeLock mWakeLock;
+	private WakeLock mWakeLock;
+	
 	private List<Location> mGpsLocationQueue = Collections
 			.synchronizedList(new ArrayList<Location>());
+	
 	private List<GPXFileWriter> mGpsCaptureFiles = Collections
 			.synchronizedList(new ArrayList<GPXFileWriter>());
+	
 	private int mNumSatellites = 0;
 	private List<GPSCaptureCallback> mGpsClientCallbacks = Collections
 			.synchronizedList(new ArrayList<GPSCaptureCallback>());
@@ -137,6 +144,22 @@ public class GPSCaptureService extends Service implements LocationListener {
 		@Override
 		public boolean isRunning() throws RemoteException {
 			return mRunning;
+		}
+
+		@Override
+		public boolean uploadCaptureToOSM(String captureName, String description, String tags)
+				throws RemoteException {
+			
+			FileInputStream f;
+			try {
+				f = new FileInputStream(new File("/sdcard/" + getString(R.string.app_name) + captureName + ".gpx.xml"));
+			} catch (FileNotFoundException e) {
+				Log.e(TAG, "Could not upload capture: " + e.toString());
+				return false;
+			}
+			OSMUploader.uploadAsync(OSMUploader.OSM_USERNAME, OSMUploader.OSM_PASSWORD, description, tags, false, f, captureName);
+			
+			return true;
 		}
 	};
 
