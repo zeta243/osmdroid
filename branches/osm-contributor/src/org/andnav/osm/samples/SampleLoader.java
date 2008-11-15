@@ -32,7 +32,8 @@ public class SampleLoader extends ListActivity {
 		final ArrayList<String> list = new ArrayList<String>();
 		
 		list.add("OSMapView with Minimap, ZoomControls, Animations and MyLocationOverlay");
-		list.add("Sample OSMContributor");
+		list.add("Sample OSMContributor (Simple)");
+		list.add("Sample OSMContributor (Advanced)");
 		list.add("OSMapView with ItemizedOverlay");
 		list.add("OSMapView with ItemizedOverlayWithFocus");
 		list.add("OSMapView with Minimap and ZoomControls");
@@ -54,15 +55,18 @@ public class SampleLoader extends ListActivity {
 				this.startActivity(new Intent(this, SampleExtensive.class));
 				break;
 			case 1:
-				this.startActivity(new Intent(this, GPSCaptureActivity.class));
+				this.startActivity(new Intent(this, GPSCaptureActivitySimple.class));
 				break;
 			case 2:
-				this.startActivity(new Intent(this, SampleWithMinimapItemizedoverlay.class));
+				this.startActivity(new Intent(this, GPSCaptureActivityExtensive.class));
 				break;
 			case 3:
-				this.startActivity(new Intent(this, SampleWithMinimapItemizedoverlayWithFocus.class));
+				this.startActivity(new Intent(this, SampleWithMinimapItemizedoverlay.class));
 				break;
 			case 4:
+				this.startActivity(new Intent(this, SampleWithMinimapItemizedoverlayWithFocus.class));
+				break;
+			case 5:
 				this.startActivity(new Intent(this, SampleWithMinimapZoomcontrols.class));
 				break;
 		}

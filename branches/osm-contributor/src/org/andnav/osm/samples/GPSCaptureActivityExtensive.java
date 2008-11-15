@@ -3,7 +3,6 @@ package org.andnav.osm.samples;
 import java.util.Calendar;
 import java.util.List;
 
-import org.andnav.osm.OSMMapActivity;
 import org.andnav.osm.R;
 import org.andnav.osm.adt.util.TypeConverter;
 import org.andnav.osm.contributor.service.GPSCaptureCallback;
@@ -16,6 +15,7 @@ import org.andnav.osm.views.overlay.OSMMapViewOverlay;
 import org.andnav.osm.views.overlay.OSMMapViewSimpleLocationOverlay;
 import org.andnav.osm.views.tiles.OSMMapTileProviderInfo;
 
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -43,8 +43,9 @@ import android.widget.RelativeLayout.LayoutParams;
 
 
 
-public class GPSCaptureActivity extends OSMMapActivity implements OSMConstants {
+public class GPSCaptureActivityExtensive extends Activity implements OSMConstants {
     /** Called when the activity is first created. */
+	
 	
 	private static final int MENU_ZOOMIN_ID = Menu.FIRST;
 	private static final int MENU_ZOOMOUT_ID = MENU_ZOOMIN_ID + 1;
@@ -52,7 +53,7 @@ public class GPSCaptureActivity extends OSMMapActivity implements OSMConstants {
 	private static final int MENU_ANIMATION_ID = MENU_RENDERER_ID + 1;
 	private static final int MENU_MINIMAP_ID = MENU_ANIMATION_ID + 1;
 	
-	private static final String TAG = "GPSCaptureActivity";
+	private static final String TAG = "GPSCaptureActivityExtensive";
 	
 	private GPSCaptureInterface mCaptureService = null;
 	
@@ -98,7 +99,7 @@ public class GPSCaptureActivity extends OSMMapActivity implements OSMConstants {
         }
 
         public void onServiceDisconnected(ComponentName className) {
-        	GPSCaptureActivity.this.mCaptureService = null;
+        	GPSCaptureActivityExtensive.this.mCaptureService = null;
         }
     };
     
@@ -130,7 +131,7 @@ public class GPSCaptureActivity extends OSMMapActivity implements OSMConstants {
                         {              
                             List <OSMMapViewOverlay> overlays = mOSMView.getOverlays();
                             
-                	        overlays.add(new OSMMapViewLinearOverlay(GPSCaptureActivity.this,
+                	        overlays.add(new OSMMapViewLinearOverlay(GPSCaptureActivityExtensive.this,
                 	        		TypeConverter.locationToGeoPoint(mLastLocation),
                 	        		TypeConverter.locationToGeoPoint(mLatestLocation)));
                 	        
@@ -154,9 +155,9 @@ public class GPSCaptureActivity extends OSMMapActivity implements OSMConstants {
     public void onCreate(Bundle savedInstanceState) {
     	Log.d(TAG, "onCreate() called");
     	
-        super.onCreate(savedInstanceState, false);
+        super.onCreate(savedInstanceState);
         
-        setContentView(R.layout.main);
+        setContentView(R.layout.gps_capture_extensive_layout);
       
     	if (savedInstanceState != null)
     	{
@@ -421,17 +422,4 @@ public class GPSCaptureActivity extends OSMMapActivity implements OSMConstants {
 		}
 		return false;
 	}
-
-	@Override
-	public void onLocationChanged(Location loc) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void onLocationLost() {
-		// TODO Auto-generated method stub
-		
-	}
-    
 }
