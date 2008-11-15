@@ -5,8 +5,8 @@ import java.util.ArrayList;
 
 import org.andnav.osm.adt.GeoPoint;
 import org.andnav.osm.views.OSMMapView;
-import org.andnav.osm.views.overlay.OSMMapViewOverlayItem;
 import org.andnav.osm.views.overlay.OSMMapViewItemizedOverlay;
+import org.andnav.osm.views.overlay.OSMMapViewOverlayItem;
 import org.andnav.osm.views.tiles.OSMMapTileProviderInfo;
 
 import android.app.Activity;
