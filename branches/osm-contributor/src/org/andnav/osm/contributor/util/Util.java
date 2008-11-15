@@ -6,8 +6,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
+import org.andnav.osm.adt.BoundingBoxE6;
 import org.andnav.osm.contributor.util.constants.OSMContributorConstants;
-import org.andnav.osm.util.BoundingBoxE6;
 
 /**
  * 

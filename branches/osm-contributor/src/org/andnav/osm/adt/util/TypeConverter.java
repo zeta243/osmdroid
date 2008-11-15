@@ -1,14 +1,17 @@
-// Created by plusminus on 12:29:23 - 21.09.2008
-package org.andnav.osm.contributor.util;
+// Created by plusminus on 00:47:05 - 02.10.2008
+package org.andnav.osm.adt.util;
+
 
 import org.andnav.osm.adt.GeoPoint;
-import org.andnav.osm.util.constants.OSMConstants;
+
+import android.location.Location;
 
 /**
- * Extends the {@link GeoPoint} with a timeStamp.
+ * Converts some usual types from one to another.
  * @author Nicolas Gramlich
+ *
  */
-public class RecordedGeoPoint extends GeoPoint implements OSMConstants{
+public class TypeConverter {
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -17,42 +20,13 @@ public class RecordedGeoPoint extends GeoPoint implements OSMConstants{
 	// Fields
 	// ===========================================================
 
-	protected final long mTimeStamp;
-	protected final int mNumSatellites;
-
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 
-	public RecordedGeoPoint(final int latitudeE6, final int longitudeE6) {
-		this(latitudeE6, longitudeE6, System.currentTimeMillis(), NOT_SET);
-	}
-	
-	public RecordedGeoPoint(final int latitudeE6, final int longitudeE6, final long aTimeStamp, final int aNumSatellites) {
-		super(latitudeE6, longitudeE6);
-		this.mTimeStamp = aTimeStamp;
-		this.mNumSatellites = aNumSatellites;
-	}
-
 	// ===========================================================
 	// Getter & Setter
 	// ===========================================================
-	
-	public long getTimeStamp() {
-		return this.mTimeStamp;
-	}
-	
-	public double getLatitudeAsDouble(){
-		return this.getLatitudeE6() / 1E6;
-	}
-	
-	public double getLongitudeAsDouble(){
-		return this.getLongitudeE6() / 1E6;
-	}
-	
-	public int getNumSatellites(){
-		return this.mNumSatellites;
-	}
 
 	// ===========================================================
 	// Methods from SuperClass/Interfaces
@@ -61,6 +35,10 @@ public class RecordedGeoPoint extends GeoPoint implements OSMConstants{
 	// ===========================================================
 	// Methods
 	// ===========================================================
+	
+	public static GeoPoint locationToGeoPoint(final Location aLoc){
+		return new GeoPoint((int)(aLoc.getLatitude() * 1E6), (int)(aLoc.getLongitude() * 1E6));
+	}
 
 	// ===========================================================
 	// Inner and Anonymous Classes

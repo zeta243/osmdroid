@@ -15,7 +15,7 @@ import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 
 
-public class OSMMapViewItemizedOverlayWithFocus<T extends OSMMapViewOverlayItem> extends OSMViewItemizedOverlay<T> {
+public class OSMMapViewItemizedOverlayWithFocus<T extends OSMMapViewOverlayItem> extends OSMMapViewItemizedOverlay<T> {
 	// ===========================================================
 	// Constants
 	// ===========================================================

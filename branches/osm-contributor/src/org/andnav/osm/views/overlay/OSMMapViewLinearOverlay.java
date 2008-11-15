@@ -1,6 +1,6 @@
 package org.andnav.osm.views.overlay;
 
-import org.andnav.osm.util.GeoPoint;
+import org.andnav.osm.adt.GeoPoint;
 import org.andnav.osm.views.OSMMapView;
 import org.andnav.osm.views.OSMMapView.OpenStreetMapViewProjection;
 

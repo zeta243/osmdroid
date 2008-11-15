@@ -42,9 +42,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <service android:name=".contributor.GPSCaptureService" android:label="GPSCaptureService">
+        <service android:name=".contributor.service.GPSCaptureService" android:label="GPSCaptureService">
             <intent-filter>
-                <action android:name="org.andnav.osm.contributor.GPSCaptureInterface" />
+                <action android:name="org.andnav.osm.contributor.service.GPSCaptureInterface" />
             </intent-filter>
         </service>
     </application>

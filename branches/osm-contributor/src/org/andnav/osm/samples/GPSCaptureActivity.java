@@ -5,16 +5,16 @@ import java.util.List;
 
 import org.andnav.osm.OSMMapActivity;
 import org.andnav.osm.R;
-import org.andnav.osm.contributor.GPSCaptureCallback;
-import org.andnav.osm.contributor.GPSCaptureInterface;
-import org.andnav.osm.util.TypeConverter;
+import org.andnav.osm.adt.util.TypeConverter;
+import org.andnav.osm.contributor.service.GPSCaptureCallback;
+import org.andnav.osm.contributor.service.GPSCaptureInterface;
 import org.andnav.osm.util.constants.OSMConstants;
 import org.andnav.osm.views.OSMMapView;
-import org.andnav.osm.views.controller.OSMViewController;
+import org.andnav.osm.views.controller.OSMMapViewController;
 import org.andnav.osm.views.overlay.OSMMapViewLinearOverlay;
 import org.andnav.osm.views.overlay.OSMMapViewOverlay;
 import org.andnav.osm.views.overlay.OSMMapViewSimpleLocationOverlay;
-import org.andnav.osm.views.util.OSMMapTileProviderInfo;
+import org.andnav.osm.views.tiles.OSMMapTileProviderInfo;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -406,7 +406,7 @@ public class GPSCaptureActivity extends OSMMapActivity implements OSMConstants {
 				return true;
 				
 			case MENU_ANIMATION_ID:
-				this.mOSMView.getController().animateTo(52370816, 9735936, OSMViewController.AnimationType.MIDDLEPEAKSPEED, OSMViewController.ANIMATION_SMOOTHNESS_HIGH, OSMViewController.ANIMATION_DURATION_DEFAULT); // Hannover
+				this.mOSMView.getController().animateTo(52370816, 9735936, OSMMapViewController.AnimationType.MIDDLEPEAKSPEED, OSMMapViewController.ANIMATION_SMOOTHNESS_HIGH, OSMMapViewController.ANIMATION_DURATION_DEFAULT); // Hannover
 				// Stop the Animation after 500ms  (just to show that it works)
 //				new Handler().postDelayed(new Runnable(){
 //					@Override

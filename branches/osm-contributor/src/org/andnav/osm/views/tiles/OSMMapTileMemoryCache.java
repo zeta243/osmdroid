@@ -1,14 +1,19 @@
-// Created by plusminus on 12:29:23 - 21.09.2008
-package org.andnav.osm.contributor.util;
+// Created by plusminus on 17:58:57 - 25.09.2008
+package org.andnav.osm.views.tiles;
 
-import org.andnav.osm.adt.GeoPoint;
-import org.andnav.osm.util.constants.OSMConstants;
+import java.util.HashMap;
+
+import org.andnav.osm.views.util.LRUBitmapCache;
+import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
+
+import android.graphics.Bitmap;
 
 /**
- * Extends the {@link GeoPoint} with a timeStamp.
+ * 
  * @author Nicolas Gramlich
+ *
  */
-public class RecordedGeoPoint extends GeoPoint implements OSMConstants{
+public class OSMMapTileMemoryCache implements OpenStreetMapViewConstants{
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -16,42 +21,34 @@ public class RecordedGeoPoint extends GeoPoint implements OSMConstants{
 	// ===========================================================
 	// Fields
 	// ===========================================================
-
-	protected final long mTimeStamp;
-	protected final int mNumSatellites;
+	
+	protected HashMap<String, Bitmap> mCachedTiles;
 
 	// ===========================================================
 	// Constructors
 	// ===========================================================
-
-	public RecordedGeoPoint(final int latitudeE6, final int longitudeE6) {
-		this(latitudeE6, longitudeE6, System.currentTimeMillis(), NOT_SET);
+	
+	public OSMMapTileMemoryCache(){
+		this(CACHE_MAPTILECOUNT_DEFAULT);
 	}
 	
-	public RecordedGeoPoint(final int latitudeE6, final int longitudeE6, final long aTimeStamp, final int aNumSatellites) {
-		super(latitudeE6, longitudeE6);
-		this.mTimeStamp = aTimeStamp;
-		this.mNumSatellites = aNumSatellites;
+	/**
+	 * @param aMaximumCacheSize Maximum amount of MapTiles to be hold within.
+	 */
+	public OSMMapTileMemoryCache(final int aMaximumCacheSize){
+		this.mCachedTiles = new LRUBitmapCache(aMaximumCacheSize);
 	}
 
 	// ===========================================================
 	// Getter & Setter
 	// ===========================================================
 	
-	public long getTimeStamp() {
-		return this.mTimeStamp;
+	public synchronized Bitmap getMapTile(final String aTileURLString) {
+		return this.mCachedTiles.get(aTileURLString);
 	}
-	
-	public double getLatitudeAsDouble(){
-		return this.getLatitudeE6() / 1E6;
-	}
-	
-	public double getLongitudeAsDouble(){
-		return this.getLongitudeE6() / 1E6;
-	}
-	
-	public int getNumSatellites(){
-		return this.mNumSatellites;
+
+	public synchronized void putTile(final String aTileURLString, final Bitmap aTile) {
+		this.mCachedTiles.put(aTileURLString, aTile);
 	}
 
 	// ===========================================================
