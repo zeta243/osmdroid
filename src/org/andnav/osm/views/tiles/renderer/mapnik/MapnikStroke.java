@@ -7,6 +7,9 @@ import java.util.Vector;
 
 public class MapnikStroke {
 
+	static final int DASH = 0;
+	static final int GAP  = 1;
+	
 	public enum LineCapEnum {
 		BUTT_CAP, SQUARE_CAP, ROUND_CAP, LineCapEnumMax
 	}
@@ -23,79 +26,99 @@ public class MapnikStroke {
 	private Vector<float[]> mDash;
 
 	public MapnikStroke() {
-		// TODO: Defined in src/stroke.cpp
+		mColour = new MapnikColour(0,0,0);
+	    mWidth = 1;
+	    mOpacity = 1;
+	    mLineCap = LineCapEnum.BUTT_CAP;
+	    mLineJoin = LineJoinEnum.MITER_JOIN;
+	    mDash = new Vector<float[]>();
 	}
 
 	public MapnikStroke(MapnikColour c, float width) {
-		// TODO: Defined in src/stroke.cpp
+		mColour = c;
+		mWidth = width;
+		mOpacity = 1;
+	    mLineCap = LineCapEnum.BUTT_CAP;
+	    mLineJoin = LineJoinEnum.MITER_JOIN;
+	    mDash = new Vector<float[]>();
 	}
 
 	public MapnikStroke(MapnikStroke s) {
-		// TODO: Defined in src/stroke.cpp
+		mColour = s.mColour;
+		mWidth  = s.mWidth;
+		mOpacity = s.mOpacity;
+		mLineCap = s.mLineCap;
+		mLineJoin = s.mLineJoin;
+		mDash     = s.mDash;
 	}
-
-	public void setColour(MapnikColour c) {
-		// TODO: Defined in src/stroke.cpp
-	}
-
+	
 	public MapnikColour getColour() {
-		// TODO: Defined in src/stroke.cpp
-		return null;
+		return mColour;
+	}
+	
+	public void setColour(MapnikColour c) {
+		mColour = c;
 	}
 
 	public float getWidth() {
-		// TODO: Defined in src/stroke.cpp
-		return 0;
+		return mWidth;
 	}
 
 	public void setWidth(float w) {
-		// TODO: Defined in src/stroke.cpp
+		mWidth = w;
 	}
 
 	public float getOpacity() {
-		// TODO: Defined in src/stroke.cpp
-		return 0;
+		return mOpacity;
 	}
 
 	public void setOpacity(float o) {
-		// TODO: Defined in src/stroke.cpp
+		if (o > 1.0)
+			mOpacity = (float)1.0;
+		else if (o < 0.0)
+		    mOpacity = (float)0.0;
+		else
+			mOpacity = o;
 	}
 
 	public LineCapEnum getLineCap() {
-		// TODO: Defined in src/stroke.cpp
-		return null;
+		return mLineCap;
 	}
 
-	public void setLineCap() {
-		// TODO: Defined in src/stroke.cpp
+	public void setLineCap(LineCapEnum c) {
+		mLineCap = c;
 	}
 
 	public LineJoinEnum getLineJoin() {
-		// TODO: Defined in src/stroke.cpp
-		return null;
+		return mLineJoin;
+	}
+	
+	public void setLineJoin(LineJoinEnum j)
+	{
+		mLineJoin = j;
 	}
 
 	public void addDash(float dash, float gap) {
-		// TODO: Defined in src/stroke.cpp
+		float[] d = new float[2];
+		d[DASH] = dash;
+		d[GAP]  = gap;
+		mDash.add(d);
 	}
 
 	public boolean hasDash() {
-		// TODO: Defined in src/stroke.cpp
-		return false;
+		if (mDash.isEmpty())
+			return false;
+		return true;
 	}
 
 	public Vector<float[]> getDashArray() {
-		// TODO: Defined in src/stroke.cpp
-		return null;
-	}
-
-	private void swap(MapnikStroke other) {
-		// TODO: Defined in src/stroke.cpp
+		return mDash;
 	}
 
 	/*
 	 * // TODO: These were in include/mapnik/stroke.hpp - I didnt figure out
-	 * what they do yet DEFINE_ENUM( line_cap_e, line_cap_enum ); DEFINE_ENUM(
-	 * line_join_e, line_join_enum );
+	 * what they do yet
+	 * DEFINE_ENUM( line_cap_e, line_cap_enum );
+	 * DEFINE_ENUM( line_join_e, line_join_enum );
 	 */
 }
