@@ -6,6 +6,7 @@ import org.andnav.osm.views.tiles.renderer.mapnik.MapnikEnvelope;
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikParameters;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeature;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeatureLayerDescriptor;
+import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeatureSet;
 
 public abstract class MapnikDataSource {
 
@@ -29,9 +30,8 @@ public abstract class MapnikDataSource {
     
     public abstract MapnikDataSourceType getType();
     
-    public abstract List<MapnikFeature> getFeatures();
-    public abstract List<MapnikFeature> getFeaturesAtPoint(double[] coords);
+    public abstract MapnikFeatureSet getFeatures(MapnikQuery query);
+    public abstract MapnikFeatureSet getFeaturesAtPoint(double[] coords);
     public abstract MapnikEnvelope getEnvelope();
     public abstract MapnikFeatureLayerDescriptor getLayerDescriptor();
-
 }

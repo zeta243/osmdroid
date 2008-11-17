@@ -1,11 +1,18 @@
 package org.andnav.osm.views.tiles.renderer.mapnik;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import org.andnav.osm.util.MyMath;
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikProjection.MapnikProjectionDataType;
+import org.andnav.osm.views.tiles.renderer.mapnik.datasource.MapnikDataSource;
+import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeature;
+import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeatureSet;
+import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeatureSetFilter;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeatureTypeStyle;
+import org.andnav.osm.views.tiles.renderer.mapnik.filter.MapnikFilterHitTest;
+import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikCoordTransformer;
 
 // original from include/mapnik/map.hpp
 
@@ -184,14 +191,11 @@ public class MapnikMap {
 	
 	public void zoomAll()
 	{
-		// MapnikProjection proj0 = new MapnikProjection(MapnikProjectionDataType.LatLong);
+		// TODO: I am unsure of the transformations here.
 		MapnikEnvelope mapEnvelope = null;
-		boolean first = true;
 		
 		for (MapnikLayer l : mLayers)
 		{
-			String layerSrc = l.getSrc();
-			// MapnikProjection proj1 = new MapnikProjection(MapnikProjectionDataType.Gudermann);
 			MapnikEnvelope layerEnvelope = l.getEnvelope();
 			
 			// Convert layer's lat/long into map's coords
@@ -210,47 +214,6 @@ public class MapnikMap {
 		}
 		
 		this.zoomToBox(mapEnvelope);
-		
-/*
-        projection proj0(srs_);
-        Envelope<double> ext;
-        bool first = true;
-        std::vector<Layer>::const_iterator itr = layers_.begin();
-        std::vector<Layer>::const_iterator end = layers_.end();
-        while (itr != end)
-        {
-            std::string const& layer_srs = itr->srs();
-            projection proj1(layer_srs);
-            proj_transform prj_trans(proj0,proj1);
-
-            Envelope<double> layerExt = itr->envelope();
-            double x0 = layerExt.minx();
-            double y0 = layerExt.miny();
-            double z0 = 0.0;
-            double x1 = layerExt.maxx();
-            double y1 = layerExt.maxy();
-            double z1 = 0.0;
-            prj_trans.backward(x0,y0,z0);
-            prj_trans.backward(x1,y1,z1);
-
-            Envelope<double> layerExt2(x0,y0,x1,y1);
-#ifdef MAPNIK_DEBUG
-            std::clog << " layer1 - > " << layerExt << "\n";
-            std::clog << " layer2 - > " << layerExt2 << "\n";
-#endif
-            if (first)
-            {
-                ext = layerExt2;
-                first = false;
-            }
-            else
-            {
-                ext.expand_to_include(layerExt2);
-            }
-            ++itr;
-        }
-        zoomToBox(ext);
-*/
 	}
 	
 	public void zoomToBox(MapnikEnvelope e)
@@ -272,5 +235,69 @@ public class MapnikMap {
         {
             mCurrentExtent.setWidth(mCurrentExtent.getHeight() * ratio1);
         }
+	}
+	
+	public MapnikEnvelope getCurrentExtent()
+	{
+		return this.mCurrentExtent;
+	}
+	
+	public void pan(int x, int y)
+	{
+        int dx = (int) (x - (0.5 * mWidth));
+        int dy = (int)(0.5 * mHeight) - y;
+        
+        double s = mWidth/mCurrentExtent.getWidth();
+        double minx  = mCurrentExtent.getMinX() + dx/s;
+        double maxx  = mCurrentExtent.getMaxX() + dx/s;
+        double miny  = mCurrentExtent.getMinY() + dy/s;
+        double maxy  = mCurrentExtent.getMaxY() + dy/s;
+        mCurrentExtent = new MapnikEnvelope(minx,miny,maxx,maxy);
+	}
+	
+	public void panAndZoom(int x, int y, double factor)
+	{
+		pan(x, y);
+		zoom(factor);
+	}
+	
+	double getScale()
+	{
+		if (mWidth > 0)
+			return mCurrentExtent.getWidth() / mWidth;
+		return mCurrentExtent.getWidth();
+	}
+	
+	public MapnikCoordTransformer getCoordTransformer()
+	{
+		return new MapnikCoordTransformer(mWidth, mHeight, mCurrentExtent);
+	}
+	
+	MapnikFeatureSet queryPoint(int index, double[] coords)
+	{
+		MapnikLayer l = this.getLayer(index);
+		
+        double z = 0;
+        // Forwards: layer => Map
+        // Backwards: Map => Layer
+        coords[1] = MyMath.gudermann(coords[1]);
+        
+        double minx = mCurrentExtent.getMinX();
+        // double miny = MyMath.gudermann(mCurrentExtent.getMinY());
+        double maxx = mCurrentExtent.getMaxX();
+        // double maxy = MyMath.gudermann(mCurrentExtent.getMaxY());
+
+        double tol = (maxx - minx) / mWidth * 3;
+        
+        MapnikDataSource ds = l.getDataSource();
+        if (ds != null)
+        {
+        	MapnikFeatureSet fs = ds.getFeaturesAtPoint(coords);
+        	if (fs != null)
+        	{
+        		return new MapnikFeatureSet(new MapnikFeatureSetFilter(fs, new MapnikFilterHitTest(coords[0], coords[1], tol)));
+        	}
+        }	    
+		return null;
 	}
 }

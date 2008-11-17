@@ -4,11 +4,13 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikRaster;
+import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikGeometry;
+import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikPoint;
 
 public class MapnikFeature {
 	
 	private int mId;
-	Vector<Double> mGeomCont;
+	Vector<MapnikGeometry> mGeomCont;
 	MapnikRaster mRaster;
 	HashMap<String, Object> properties;
 	
@@ -16,7 +18,7 @@ public class MapnikFeature {
 	{
 		mId = id;
 		properties = new HashMap<String, Object>();
-		mGeomCont = new Vector<Double>();
+		mGeomCont = new Vector<MapnikGeometry>();
 		mRaster  = null;
 	}
 	
@@ -25,9 +27,9 @@ public class MapnikFeature {
 		return mId;
 	}
 	
-	public void addGeometry(Double g)
+	public void addGeometry(MapnikGeometry p)
 	{
-		mGeomCont.add(g);
+		mGeomCont.add(p);
 	}
 	
 	public int getNumGeometries()
@@ -35,9 +37,14 @@ public class MapnikFeature {
 		return mGeomCont.size();
 	}
 	
-	public Double getGeometry(int id)
+	public MapnikGeometry getGeometry(int id)
 	{
 		return mGeomCont.get(id);
+	}
+	
+	public Vector<MapnikGeometry> getGeometries()
+	{
+		return mGeomCont;
 	}
 	
 	public MapnikRaster getRaster()

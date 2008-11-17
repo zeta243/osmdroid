@@ -38,18 +38,24 @@ public class ProjectionTransformation {
 		return true;
 	}
 	
-	boolean backward(double[] x, double[] y, double[] z)
+	boolean backward(double[] coords)
 	{
+		if (mSource.mType == MapnikProjectionDataType.LatLong)
+		{
+			if (mDest.mType == MapnikProjectionDataType.Gudermann)
+			{
+				coords[0] = MyMath.gudermann(coords[0]);
+				coords[1] = MyMath.gudermann(coords[1]);
+			}
+		}
+		else if (mSource.mType == MapnikProjectionDataType.Gudermann)
+		{
+			if (mDest.mType == MapnikProjectionDataType.LatLong)
+			{
+				coords[0] = MyMath.gudermannInverse(coords[0]);
+				coords[1] = MyMath.gudermannInverse(coords[1]);
+			}
+		}
 		return true;
 	}
-	
-/*
-    public:
-        proj_transform(projection const& source,
-                       projection const& dest);
-
-        bool forward (double& x, double& y , double& z) const;
-        bool backward (double& x, double& y , double& z) const;
-*/
-	
 }
