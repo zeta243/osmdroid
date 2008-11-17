@@ -2,6 +2,8 @@ package org.andnav.osm.views.tiles.renderer.mapnik.geometry;
 
 import java.util.Vector;
 
+import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikVertex.VertexCommandType;
+
 public class MapnikLineString extends MapnikGeometry {
 
 	private Vector<MapnikVertex> mVertices;
@@ -15,14 +17,12 @@ public class MapnikLineString extends MapnikGeometry {
 	
 	@Override
 	public boolean HitTest(double x, double y, double tol) {
-		// TODO Auto-generated method stub
-		return false;
+		return MapnikGeometryUtil.pointOnPath(x, y, mVertices, tol);
 	}
 
 	@Override
 	public MapnikVertex getNextVertex() {
-		// TODO Auto-generated method stub
-		return null;
+		return mVertices.get(mItr++);
 	}
 
 	@Override
@@ -91,32 +91,29 @@ public class MapnikLineString extends MapnikGeometry {
 
 	@Override
 	public void lineTo(MapnikVertex v) {
-		// TODO Auto-generated method stub
-		
+		v.mCmd = VertexCommandType.SEG_LINETO;
+		mVertices.add(v);
 	}
 
 	@Override
 	public void moveTo(MapnikVertex v) {
-		// TODO Auto-generated method stub
-		
+		v.mCmd = VertexCommandType.SEG_MOVETO;
+		mVertices.add(v);
 	}
 
 	@Override
 	public int numPoints() {
-		// TODO Auto-generated method stub
-		return 0;
+		return mVertices.size();
 	}
 
 	@Override
 	public void rewind(int pos) {
-		// TODO Auto-generated method stub
-		
+		mItr = 0;
 	}
 
 	@Override
 	public void setCapacity(int size) {
-		// TODO Auto-generated method stub
-		
+		mVertices.ensureCapacity(size);
 	}
 
 }

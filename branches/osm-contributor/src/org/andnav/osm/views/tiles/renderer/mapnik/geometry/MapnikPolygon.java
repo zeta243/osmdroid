@@ -16,7 +16,7 @@ public class MapnikPolygon extends MapnikGeometry {
 	
 	@Override
 	public boolean HitTest(double x, double y, double unused) {
-		return MapnikGeometryUtil.PointInsidePath(x, y, mVertices);
+		return MapnikGeometryUtil.pointInsidePath(x, y, mVertices);
 	}
 
 	@Override
@@ -96,7 +96,6 @@ public class MapnikPolygon extends MapnikGeometry {
 	@Override
 	public void setCapacity(int size) {
 		mVertices.ensureCapacity(size);
-		
 	}
 
 	@Override

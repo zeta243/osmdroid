@@ -1,8 +1,10 @@
-package org.andnav.osm.views.tiles.renderer.mapnik;
+package org.andnav.osm.views.tiles.renderer.mapnik.feature;
 
 // original from include/mapnik/feature_type_style.hpp
 
 import java.util.Vector;
+
+import org.andnav.osm.views.tiles.renderer.mapnik.MapnikRule;
 
 public class MapnikFeatureTypeStyle {
 

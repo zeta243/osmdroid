@@ -13,7 +13,7 @@ public class MapnikPoint extends MapnikGeometry {
 	
 	@Override
 	public boolean HitTest(double x, double y, double tol) {
-		return MapnikGeometryUtil.PointInCircle(mPoint.x, mPoint.y, x, y, tol);
+		return MapnikGeometryUtil.pointInsideCircle(mPoint.x, mPoint.y, x, y, tol);
 	}
 
 	@Override
