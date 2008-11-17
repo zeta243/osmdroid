@@ -1,27 +1,31 @@
 package org.andnav.osm.views.tiles.renderer.mapnik;
 
-import org.andnav.osm.views.tiles.renderer.mapnik.projector.Projector;
+import static org.andnav.osm.util.MyMath.gudermann;
+import static org.andnav.osm.util.MyMath.gudermannInverse;
 
 public class MapnikProjection {
 	
-	private String mParams;
-	private Projector mProjection;
-	
-	public MapnikProjection()
+	public enum MapnikProjectionDataType
 	{
-		mParams = "+proj=latlong +ellps=WGS84";
-		init();
+		LatLong,
+		Gudermann
 	}
 	
-	public MapnikProjection(String params)
+	public MapnikProjectionDataType mType;
+	
+	public MapnikProjection(MapnikProjectionDataType t)
 	{
-		mParams = params;
-		init();
-		
+		mType = t;
 	}
+	
+//	public MapnikProjection(String params)
+//	{
+//		mParams = params;
+//		init();
+//	}
 
-	private void init()
-	{
-		// TODO: Initialise the projection object.
-	}
+//	private void init()
+//	{
+//		// TODO: Initialise the projection object.
+//	}
 }

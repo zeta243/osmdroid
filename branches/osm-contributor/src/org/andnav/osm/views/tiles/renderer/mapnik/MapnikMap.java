@@ -3,6 +3,8 @@ package org.andnav.osm.views.tiles.renderer.mapnik;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.andnav.osm.util.MyMath;
+import org.andnav.osm.views.tiles.renderer.mapnik.MapnikProjection.MapnikProjectionDataType;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeatureTypeStyle;
 
 // original from include/mapnik/map.hpp
@@ -182,16 +184,33 @@ public class MapnikMap {
 	
 	public void zoomAll()
 	{
-		MapnikProjection proj0 = new MapnikProjection(mSrc);
-		MapnikEnvelope ext = null;
+		// MapnikProjection proj0 = new MapnikProjection(MapnikProjectionDataType.LatLong);
+		MapnikEnvelope mapEnvelope = null;
 		boolean first = true;
 		
 		for (MapnikLayer l : mLayers)
 		{
 			String layerSrc = l.getSrc();
-			MapnikProjection proj1 = new MapnikProjection(layerSrc);
+			// MapnikProjection proj1 = new MapnikProjection(MapnikProjectionDataType.Gudermann);
+			MapnikEnvelope layerEnvelope = l.getEnvelope();
 			
+			// Convert layer's lat/long into map's coords
+			double mapMinX = layerEnvelope.getMinX();
+			double mapMinY = MyMath.gudermannInverse(layerEnvelope.getMinY());
+			
+			double mapMaxX = layerEnvelope.getMaxX();
+			double mapMaxY = MyMath.gudermannInverse(layerEnvelope.getMaxY());
+			
+			MapnikEnvelope convertedLayerEnvelope = new MapnikEnvelope(mapMinX, mapMinY, mapMaxX, mapMaxY);
+			
+			if (mapEnvelope == null)
+				mapEnvelope = convertedLayerEnvelope;
+			else
+				mapEnvelope.expandToInclude(convertedLayerEnvelope);
 		}
+		
+		this.zoomToBox(mapEnvelope);
+		
 /*
         projection proj0(srs_);
         Envelope<double> ext;
@@ -232,6 +251,12 @@ public class MapnikMap {
         }
         zoomToBox(ext);
 */
+	}
+	
+	public void zoomToBox(MapnikEnvelope e)
+	{
+		this.mCurrentExtent = e;
+		fixAspectRatio();
 	}
 	
 	private void fixAspectRatio()
