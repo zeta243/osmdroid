@@ -5,11 +5,10 @@ import java.util.Vector;
 
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikRaster;
 
-// geometry2d
-public class MapnikFeature<GEOMETRY_TYPE> {
+public class MapnikFeature {
 	
 	private int mId;
-	Vector<GEOMETRY_TYPE> mGeomCont;
+	Vector<Double> mGeomCont;
 	MapnikRaster mRaster;
 	HashMap<String, Object> properties;
 	
@@ -17,7 +16,7 @@ public class MapnikFeature<GEOMETRY_TYPE> {
 	{
 		mId = id;
 		properties = new HashMap<String, Object>();
-		mGeomCont = new Vector<GEOMETRY_TYPE>();
+		mGeomCont = new Vector<Double>();
 		mRaster  = null;
 	}
 	
@@ -26,7 +25,7 @@ public class MapnikFeature<GEOMETRY_TYPE> {
 		return mId;
 	}
 	
-	public void addGeometry(GEOMETRY_TYPE g)
+	public void addGeometry(Double g)
 	{
 		mGeomCont.add(g);
 	}
@@ -36,7 +35,7 @@ public class MapnikFeature<GEOMETRY_TYPE> {
 		return mGeomCont.size();
 	}
 	
-	public GEOMETRY_TYPE getGeometry(int id)
+	public Double getGeometry(int id)
 	{
 		return mGeomCont.get(id);
 	}

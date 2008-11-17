@@ -13,13 +13,5 @@ public abstract class MapnikFilter {
 	public abstract void accept(MapnikFilterVisitor visitor);
 	
 	public abstract String toString();
-	
-	/*
-       virtual bool pass(const FeatureT& feature) const=0;
-       virtual filter<FeatureT>* clone() const=0;
-       virtual void accept(filter_visitor<FeatureT>& v) = 0;
-       virtual std::string to_string() const=0;
-       virtual ~filter() {}
 
-	 */
 }
