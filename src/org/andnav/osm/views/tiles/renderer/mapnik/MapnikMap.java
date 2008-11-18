@@ -191,19 +191,18 @@ public class MapnikMap {
 	
 	public void zoomAll()
 	{
-		// TODO: I am unsure of the transformations here.
+		// Projection Transformations skipped - all data *must* be in Mercator projection
 		MapnikEnvelope mapEnvelope = null;
 		
 		for (MapnikLayer l : mLayers)
 		{
 			MapnikEnvelope layerEnvelope = l.getEnvelope();
 			
-			// Convert layer's lat/long into map's coords
 			double mapMinX = layerEnvelope.getMinX();
-			double mapMinY = MyMath.gudermannInverse(layerEnvelope.getMinY());
+			double mapMinY = layerEnvelope.getMinY();
 			
 			double mapMaxX = layerEnvelope.getMaxX();
-			double mapMaxY = MyMath.gudermannInverse(layerEnvelope.getMaxY());
+			double mapMaxY = layerEnvelope.getMaxY();
 			
 			MapnikEnvelope convertedLayerEnvelope = new MapnikEnvelope(mapMinX, mapMinY, mapMaxX, mapMaxY);
 			
@@ -275,17 +274,11 @@ public class MapnikMap {
 	
 	MapnikFeatureSet queryPoint(int index, double[] coords)
 	{
-		MapnikLayer l = this.getLayer(index);
-		
-        double z = 0;
-        // Forwards: layer => Map
-        // Backwards: Map => Layer
-        coords[1] = MyMath.gudermann(coords[1]);
+		// Projection Transformations skipped - all data *must* be in Mercator projection
+		MapnikLayer l = getLayer(index);
         
         double minx = mCurrentExtent.getMinX();
-        // double miny = MyMath.gudermann(mCurrentExtent.getMinY());
         double maxx = mCurrentExtent.getMaxX();
-        // double maxy = MyMath.gudermann(mCurrentExtent.getMaxY());
 
         double tol = (maxx - minx) / mWidth * 3;
         
@@ -294,10 +287,30 @@ public class MapnikMap {
         {
         	MapnikFeatureSet fs = ds.getFeaturesAtPoint(coords);
         	if (fs != null)
-        	{
         		return new MapnikFeatureSet(new MapnikFeatureSetFilter(fs, new MapnikFilterHitTest(coords[0], coords[1], tol)));
-        	}
         }	    
+		return null;
+	}
+
+	public MapnikFeatureSet queryMapPoint(int index, double[] coords)
+	{
+		// Projection Transformations skipped - all data *must* be in Mercator projection
+		MapnikLayer l = getLayer(index);
+		MapnikCoordTransformer tr = getCoordTransformer();
+		
+		tr.backward(coords);
+		
+		double minx = mCurrentExtent.getMinX();
+		double maxx = mCurrentExtent.getMaxX();		
+
+        double tol = (maxx - minx) / mWidth * 3;
+        MapnikDataSource ds = l.getDataSource();
+        if (ds != null)
+        {
+        	MapnikFeatureSet fs = ds.getFeaturesAtPoint(coords);
+        	if (fs != null)
+        		return new MapnikFeatureSet(new MapnikFeatureSetFilter(fs, new MapnikFilterHitTest(coords[0], coords[1], tol)));
+        }
 		return null;
 	}
 }
