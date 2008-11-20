@@ -1,21 +1,23 @@
-package org.andnav.osm.views.tiles.renderer.mapnik.feature;
+package org.andnav.osm.views.tiles.renderer.mapnik;
 
 import java.util.Vector;
 
-public class MapnikFeatureLayerDescriptor {
+import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeatureAttributeDescriptor;
+
+public class MapnikLayerDescriptor {
 
 	private String mName;
 	private String mEncoding;
 	private Vector<MapnikFeatureAttributeDescriptor> mAttrDesc;
 
-	public MapnikFeatureLayerDescriptor(String name, String encoding)
+	public MapnikLayerDescriptor(String name, String encoding)
 	{
 		mName = name;
 		mEncoding = encoding;
 		mAttrDesc = new Vector<MapnikFeatureAttributeDescriptor>();
 	}
 	
-	public MapnikFeatureLayerDescriptor(MapnikFeatureLayerDescriptor l)
+	public MapnikLayerDescriptor(MapnikLayerDescriptor l)
 	{
 		mName = l.mName;
 		mEncoding = l.mEncoding;

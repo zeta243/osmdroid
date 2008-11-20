@@ -3,9 +3,9 @@ package org.andnav.osm.views.tiles.renderer.mapnik.datasource;
 import java.util.List;
 
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikEnvelope;
+import org.andnav.osm.views.tiles.renderer.mapnik.MapnikLayerDescriptor;
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikParameters;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeature;
-import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeatureLayerDescriptor;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeatureSet;
 
 public abstract class MapnikDataSource {
@@ -33,5 +33,5 @@ public abstract class MapnikDataSource {
     public abstract MapnikFeatureSet getFeatures(MapnikQuery query);
     public abstract MapnikFeatureSet getFeaturesAtPoint(double[] coords);
     public abstract MapnikEnvelope getEnvelope();
-    public abstract MapnikFeatureLayerDescriptor getLayerDescriptor();
+    public abstract MapnikLayerDescriptor getLayerDescriptor();
 }
