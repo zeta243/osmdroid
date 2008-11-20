@@ -113,7 +113,7 @@ public class MapnikFilterParser {
     {
     	expressions.push(new MapnikFilterLiteral(new MapnikParameterDoubleValue(Double.parseDouble(val))));
     }
-    
+     
     public static void pushString(Stack<MapnikFilterExpression> expressions, String val)
     {
     	expressions.push(new MapnikFilterLiteral(new MapnikParameterStringValue(val.substring(1, val.length() - 1))));
@@ -134,19 +134,11 @@ SKIP :
 |	"\n"
 }
 
-TOKEN : /* OPERATORS */
-{
-	< EQUALS: "=" >
-|   < NOT_EQUALS: "!=" >
-|   < GREATER_THAN: ">" >
-|   < LESS_THAN: "<" >
-}
-
 TOKEN : /* and/or */
 {
 	< DECIMAL_LITERAL: ["1"-"9"] (["0"-"9"])* >
 |	< DECIMAL_FLOATING_POINT_LITERAL: (["0"-"9"])+ "." (["0"-"9"])+ >
-|   < LETTER: [         "A"-"Z",         "a"-"z" ] >|	< STRING_LITERAL:      "'"      (   (~["\"","\\","\n","\r"])        | ("\\"            ( ["n","t","b","r","f","\\","'","\""]            | ["0"-"7"] ( ["0"-"7"] )?            | ["0"-"3"] ["0"-"7"] ["0"-"7"]            )          )      )*      "'" >|  	< PROPERTY: "[" (<LETTER> | "_" | ":")+ "]">//|	< LITERAL: (<DECIMAL_LITERAL> | <DECIMAL_FLOATING_POINT_LITERAL> | <STRING_LITERAL> | <PROPERTY> ) >//|   < FUNCTION: ( <LITERAL> | ("sqrt" | "sin" | "cos")"(" <LITERAL> ")" | ("min" | "max")"("<LITERAL>","<LITERAL>")") > //|   < FACTOR:   (<FUNCTION> | "("  ")" | "-" ) >//|   < TERM:     <FACTOR> ("*" <FACTOR> |//                          "/" <FACTOR>) >//|   < EXPRESSION: <TERM> ("+" <TERM> |//                          "-" <TERM> )>//|   < RELATION: <EXPRESSION> ((">=" <EXPRESSION>) |//                              (">" <EXPRESSION>)  |//                              ("<" <EXPRESSION>)  |//                              ("<=" <EXPRESSION>)) >//|   < EQUATION: <RELATION> (("=" <RELATION>) |//                            ("<>" <RELATION>)) >//|   < NOT_EXPR: <EQUATION> | "not" <EQUATION> >//|   < AND_EXPR: <NOT_EXPR> "and" <NOT_EXPR> >//|   < OR_EXPR: <AND_EXPR> "or" <AND_EXPR> >//|   < FILTER_STATEMENT: <OR_EXPR> ";" >
+|   < LETTER: [         "A"-"Z",         "a"-"z" ] >|	< STRING_LITERAL:      "'"      (   (~["\"","\\","\n","\r"])        | ("\\"            ( ["n","t","b","r","f","\\","'","\""]            | ["0"-"7"] ( ["0"-"7"] )?            | ["0"-"3"] ["0"-"7"] ["0"-"7"]            )          )      )*      "'" >|  	< PROPERTY: "[" (<LETTER> | "_" | ":")+ "]">
 }
 
 int one_line() : {}
