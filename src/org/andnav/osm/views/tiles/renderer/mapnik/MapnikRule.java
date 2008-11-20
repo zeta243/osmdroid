@@ -33,6 +33,19 @@ public class MapnikRule {
 	}
 	
 	public MapnikRule(String name,
+			          String title)
+	{
+		mName = name;
+		mTitle = title;
+		mAbstract = new String();
+		mMinScale = 0;
+		mMaxScale = Double.POSITIVE_INFINITY;
+		mSymbolizerVector = new Vector<MapnikSymbolizer>();
+		mFilter = new MapnikFilterAll();
+		mElseFilter = false;
+	}
+	
+	public MapnikRule(String name,
 			          String title,
 			          double minScaleDenominator,
 			          double maxScaleDenominator)

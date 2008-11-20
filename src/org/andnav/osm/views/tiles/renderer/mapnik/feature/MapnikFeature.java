@@ -3,6 +3,7 @@ package org.andnav.osm.views.tiles.renderer.mapnik.feature;
 import java.util.HashMap;
 import java.util.Vector;
 
+import org.andnav.osm.views.tiles.renderer.mapnik.MapnikParameterValue;
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikRaster;
 import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikGeometry;
 import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikPoint;
@@ -12,12 +13,12 @@ public class MapnikFeature {
 	private int mId;
 	Vector<MapnikGeometry> mGeomCont;
 	MapnikRaster mRaster;
-	HashMap<String, Object> properties;
+	HashMap<String, MapnikParameterValue> properties;
 	
 	public MapnikFeature(int id)
 	{
 		mId = id;
-		properties = new HashMap<String, Object>();
+		properties = new HashMap<String, MapnikParameterValue>();
 		mGeomCont = new Vector<MapnikGeometry>();
 		mRaster  = null;
 	}
@@ -57,7 +58,7 @@ public class MapnikFeature {
 		mRaster = r;
 	}
 	
-	public HashMap<String, Object> getProperties()
+	public HashMap<String, MapnikParameterValue> getProperties()
 	{
 		return properties;
 	}

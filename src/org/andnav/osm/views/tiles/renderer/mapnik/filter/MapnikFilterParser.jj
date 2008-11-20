@@ -1,0 +1,220 @@
+/**
+ * JavaCC file
+ */
+ 
+options {
+  JDK_VERSION = "1.5";
+}
+PARSER_BEGIN(MapnikFilterParser)
+package org.andnav.osm.views.tiles.renderer.mapnik.filter;
+
+import java.util.Stack;
+import org.andnav.osm.views.tiles.renderer.mapnik.filter.compare.*;
+import org.andnav.osm.views.tiles.renderer.mapnik.filter.maths.*;
+
+public class MapnikFilterParser {
+	
+	private static Stack<MapnikFilter> mFilters;
+	private static Stack<MapnikFilterExpression> mExpressions;
+	
+  public static void compile(String args[]) throws ParseException {
+    MapnikFilterParser parser = new MapnikFilterParser(System.in);
+    while (true) {
+      System.out.println("Reading from standard input...");
+      System.out.print("Enter an expression like \"1+(2+3)*4;\" :");
+      try {
+        switch (MapnikFilterParser.one_line()) {
+        case 0:
+          System.out.println("OK.");
+          break;
+        case 1:
+          System.out.println("Goodbye.");
+          break;
+        default:
+          break;
+        }
+      } catch (Exception e) {
+        System.out.println("NOK.");
+        System.out.println(e.getMessage());
+        MapnikFilterParser.ReInit(System.in);
+      } catch (Error e) {
+        System.out.println("Oops.");
+        System.out.println(e.getMessage());
+        break;
+      }
+    }
+  }
+  
+    public static void composeOrFilter(Stack<MapnikFilter> filters)
+    {
+        if (filters.size() >= 2)
+        {
+      	    MapnikFilter right = filters.pop();
+      	    MapnikFilter left  = filters.pop();
+      	    if (left != null && right != null)
+        		filters.push(new MapnikFilterLogicalOr(left, right));
+        }
+    }
+  
+    public static void composeAndFilter(Stack<MapnikFilter> filters)
+    {
+        if (filters.size() >= 2)
+        {
+      	    MapnikFilter right = filters.pop();
+      	    MapnikFilter left  = filters.pop();
+      	    if (left != null && right != null)
+      		    filters.push(new MapnikFilterLogicalAnd(left, right));
+        }
+    }
+  
+    public static void composeNotFilter(Stack<MapnikFilter> filters)
+    {
+        if (filters.size() >= 1)
+        {
+      	    MapnikFilter filter  = filters.pop();
+      	    if (filter != null)
+      		    filters.push(new MapnikFilterLogicalNot(filter));
+        }
+    }
+    
+    public static void composeFilter(Stack<MapnikFilter> filters, Stack<MapnikFilterExpression> expressions, MapnikFilterCompareOp op)
+    {
+   		if (expressions.size()>=2)
+        {
+            MapnikFilterExpression right = expressions.pop();
+            MapnikFilterExpression left  = expressions.pop();
+
+            if (left != null && right != null)
+                filters.push(new MapnikFilterCompare(left, right, op));
+        }
+    }
+    
+    public static void composeExpression(Stack<MapnikFilterExpression> expressions, MapnikFilterExpressionMathsOp op)
+    {
+    	if (expressions.size() >= 2)
+    	{
+    		MapnikFilterExpression right = expressions.pop();
+    		MapnikFilterExpression left  = expressions.pop();
+    		
+    		// if (left != null && right != null)
+    		    // TODO: Figure out data-types that under-pin expressions
+    	}
+    }
+}
+PARSER_END(MapnikFilterParser)
+
+SKIP :
+{
+ 	" "
+|	"\r"
+|	"\t"
+|	"\n"
+}
+
+TOKEN : /* OPERATORS */
+{
+	< EQUALS: "=" >
+|   < NOT_EQUALS: "!=" >
+|   < GREATER_THAN: ">" >
+|   < LESS_THAN: "<" >
+}
+
+TOKEN : /* and/or */
+{
+	< DECIMAL_LITERAL: ["1"-"9"] (["0"-"9"])* >
+|	< DECIMAL_FLOATING_POINT_LITERAL: (["0"-"9"])+ "." (["0"-"9"])+ >
+//|   < LETTER: [//         "A"-"Z",//         "a"-"z" ] >//|	< STRING_LITERAL://      "'"//      (   (~["\"","\\","\n","\r"])//        | ("\\"//            ( ["n","t","b","r","f","\\","'","\""]//            | ["0"-"7"] ( ["0"-"7"] )?//            | ["0"-"3"] ["0"-"7"] ["0"-"7"]//            )//          )//      )*//      "'" >//|  	< PROPERTY: "[" (<LETTER> | "_" | ":")+ "]">//|	< LITERAL: (<DECIMAL_LITERAL> | <DECIMAL_FLOATING_POINT_LITERAL> | <STRING_LITERAL> | <PROPERTY> ) >//|   < FUNCTION: ( <LITERAL> | ("sqrt" | "sin" | "cos")"(" <LITERAL> ")" | ("min" | "max")"("<LITERAL>","<LITERAL>")") > //|   < FACTOR:   (<FUNCTION> | "("  ")" | "-" ) >//|   < TERM:     <FACTOR> ("*" <FACTOR> |//                          "/" <FACTOR>) >//|   < EXPRESSION: <TERM> ("+" <TERM> |//                          "-" <TERM> )>//|   < RELATION: <EXPRESSION> ((">=" <EXPRESSION>) |//                              (">" <EXPRESSION>)  |//                              ("<" <EXPRESSION>)  |//                              ("<=" <EXPRESSION>)) >//|   < EQUATION: <RELATION> (("=" <RELATION>) |//                            ("<>" <RELATION>)) >//|   < NOT_EXPR: <EQUATION> | "not" <EQUATION> >//|   < AND_EXPR: <NOT_EXPR> "and" <NOT_EXPR> >//|   < OR_EXPR: <AND_EXPR> "or" <AND_EXPR> >//|   < FILTER_STATEMENT: <OR_EXPR> ";" >
+}
+
+
+
+int one_line() : {}
+{
+  filter_statement() { return 0; }
+| ";"	    { return 1; }
+}
+
+void filter_statement() : {}
+{
+	or_expr() ";"
+}
+
+/*
+
+
+                literal = number | string | property;
+
+*/
+
+void intNumber() : {}
+{
+	<DECIMAL_LITERAL> {}
+}
+
+void number() : {}
+{
+    <DECIMAL_FLOATING_POINT_LITERAL> {}
+}
+
+void literal() : {}
+{
+	number() // | string() // | property()
+}
+
+void function() : {}
+{
+	literal() | (("sqrt" | "sin" | "cos") "(" literal() ")") | ("min" | "max")"(" literal()","literal()")"
+}
+
+void factor() : {}
+{
+	function() | "(" or_expr() ")" | ("-" factor() ) 
+}
+
+void term() : {}
+{
+	factor() ( "*" factor() { composeExpression(mExpressions, new MapnikFilterExpressionMathsOpMultiply()); }
+|              "/" factor() { composeExpression(mExpressions, new MapnikFilterExpressionMathsOpDivide()); } )
+}
+
+void expression() : {}
+{
+	term() ( "+" term() { composeExpression(mExpressions, new MapnikFilterExpressionMathsOpAdd()); }
+|            "-" term() { composeExpression(mExpressions, new MapnikFilterExpressionMathsOpSub()); } )
+}
+
+void relation() : {}
+{
+	expression() ( ">=" expression() { composeFilter(mFilters, mExpressions, new MapnikFilterCompareOpGreaterThanOrEqual()); }
+|                  ">"  expression() { composeFilter(mFilters, mExpressions, new MapnikFilterCompareOpGreaterThan()); }
+|                  "<"  expression() { composeFilter(mFilters, mExpressions, new MapnikFilterCompareOpLessThan()); }
+|                  "<=" expression() { composeFilter(mFilters, mExpressions, new MapnikFilterCompareOpGreaterThanOrEqual()); } )
+}
+
+void equation() : {}
+{
+    relation() ( "=" relation() { composeFilter(mFilters, mExpressions, new MapnikFilterCompareOpEquals()); }
+|                "<>" relation() { composeFilter(mFilters, mExpressions, new MapnikFilterCompareOpNotEquals()); } )
+}
+
+void not_expr() : {}
+{
+	equation() | "not" equation() { composeNotFilter(mFilters); }
+}
+
+void and_expr() : {}
+{
+	not_expr() "and" not_expr() { composeAndFilter(mFilters); }
+}
+
+void or_expr() : {}
+{
+    and_expr() "or" and_expr() { composeOrFilter(mFilters); } 
+}
+
+
+
+
+
+
+

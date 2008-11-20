@@ -1,21 +1,15 @@
 package org.andnav.osm.views.tiles.renderer.mapnik;
 
-public class MapnikParameterValue<T> {
+public abstract class MapnikParameterValue<T> {
 
-	private T p;
-	
-	public MapnikParameterValue(T v)
+	public MapnikParameterValue()
 	{
-		p = v;
+
 	}
 	
-	public T getValue()
-	{
-		return p;
-	}
+	public abstract T getValue();
 	
-	public void setValue(T v)
-	{
-		p = v;
-	}
+	public abstract void setValue(T v);
+
+	public abstract String toString();
 }
