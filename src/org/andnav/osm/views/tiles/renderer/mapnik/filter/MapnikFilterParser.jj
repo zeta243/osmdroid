@@ -1,7 +1,7 @@
 /**
  * JavaCC file
  */
- 
+
 options {
   JDK_VERSION = "1.5";
 }
@@ -9,120 +9,111 @@ PARSER_BEGIN(MapnikFilterParser)
 package org.andnav.osm.views.tiles.renderer.mapnik.filter;
 
 import java.util.Stack;
+import java.io.ByteArrayInputStream;
 import org.andnav.osm.views.tiles.renderer.mapnik.filter.compare.*;
 import org.andnav.osm.views.tiles.renderer.mapnik.filter.maths.*;
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikParameterIntValue;
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikParameterDoubleValue;
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikParameterStringValue;
+import android.util.Log;
 
 public class MapnikFilterParser {
 	
+	private static final String TAG = "MapnikFilterParser";
 	private static Stack<MapnikFilter> mFilters;
 	private static Stack<MapnikFilterExpression> mExpressions;
-	
-  public static void compile(String args[]) throws ParseException {
-    MapnikFilterParser parser = new MapnikFilterParser(System.in);
-    while (true) {
-      System.out.println("Reading from standard input...");
-      System.out.print("Enter an expression like \"1+(2+3)*4;\" :");
-      try {
-        switch (MapnikFilterParser.one_line()) {
-        case 0:
-          System.out.println("OK.");
-          break;
-        case 1:
-          System.out.println("Goodbye.");
-          break;
-        default:
-          break;
-        }
-      } catch (Exception e) {
-        System.out.println("NOK.");
-        System.out.println(e.getMessage());
-        MapnikFilterParser.ReInit(System.in);
-      } catch (Error e) {
-        System.out.println("Oops.");
-        System.out.println(e.getMessage());
-        break;
-      }
-    }
-  }
-  
-    public static void composeOrFilter(Stack<MapnikFilter> filters)
-    {
-        if (filters.size() >= 2)
-        {
-      	    MapnikFilter right = filters.pop();
-      	    MapnikFilter left  = filters.pop();
-      	    if (left != null && right != null)
-        		filters.push(new MapnikFilterLogicalOr(left, right));
-        }
-    }
-  
-    public static void composeAndFilter(Stack<MapnikFilter> filters)
-    {
-        if (filters.size() >= 2)
-        {
-      	    MapnikFilter right = filters.pop();
-      	    MapnikFilter left  = filters.pop();
-      	    if (left != null && right != null)
-      		    filters.push(new MapnikFilterLogicalAnd(left, right));
-        }
-    }
-  
-    public static void composeNotFilter(Stack<MapnikFilter> filters)
-    {
-        if (filters.size() >= 1)
-        {
-      	    MapnikFilter filter  = filters.pop();
-      	    if (filter != null)
-      		    filters.push(new MapnikFilterLogicalNot(filter));
-        }
-    }
-    
-    public static void composeFilter(Stack<MapnikFilter> filters, Stack<MapnikFilterExpression> expressions, MapnikFilterCompareOp op)
-    {
-   		if (expressions.size()>=2)
-        {
-            MapnikFilterExpression right = expressions.pop();
-            MapnikFilterExpression left  = expressions.pop();
 
-            if (left != null && right != null)
-                filters.push(new MapnikFilterCompare(left, right, op));
-        }
-    }
-    
-    public static void composeExpression(Stack<MapnikFilterExpression> expressions, MapnikFilterExpressionMathsOp op)
-    {
-    	if (expressions.size() >= 2)
-    	{
-    		MapnikFilterExpression right = expressions.pop();
-    		MapnikFilterExpression left  = expressions.pop();
-    		
-    		if (left != null && right != null)
-    		    expressions.push(new MapnikFilterExpressionMaths(op, left, right));
-    	}
-    }
-    
-    public static void pushInt(Stack<MapnikFilterExpression> expressions, String val)
-    {
-    	expressions.push(new MapnikFilterLiteral(new MapnikParameterIntValue(Integer.parseInt(val))));
-    }
-    
-    public static void pushDouble(Stack<MapnikFilterExpression> expressions, String val)
-    {
-    	expressions.push(new MapnikFilterLiteral(new MapnikParameterDoubleValue(Double.parseDouble(val))));
-    }
-     
-    public static void pushString(Stack<MapnikFilterExpression> expressions, String val)
-    {
-    	expressions.push(new MapnikFilterLiteral(new MapnikParameterStringValue(val.substring(1, val.length() - 1))));
-    }
+	public static synchronized void compile(Stack<MapnikFilter> filters, Stack<MapnikFilterExpression> expressions, String filterText) throws Exception {
+		MapnikFilterParser.mFilters = filters;
+		MapnikFilterParser.mExpressions = expressions;
 
-    public static void pushProperty(Stack<MapnikFilterExpression> expressions, String val)
-    {
-    	expressions.push(new MapnikFilterProperty(val.substring(1, val.length() - 1)));
-    }
+		MapnikFilterParser parser = new MapnikFilterParser(new ByteArrayInputStream(filterText.getBytes()));
+
+		try {
+			parser.one_line();
+		}
+		catch (Exception e)
+		{
+			Log.e(TAG, "Parsing Failed: " + e.toString() + e.getMessage());
+			throw e;
+		}
+	}
+
+	public static void composeOrFilter(Stack<MapnikFilter> filters)
+	{
+		if (filters.size() >= 2)
+		{
+			MapnikFilter right = filters.pop();
+			MapnikFilter left  = filters.pop();
+			if (left != null && right != null)
+				filters.push(new MapnikFilterLogicalOr(left, right));
+		}
+	}
+
+	public static void composeAndFilter(Stack<MapnikFilter> filters)
+	{
+		if (filters.size() >= 2)
+		{
+			MapnikFilter right = filters.pop();
+			MapnikFilter left  = filters.pop();
+			if (left != null && right != null)
+				filters.push(new MapnikFilterLogicalAnd(left, right));
+		}
+	}
+
+	public static void composeNotFilter(Stack<MapnikFilter> filters)
+	{
+		if (filters.size() >= 1)
+		{
+			MapnikFilter filter  = filters.pop();
+			if (filter != null)
+				filters.push(new MapnikFilterLogicalNot(filter));
+		}
+	}
+
+	public static void composeFilter(Stack<MapnikFilter> filters, Stack<MapnikFilterExpression> expressions, MapnikFilterCompareOp op)
+	{
+		if (expressions.size()>=2)
+		{
+			MapnikFilterExpression right = expressions.pop();
+			MapnikFilterExpression left  = expressions.pop();
+
+			if (left != null && right != null)
+				filters.push(new MapnikFilterCompare(left, right, op));
+		}
+	}
+
+	public static void composeExpression(Stack<MapnikFilterExpression> expressions, MapnikFilterExpressionMathsOp op)
+	{
+		if (expressions.size() >= 2)
+		{
+			MapnikFilterExpression right = expressions.pop();
+			MapnikFilterExpression left  = expressions.pop();
+
+			if (left != null && right != null)
+				expressions.push(new MapnikFilterExpressionMaths(op, left, right));
+		}
+	}
+
+	public static void pushInt(Stack<MapnikFilterExpression> expressions, String val)
+	{
+		expressions.push(new MapnikFilterLiteral(new MapnikParameterIntValue(Integer.parseInt(val))));
+	}
+
+	public static void pushDouble(Stack<MapnikFilterExpression> expressions, String val)
+	{
+		expressions.push(new MapnikFilterLiteral(new MapnikParameterDoubleValue(Double.parseDouble(val))));
+	}
+
+	public static void pushString(Stack<MapnikFilterExpression> expressions, String val)
+	{
+		expressions.push(new MapnikFilterLiteral(new MapnikParameterStringValue(val.substring(1, val.length() - 1))));
+	}
+
+	public static void pushProperty(Stack<MapnikFilterExpression> expressions, String val)
+	{
+		expressions.push(new MapnikFilterProperty(val.substring(1, val.length() - 1)));
+	}
 }
 PARSER_END(MapnikFilterParser)
 
