@@ -1,26 +1,29 @@
 package org.andnav.osm.views.tiles.renderer.mapnik;
 
-public class MapnikParameterDoubleValue extends MapnikParameterValue<Double> {
-
-	private Double p;
+public class MapnikParameterDoubleValue extends MapnikParameterValue {
 	
 	public MapnikParameterDoubleValue(Double v)
 	{
-		p = v;
+		super(MapnikParameterValueType.DOUBLE, v);
 	}
 	
 	public Double getValue()
 	{
-		return p;
+		return (Double) mValue;
 	}
 	
 	public void setValue(Double v)
 	{
-		p = v;
+		mValue = v;
 	}
 	
 	public String toString()
 	{
-		return p.toString();
+		return mValue.toString();
+	}
+
+	@Override
+	public void setValue(Object v) {
+		setValue((Double)v);
 	}
 }

@@ -11,6 +11,9 @@ package org.andnav.osm.views.tiles.renderer.mapnik.filter;
 import java.util.Stack;
 import org.andnav.osm.views.tiles.renderer.mapnik.filter.compare.*;
 import org.andnav.osm.views.tiles.renderer.mapnik.filter.maths.*;
+import org.andnav.osm.views.tiles.renderer.mapnik.MapnikParameterIntValue;
+import org.andnav.osm.views.tiles.renderer.mapnik.MapnikParameterDoubleValue;
+import org.andnav.osm.views.tiles.renderer.mapnik.MapnikParameterStringValue;
 
 public class MapnikFilterParser {
 	
@@ -96,9 +99,29 @@ public class MapnikFilterParser {
     		MapnikFilterExpression right = expressions.pop();
     		MapnikFilterExpression left  = expressions.pop();
     		
-    		// if (left != null && right != null)
-    		    // TODO: Figure out data-types that under-pin expressions
+    		if (left != null && right != null)
+    		    expressions.push(new MapnikFilterExpressionMaths(op, left, right));
     	}
+    }
+    
+    public static void pushInt(Stack<MapnikFilterExpression> expressions, String val)
+    {
+    	expressions.push(new MapnikFilterLiteral(new MapnikParameterIntValue(Integer.parseInt(val))));
+    }
+    
+    public static void pushDouble(Stack<MapnikFilterExpression> expressions, String val)
+    {
+    	expressions.push(new MapnikFilterLiteral(new MapnikParameterDoubleValue(Double.parseDouble(val))));
+    }
+    
+    public static void pushString(Stack<MapnikFilterExpression> expressions, String val)
+    {
+    	expressions.push(new MapnikFilterLiteral(new MapnikParameterStringValue(val.substring(1, val.length() - 1))));
+    }
+
+    public static void pushProperty(Stack<MapnikFilterExpression> expressions, String val)
+    {
+    	expressions.push(new MapnikFilterProperty(val.substring(1, val.length() - 1)));
     }
 }
 PARSER_END(MapnikFilterParser)
@@ -123,10 +146,8 @@ TOKEN : /* and/or */
 {
 	< DECIMAL_LITERAL: ["1"-"9"] (["0"-"9"])* >
 |	< DECIMAL_FLOATING_POINT_LITERAL: (["0"-"9"])+ "." (["0"-"9"])+ >
-//|   < LETTER: [//         "A"-"Z",//         "a"-"z" ] >//|	< STRING_LITERAL://      "'"//      (   (~["\"","\\","\n","\r"])//        | ("\\"//            ( ["n","t","b","r","f","\\","'","\""]//            | ["0"-"7"] ( ["0"-"7"] )?//            | ["0"-"3"] ["0"-"7"] ["0"-"7"]//            )//          )//      )*//      "'" >//|  	< PROPERTY: "[" (<LETTER> | "_" | ":")+ "]">//|	< LITERAL: (<DECIMAL_LITERAL> | <DECIMAL_FLOATING_POINT_LITERAL> | <STRING_LITERAL> | <PROPERTY> ) >//|   < FUNCTION: ( <LITERAL> | ("sqrt" | "sin" | "cos")"(" <LITERAL> ")" | ("min" | "max")"("<LITERAL>","<LITERAL>")") > //|   < FACTOR:   (<FUNCTION> | "("  ")" | "-" ) >//|   < TERM:     <FACTOR> ("*" <FACTOR> |//                          "/" <FACTOR>) >//|   < EXPRESSION: <TERM> ("+" <TERM> |//                          "-" <TERM> )>//|   < RELATION: <EXPRESSION> ((">=" <EXPRESSION>) |//                              (">" <EXPRESSION>)  |//                              ("<" <EXPRESSION>)  |//                              ("<=" <EXPRESSION>)) >//|   < EQUATION: <RELATION> (("=" <RELATION>) |//                            ("<>" <RELATION>)) >//|   < NOT_EXPR: <EQUATION> | "not" <EQUATION> >//|   < AND_EXPR: <NOT_EXPR> "and" <NOT_EXPR> >//|   < OR_EXPR: <AND_EXPR> "or" <AND_EXPR> >//|   < FILTER_STATEMENT: <OR_EXPR> ";" >
+|   < LETTER: [         "A"-"Z",         "a"-"z" ] >|	< STRING_LITERAL:      "'"      (   (~["\"","\\","\n","\r"])        | ("\\"            ( ["n","t","b","r","f","\\","'","\""]            | ["0"-"7"] ( ["0"-"7"] )?            | ["0"-"3"] ["0"-"7"] ["0"-"7"]            )          )      )*      "'" >|  	< PROPERTY: "[" (<LETTER> | "_" | ":")+ "]">//|	< LITERAL: (<DECIMAL_LITERAL> | <DECIMAL_FLOATING_POINT_LITERAL> | <STRING_LITERAL> | <PROPERTY> ) >//|   < FUNCTION: ( <LITERAL> | ("sqrt" | "sin" | "cos")"(" <LITERAL> ")" | ("min" | "max")"("<LITERAL>","<LITERAL>")") > //|   < FACTOR:   (<FUNCTION> | "("  ")" | "-" ) >//|   < TERM:     <FACTOR> ("*" <FACTOR> |//                          "/" <FACTOR>) >//|   < EXPRESSION: <TERM> ("+" <TERM> |//                          "-" <TERM> )>//|   < RELATION: <EXPRESSION> ((">=" <EXPRESSION>) |//                              (">" <EXPRESSION>)  |//                              ("<" <EXPRESSION>)  |//                              ("<=" <EXPRESSION>)) >//|   < EQUATION: <RELATION> (("=" <RELATION>) |//                            ("<>" <RELATION>)) >//|   < NOT_EXPR: <EQUATION> | "not" <EQUATION> >//|   < AND_EXPR: <NOT_EXPR> "and" <NOT_EXPR> >//|   < OR_EXPR: <AND_EXPR> "or" <AND_EXPR> >//|   < FILTER_STATEMENT: <OR_EXPR> ";" >
 }
-
-
 
 int one_line() : {}
 {
@@ -139,26 +160,25 @@ void filter_statement() : {}
 	or_expr() ";"
 }
 
-/*
-
-
-                literal = number | string | property;
-
-*/
-
-void intNumber() : {}
+void property(): {}
 {
-	<DECIMAL_LITERAL> {}
+	<PROPERTY> { pushProperty(mExpressions, token.toString()); }
+}
+
+void string() : {}
+{
+	<STRING_LITERAL> { pushString(mExpressions, token.toString()); }
 }
 
 void number() : {}
 {
-    <DECIMAL_FLOATING_POINT_LITERAL> {}
+    <DECIMAL_FLOATING_POINT_LITERAL> { pushDouble(mExpressions, token.toString()); }
+|   <DECIMAL_LITERAL> { pushInt(mExpressions, token.toString()); }
 }
 
 void literal() : {}
 {
-	number() // | string() // | property()
+	number() | string() | property()
 }
 
 void function() : {}

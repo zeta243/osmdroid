@@ -7,24 +7,36 @@ import org.andnav.osm.views.tiles.renderer.mapnik.filter.MapnikFilterVisitor;
 
 public class MapnikFilterExpressionMaths extends MapnikFilterExpression {
 
+	private MapnikFilterExpression mLeft;
+	private MapnikFilterExpression mRight;
+	
+	private MapnikFilterExpressionMathsOp mOp;
+	
+	public MapnikFilterExpressionMaths(MapnikFilterExpressionMathsOp op, MapnikFilterExpression left, MapnikFilterExpression right)
+	{
+		mLeft = left;
+		mRight = right;
+		mOp = op;
+	}
+	
 	@Override
 	public void accept(MapnikFilterVisitor filterVisitor) {
-		// TODO Auto-generated method stub
+		mLeft.accept(filterVisitor);
+        mRight.accept(filterVisitor);
+        filterVisitor.visit(this);
 	}
+	
 	@Override
 	public MapnikFilterExpression clone() {
-		// TODO Auto-generated method stub
-		return null;
+		return new MapnikFilterExpressionMaths(mOp, mLeft, mRight);
 	}
 
 	public MapnikParameterValue getValue(MapnikFeature feature) {
-		// TODO Auto-generated method stub
-		return null;
+		return mOp.calculate(feature, mLeft, mRight);
 	}
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
-		return null;
+		return mLeft.toString() + " " + mOp.toString() + " " + mRight.toString();
 	}
 
 }

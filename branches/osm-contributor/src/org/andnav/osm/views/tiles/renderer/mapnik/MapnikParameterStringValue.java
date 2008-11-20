@@ -1,26 +1,29 @@
 package org.andnav.osm.views.tiles.renderer.mapnik;
 
-public class MapnikParameterStringValue extends MapnikParameterValue<String> {
-	
-	private String p;
+public class MapnikParameterStringValue extends MapnikParameterValue {
 	
 	public MapnikParameterStringValue(String v)
 	{
-		p = v;
+		super(MapnikParameterValueType.STRING, v);
 	}
 	
 	public String getValue()
 	{
-		return p;
+		return (String) mValue;
 	}
 	
 	public void setValue(String v)
 	{
-		p = v;
+		mValue = v;
 	}
 	
 	public String toString()
 	{
-		return p;
+		return mValue.toString();
+	}
+
+	@Override
+	public void setValue(Object v) {
+		setValue((String)v);
 	}
 }
