@@ -386,6 +386,7 @@ public class MapnikMapParser {
 //		
 //	}
 
+	
 	private void parsePolygonSymbolizer(MapnikRule rule, XmlPullParser xpp) throws XmlPullParserException, IOException, MapnikInvalidXMLException
 	{
 		MapnikPolygonSymbolizer symbolizer = new MapnikPolygonSymbolizer();
