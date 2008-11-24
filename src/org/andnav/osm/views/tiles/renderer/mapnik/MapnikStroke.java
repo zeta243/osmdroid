@@ -11,11 +11,11 @@ public class MapnikStroke {
 	static final int GAP  = 1;
 	
 	public enum LineCapEnum {
-		BUTT_CAP, SQUARE_CAP, ROUND_CAP, LineCapEnumMax
+		BUTT_CAP, SQUARE_CAP, ROUND_CAP
 	}
 
 	public enum LineJoinEnum {
-		MITER_JOIN, MITER_REVERT_JOIN, ROUND_JOIN, BEVEL_JOIN, LineJoinEnum_MAX
+		MITER_JOIN, MITER_REVERT_JOIN, ROUND_JOIN, BEVEL_JOIN
 	}
 
 	private MapnikColour mColour;

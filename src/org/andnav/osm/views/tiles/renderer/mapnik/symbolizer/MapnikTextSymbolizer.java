@@ -8,7 +8,6 @@ public class MapnikTextSymbolizer extends MapnikSymbolizer {
 	{
 		POINT_PLACEMENT,
 		LINE_PLACEMENT,
-		LabelPlacementEnum_MAX
 	}
 	
 	private String mName;
@@ -50,7 +49,7 @@ public class MapnikTextSymbolizer extends MapnikSymbolizer {
 		mDisplacement[0] = 0;
 		mDisplacement[1] = 0;
 		mAvoidEdges   = false;
-		this.mMinumumDistance = 0;
+		mMinumumDistance = 0;
 		mOverlap      = false;
 	}
 	
