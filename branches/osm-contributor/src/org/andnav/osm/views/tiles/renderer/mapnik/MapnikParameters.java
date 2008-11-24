@@ -10,6 +10,11 @@ public class MapnikParameters {
 		mParams = new HashMap<String, MapnikParameterValue>();
 	}
 	
+	public void set(String key, MapnikParameterValue val)
+	{
+		mParams.put(key, val);
+	}
+	
 	public Integer getInt(String key, Integer def)
 	{
 		Integer r = (Integer)mParams.get(key).getValue();

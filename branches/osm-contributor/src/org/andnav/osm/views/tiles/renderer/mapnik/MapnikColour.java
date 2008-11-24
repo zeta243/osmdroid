@@ -20,8 +20,8 @@ public class MapnikColour {
 		m_argb = ((alpha & 0xff) << 24 | (red & 0xff) << 16 | (green & 0xff) << 8 | (blue & 0xff));
 	}
 
-	public MapnikColour(int abgr) {
-		m_argb = abgr;
+	public MapnikColour(int argb) {
+		m_argb = argb;
 	}
 
 	public MapnikColour(MapnikColour c) {
