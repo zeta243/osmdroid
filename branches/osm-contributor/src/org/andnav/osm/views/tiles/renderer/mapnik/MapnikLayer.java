@@ -9,7 +9,7 @@ public class MapnikLayer {
 	private String mName;
 	private String mTitle;
 	private String mAbstract;
-	private String mSrc;
+	private String mSrs;
 	
 	private double mMinZoom;
 	private double mMaxZoom;
@@ -22,12 +22,12 @@ public class MapnikLayer {
 	
 	private MapnikDataSource mDataSource;
 
-	public MapnikLayer(String name, String src)
+	public MapnikLayer(String name, String srs)
 	{
 		mName = name;
 		mTitle = "";
 		mAbstract = "";
-		mSrc      = src;
+		mSrs      = srs;
 		mMinZoom  = 0;
 		mMaxZoom = Double.POSITIVE_INFINITY;
 		mActive = true;
@@ -42,7 +42,7 @@ public class MapnikLayer {
 		mName = l.mName;
 		mTitle = l.mTitle;
 		mAbstract = l.mAbstract;
-		mSrc      = l.mSrc;
+		mSrs      = l.mSrs;
 		mMinZoom  = l.mMinZoom;
 		mMaxZoom  = l.mMaxZoom;
 		mActive   = l.mActive;
@@ -76,12 +76,12 @@ public class MapnikLayer {
 		mAbstract = abstract1;
 	}
 
-	public String getSrc() {
-		return mSrc;
+	public String getSRS() {
+		return mSrs;
 	}
 
-	public void setSrc(String src) {
-		mSrc = src;
+	public void setSRS(String srs) {
+		mSrs = srs;
 	}
 
 	public double getMinZoom() {

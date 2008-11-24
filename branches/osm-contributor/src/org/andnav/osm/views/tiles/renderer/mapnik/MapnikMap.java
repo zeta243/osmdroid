@@ -25,7 +25,7 @@ public class MapnikMap {
 
 	private int mWidth;
 	private int mHeight;
-	private String mSrc;
+	private String mSrs; // Spacial Refefence String
 
 	private MapnikColour mBackground;
 	
@@ -37,7 +37,7 @@ public class MapnikMap {
 	{
 		mWidth  = 400;
 		mHeight = 400;
-		mSrc    = "+proj=latlong +datum=WGS84";
+		mSrs    = "+proj=latlong +datum=WGS84";
 		mStyles = new HashMap<String, MapnikFeatureTypeStyle>();
 		mLayers = new Vector<MapnikLayer>();
 	}
@@ -50,7 +50,7 @@ public class MapnikMap {
 			height = MAX_MAPSIZE;
 		mWidth  = width;
 		mHeight = height;
-		mSrc    = src;
+		mSrs    = src;
 		mStyles = new HashMap<String, MapnikFeatureTypeStyle>();
 		mLayers = new Vector<MapnikLayer>();
 	}
@@ -59,7 +59,7 @@ public class MapnikMap {
 	{
 		mWidth      = m.mWidth;
 		mHeight     = m.mHeight;
-		mSrc        = m.mSrc;
+		mSrs        = m.mSrs;
 		mBackground = m.mBackground;
 		mStyles     = m.mStyles;
 		mCurrentExtent   = m.mCurrentExtent;
@@ -156,14 +156,14 @@ public class MapnikMap {
         }
 	}
 	
-	public String getSource()
+	public String getSRS()
 	{
-		return mSrc;
+		return mSrs;
 	}
 	
-	public void setSource(String source)
+	public void setSRS(String srs)
 	{
-		mSrc = source;
+		mSrs = srs;
 	}
 	
 	public MapnikColour getBackgroundColour()
