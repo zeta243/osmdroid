@@ -52,7 +52,7 @@ public class MapnikMapParser {
         				}
         				else if (xpp.getAttributeName(i) == "srs")
         				{
-        					m.setSource(xpp.getAttributeValue(i));
+        					m.setSRS(xpp.getAttributeValue(i));
         				}
         				else
         					throw new MapnikInvalidXMLException(xpp, "Unexpected attribute: " + xpp.getAttributeName(i));
@@ -121,7 +121,7 @@ public class MapnikMapParser {
 		// XXX if no projection is given inherit from map? [DS]
 		
 		if (srs == null)
-			srs = m.getSource();
+			srs = m.getSRS();
 		
 		MapnikLayer layer = new MapnikLayer(layerName, srs);
 		
