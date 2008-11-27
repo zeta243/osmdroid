@@ -19,7 +19,7 @@ import java.util.concurrent.Executors;
 import org.andnav.osm.exceptions.EmptyCacheException;
 import org.andnav.osm.util.StreamUtils;
 import org.andnav.osm.util.constants.OSMConstants;
-import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
+import org.andnav.osm.views.util.constants.OSMMapViewConstants;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -37,13 +37,13 @@ import android.util.Log;
  * @author Nicolas Gramlich
  *
  */
-public class OSMMapTileFilesystemCache implements OSMConstants, OpenStreetMapViewConstants{
+public class OSMMapTileFilesystemCache implements OSMConstants, OSMMapViewConstants{
 	// ===========================================================
 	// Constants
 	// ===========================================================
 
-	public static final int MAPTILEFSLOADER_SUCCESS_ID = 1000;
-	public static final int MAPTILEFSLOADER_FAIL_ID = MAPTILEFSLOADER_SUCCESS_ID + 1;
+	public static final int MAPTILEFSCACHE_SUCCESS_ID = 1000;
+	public static final int MAPTILEFSCACHE_FAIL_ID = MAPTILEFSCACHE_SUCCESS_ID + 1;
 	
 //	public static final Options BITMAPLOADOPTIONS = new Options(){
 //		{
@@ -56,8 +56,8 @@ public class OSMMapTileFilesystemCache implements OSMConstants, OpenStreetMapVie
 	// ===========================================================
 
 	protected final Context mCtx;
-	protected final OpenStreetMapTileFilesystemProviderDataBase mDatabase;
-	protected final int mMaxFSCacheByteSize;
+	protected final OSMMapTileFilesystemCacheDataBase mDatabase;
+	protected int mMaxFSCacheByteSize;
 	protected int mCurrentFSCacheByteSize;
 	protected ExecutorService mThreadPool = Executors.newFixedThreadPool(2);
 	protected final OSMMapTileMemoryCache mCache;
@@ -76,7 +76,7 @@ public class OSMMapTileFilesystemCache implements OSMConstants, OpenStreetMapVie
 	public OSMMapTileFilesystemCache(final Context ctx, final int aMaxFSCacheByteSize, final OSMMapTileMemoryCache aCache) {
 		this.mCtx = ctx;
 		this.mMaxFSCacheByteSize = aMaxFSCacheByteSize;
-		this.mDatabase = new OpenStreetMapTileFilesystemProviderDataBase(ctx);
+		this.mDatabase = new OSMMapTileFilesystemCacheDataBase(ctx);
 		this.mCurrentFSCacheByteSize = this.mDatabase.getCurrentFSCacheByteSize();
 		this.mCache = aCache;
 
@@ -90,6 +90,26 @@ public class OSMMapTileFilesystemCache implements OSMConstants, OpenStreetMapVie
 	
 	public int getCurrentFSCacheByteSize() {
 		return this.mCurrentFSCacheByteSize;
+	}
+	
+	public int getMaxFSCacheByteSize() {
+		return this.mMaxFSCacheByteSize;
+	}
+	
+	public void setMaxFSCacheByteSize(final int aSize) {
+		this.mMaxFSCacheByteSize = aSize;
+	}
+	
+	public boolean exists(final String aTileURLString){
+		InputStream in = null;
+		try{
+			in = this.mCtx.openFileInput(aTileURLString);
+			return true;
+		}catch(Exception e){
+			return false;
+		}finally{
+			StreamUtils.closeStream(in);
+		}
 	}
 
 	public void loadMapTileToMemCacheAsync(final String aTileURLString, final Handler callback) throws FileNotFoundException{
@@ -119,13 +139,13 @@ public class OSMMapTileFilesystemCache implements OSMConstants, OpenStreetMapVie
 
 					OSMMapTileFilesystemCache.this.mCache.putTile(aTileURLString, bmp);
 
-					final Message successMessage = Message.obtain(callback, MAPTILEFSLOADER_SUCCESS_ID);
+					final Message successMessage = Message.obtain(callback, MAPTILEFSCACHE_SUCCESS_ID);
 					successMessage.sendToTarget();
 
 					if(DEBUGMODE)
 						Log.d(DEBUGTAG, "Loaded: " + aTileURLString + " to MemCache.");
 				} catch (IOException e) {
-					final Message failMessage = Message.obtain(callback, MAPTILEFSLOADER_FAIL_ID);
+					final Message failMessage = Message.obtain(callback, MAPTILEFSCACHE_FAIL_ID);
 					failMessage.sendToTarget();
 					if(DEBUGMODE)
 						Log.e(DEBUGTAG, "Error Loading MapTile from FS. Exception: " + e.getClass().getSimpleName(), e);
@@ -177,7 +197,7 @@ public class OSMMapTileFilesystemCache implements OSMConstants, OpenStreetMapVie
 	
 	public void cutCurrentFSCacheBy(final int bytesToCut){
 		try {
-			this.mDatabase.deleteOldest(Integer.MAX_VALUE); // Delete all
+			this.mDatabase.deleteOldest(bytesToCut);
 			this.mCurrentFSCacheByteSize = 0;
 		} catch (EmptyCacheException e) {
 			if(DEBUGMODE)
@@ -197,7 +217,7 @@ public class OSMMapTileFilesystemCache implements OSMConstants, OpenStreetMapVie
 	// Inner and Anonymous Classes
 	// ===========================================================
 
-	private interface OpenStreetMapTileFilesystemProviderDataBaseConstants{
+	private interface OSMMapTileFilesystemCacheDataBaseConstants {
 		public static final String DATABASE_NAME = "osmaptilefscache_db";
 		public static final int DATABASE_VERSION = 2;
 
@@ -220,7 +240,7 @@ public class OSMMapTileFilesystemCache implements OSMConstants, OpenStreetMapVie
 		public static final String T_FSCACHE_SELECT_OLDEST = "SELECT " + T_FSCACHE_NAME + "," + T_FSCACHE_FILESIZE + " FROM " + T_FSCACHE + " ORDER BY " + T_FSCACHE_TIMESTAMP + " ASC";
 	}
 
-	private class OpenStreetMapTileFilesystemProviderDataBase implements OpenStreetMapTileFilesystemProviderDataBaseConstants, OpenStreetMapViewConstants{
+	private class OSMMapTileFilesystemCacheDataBase implements OSMMapTileFilesystemCacheDataBaseConstants, OSMMapViewConstants{
 		// ===========================================================
 		// Fields
 		// ===========================================================
@@ -233,7 +253,7 @@ public class OSMMapTileFilesystemCache implements OSMConstants, OpenStreetMapVie
 		// Constructors
 		// ===========================================================
 
-		public OpenStreetMapTileFilesystemProviderDataBase(final Context context) {
+		public OSMMapTileFilesystemCacheDataBase(final Context context) {
 			this.mCtx = context;
 			this.mDatabase = new AndNavDatabaseHelper(context).getWritableDatabase();
 		}

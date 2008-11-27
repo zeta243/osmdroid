@@ -7,14 +7,14 @@ import static org.andnav.osm.util.MyMath.gudermannInverse;
 import java.util.ArrayList;
 
 import org.andnav.osm.util.constants.OSMConstants;
-import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
+import org.andnav.osm.views.util.constants.OSMMapViewConstants;
 
 /**
  * 
  * @author Nicolas Gramlich
  *
  */
-public class BoundingBoxE6 implements OpenStreetMapViewConstants, OSMConstants {
+public class BoundingBoxE6 implements OSMMapViewConstants, OSMConstants {
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -27,7 +27,12 @@ public class BoundingBoxE6 implements OpenStreetMapViewConstants, OSMConstants {
 	protected final int mLatSouthE6;
 	protected final int mLonEastE6;
 	protected final int mLonWestE6;  
-
+	private GeoLine mNorthGeoLine;
+	private GeoLine mSouthGeoLine;
+	private GeoLine mWestGeoLine;
+	private GeoLine mEastGeoLine;
+	private GeoPoint mCenterGeoPoint;
+	
 	// ===========================================================
 	// Constructors
 	// ===========================================================
@@ -45,10 +50,75 @@ public class BoundingBoxE6 implements OpenStreetMapViewConstants, OSMConstants {
 		this.mLonWestE6 = (int)(west * 1E6);
 		this.mLonEastE6 = (int)(east * 1E6);
 	}
+	
+	public static BoundingBoxE6 fromGeoPoints(final ArrayList<? extends GeoPoint> partialPolyLine) {
+		int minLat = Integer.MAX_VALUE;
+		int minLon = Integer.MAX_VALUE;
+		int maxLat = Integer.MIN_VALUE;
+		int maxLon = Integer.MIN_VALUE;
+		for (GeoPoint gp : partialPolyLine) {
+			final int latitudeE6 = gp.getLatitudeE6();
+			final int longitudeE6 = gp.getLongitudeE6();
+			
+			minLat = Math.min(minLat, latitudeE6);
+			minLon = Math.min(minLon, longitudeE6);
+			maxLat = Math.max(maxLat, latitudeE6);
+			maxLon = Math.max(maxLon, longitudeE6);
+		}
+		
+		return new BoundingBoxE6(minLat, maxLon, maxLat, minLon);
+	}
 
 	// ===========================================================
 	// Getter & Setter
 	// ===========================================================
+	
+	
+	/**
+	 * @return GeoPoint center of this BoundingBox
+	 */
+	public GeoPoint getCenter(){
+		if(this.mCenterGeoPoint == null)
+			this.mCenterGeoPoint = new GeoPoint((this.mLatNorthE6 + this.mLatSouthE6) / 2, (this.mLonEastE6 + this.mLonWestE6) / 2);
+		
+		return this.mCenterGeoPoint;
+	}
+	
+	/**
+	 * @return GeoLine from NorthWest to NorthEast
+	 */
+	public GeoLine getNorthLine(){
+		if(this.mNorthGeoLine == null)
+			this.mNorthGeoLine = new GeoLine(mLatNorthE6, mLonWestE6, mLatNorthE6, mLonEastE6);
+		return this.mNorthGeoLine;
+	}
+
+	/**
+	 * @return GeoLine from SouthEast to SouthWest
+	 */
+	public GeoLine getSouthGeoLine(){
+		if(this.mSouthGeoLine == null)
+			this.mSouthGeoLine = new GeoLine(mLatSouthE6, mLonEastE6, mLatSouthE6, mLonWestE6);
+		return this.mSouthGeoLine;
+	}
+
+	/**
+	 * @return GeoLine from NorthEast to SouthEast
+	 */
+	public GeoLine getEastGeoLine(){
+		if(this.mEastGeoLine == null)
+			this.mEastGeoLine = new GeoLine(mLatNorthE6, mLonEastE6, mLatSouthE6, mLonEastE6);
+		return this.mEastGeoLine;
+	}
+
+	/**
+	 * @return GeoLine from SouthWest to NorthWest
+	 */
+	public GeoLine getWestGeoLine(){
+		if(this.mWestGeoLine == null)
+			this.mWestGeoLine = new GeoLine(mLatSouthE6, mLonWestE6, mLatNorthE6, mLonWestE6);
+		return this.mWestGeoLine;
+	}
 	
 	public int getDiagonalLengthInMeters() {
 		return new GeoPoint(this.mLatNorthE6, this.mLonWestE6).distanceTo(new GeoPoint(this.mLatSouthE6, this.mLonEastE6));
@@ -161,27 +231,20 @@ public class BoundingBoxE6 implements OpenStreetMapViewConstants, OSMConstants {
 			.toString();
 	}
 
-	public static BoundingBoxE6 fromGeoPoints(final ArrayList<? extends GeoPoint> partialPolyLine) {
-		int minLat = Integer.MAX_VALUE;
-		int minLon = Integer.MAX_VALUE;
-		int maxLat = Integer.MIN_VALUE;
-		int maxLon = Integer.MIN_VALUE;
-		for (GeoPoint gp : partialPolyLine) {
-			final int latitudeE6 = gp.getLatitudeE6();
-			final int longitudeE6 = gp.getLongitudeE6();
-			
-			minLat = Math.min(minLat, latitudeE6);
-			minLon = Math.min(minLon, longitudeE6);
-			maxLat = Math.max(maxLat, latitudeE6);
-			maxLon = Math.max(maxLon, longitudeE6);
-		}
-		
-		return new BoundingBoxE6(minLat, maxLon, maxLat, minLon);
-	}
-
 	// ===========================================================
 	// Methods
 	// ===========================================================
+	
+	public boolean intersectsLine(final GeoPoint gpA, final GeoPoint gpB){		
+		return intersectsLine(new GeoLine(gpA, gpB));
+	}
+	
+	public boolean intersectsLine(final GeoLine pGeoLine){		
+		return getNorthLine().intersects(pGeoLine)
+			|| getSouthGeoLine().intersects(pGeoLine)
+			|| getWestGeoLine().intersects(pGeoLine)
+			|| getEastGeoLine().intersects(pGeoLine);
+	}
 
 	// ===========================================================
 	// Inner and Anonymous Classes

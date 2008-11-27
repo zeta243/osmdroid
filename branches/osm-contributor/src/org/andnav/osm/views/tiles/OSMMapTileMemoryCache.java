@@ -4,7 +4,7 @@ package org.andnav.osm.views.tiles;
 import java.util.HashMap;
 
 import org.andnav.osm.views.util.LRUBitmapCache;
-import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
+import org.andnav.osm.views.util.constants.OSMMapViewConstants;
 
 import android.graphics.Bitmap;
 
@@ -13,7 +13,7 @@ import android.graphics.Bitmap;
  * @author Nicolas Gramlich
  *
  */
-public class OSMMapTileMemoryCache implements OpenStreetMapViewConstants{
+public class OSMMapTileMemoryCache implements OSMMapViewConstants{
 	// ===========================================================
 	// Constants
 	// ===========================================================

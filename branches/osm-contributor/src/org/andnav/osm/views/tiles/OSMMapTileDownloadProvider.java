@@ -10,7 +10,7 @@ import java.net.URL;
 
 import org.andnav.osm.util.StreamUtils;
 import org.andnav.osm.util.constants.OSMConstants;
-import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
+import org.andnav.osm.views.util.constants.OSMMapViewConstants;
 
 import android.content.Context;
 import android.os.Handler;
@@ -22,7 +22,7 @@ import android.util.Log;
  * @author Nicolas Gramlich
  *
  */
-public class OSMMapTileDownloadProvider extends OSMAbstractMapTileProvider implements OSMConstants, OpenStreetMapViewConstants {
+public class OSMMapTileDownloadProvider extends OSMAbstractMapTileProvider implements OSMConstants, OSMMapViewConstants {
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -48,13 +48,15 @@ public class OSMMapTileDownloadProvider extends OSMAbstractMapTileProvider imple
 	// ===========================================================
 	
 	@Override
-	public void requestMapTileAsync(int[] coords, int zoomLevel, final Handler callback) {
+	public boolean requestMapTileAsync(int[] coords, int zoomLevel, final Handler callback) {
 		final String aURLString = mRendererInfo.getTileURLString(coords, zoomLevel);
 		if(this.mPending.contains(aURLString))
-			return;
+			return false;
 	
 		this.mPending.add(aURLString);
 		getRemoteImageAsync(aURLString, callback);
+		
+		return true;
 	}
 
 	// ===========================================================
@@ -87,11 +89,11 @@ public class OSMMapTileDownloadProvider extends OSMAbstractMapTileProvider imple
 					if(DEBUGMODE)
 						Log.i(DEBUGTAG, "Maptile saved to: " + aURLString);
 
-					final Message successMessage = Message.obtain(callback, MAPTILEDOWNLOADER_SUCCESS_ID);
+					final Message successMessage = Message.obtain(callback, MAPTILEPROVIDER_SUCCESS_ID);
 					successMessage.sendToTarget();
 					OSMMapTileDownloadProvider.this.mPending.remove(aURLString);
 				} catch (Exception e) {
-					final Message failMessage = Message.obtain(callback, MAPTILEDOWNLOADER_FAIL_ID);
+					final Message failMessage = Message.obtain(callback, MAPTILEPROVIDER_FAIL_ID);
 					failMessage.sendToTarget();
 					if(DEBUGMODE)
 						Log.e(DEBUGTAG, "Error Downloading MapTile. Exception: " + e.getClass().getSimpleName(), e);

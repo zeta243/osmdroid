@@ -25,23 +25,51 @@ public class GeoPoint implements MathConstants, GeoConstants{
 	// Constructors
 	// ===========================================================
 	
+	protected GeoPoint() {
+
+	}
+	
 	public GeoPoint(final int aLatitudeE6, final int aLongitudeE6) {
 		this.mLatitudeE6 = aLatitudeE6;
 		this.mLongitudeE6 = aLongitudeE6;
 	}
 	
-	protected static GeoPoint fromDoubleString(final String s, final char spacer) {
+	/**
+	 * First token is the Latitude, second the Longitude.
+	 * @param s
+	 * @param spacer
+	 * @return
+	 */
+	public static GeoPoint fromDoubleString(final String s, final char spacer) {
 		final int spacerPos = s.indexOf(spacer);
 		return new GeoPoint((int) (Double.parseDouble(s.substring(0,
-				spacerPos - 1)) * 1E6), (int) (Double.parseDouble(s.substring(
+				spacerPos)) * 1E6), (int) (Double.parseDouble(s.substring(
 				spacerPos + 1, s.length())) * 1E6));
+	}
+	
+	/**
+	 * First token is the Longitude, second the Latitude.
+	 * @param s
+	 * @param spacer
+	 * @return
+	 */
+	public static GeoPoint fromInvertedDoubleString(final String s, final char spacer) {
+		final int spacerPos = s.indexOf(spacer);
+		return new GeoPoint((int) (Double.parseDouble(s.substring(
+				spacerPos + 1, s.length())) * 1E6),
+				(int) (Double.parseDouble(s.substring(0,
+				spacerPos)) * 1E6));
 	}
 	
 	public static GeoPoint fromIntString(final String s){
 		final int commaPos = s.indexOf(',');
-		return new GeoPoint(Integer.parseInt(s.substring(0,commaPos-1)),
-				Integer.parseInt(s.substring(commaPos+1,s.length())));
+		return new GeoPoint(Integer.parseInt(s.substring(0,commaPos)),
+				Integer.parseInt(s.substring(commaPos+1)));
 	} 
+	
+	public static GeoPoint getGeoPointBetween(GeoPoint a, GeoPoint b) {
+		return new GeoPoint((a.mLatitudeE6 + b.mLatitudeE6) / 2, (a.mLongitudeE6 + b.mLongitudeE6) / 2);
+	}
 
 	// ===========================================================
 	// Getter & Setter

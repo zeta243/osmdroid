@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.andnav.osm.R;
 import org.andnav.osm.views.OSMMapView;
+import org.andnav.osm.views.overlay.OSMMapViewItemizedOverlay.OnItemTapListener;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -43,8 +44,8 @@ public class OSMMapViewItemizedOverlayWithFocus<T extends OSMMapViewOverlayItem>
 	protected final int mMarkerFocusedWidth, mMarkerFocusedHeight; 
 	protected final Paint mMarkerBackgroundPaint, mDescriptionPaint, mTitlePaint;
 	
-	protected int mFocusedItemIndex;
-	protected boolean mFocusItemsOnTap;
+	protected int mFocusedItemIndex = 0;
+	protected boolean mFocusItemsOnTap = true;
 	private Point mFocusedScreenCoords = new Point();
 	
 	private final String UNKNOWN;
@@ -87,6 +88,10 @@ public class OSMMapViewItemizedOverlayWithFocus<T extends OSMMapViewOverlayItem>
 	// Getter & Setter
 	// ===========================================================
 	
+	public int getFocusedItemIndex() {
+		return this.mFocusedItemIndex;
+	}
+	
 	public void setFocusedItem(final int pIndex){
 		this.mFocusedItemIndex = pIndex;
 	}
@@ -121,7 +126,7 @@ public class OSMMapViewItemizedOverlayWithFocus<T extends OSMMapViewOverlayItem>
 	
 	@Override
 	protected void onDrawFinished(Canvas c, OSMMapView osmv) {
-		if(this.mFocusedItemIndex != NOT_SET){
+		if(this.mFocusedItemIndex != NOT_SET && this.mFocusedItemIndex < super.mItemList.size()){
 			/* Calculate and set the bounds of the marker. */
 			final int left = this.mFocusedScreenCoords.x - this.mMarkerFocusedHotSpot.x;
 			final int right = left + this.mMarkerFocusedWidth;
@@ -147,20 +152,21 @@ public class OSMMapViewItemizedOverlayWithFocus<T extends OSMMapViewOverlayItem>
 			/* Loop through the charwidth array and harshly insert a linebreak, 
 			 * when the width gets bigger than DESCRIPTION_MAXWIDTH. */
 			for (i = 0; i < widths.length; i++) {
-				if(!Character.isLetter(itemDescription.charAt(i)))
+				final char curChar = itemDescription.charAt(i);
+				if(!Character.isLetter(curChar))
 					lastwhitespace = i;
 				
 				float charwidth = widths[i];
 				       
-				if(curLineWidth + charwidth> DESCRIPTION_MAXWIDTH){
+				if(curLineWidth + charwidth > DESCRIPTION_MAXWIDTH || curChar == '\n'){
 					if(lastStop == lastwhitespace)
 						i--;
 					else
 						i = lastwhitespace;
 					
-					
 					sb.append(itemDescription.subSequence(lastStop, i));
-					sb.append('\n');
+					if(curChar != '\n')
+						sb.append('\n');
 					
 					lastStop = i;
 					maxWidth = Math.max(maxWidth, curLineWidth);
