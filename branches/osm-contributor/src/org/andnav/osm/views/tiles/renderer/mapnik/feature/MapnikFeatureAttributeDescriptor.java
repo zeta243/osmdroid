@@ -15,14 +15,16 @@ public class MapnikFeatureAttributeDescriptor {
 	private boolean mPrimaryKey;
 	private int mSize;
 	private int mPrecision;
+	private int mColumn;
 
-	public MapnikFeatureAttributeDescriptor(String name, AttributeType type, boolean primaryKey, int size, int precision)
+	public MapnikFeatureAttributeDescriptor(String name, AttributeType type, boolean primaryKey, int size, int precision, int column)
 	{
 		mName       = name;
 		mType       = type;
 		mPrimaryKey = primaryKey;
 		mSize       = size;
 		mPrecision  = precision;
+		mColumn     = column;
 	}
 	
 	public MapnikFeatureAttributeDescriptor(MapnikFeatureAttributeDescriptor fad)
@@ -34,7 +36,6 @@ public class MapnikFeatureAttributeDescriptor {
 		mPrecision  = fad.mPrecision;
 		
 	}
-	
 	
 	public String getName() {
 		return mName;
@@ -54,5 +55,10 @@ public class MapnikFeatureAttributeDescriptor {
 
 	public int getPrecision() {
 		return mPrecision;
+	}
+	
+	public int getColumn()
+	{
+		return mColumn;
 	}
 }

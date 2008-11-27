@@ -4,12 +4,13 @@ import java.util.Vector;
 
 public class MapnikFeatureSet {
 
-	private Vector<MapnikFeature> mFeatureSet;
-	private int mItr;
+	protected Vector<MapnikFeature> mFeatureSet;
+	protected int mItr;
 	
 	public MapnikFeatureSet()
 	{
 		mFeatureSet = new Vector<MapnikFeature>();
+		mItr = 0;
 	}
 	
 	public MapnikFeatureSet(MapnikFeatureSetFilter featureSetFilter)
