@@ -28,9 +28,9 @@ public class MapnikFeature {
 		return mId;
 	}
 	
-	public void addGeometry(MapnikGeometry p)
+	public void addGeometry(MapnikGeometry g)
 	{
-		mGeomCont.add(p);
+		mGeomCont.add(g);
 	}
 	
 	public int getNumGeometries()
@@ -56,6 +56,11 @@ public class MapnikFeature {
 	public void setRaster(MapnikRaster r)
 	{
 		mRaster = r;
+	}
+	
+	public void setProperty(String key, MapnikParameterValue value)
+	{
+		properties.put(key, value);
 	}
 	
 	public HashMap<String, MapnikParameterValue> getProperties()

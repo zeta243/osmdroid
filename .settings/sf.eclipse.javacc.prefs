@@ -1,0 +1,9 @@
+#Wed Nov 19 15:31:11 GMT 2008
+CLEAR_CONSOLE=false
+JJ_NATURE=true
+JTB_OPTIONS=-p\=org.andnav.osm.views.tiles.renderer.mapnik.filter
+RUNTIME_JAR=-intern-
+RUNTIME_JTBJAR=-intern-
+SHOW_CONSOLE=true
+SUPPRESS_WARNINGS=true
+eclipse.preferences.version=1
