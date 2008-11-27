@@ -2,14 +2,15 @@
 package org.andnav.osm.views.util;
 
 import org.andnav.osm.adt.BoundingBoxE6;
-import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
+import org.andnav.osm.adt.GeoPoint;
+import org.andnav.osm.views.util.constants.OSMMapViewConstants;
 
 /**
  * 
  * @author Nicolas Gramlich
  *
  */
-public class Util implements OpenStreetMapViewConstants{
+public class Util implements OSMMapViewConstants{
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -33,6 +34,10 @@ public class Util implements OpenStreetMapViewConstants{
 	// ===========================================================
 	// Methods
 	// ===========================================================
+	
+	public static int[] getMapTileFromCoordinates(final GeoPoint gp, final int zoom, final int[] reuse) {
+		return getMapTileFromCoordinates(gp.getLatitudeE6() / 1E6, gp.getLongitudeE6() / 1E6, zoom, reuse);
+	}
 	
 	public static int[] getMapTileFromCoordinates(final int aLat, final int aLon, final int zoom, final int[] reuse) {
 		return getMapTileFromCoordinates(aLat / 1E6, aLon / 1E6, zoom, reuse);

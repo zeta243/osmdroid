@@ -15,7 +15,7 @@ import org.andnav.osm.views.tiles.OSMMapTileFilesystemCache;
 import org.andnav.osm.views.tiles.OSMMapTileManager;
 import org.andnav.osm.views.tiles.OSMMapTileProviderInfo;
 import org.andnav.osm.views.util.Util;
-import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
+import org.andnav.osm.views.util.constants.OSMMapViewConstants;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -35,7 +35,7 @@ import android.view.View;
 import android.view.GestureDetector.OnGestureListener;
 
 public class OSMMapView extends View implements OSMConstants,
-		OpenStreetMapViewConstants {
+		OSMMapViewConstants {
 
 	// ===========================================================
 	// Constants
@@ -50,8 +50,8 @@ public class OSMMapView extends View implements OSMConstants,
 	protected int mLatitudeE6 = 0, mLongitudeE6 = 0;
 	protected int mZoomLevel = 0;
 
-	protected OSMMapTileProviderInfo mRendererInfo;
-	protected final OSMMapTileManager mTileProvider;
+	protected OSMMapTileProviderInfo mProviderInfo;
+	protected final OSMMapTileManager mTileManager;
 
 	protected final GestureDetector mGestureDetector = new GestureDetector(new OpenStreetMapViewGestureDetectorListener());
 
@@ -79,8 +79,8 @@ public class OSMMapView extends View implements OSMConstants,
 	 */
 	public OSMMapView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		this.mRendererInfo = DEFAULTRENDERER;
-		this.mTileProvider = new OSMMapTileManager(context, mRendererInfo, new SimpleInvalidationHandler());
+		this.mProviderInfo = DEFAULTRENDERER;
+		this.mTileManager = new OSMMapTileManager(context, mProviderInfo, new SimpleInvalidationHandler());
 	}
 
 	/**
@@ -92,8 +92,8 @@ public class OSMMapView extends View implements OSMConstants,
 	 */
 	public OSMMapView(final Context context, final OSMMapTileProviderInfo aRendererInfo) {
 		super(context);
-		this.mRendererInfo = aRendererInfo;
-		this.mTileProvider = new OSMMapTileManager(context, mRendererInfo, new SimpleInvalidationHandler());
+		this.mProviderInfo = aRendererInfo;
+		this.mTileManager = new OSMMapTileManager(context, mProviderInfo, new SimpleInvalidationHandler());
 	}
 
 	/**
@@ -110,8 +110,8 @@ public class OSMMapView extends View implements OSMConstants,
 	public OSMMapView(final Context context, final OSMMapTileProviderInfo aRendererInfo,
 			final OSMMapView aMapToShareTheTileProviderWith) {
 		super(context);
-		this.mRendererInfo = aRendererInfo;
-		this.mTileProvider = aMapToShareTheTileProviderWith.mTileProvider;
+		this.mProviderInfo = aRendererInfo;
+		this.mTileManager = aMapToShareTheTileProviderWith.mTileManager;
 	}
 
 	// ===========================================================
@@ -128,7 +128,7 @@ public class OSMMapView extends View implements OSMConstants,
 	 * @see OpenStreetMapView.OpenStreetMapView(
 	 * @param aOsmvMinimap
 	 * @param aZoomDiff
-	 *            3 is a good Value. Pass {@link OpenStreetMapViewConstants}
+	 *            3 is a good Value. Pass {@link OSMMapViewConstants}
 	 *            .NOT_SET to disable autozooming of the minimap.
 	 */
 	public void setMiniMap(final OSMMapView aOsmvMinimap, final int aZoomDiff) {
@@ -147,7 +147,7 @@ public class OSMMapView extends View implements OSMConstants,
 
 	/**
 	 * @return {@link View}.GONE or {@link View}.VISIBLE or {@link View}
-	 *         .INVISIBLE or {@link OpenStreetMapViewConstants}.NOT_SET
+	 *         .INVISIBLE or {@link OSMMapViewConstants}.NOT_SET
 	 * */
 	public int getOverrideMiniMapVisiblity() {
 		return this.mMiniMapOverriddenVisibility;
@@ -156,7 +156,7 @@ public class OSMMapView extends View implements OSMConstants,
 	/**
 	 * Use this method if you want to make the MiniMap visible i.e.: always or
 	 * never. Use {@link View}.GONE , {@link View}.VISIBLE, {@link View}
-	 * .INVISIBLE. Use {@link OpenStreetMapViewConstants}.NOT_SET to reset this
+	 * .INVISIBLE. Use {@link OSMMapViewConstants}.NOT_SET to reset this
 	 * feature.
 	 * 
 	 * @param aVisiblity
@@ -233,8 +233,8 @@ public class OSMMapView extends View implements OSMConstants,
 		
 		final BoundingBoxE6 tmp = Util.getBoundingBoxFromMapTile(centerMapTileCoords, this.mZoomLevel);
 		
-		final int mLatitudeSpan_2 = (int)(1.0f * tmp.getLatitudeSpanE6() * pViewHeight / this.mRendererInfo.MAPTILE_SIZEPX) / 2; 
-		final int mLongitudeSpan_2 = (int)(1.0f * tmp.getLongitudeSpanE6() * pViewWidth / this.mRendererInfo.MAPTILE_SIZEPX) / 2;
+		final int mLatitudeSpan_2 = (int)(1.0f * tmp.getLatitudeSpanE6() * pViewHeight / this.mProviderInfo.MAPTILE_SIZEPX) / 2; 
+		final int mLongitudeSpan_2 = (int)(1.0f * tmp.getLongitudeSpanE6() * pViewWidth / this.mProviderInfo.MAPTILE_SIZEPX) / 2;
 		
 		final int north = this.mLatitudeE6 + mLatitudeSpan_2;
 		final int south = this.mLatitudeE6 - mLatitudeSpan_2;
@@ -280,11 +280,11 @@ public class OSMMapView extends View implements OSMConstants,
 	}
 
 	public void setRenderer(final OSMMapTileProviderInfo aRenderer) {
-		this.mRendererInfo = aRenderer;
+		this.mProviderInfo = aRenderer;
 		this.setZoomLevel(this.mZoomLevel); // Invalidates the map and zooms to
 											// the maximum level of the
 											// renderer.
-		this.mTileProvider.setRenderer(aRenderer);
+		this.mTileManager.setRenderer(aRenderer);
 	}
 
 	/**
@@ -293,7 +293,7 @@ public class OSMMapView extends View implements OSMConstants,
 	 *            Renderer chosen.
 	 */
 	public void setZoomLevel(final int aZoomLevel) {
-		this.mZoomLevel = Math.max(0, Math.min(this.mRendererInfo.ZOOM_MAXLEVEL, aZoomLevel));
+		this.mZoomLevel = Math.max(0, Math.min(this.mProviderInfo.ZOOM_MAXLEVEL, aZoomLevel));
 
 		if (this.mMiniMap != null) {
 			if (this.mZoomLevel < this.mMiniMapZoomDiff) {
@@ -439,7 +439,7 @@ public class OSMMapView extends View implements OSMConstants,
 		final int zoomLevel = this.mZoomLevel;
 		final int viewWidth = this.getWidth();
 		final int viewHeight = this.getHeight();
-		final int tileSizePx = this.mRendererInfo.MAPTILE_SIZEPX;
+		final int tileSizePx = this.mProviderInfo.MAPTILE_SIZEPX;
 
 		/*
 		 * Get the center MapTile which is above this.mLatitudeE6 and
@@ -497,7 +497,7 @@ public class OSMMapView extends View implements OSMConstants,
 				/* Construct a URLString, which represents the MapTile. */
 
 				/* Draw the MapTile 'i tileSizePx' above of the centerMapTile */
-				final Bitmap currentMapTile = this.mTileProvider.getMapTile(mapTileCoords, zoomLevel);
+				final Bitmap currentMapTile = this.mTileManager.getMapTile(mapTileCoords, zoomLevel);
 				
 				final int tileLeft = this.mTouchMapOffsetX + centerMapTileScreenLeft
 						+ (x * tileSizePx);
@@ -596,7 +596,7 @@ public class OSMMapView extends View implements OSMConstants,
 															// make it only
 															// 'valid' for a
 															// short time.
-			tileSizePx = OSMMapView.this.mRendererInfo.MAPTILE_SIZEPX;
+			tileSizePx = OSMMapView.this.mProviderInfo.MAPTILE_SIZEPX;
 
 			/*
 			 * Get the center MapTile which is above this.mLatitudeE6 and
@@ -631,7 +631,7 @@ public class OSMMapView extends View implements OSMConstants,
 
 		public float metersToEquatorPixels(final float aMeters) {
 			return aMeters / EQUATORCIRCUMFENCE
-					* OSMMapView.this.mRendererInfo.MAPTILE_SIZEPX;
+					* OSMMapView.this.mProviderInfo.MAPTILE_SIZEPX;
 		}
 
 		/**
@@ -774,8 +774,8 @@ public class OSMMapView extends View implements OSMConstants,
 		@Override
 		public void handleMessage(final Message msg) {
 			switch (msg.what) {
-				case OSMAbstractMapTileProvider.MAPTILEDOWNLOADER_SUCCESS_ID:
-				case OSMMapTileFilesystemCache.MAPTILEFSLOADER_SUCCESS_ID:
+				case OSMAbstractMapTileProvider.MAPTILEPROVIDER_SUCCESS_ID:
+				case OSMMapTileFilesystemCache.MAPTILEFSCACHE_SUCCESS_ID:
 					OSMMapView.this.invalidate();
 					break;
 			}

@@ -13,8 +13,8 @@ public abstract class OSMAbstractMapTileProvider {
 	// Constants
 	// ===========================================================
 	
-	public static final int MAPTILEDOWNLOADER_SUCCESS_ID = 0;
-	public static final int MAPTILEDOWNLOADER_FAIL_ID = MAPTILEDOWNLOADER_SUCCESS_ID + 1;
+	public static final int MAPTILEPROVIDER_SUCCESS_ID = 0;
+	public static final int MAPTILEPROVIDER_FAIL_ID = MAPTILEPROVIDER_SUCCESS_ID + 1;
 
 	// ===========================================================
 	// Fields
@@ -44,7 +44,7 @@ public abstract class OSMAbstractMapTileProvider {
 	// Methods from/for SuperClass/Interfaces
 	// ===========================================================
 	
-	public abstract void requestMapTileAsync(int[] coords,int zoomLevel, final Handler callback);
+	public abstract boolean requestMapTileAsync(int[] coords,int zoomLevel, final Handler callback);
 
 	// ===========================================================
 	// Methods

@@ -6,7 +6,7 @@ package org.andnav.osm.views.util.constants;
  * @author Nicolas Gramlich
  *
  */
-public interface OpenStreetMapViewConstants {
+public interface OSMMapViewConstants {
 	// ===========================================================
 	// Final Fields
 	// ===========================================================
