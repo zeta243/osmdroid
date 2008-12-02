@@ -1,31 +1,24 @@
 package org.andnav.osm.views.tiles.renderer.mapnik.symbolizer;
 
-import org.andnav.osm.views.tiles.renderer.mapnik.MapnikColour;
-import org.andnav.osm.views.tiles.renderer.mapnik.MapnikStroke;
+import android.graphics.Paint;
 
 // Original from include/mapnik/line_symbolizer.hpp
 
 public class MapnikLineSymbolizer extends MapnikSymbolizer {
 
-	private MapnikStroke mStroke;
+	// private Paint mPaint;
 
 	public MapnikLineSymbolizer() {
-		mStroke = new MapnikStroke();
+		super();
 	}
 
-	public MapnikLineSymbolizer(MapnikStroke stroke) {
-		mStroke = stroke;
+	public MapnikLineSymbolizer(Paint paint) {
+		mPaint = paint;
 	}
 
-	public MapnikLineSymbolizer(MapnikColour pen, float width) {
-		mStroke = new MapnikStroke(pen, width);
-	}
-
-	public MapnikStroke getStroke() {
-		return mStroke;
-	}
-
-	public void setStroke(MapnikStroke stroke) {
-		mStroke = stroke;
+	public MapnikLineSymbolizer(int colour, float width) {
+		super();
+		mPaint.setColor(colour);
+		mPaint.setStrokeWidth(width);
 	}
 }

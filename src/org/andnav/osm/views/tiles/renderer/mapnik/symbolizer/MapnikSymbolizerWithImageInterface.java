@@ -1,13 +1,13 @@
 package org.andnav.osm.views.tiles.renderer.mapnik.symbolizer;
 
-import org.andnav.osm.views.tiles.renderer.mapnik.MapnikImageData;
+import android.graphics.Bitmap;
 
 public interface MapnikSymbolizerWithImageInterface {
 
 	/* (non-Javadoc)
 	 * @see org.andnav.osm.views.tiles.renderer.mapnik.symbolizer.MapnikSymbolizerWithImageInterface#getImage()
 	 */
-	public abstract MapnikImageData getImage();
+	public abstract Bitmap getImage();
 
 	/* (non-Javadoc)
 	 * @see org.andnav.osm.views.tiles.renderer.mapnik.symbolizer.MapnikSymbolizerWithImageInterface#getFilename()
@@ -17,6 +17,6 @@ public interface MapnikSymbolizerWithImageInterface {
 	/* (non-Javadoc)
 	 * @see org.andnav.osm.views.tiles.renderer.mapnik.symbolizer.MapnikSymbolizerWithImageInterface#setImage(org.andnav.osm.views.tiles.renderer.mapnik.MapnikImageData)
 	 */
-	public abstract void setImage(MapnikImageData image);
+	public abstract void setImage(Bitmap image);
 
 }

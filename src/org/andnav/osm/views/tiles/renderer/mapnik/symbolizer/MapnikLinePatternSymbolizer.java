@@ -9,7 +9,7 @@ public class MapnikLinePatternSymbolizer extends MapnikSymbolizerWithImage{
 
 	public MapnikLinePatternSymbolizer(String filename, String type,
 			int width, int height) throws IOException, FileNotFoundException {
-		super(filename, type, width, height);
+		super(filename);
 	}
 
 	public MapnikLinePatternSymbolizer(MapnikLinePatternSymbolizer s)

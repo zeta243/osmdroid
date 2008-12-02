@@ -2,6 +2,9 @@ package org.andnav.osm.views.tiles.renderer.mapnik;
 
 import java.util.Vector;
 
+import android.graphics.Paint.Cap;
+import android.graphics.Paint.Join;
+
 // Original from include/mapnik/stroke.hpp
 //               src/stroke.cpp
 
@@ -9,28 +12,20 @@ public class MapnikStroke {
 
 	static final int DASH = 0;
 	static final int GAP  = 1;
-	
-	public enum LineCapEnum {
-		BUTT_CAP, SQUARE_CAP, ROUND_CAP
-	}
-
-	public enum LineJoinEnum {
-		MITER_JOIN, MITER_REVERT_JOIN, ROUND_JOIN, BEVEL_JOIN
-	}
 
 	private MapnikColour mColour;
 	private float mWidth;
 	private float mOpacity; // 0.0 - 1.0
-	private LineCapEnum mLineCap;
-	private LineJoinEnum mLineJoin;
+	private Cap mLineCap;
+	private Join mLineJoin;
 	private Vector<float[]> mDash;
 
 	public MapnikStroke() {
 		mColour = new MapnikColour(0,0,0);
 	    mWidth = 1;
 	    mOpacity = 1;
-	    mLineCap = LineCapEnum.BUTT_CAP;
-	    mLineJoin = LineJoinEnum.MITER_JOIN;
+	    mLineCap = Cap.BUTT;
+	    mLineJoin = Join.MITER;
 	    mDash = new Vector<float[]>();
 	}
 
@@ -38,8 +33,8 @@ public class MapnikStroke {
 		mColour = c;
 		mWidth = width;
 		mOpacity = 1;
-	    mLineCap = LineCapEnum.BUTT_CAP;
-	    mLineJoin = LineJoinEnum.MITER_JOIN;
+	    mLineCap = Cap.BUTT;
+	    mLineJoin = Join.MITER;
 	    mDash = new Vector<float[]>();
 	}
 
@@ -81,19 +76,19 @@ public class MapnikStroke {
 			mOpacity = o;
 	}
 
-	public LineCapEnum getLineCap() {
+	public Cap getLineCap() {
 		return mLineCap;
 	}
 
-	public void setLineCap(LineCapEnum c) {
+	public void setLineCap(Cap c) {
 		mLineCap = c;
 	}
 
-	public LineJoinEnum getLineJoin() {
+	public Join getLineJoin() {
 		return mLineJoin;
 	}
 	
-	public void setLineJoin(LineJoinEnum j)
+	public void setLineJoin(Join j)
 	{
 		mLineJoin = j;
 	}
@@ -114,11 +109,4 @@ public class MapnikStroke {
 	public Vector<float[]> getDashArray() {
 		return mDash;
 	}
-
-	/*
-	 * // TODO: These were in include/mapnik/stroke.hpp - I didnt figure out
-	 * what they do yet
-	 * DEFINE_ENUM( line_cap_e, line_cap_enum );
-	 * DEFINE_ENUM( line_join_e, line_join_enum );
-	 */
 }

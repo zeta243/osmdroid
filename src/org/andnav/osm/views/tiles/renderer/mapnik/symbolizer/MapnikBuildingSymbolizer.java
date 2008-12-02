@@ -1,35 +1,32 @@
 package org.andnav.osm.views.tiles.renderer.mapnik.symbolizer;
 
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikColour;
+import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeature;
+import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikCoordTransformer;
+
+import android.graphics.Canvas;
+import android.graphics.Paint.Style;
 
 // Original from include/mapnik/polygon_symbolizer.hpp
 
 public class MapnikBuildingSymbolizer extends MapnikSymbolizer {
 
-    MapnikColour mFill;
     double mHeight;
-    float mOpacity;
 	
 	public MapnikBuildingSymbolizer()
 	{
-		mFill = new MapnikColour(128, 128, 128);
+		super();
+		mPaint.setStyle(Style.FILL);
+		mPaint.setARGB(255, 128, 128, 128);
 		mHeight = 0;
-		mOpacity = 1;
 	}
 	
-	public MapnikBuildingSymbolizer(MapnikColour fill, double height)
+	public MapnikBuildingSymbolizer(int fill, double height)
 	{
-		mFill = fill;
+		super();
+		mPaint.setStyle(Style.FILL);
+		mPaint.setColor(fill);		
 		mHeight = height;
-		mOpacity = 1;
-	}
-
-	public MapnikColour getFill() {
-		return mFill;
-	}
-
-	public void setFill(MapnikColour fill) {
-		mFill = fill;
 	}
 
 	public double getHeight() {
@@ -40,11 +37,11 @@ public class MapnikBuildingSymbolizer extends MapnikSymbolizer {
 		mHeight = height;
 	}
 
-	public float getOpacity() {
-		return mOpacity;
-	}
-
-	public void setOpacity(float opacity) {
-		mOpacity = opacity;
+	@Override
+	public void draw(Canvas canvas, MapnikCoordTransformer transformer,
+			MapnikFeature feature) throws Exception {
+		// TODO We dont use any building symbolizer - so its not implemented yet.
+		throw new Exception("Building Symbolizer is not implemented");
+		
 	}
 }

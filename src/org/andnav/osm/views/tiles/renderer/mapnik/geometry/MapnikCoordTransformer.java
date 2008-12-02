@@ -13,18 +13,17 @@ public class MapnikCoordTransformer {
     private double mOffset_x;
     private double mOffset_y;
 
-    public MapnikCoordTransformer(int width, int height, MapnikEnvelope extent)
+    public MapnikCoordTransformer(int width, int height, MapnikEnvelope extent, int offset_x, int offset_y)
     {
     	mWidth = width;
     	mHeight = height;
     	mExtent = extent;
-    	mOffset_x = 0;
-    	mOffset_y = 0;
+    	mOffset_x = offset_x;
+    	mOffset_y = offset_y;
     	
         double sx=((double)width)/extent.getWidth();
         double sy=((double)height)/extent.getHeight();
         mScale = Math.min(sx, sy);
-
     }
     
     public double getScale()
