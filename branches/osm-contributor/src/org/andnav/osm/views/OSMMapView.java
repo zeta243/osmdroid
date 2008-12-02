@@ -41,7 +41,7 @@ public class OSMMapView extends View implements OSMConstants,
 	// Constants
 	// ===========================================================
 
-	final OSMMapTileProviderInfo DEFAULTRENDERER = OSMMapTileProviderInfo.MAPNIK;
+	final OSMMapTileProviderInfo DEFAULTRPROVIDER = OSMMapTileProviderInfo.MAPNIK;
 
 	// ===========================================================
 	// Fields
@@ -79,7 +79,7 @@ public class OSMMapView extends View implements OSMConstants,
 	 */
 	public OSMMapView(Context context, AttributeSet attrs) {
 		super(context, attrs);
-		this.mProviderInfo = DEFAULTRENDERER;
+		this.mProviderInfo = DEFAULTRPROVIDER;
 		this.mTileManager = new OSMMapTileManager(context, mProviderInfo, new SimpleInvalidationHandler());
 	}
 
@@ -279,12 +279,10 @@ public class OSMMapView extends View implements OSMConstants,
 		this.postInvalidate();
 	}
 
-	public void setRenderer(final OSMMapTileProviderInfo aRenderer) {
-		this.mProviderInfo = aRenderer;
-		this.setZoomLevel(this.mZoomLevel); // Invalidates the map and zooms to
-											// the maximum level of the
-											// renderer.
-		this.mTileManager.setRenderer(aRenderer);
+	public void setProvider(final OSMMapTileProviderInfo aProvider) {
+		this.mProviderInfo = aProvider;
+		this.mTileManager.setProvider(aProvider);
+		this.setZoomLevel(this.mZoomLevel); // Invalidates the map and zooms to the maximum level of the provider.
 	}
 
 	/**

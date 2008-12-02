@@ -12,7 +12,7 @@ public enum OSMMapTileProviderInfo {
 	OSMARENDER("http://tah.openstreetmap.org/Tiles/tile/", "OsmaRender", ".png", 17, 256, 18000, OSMMapTileProviderType.DOWNLOAD_PROVIDER),
 	MAPNIK("http://tile.openstreetmap.org/", "Mapnik", ".png", 18, 256, 18000, OSMMapTileProviderType.DOWNLOAD_PROVIDER),
 	CYCLEMAP("http://b.andy.sandbox.cloudmade.com/tiles/cycle/", "Cycle Map", ".png", 17, 256, 18000, OSMMapTileProviderType.DOWNLOAD_PROVIDER),
-	OPENARIELMAP("http://tile.openaerialmap.org/tiles/1.0.0/openaerialmap-900913/", "OpenArialMap (Satellite)", ".jpg", 13, 256, 18000, OSMMapTileProviderType.DOWNLOAD_PROVIDER),
+	OPENAERIELMAP("http://tile.openaerialmap.org/tiles/1.0.0/openaerialmap-900913/", "OpenAerialMap (Satellite)", ".jpg", 13, 256, 18000, OSMMapTileProviderType.DOWNLOAD_PROVIDER),
 	CLOUDMADESMALLTILES("http://tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/2/64/", "Cloudmade (Small tiles)", ".jpg", 13, 64, 18000, OSMMapTileProviderType.DOWNLOAD_PROVIDER),
 	CLOUDMADESTANDARDTILES("http://tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/2/256/", "Cloudmade (Standard tiles)", ".jpg", 18, 256, 18000, OSMMapTileProviderType.DOWNLOAD_PROVIDER),
 	INTERNAL("http://internal/", "Internal", "", 18, 256, 18000, OSMMapTileProviderType.LOCAL_PROVIDER); // URL and name are still needed - they are used as keys by the FS/memory tile caches
