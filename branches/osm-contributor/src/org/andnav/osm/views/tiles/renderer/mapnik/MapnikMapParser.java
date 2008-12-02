@@ -4,9 +4,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Stack;
 import java.util.Vector;
-
-import org.andnav.osm.views.tiles.renderer.mapnik.MapnikStroke.LineCapEnum;
-import org.andnav.osm.views.tiles.renderer.mapnik.MapnikStroke.LineJoinEnum;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeatureTypeStyle;
 import org.andnav.osm.views.tiles.renderer.mapnik.filter.MapnikFilter;
 import org.andnav.osm.views.tiles.renderer.mapnik.filter.MapnikFilterExpression;
@@ -22,10 +19,16 @@ import org.andnav.osm.views.tiles.renderer.mapnik.symbolizer.MapnikTextSymbolize
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.graphics.Color;
+import android.graphics.DashPathEffect;
+import android.graphics.Paint;
+import android.graphics.Paint.Cap;
+import android.graphics.Paint.Join;
+
 public class MapnikMapParser {
 
 	private boolean mStrict;
-	// TODO: Make use of Androids font system
+
 	private HashMap<String, MapnikParameters> mDatasourceTemplates;
 	
 	public MapnikMapParser(boolean strict)
@@ -117,8 +120,6 @@ public class MapnikMapParser {
 			else
 				throw new MapnikInvalidXMLException(xpp, "Unexpected attribute: " + attrName);
 		}
-		
-		// XXX if no projection is given inherit from map? [DS]
 		
 		if (srs == null)
 			srs = m.getSRS();
@@ -346,20 +347,18 @@ public class MapnikMapParser {
 				{
 					parsePolygonSymbolizer(rule, xpp);
 				}
-				
-				// Not needed/used for OSM - dont need to be implemented.
-//				else if (xpp.getName() == "BuildingSymbolizer")
-//				{
-//					parseBuildingSymbolizer(rule, xpp); /* Not used */
-//				}
-//				else if (xpp.getName() == "RasterSymbolizer")
-//				{
-//					parseRasterSymbolizer(rule, xpp); /* Not used */
-//				}
-//				else if (xpp.getName() == "MarkersSymbolizer")
-//				{
-//					parseMarkersSymbolizer(rule, xpp); /* Not used */
-//				}
+				else if (xpp.getName() == "BuildingSymbolizer")
+				{
+					parseBuildingSymbolizer(rule, xpp);
+				}
+				else if (xpp.getName() == "RasterSymbolizer")
+				{
+					parseRasterSymbolizer(rule, xpp);
+				}
+				else if (xpp.getName() == "MarkersSymbolizer")
+				{
+					parseMarkersSymbolizer(rule, xpp);
+				}
 				else
 					throw new MapnikInvalidXMLException(xpp, "Unexpected Tag");
 			}
@@ -370,21 +369,20 @@ public class MapnikMapParser {
 		}
 	}
 	
-	// Not needed/used for OSM - dont need to be implemented.
-//	private void parseMarkersSymbolizer(MapnikRule rule, XmlPullParser xpp) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//	private void parseRasterSymbolizer(MapnikRule rule, XmlPullParser xpp) {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//
-//	private void parseBuildingSymbolizer(MapnikRule rule, XmlPullParser xpp) {
-//		// TODO Auto-generated method stub
-//		
-//	}
+	private void parseMarkersSymbolizer(MapnikRule rule, XmlPullParser xpp) throws XmlPullParserException, IOException, MapnikInvalidXMLException {
+		// TODO
+		throw new MapnikInvalidXMLException(xpp, "Marker Symbolizer not implemented");
+	}
+
+	private void parseRasterSymbolizer(MapnikRule rule, XmlPullParser xpp) throws XmlPullParserException, IOException, MapnikInvalidXMLException {
+		// TODO 
+		throw new MapnikInvalidXMLException(xpp, "Raster Symbolizer not implemented");
+	}
+
+	private void parseBuildingSymbolizer(MapnikRule rule, XmlPullParser xpp) throws XmlPullParserException, IOException, MapnikInvalidXMLException {
+		// TODO 
+		throw new MapnikInvalidXMLException(xpp, "Building Symbolizer not implemented");
+	}
 
 	
 	private void parsePolygonSymbolizer(MapnikRule rule, XmlPullParser xpp) throws XmlPullParserException, IOException, MapnikInvalidXMLException
@@ -411,7 +409,7 @@ public class MapnikMapParser {
 								eventType = xpp.next();
 								if (eventType == XmlPullParser.TEXT)
 								{
-									symbolizer.setFill(new MapnikColour(android.graphics.Color.parseColor(xpp.getText())));
+									symbolizer.getPaint().setColor(Color.parseColor(xpp.getText()));
 									break;
 								}
 								else
@@ -423,7 +421,7 @@ public class MapnikMapParser {
 								eventType = xpp.next();
 								if (eventType == XmlPullParser.TEXT)
 								{
-									symbolizer.setOpacity(Float.parseFloat(xpp.getText()));
+									symbolizer.getPaint().setAlpha((int)(255 * Float.parseFloat(xpp.getText())));
 									break;
 								}
 								else
@@ -446,7 +444,8 @@ public class MapnikMapParser {
 
 	private void parseLineSymbolizer(MapnikRule rule, XmlPullParser xpp) throws XmlPullParserException, IOException, MapnikInvalidXMLException
 	{
-		MapnikStroke stroke = new MapnikStroke();
+		Paint paint = new Paint();
+		// MapnikStroke stroke = new MapnikStroke();
 		
 		int eventType = xpp.getEventType();
 		while (eventType != XmlPullParser.END_DOCUMENT)
@@ -468,7 +467,7 @@ public class MapnikMapParser {
 								eventType = xpp.next();
 								if (eventType == XmlPullParser.TEXT)
 								{
-									stroke.setColour(new MapnikColour(android.graphics.Color.parseColor(xpp.getText())));
+									paint.setColor(android.graphics.Color.parseColor(xpp.getText()));
 									break;
 								}
 								else
@@ -480,7 +479,7 @@ public class MapnikMapParser {
 								eventType = xpp.next();
 								if (eventType == XmlPullParser.TEXT)
 								{
-									stroke.setWidth(Float.parseFloat(xpp.getText()));
+									paint.setStrokeWidth(Float.parseFloat(xpp.getText()));
 									break;
 								}
 								else
@@ -491,7 +490,7 @@ public class MapnikMapParser {
 								eventType = xpp.next();
 								if (eventType == XmlPullParser.TEXT)
 								{
-									stroke.setOpacity(Float.parseFloat(xpp.getText()));
+									paint.setAlpha((int)(255 * Float.parseFloat(xpp.getText())));
 									break;
 								}
 								else
@@ -504,13 +503,12 @@ public class MapnikMapParser {
 								{
 									String type = xpp.getText();
 									if (type == "round")
-										stroke.setLineJoin(LineJoinEnum.ROUND_JOIN);
+										
+										paint.setStrokeJoin(Join.ROUND);
 									else if (type == "miter")
-										stroke.setLineJoin(LineJoinEnum.MITER_JOIN);
-									else if (type == "miter_revert")
-										stroke.setLineJoin(LineJoinEnum.MITER_REVERT_JOIN);
+										paint.setStrokeJoin(Join.MITER);
 									else if (type == "bevel")
-										stroke.setLineJoin(LineJoinEnum.BEVEL_JOIN);
+										paint.setStrokeJoin(Join.BEVEL);
 									else
 										throw new MapnikInvalidXMLException(xpp, "Invalid LineJoin: " + type);
 									break;
@@ -525,11 +523,11 @@ public class MapnikMapParser {
 								{
 									String type = xpp.getText();
 									if (type == "round")
-										stroke.setLineCap(LineCapEnum.ROUND_CAP);
+										paint.setStrokeCap(Cap.ROUND);
 									else if (type == "square")
-										stroke.setLineCap(LineCapEnum.SQUARE_CAP);
+										paint.setStrokeCap(Cap.SQUARE);
 									else if (type == "butt")
-										stroke.setLineCap(LineCapEnum.BUTT_CAP);
+										paint.setStrokeCap(Cap.BUTT);
 									else
 										throw new MapnikInvalidXMLException(xpp, "Invalid LineJoin: " + type);
 									break;
@@ -557,10 +555,14 @@ public class MapnikMapParser {
 											dashes.add(Float.parseFloat(t));
 										}
 									}
+
+									float[] myDashes = new float[dashes.size()];
 									for (int n = 0; n < dashes.size(); n += 2)
 									{
-										stroke.addDash(dashes.get(n), dashes.get(n + 1));
+										myDashes[n] = dashes.get(n);
 									}
+									DashPathEffect pathEffect = new DashPathEffect(myDashes, (float)0);
+									paint.setPathEffect(pathEffect);
 
 									break;
 								}
@@ -579,7 +581,7 @@ public class MapnikMapParser {
 				break;
 		}
 		
-		rule.appendSymbolizer(new MapnikLineSymbolizer(stroke));
+		rule.appendSymbolizer(new MapnikLineSymbolizer(paint));
 	}
 
 	private void parseShieldSymbolizer(MapnikRule rule, XmlPullParser xpp) throws XmlPullParserException, IOException, MapnikInvalidXMLException
@@ -587,7 +589,7 @@ public class MapnikMapParser {
 		String name = null;
 		String faceName = null;
 		int size = -1;
-		MapnikColour fill = null;
+		int fill = Color.TRANSPARENT;
 		
 		String file = null;
 		String type = null;
@@ -610,7 +612,7 @@ public class MapnikMapParser {
 				size = Integer.parseInt(attrValue);
 			
 			else if (attrName == "fill")
-				fill = new MapnikColour(android.graphics.Color.parseColor(attrValue));
+				fill = Color.parseColor(attrValue);
 			
 			else if (attrName == "file")
 				file = attrValue;
@@ -632,7 +634,7 @@ public class MapnikMapParser {
 		}
 		
 		MapnikShieldSymbolizer symbolizer = null;
-		if (name != null && faceName != null && size > 0 && fill != null &&
+		if (name != null && faceName != null && size > 0 &&
 			file != null && type != null && width > 0 && height > 0)
 		    symbolizer = new MapnikShieldSymbolizer(name, faceName, size, fill, file, type, width, height);
 		else
@@ -649,10 +651,10 @@ public class MapnikMapParser {
 		String name = null;
 		String faceName = null;
 		int size = 0;
-		MapnikColour fill = null;
+		int fill = Color.TRANSPARENT;
 		
 		LabelPlacementEnum placement = LabelPlacementEnum.POINT_PLACEMENT;
-		MapnikColour halo_fill = null;
+		int halo_fill = Color.TRANSPARENT;
 		int halo_radius = -1;
 		int text_ratio = -1;
 		int wrap_width = -1;
@@ -677,7 +679,7 @@ public class MapnikMapParser {
 				size = Integer.parseInt(attrValue);
 			
 			else if (attrName == "fill")
-			    fill = new MapnikColour(android.graphics.Color.parseColor(attrValue));
+			    fill = Color.parseColor(attrValue);
 			
 			else if (attrName == "placement")
 			{
@@ -689,7 +691,7 @@ public class MapnikMapParser {
 					throw new MapnikInvalidXMLException(xpp, "Invalid Attribute: " + attrName);
 			}
 			else if (attrName == "halo_fill")
-				halo_fill = new MapnikColour(android.graphics.Color.parseColor(attrValue));
+				halo_fill = Color.parseColor(attrValue);
 			
 			else if (attrName == "halo_radius")
 				halo_radius = Integer.parseInt(attrValue);
@@ -728,14 +730,15 @@ public class MapnikMapParser {
 		
 		MapnikTextSymbolizer symbolizer = null;
 		
-		if (name != null && faceName != null && size > 0 && fill != null)
+		if (name != null && faceName != null && size > 0)
 			symbolizer = new MapnikTextSymbolizer(name, faceName, size, fill);
 		else
 			throw new MapnikInvalidXMLException(xpp, "Missing required attributes (file, face_name, size, fill)");
 		
 		symbolizer.setLabelPlacement(placement);
-		if (halo_fill != null)
-			symbolizer.setHaloFill(halo_fill);
+
+		symbolizer.setHaloFill(halo_fill);
+		
 		if (halo_radius != -1)
 			symbolizer.setHaloRadius(halo_radius);
 		if (text_ratio != -1)
@@ -866,19 +869,17 @@ public class MapnikMapParser {
 		MapnikPointSymbolizer symbolizer = null;
 		if (file != null && type != null && width > 0 && height > 0)
 		{
-			symbolizer = new MapnikPointSymbolizer(file, type, width, height);
+			symbolizer = new MapnikPointSymbolizer(file);
 		}
 		else if (file == null && type == null && width == -1 && height == -1)
 			symbolizer = new MapnikPointSymbolizer();
 		else
 			throw new MapnikInvalidXMLException(xpp, "Missing required attributes (file, type, width, height)");
 
-		
 		symbolizer.setAllowOverlap(allow_overlap);
 		rule.appendSymbolizer(symbolizer);
 	}
 
-	
 	public class MapnikInvalidXMLException extends Exception
 	{
 		private static final long serialVersionUID = 5010677168353539997L;

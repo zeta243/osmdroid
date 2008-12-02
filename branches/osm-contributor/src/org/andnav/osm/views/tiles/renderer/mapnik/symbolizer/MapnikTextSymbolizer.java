@@ -1,6 +1,16 @@
 package org.andnav.osm.views.tiles.renderer.mapnik.symbolizer;
 
-import org.andnav.osm.views.tiles.renderer.mapnik.MapnikColour;
+import java.util.Vector;
+
+import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeature;
+import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikCoordTransformer;
+import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikGeometry;
+
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Path;
+import android.graphics.Typeface;
 
 public class MapnikTextSymbolizer extends MapnikSymbolizer {
 
@@ -10,27 +20,38 @@ public class MapnikTextSymbolizer extends MapnikSymbolizer {
 		LINE_PLACEMENT,
 	}
 	
-	private String mName;
-	private String mFaceName;
-	private int mSize;
-	private int mTextRatio;
-	private int mWrapWidth;
-	private int mLabelSpacing;
-	private int mLabelPositionTolerance;
-	private boolean mForceOddLabels;
-	private double mMaxCharAngleDelta;
-	private MapnikColour mFill;
-	private MapnikColour mHaloFill;
-	private int mHaloRadius;
-	private LabelPlacementEnum mLabelPlacement;
-	private double[] mAnchor = new double[2];
-	private double[] mDisplacement = new double[2];
-	boolean mAvoidEdges;
-	double mMinumumDistance;
-	boolean mOverlap;
+	protected Typeface mTypeface;
+	protected Paint mPaint;
+	protected String mName;
+	protected String mFaceName;
 	
-	public MapnikTextSymbolizer(String name, String faceName, int size, MapnikColour fill)
+	protected int mSize;
+	protected int mTextRatio;
+	protected int mWrapWidth;
+	protected int mLabelSpacing;
+	protected int mLabelPositionTolerance;
+	protected boolean mForceOddLabels;
+	protected double mMaxCharAngleDelta;
+	protected int mFill;
+	protected int mHaloFill;
+	protected int mHaloRadius;
+	protected LabelPlacementEnum mLabelPlacement;
+	protected double[] mAnchor = new double[2];
+	protected double[] mDisplacement = new double[2];
+	protected boolean mAvoidEdges;
+	protected double mMinumumDistance;
+	protected boolean mOverlap;
+	
+	public MapnikTextSymbolizer(String name, String faceName, int size, int colour)
 	{
+		mPaint = new Paint();
+		
+		mTypeface = Typeface.create(faceName, Typeface.NORMAL);
+		
+		mPaint.setTypeface(mTypeface);
+		mPaint.setTextSize(size);
+		mPaint.setColor(colour);
+		
 		mName         = name;
 		mFaceName     = faceName;
 		mSize         = size;
@@ -40,8 +61,8 @@ public class MapnikTextSymbolizer extends MapnikSymbolizer {
 		mLabelPositionTolerance = 0;
 		mForceOddLabels = false;
 		mMaxCharAngleDelta = 0;
-		mFill         = fill;
-		mHaloFill     = new MapnikColour(255,255,255);
+		mFill         = colour;
+		mHaloFill     = Color.BLACK;
 		mHaloRadius   = 0;
 		mLabelPlacement = LabelPlacementEnum.POINT_PLACEMENT;
 		mAnchor[0]    = 0;
@@ -55,6 +76,8 @@ public class MapnikTextSymbolizer extends MapnikSymbolizer {
 	
 	public MapnikTextSymbolizer(MapnikTextSymbolizer s)
 	{
+		mPaint        = s.mPaint;
+		mTypeface     = s.mTypeface;
 		mName         = s.mName;
 		mFaceName     = s.mFaceName;
 		mSize         = s.mSize;
@@ -149,19 +172,19 @@ public class MapnikTextSymbolizer extends MapnikSymbolizer {
 		mMaxCharAngleDelta = maxCharAngleDelta;
 	}
 
-	public MapnikColour getFill() {
+	public int getFill() {
 		return mFill;
 	}
 
-	public void setFill(MapnikColour fill) {
+	public void setFill(int fill) {
 		mFill = fill;
 	}
 
-	public MapnikColour getHaloFill() {
+	public int getHaloFill() {
 		return mHaloFill;
 	}
 
-	public void setHaloFill(MapnikColour haloFill) {
+	public void setHaloFill(int haloFill) {
 		mHaloFill = haloFill;
 	}
 
@@ -221,9 +244,33 @@ public class MapnikTextSymbolizer extends MapnikSymbolizer {
 		mOverlap = overlap;
 	}
 	
-/*
+	@Override
+	public void draw(Canvas canvas, MapnikCoordTransformer transformer,
+			MapnikFeature feature) throws Exception {
+		
+		Vector<MapnikGeometry> geoms = feature.getGeometries();
+		
+		float characterWidths[] = new float[mName.length()];
+		mPaint.getTextWidths(mName, characterWidths);
+		
+		float totalWidth = 0;
+        for (float n : characterWidths)
+        	totalWidth += n;
 
-
-
- */
+		for (MapnikGeometry g : geoms)
+		{
+			if (g.numPoints() > 2)
+			{
+				float pathLen[] = new float[1];
+				Path path = this.getPath(feature, transformer, pathLen);
+				float currentOffset = totalWidth / 2;
+				while (currentOffset < pathLen[0])
+				{
+		            float Y_offset = (Math.abs(mPaint.ascent()) - mPaint.descent()) / 2;
+		            canvas.drawTextOnPath(mName, path, currentOffset, Y_offset, mPaint);
+		            currentOffset += totalWidth * 1.5;
+				}
+			}
+		}
+	}
 }

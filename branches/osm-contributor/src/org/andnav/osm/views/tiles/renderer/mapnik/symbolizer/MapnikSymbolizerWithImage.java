@@ -7,30 +7,39 @@ import java.io.IOException;
 
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikImageData;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.graphics.Bitmap.Config;
+
 // Original from include/mapnik/symbolizer.hpp
 //               src/symbolizer.cpp
 
 public class MapnikSymbolizerWithImage extends MapnikSymbolizer implements MapnikSymbolizerWithImageInterface {
 
-	protected MapnikImageData mImage;
+	protected Bitmap mImage;
+	// protected MapnikImageData mImage;
 	protected String mImageFilename;
 	
-	public MapnikSymbolizerWithImage(MapnikImageData image)
+	public MapnikSymbolizerWithImage(int width, int height)
 	{
-		mImage = image;
+		mImage = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+		mImageFilename = null;
+		int pixels[] = {Color.BLACK};
+		mImage.setPixels(pixels, 0, 1, 0, 0, width, height);
 	}
 	
-	public MapnikSymbolizerWithImage(String filename, String type, int width, int height) throws IOException, FileNotFoundException
+	public MapnikSymbolizerWithImage(Bitmap image)
+	{
+		mImage = image;
+		mImageFilename = null;
+	}
+	
+	public MapnikSymbolizerWithImage(String filename) throws IOException, FileNotFoundException
 	{
 		mImageFilename = filename;
 		
-		FileInputStream s = new FileInputStream(new File(filename));
-		
-		byte[] imageData = new byte[width * height * 4];
-		s.read(imageData, 0, width * height * 4);
-		
-		mImage = new MapnikImageData(width, height);
-		mImage.setBytes(imageData);
+		mImage = BitmapFactory.decodeFile(filename);
 	}
 	
 	public MapnikSymbolizerWithImage(MapnikSymbolizerWithImage symbolizer)
@@ -39,7 +48,7 @@ public class MapnikSymbolizerWithImage extends MapnikSymbolizer implements Mapni
 		mImageFilename = symbolizer.mImageFilename;
 	}
 
-	public MapnikImageData getImage()
+	public Bitmap getImage()
 	{
 		return mImage;
 	}
@@ -49,7 +58,7 @@ public class MapnikSymbolizerWithImage extends MapnikSymbolizer implements Mapni
 		return mImageFilename;	
 	}
 	
-	public void setImage(MapnikImageData image)
+	public void setImage(Bitmap image)
 	{
 		mImage = image; 
 	}

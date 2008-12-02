@@ -9,7 +9,7 @@ public class MapnikPolygonPatternSymbolizer extends MapnikSymbolizerWithImage {
 
 	public MapnikPolygonPatternSymbolizer(String file, String type, int width, int height) throws FileNotFoundException, IOException
 	{
-		super(file, type, width, height);
+		super(file);
 	}
 	
 	public MapnikPolygonPatternSymbolizer(MapnikPolygonPatternSymbolizer s)

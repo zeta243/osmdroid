@@ -25,7 +25,7 @@ public class MapnikMap {
 
 	private int mWidth;
 	private int mHeight;
-	private String mSrs; // Spacial Refefence String
+	private String mSrs; // Spatial Reference String
 
 	private MapnikColour mBackground;
 	
@@ -260,7 +260,7 @@ public class MapnikMap {
 		zoom(factor);
 	}
 	
-	double getScale()
+	public double getScale()
 	{
 		if (mWidth > 0)
 			return mCurrentExtent.getWidth() / mWidth;
@@ -269,10 +269,10 @@ public class MapnikMap {
 	
 	public MapnikCoordTransformer getCoordTransformer()
 	{
-		return new MapnikCoordTransformer(mWidth, mHeight, mCurrentExtent);
+		return new MapnikCoordTransformer(mWidth, mHeight, mCurrentExtent, 0, 0);
 	}
 	
-	MapnikFeatureSet queryPoint(int index, double[] coords)
+	public MapnikFeatureSet queryPoint(int index, double[] coords)
 	{
 		// Projection Transformations skipped - all data *must* be in Mercator projection
 		MapnikLayer l = getLayer(index);
