@@ -418,7 +418,7 @@ public class GPSCaptureActivityExtensive extends Activity implements OSMConstant
 				return true;
 				
 			default: 
-				this.mOSMView.setRenderer(OSMMapTileProviderInfo.values()[item.getItemId() - 1000]);
+				this.mOSMView.setProvider(OSMMapTileProviderInfo.values()[item.getItemId() - 1000]);
 		}
 		return false;
 	}

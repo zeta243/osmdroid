@@ -201,7 +201,7 @@ public class SampleExtensive extends Activity implements OSMConstants{
 				return true;
 				
 			default: 
-				this.mOsmv.setRenderer(OSMMapTileProviderInfo.values()[item.getItemId() - 1000]);
+				this.mOsmv.setProvider(OSMMapTileProviderInfo.values()[item.getItemId() - 1000]);
 		}
 		return false;
 	}

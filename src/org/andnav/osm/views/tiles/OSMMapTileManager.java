@@ -55,7 +55,6 @@ public class OSMMapTileManager implements OSMConstants, OSMMapViewConstants{
 			    break;
 		}
 		
-		
 		this.mDownloadFinishedListenerHander = aDownloadFinishedListener;
 		this.mProviderInfo = pProviderInfo;
 	}
@@ -63,6 +62,15 @@ public class OSMMapTileManager implements OSMConstants, OSMMapViewConstants{
 	// ===========================================================
 	// Getter & Setter
 	// ===========================================================
+	
+	public void setProvider(OSMMapTileProviderInfo aProviderInfo){
+		this.mProviderInfo = aProviderInfo;
+		this.mTileProvider.setProviderInfo(aProviderInfo);
+	}
+	
+	public OSMMapTileFilesystemCache getFileSystemCache(){
+		return this.mFSTileCache;
+	}
 
 	// ===========================================================
 	// Methods from SuperClass/Interfaces
@@ -71,6 +79,10 @@ public class OSMMapTileManager implements OSMConstants, OSMMapViewConstants{
 	// ===========================================================
 	// Methods
 	// ===========================================================
+	
+	public void preCacheTile(int[] coords, int zoomLevel) {
+		getMapTile(coords, zoomLevel);
+	}
 	
 	/**
 	 * @return <code>false</code>, when MapTile is already pending for download or already existing on the FS. <code>false</code> otherwise. 
@@ -142,14 +154,5 @@ public class OSMMapTileManager implements OSMConstants, OSMMapViewConstants{
 					break;
 			}
 		}
-	}
-
-	public void preCacheTile(int[] coords, int zoomLevel) {
-		getMapTile(coords, zoomLevel);
-	}
-	
-	public void setRenderer(OSMMapTileProviderInfo aRendererInfo)
-	{
-		this.mProviderInfo = aRendererInfo;
 	}
 }

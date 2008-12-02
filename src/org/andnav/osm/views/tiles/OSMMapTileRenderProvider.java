@@ -51,7 +51,7 @@ public class OSMMapTileRenderProvider extends OSMAbstractMapTileProvider impleme
 	
 	@Override
 	public boolean requestMapTileAsync(int[] coords, int zoomLevel, final Handler callback) {
-		final String aURLString = mRendererInfo.getTileURLString(coords, zoomLevel);
+		final String aURLString = mProviderInfo.getTileURLString(coords, zoomLevel);
 		if(this.mPending.contains(aURLString))
 			return false;
 	

@@ -24,21 +24,25 @@ public abstract class OSMAbstractMapTileProvider {
 	protected Context mCtx;
 	protected OSMMapTileFilesystemCache mMapTileFSCache;
 	protected ExecutorService mThreadPool = Executors.newFixedThreadPool(5);
-	protected OSMMapTileProviderInfo mRendererInfo;
+	protected OSMMapTileProviderInfo mProviderInfo;
 
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 	
-	public OSMAbstractMapTileProvider(final Context ctx, OSMMapTileProviderInfo aRendererInfo, final OSMMapTileFilesystemCache aMapTileFSProvider){
+	public OSMAbstractMapTileProvider(final Context ctx, final OSMMapTileProviderInfo aProviderInfo, final OSMMapTileFilesystemCache aMapTileFSProvider){
 		this.mCtx = ctx;
 		this.mMapTileFSCache = aMapTileFSProvider;
-		this.mRendererInfo = aRendererInfo;
+		this.mProviderInfo = aProviderInfo;
 	}
 
 	// ===========================================================
 	// Getter & Setter
 	// ===========================================================
+	
+	public void setProviderInfo(final OSMMapTileProviderInfo aProviderInfo){
+		this.mProviderInfo = aProviderInfo;
+	}
 
 	// ===========================================================
 	// Methods from/for SuperClass/Interfaces
