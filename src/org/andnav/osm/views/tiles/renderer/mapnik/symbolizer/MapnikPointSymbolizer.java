@@ -61,7 +61,7 @@ public class MapnikPointSymbolizer extends MapnikSymbolizerWithImage {
 				coords[0] = v.x;
 				coords[1] = v.y;
 				transformer.forward(coords);
-				canvas.drawBitmap(mImage, (float)coords[0], (float)coords[1], mPaint);
+				canvas.drawBitmap(mImage, (float)coords[0] - (mImage.getWidth() / 2), (float)coords[1] - (mImage.getHeight() / 2), mPaint);
 			}
 		}
 	}

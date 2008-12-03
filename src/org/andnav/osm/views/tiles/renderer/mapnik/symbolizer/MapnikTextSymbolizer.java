@@ -5,12 +5,16 @@ import java.util.Vector;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeature;
 import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikCoordTransformer;
 import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikGeometry;
+import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikVertex;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PathMeasure;
 import android.graphics.Typeface;
+import android.graphics.Paint.Align;
 
 public class MapnikTextSymbolizer extends MapnikSymbolizer {
 
@@ -44,13 +48,14 @@ public class MapnikTextSymbolizer extends MapnikSymbolizer {
 	
 	public MapnikTextSymbolizer(String name, String faceName, int size, int colour)
 	{
-		mPaint = new Paint();
+		mPaint = new Paint();		
 		
 		mTypeface = Typeface.create(faceName, Typeface.NORMAL);
 		
 		mPaint.setTypeface(mTypeface);
 		mPaint.setTextSize(size);
 		mPaint.setColor(colour);
+		mPaint.setTextAlign(Align.CENTER);
 		
 		mName         = name;
 		mFaceName     = faceName;
@@ -250,26 +255,57 @@ public class MapnikTextSymbolizer extends MapnikSymbolizer {
 		
 		Vector<MapnikGeometry> geoms = feature.getGeometries();
 		
-		float characterWidths[] = new float[mName.length()];
-		mPaint.getTextWidths(mName, characterWidths);
+		String value = feature.getProperties().get(this.mName).toString();
+		float characterWidths[] = new float[value.length()];
+		mPaint.getTextWidths(value, characterWidths);
 		
-		float totalWidth = 0;
+		float stringWidth = 0;
         for (float n : characterWidths)
-        	totalWidth += n;
+        	stringWidth += n;
 
 		for (MapnikGeometry g : geoms)
 		{
-			if (g.numPoints() > 2)
+			if (g.numPoints() > 0)
 			{
-				float pathLen[] = new float[1];
-				Path path = this.getPath(feature, transformer, pathLen);
-				float currentOffset = totalWidth / 2;
-				while (currentOffset < pathLen[0])
-				{
-		            float Y_offset = (Math.abs(mPaint.ascent()) - mPaint.descent()) / 2;
-		            canvas.drawTextOnPath(mName, path, currentOffset, Y_offset, mPaint);
-		            currentOffset += totalWidth * 1.5;
-				}
+				Path path = this.getPath(feature, transformer);
+				PathMeasure measure = new PathMeasure(path, false);
+				float pathLen = measure.getLength();
+				Matrix matrix = new Matrix();
+				
+			    if (mLabelPlacement == LabelPlacementEnum.POINT_PLACEMENT)
+			    {
+				    final int flags = PathMeasure.POSITION_MATRIX_FLAG;
+				    measure.getMatrix(pathLen / 2, matrix, flags);
+				    
+				    g.rewind(0);
+				    MapnikVertex v = g.getNextVertex();
+				    double[] coords = new double[2];
+				    
+				    coords[0] = v.x;
+				    coords[1] = v.y;
+				    
+				    transformer.forward(coords);
+				    float newcoords[] = new float[2];
+				    
+				    newcoords[0] = (float)coords[0];
+				    newcoords[1] = (float)coords[1];
+				    matrix.mapPoints(newcoords);
+				    
+			    	canvas.drawText(value, newcoords[0], newcoords[1], mPaint);
+			    }
+			    else /* LabelPlacementEnum.LINE_PLACEMENT */
+			    {
+			    	if (g.numPoints() > 2)
+			    	{
+			    		float currentOffset = stringWidth / 2;
+			    		while (currentOffset < pathLen)
+			    		{
+			    			float Y_offset = (Math.abs(mPaint.ascent()) - mPaint.descent()) / 2;
+			    			canvas.drawTextOnPath(mName, path, currentOffset, Y_offset, mPaint);
+			    			currentOffset += stringWidth * 1.5;
+			    		}
+			    	}
+			    }
 			}
 		}
 	}

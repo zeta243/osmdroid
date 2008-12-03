@@ -1,7 +1,6 @@
 package org.andnav.osm.views.tiles.renderer.mapnik;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Stack;
 import java.util.Vector;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeatureTypeStyle;
@@ -26,15 +25,9 @@ import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
 
 public class MapnikMapParser {
-
-	private boolean mStrict;
-
-	private HashMap<String, MapnikParameters> mDatasourceTemplates;
 	
-	public MapnikMapParser(boolean strict)
+	public MapnikMapParser()
 	{
-		mStrict = strict;
-		mDatasourceTemplates = new HashMap<String, MapnikParameters>();
 	}
 	
 	public boolean parseMap(MapnikMap m, XmlPullParser xpp) throws XmlPullParserException, IOException, MapnikInvalidXMLException
@@ -760,9 +753,6 @@ public class MapnikMapParser {
 	private void parsePolygonPatternSymbolizer(MapnikRule rule, XmlPullParser xpp) throws XmlPullParserException, IOException, MapnikInvalidXMLException
 	{
 		String file = null;
-		String type = null;
-		int width   = -1;
-		int height  = -1;
 		
 		for (int i = 0; i < xpp.getAttributeCount(); i++)
 		{
@@ -772,23 +762,14 @@ public class MapnikMapParser {
 			if (attrName == "file")
 				file = attrValue;
 			
-			else if (attrName == "type")
-				type = attrValue;
-			
-			else if (attrName == "width")
-				width = Integer.parseInt(attrValue);
-			
-			else if (attrName == "height")
-			    height = Integer.parseInt(attrValue);
-			
 			else
 				throw new MapnikInvalidXMLException(xpp, "Invalid Attribute: " + attrName);
 		}
 		MapnikPolygonPatternSymbolizer symbolizer = null;
-		if (file != null && type != null && width > 0 && height > 0)
-			symbolizer = new MapnikPolygonPatternSymbolizer(file, type, width, height);
+		if (file != null)
+			symbolizer = new MapnikPolygonPatternSymbolizer(file);
 		else
-			throw new MapnikInvalidXMLException(xpp, "Missing required attributes (file, type, width, height)");
+			throw new MapnikInvalidXMLException(xpp, "Missing required attributes (file)");
 
 		rule.appendSymbolizer(symbolizer);
 	}
@@ -796,9 +777,6 @@ public class MapnikMapParser {
 	private void parseLinePatternSymbolizer(MapnikRule rule, XmlPullParser xpp) throws XmlPullParserException, IOException, MapnikInvalidXMLException
 	{
 		String file = null;
-		String type = null;
-		int width   = -1;
-		int height  = -1;
 		
 		for (int i = 0; i < xpp.getAttributeCount(); i++)
 		{
@@ -807,22 +785,13 @@ public class MapnikMapParser {
 			
 			if (attrName == "file")
 				file = attrValue;
-			
-			else if (attrName == "type")
-				type = attrValue;
-			
-			else if (attrName == "width")
-				width = Integer.parseInt(attrValue);
-			
-			else if (attrName == "height")
-			    height = Integer.parseInt(attrValue);
-			
+
 			else
 				throw new MapnikInvalidXMLException(xpp, "Invalid Attribute: " + attrName);
 		}
 		MapnikLinePatternSymbolizer symbolizer = null;
-		if (file != null && type != null && width > 0 && height > 0)
-			symbolizer = new MapnikLinePatternSymbolizer(file, type, width, height);
+		if (file != null)
+			symbolizer = new MapnikLinePatternSymbolizer(file);
 		else
 			throw new MapnikInvalidXMLException(xpp, "Missing required attributes (file, type, width, height)");
 
