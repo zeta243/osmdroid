@@ -49,14 +49,18 @@ public class MapnikShieldSymbolizer extends MapnikTextSymbolizer implements Mapn
 			MapnikFeature feature) throws Exception {
 		Bitmap b = getImage().copy(getImage().getConfig(), true);
 		Canvas c = new Canvas(b);
+		
 		// Write the name of this symbol into the canvas 'c' - then write
 		// its bitmap into the main canvas 'canvas'
-		c.drawText(mName, b.getWidth() / 2, b.getHeight() / 2, mPaint);
+		
+		String propertyValue = feature.getProperties().get(this.mName).toString();
+		
+		c.drawText(propertyValue, b.getWidth() / 2, b.getHeight() / 2, mPaint);
 		
 		Vector<MapnikGeometry> geoms = feature.getGeometries();
 		
-		float characterWidths[] = new float[mName.length()];
-		mPaint.getTextWidths(mName, characterWidths);
+		float characterWidths[] = new float[propertyValue.length()];
+		mPaint.getTextWidths(propertyValue, characterWidths);
 		
 		float totalWidth = 0;
         for (float n : characterWidths)

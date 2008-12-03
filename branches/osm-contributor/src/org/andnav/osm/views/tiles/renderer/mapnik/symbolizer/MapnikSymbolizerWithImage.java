@@ -6,9 +6,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikImageData;
+import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeature;
+import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikCoordTransformer;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Bitmap.Config;
 
@@ -61,5 +64,11 @@ public class MapnikSymbolizerWithImage extends MapnikSymbolizer implements Mapni
 	public void setImage(Bitmap image)
 	{
 		mImage = image; 
+	}
+
+	@Override
+	public void draw(Canvas canvas, MapnikCoordTransformer transformer,
+			MapnikFeature feature) throws Exception {
+		// Do nothing. Drawing is performed by the subclass.
 	}
 }
