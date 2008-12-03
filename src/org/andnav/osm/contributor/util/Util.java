@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import org.andnav.osm.adt.BoundingBoxE6;
+import org.andnav.osm.adt.GPSGeoLocation;
 import org.andnav.osm.contributor.util.constants.OSMContributorConstants;
 
 /**
@@ -48,7 +49,7 @@ public class Util implements OSMContributorConstants{
 		return UTCSimpleDateFormat.format(new Date(aTimestamp));
 	}
 	
-	public static boolean isSufficienDataForUpload(final ArrayList<RecordedGeoPoint> recordedGeoPoints){
+	public static boolean isSufficienDataForUpload(final ArrayList<GPSGeoLocation> recordedGeoPoints){
 		if(recordedGeoPoints == null)
 			return false;
 		

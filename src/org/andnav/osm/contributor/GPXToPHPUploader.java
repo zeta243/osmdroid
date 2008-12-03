@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
 
-import org.andnav.osm.contributor.util.RecordedGeoPoint;
+import org.andnav.osm.adt.GPSGeoLocation;
 import org.andnav.osm.contributor.util.RecordedRouteGPXFormatter;
 import org.andnav.osm.contributor.util.Util;
 import org.apache.http.HttpResponse;
@@ -30,7 +30,7 @@ public class GPXToPHPUploader {
 	/**
 	 * @param recordedGeoPoints
 	 */
-	public static void uploadAsync(final ArrayList<RecordedGeoPoint> recordedGeoPoints){
+	public static void uploadAsync(final ArrayList<GPSGeoLocation> recordedGeoPoints){
 		new Thread(new Runnable(){
 			@Override
 			public void run() {

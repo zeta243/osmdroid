@@ -2,6 +2,7 @@
 package org.andnav.osm.adt;
 
 import org.andnav.osm.util.constants.GeoConstants;
+import org.andnav.osm.util.constants.OSMConstants;
 import org.andnav.osm.views.util.constants.MathConstants;
 
 /**
@@ -9,7 +10,7 @@ import org.andnav.osm.views.util.constants.MathConstants;
  * @author Nicolas Gramlich
  *
  */
-public class GeoPoint implements MathConstants, GeoConstants{
+public class GeoPoint implements MathConstants, GeoConstants, OSMConstants {
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -81,6 +82,14 @@ public class GeoPoint implements MathConstants, GeoConstants{
 
 	public int getLatitudeE6() {
 		return this.mLatitudeE6;
+	}
+	
+	public double getLongitudeAsDouble() {
+		return this.mLongitudeE6 / 1E6;
+	}
+
+	public double getLatitudeAsDouble() {
+		return this.mLatitudeE6 / 1E6;
 	}
 	
 	public void setLongitudeE6(final int aLongitudeE6) {
