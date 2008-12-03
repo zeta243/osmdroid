@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.Formatter;
 import java.util.List;
 
+import org.andnav.osm.adt.GPSGeoLocation;
 import org.andnav.osm.contributor.util.constants.OSMContributorConstants;
 import org.andnav.osm.util.constants.OSMConstants;
 
@@ -62,7 +63,7 @@ public class RecordedRouteGPXFormatter implements OSMContributorConstants, OSMCo
 	 * &lt;/gpx&gt;</PRE>
 	 * 
 	 */
-	public static String create(final List<RecordedGeoPoint> someRecords) throws IllegalArgumentException {
+	public static String create(final List<GPSGeoLocation> someRecords) throws IllegalArgumentException {
 		if(someRecords == null)
 			throw new IllegalArgumentException("Records may not be null.");
 		
@@ -81,13 +82,8 @@ public class RecordedRouteGPXFormatter implements OSMContributorConstants, OSMCo
 						+ formatterCompleteDateTime.format(new Date(someRecords.get(someRecords.size() - 1).getTimeStamp()).getTime()));
 		sb.append(GPX_TAG_TRACK_SEGMENT);
 
-		for (RecordedGeoPoint rgp : someRecords) {
-			f.format(GPX_TAG_TRACK_SEGMENT_POINT, rgp.getLatitudeAsDouble(), rgp.getLongitudeAsDouble());
-			f.format(GPX_TAG_TRACK_SEGMENT_POINT_TIME, Util.convertTimestampToUTCString(rgp.getTimeStamp()));
-			if(rgp.mNumSatellites != NOT_SET)
-				f.format(GPX_TAG_TRACK_SEGMENT_POINT_SAT, rgp.mNumSatellites);
-			sb.append(GPX_TAG_TRACK_SEGMENT_POINT_CLOSE);
-		}
+		for (GPSGeoLocation rgp : someRecords)
+			rgp.appendToGpxString(sb, f);
 		
 		sb.append(GPX_TAG_TRACK_SEGMENT_CLOSE)
 		.append(GPX_TAG_TRACK_CLOSE)

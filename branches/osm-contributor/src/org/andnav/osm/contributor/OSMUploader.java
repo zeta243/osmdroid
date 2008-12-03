@@ -20,7 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
-import org.andnav.osm.contributor.util.RecordedGeoPoint;
+import org.andnav.osm.adt.GPSGeoLocation;
 import org.andnav.osm.contributor.util.RecordedRouteGPXFormatter;
 import org.andnav.osm.contributor.util.Util;
 import org.andnav.osm.contributor.util.constants.OSMContributorConstants;
@@ -34,7 +34,7 @@ import org.andnav.osm.util.constants.OSMConstants;
  * @author cdaller
  * @author Nicolas Gramlich
  */
-public class OSMUploader implements OSMConstants, OSMContributorConstants{
+public class OSMUploader implements OSMConstants, OSMContributorConstants {
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -66,7 +66,7 @@ public class OSMUploader implements OSMConstants, OSMContributorConstants{
 	 * @param gpxInputStream the InputStream containing the gpx-data.
 	 * @throws IOException
 	 */
-	public static void uploadAsync(final ArrayList<RecordedGeoPoint> recordedGeoPoints) {
+	public static void uploadAsync(final ArrayList<GPSGeoLocation> recordedGeoPoints) {
 		uploadAsync( DEFAULT_DESCRIPTION, DEFAULT_TAGS, true, recordedGeoPoints);
 	}
 	
@@ -80,7 +80,7 @@ public class OSMUploader implements OSMConstants, OSMContributorConstants{
 	 * @param gpxInputStreaman the InputStream containing the gpx-data.
 	 * @throws IOException
 	 */	
-	public static void uploadAsync(final String description, final String tags, final boolean addDateTags, final ArrayList<RecordedGeoPoint> recordedGeoPoints) {
+	public static void uploadAsync(final String description, final String tags, final boolean addDateTags, final ArrayList<GPSGeoLocation> recordedGeoPoints) {
 		uploadAsync(OSM_USERNAME, OSM_PASSWORD, description, tags, addDateTags, recordedGeoPoints, pseudoFileNameFormat.format(new GregorianCalendar().getTime()) + "_" + OSM_USERNAME + ".gpx");
 	}
 
@@ -95,7 +95,7 @@ public class OSMUploader implements OSMConstants, OSMContributorConstants{
 	 * @param pseudoFileName ending with "<code>.gpx</code>"
 	 * @throws IOException
 	 */
-	public static void uploadAsync(final String username, final String password, final String description, final String tags, final boolean addDateTags, final ArrayList<RecordedGeoPoint> recordedGeoPoints, final String pseudoFileName) {
+	public static void uploadAsync(final String username, final String password, final String description, final String tags, final boolean addDateTags, final ArrayList<GPSGeoLocation> recordedGeoPoints, final String pseudoFileName) {
 		if(username == null || username.length() == 0) return;
 		if(password == null || password.length() == 0) return;
 		if(description == null || description.length() == 0) return;

@@ -4,68 +4,40 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Formatter;
+import java.util.GregorianCalendar;
+
+import org.andnav.osm.contributor.util.constants.OSMContributorConstants;
 
 import android.location.Location;
 
-public class GPXFileWriter {
+public class GPXFileWriter implements OSMContributorConstants{
 
-	private static final String TAG = "GPXFileWriter";
 	private FileOutputStream mOutputStream;
 	private String mCaptureName;
 	private String mFileName;
-	private int mNumPoints = 0;
 
 	public GPXFileWriter(final String baseDir, final String name) throws IOException, IllegalArgumentException {
 		mCaptureName = name;
 
-		Calendar c = Calendar.getInstance();
+		final Calendar c = Calendar.getInstance();
 		if (mCaptureName != null)
 			mFileName = mCaptureName + ".gpx.xml";
 		else {
 			throw new IllegalArgumentException();
 		}
 
-		File path = new File(baseDir);
+		final File path = new File(baseDir);
 		path.mkdirs();
 
-		File f = new File(baseDir + "/", mFileName);
+		final File f = new File(baseDir + "/", mFileName);
 		// f.mkdirs();
-		mOutputStream = new FileOutputStream(f);
+		this.mOutputStream = new FileOutputStream(f);
 
-		/*
-		 * TODO Please format the UTC-time-strings using:
-		 * org.andnav.osm.contributor.util.Util.convertTimestampToUTCString(long
-		 * timestamp);
-		 */
+		this.mOutputStream.write(GPX_TAG.getBytes());
 
-		/*
-		 * TODO Is there an effort using "new String("Hello world")" ? Also
-		 * please avoid concatenating strings using the "+"-Operator. User
-		 * StringBuilder instead. Its much more efficient!
-		 */
-
-		/*
-		 * TODO Please reuse the constants from:
-		 * org.andnav.osm.contributor.util.
-		 * constants.OpenStreetMapContributorConstants
-		 * 
-		 * For an example how to construct the Strings have a look at:
-		 * org.andnav.osm.contributor.util.RecordedRouteGPXFormatter.create(...)
-		 */
-		mOutputStream.write(new String("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-				+ "<gpx version=\"1.0\" creator=\"Follow My Leader\"\n"
-				+ "	xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-				+ "	xmlns=\"http://www.topografix.com/GPX/1/0\"\n"
-				+ "	xsi:schemaLocation=\"http://www.topografix.com/GPX/1/0\n"
-				+ "		http://www.topografix.com/GPX/1/0/gpx.xsd\">\n").getBytes());
-
-		String timestamp = String.format("%04d-%02d-%02dT%02d:%02d:%02dZ", c.get(Calendar.YEAR), c
-				.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
-				c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND));
-
-		mOutputStream.write(new String("	<time>" + timestamp + "</time>\n" + "	<trk>\n"
-				+ "   	<trkseg>\n").getBytes());
-		mOutputStream.flush();
+		this.mOutputStream.write(new String("<time>" + Util.convertTimestampToUTCString(c.getTimeInMillis()) + "</time><trk><trkseg>\n").getBytes());
+		this.mOutputStream.flush();
 	}
 
 	public String getName() {
@@ -73,33 +45,42 @@ public class GPXFileWriter {
 	}
 
 	public void appendLocation(Location location) throws IOException {
-		Calendar c = Calendar.getInstance();
-		String timestamp = String.format("%04d-%02d-%02dT%02d:%02d:%02dZ", c.get(Calendar.YEAR), c
-				.get(Calendar.MONTH) + 1, c.get(Calendar.DAY_OF_MONTH),
-				c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), c.get(Calendar.SECOND));
+		final Calendar c = new GregorianCalendar();
+		
+		final Formatter f = new Formatter(this.mOutputStream);
+		
+		f.format(GPX_TAG_TRACK_SEGMENT_POINT, location.getLatitude(), location.getLongitude());
+		
+		f.format(GPX_TAG_TRACK_SEGMENT_POINT_TIME, Util.convertTimestampToUTCString(c.getTimeInMillis()));
 
-		mOutputStream.write(new String("			<trkpt lat=\"" + location.getLatitude() + "\" lon=\""
-				+ location.getLongitude() + "\">\n" + "				<ele>" + location.getAltitude()
-				+ "</ele>\n" + "				<time>" + timestamp + "</time>\n" + "				<course>"
-				+ location.getBearing() + "</course>\n" + "				<speed>"
-				+ (location.getSpeed() * 2.2369362920544) + "</speed>\n" + // Converts
-																			// from
-																			// meters/second
-																			// to
-																			// miles/hour
-				"			</trkpt>\n").getBytes());
-		mOutputStream.flush();
-		mNumPoints++;
+		if(location.hasAltitude()){
+			f.format(GPX_TAG_TRACK_SEGMENT_POINT_ELE, location.getAltitude());
+		}
+		
+		if(location.hasBearing()){
+			f.format(GPX_TAG_TRACK_SEGMENT_POINT_COURSE, location.getBearing());
+		}
+		
+		if(location.hasSpeed()){
+			f.format(GPX_TAG_TRACK_SEGMENT_POINT_SPEED, location.getSpeed() * 2.2369362920544); // in mph
+		}
+		
+		this.mOutputStream.write(GPX_TAG_TRACK_SEGMENT_POINT_CLOSE.getBytes());
+		
+		this.mOutputStream.flush();
 	}
 
 	public void appendNewTrack() throws IOException {
-		mOutputStream.write(new String("		</trkseg>\n" + "		<trkseg>\n").getBytes());
-		mOutputStream.flush();
+		this.mOutputStream.write(GPX_TAG_TRACK_SEGMENT_CLOSE.getBytes());
+		this.mOutputStream.write(GPX_TAG_TRACK_SEGMENT.getBytes());
+		this.mOutputStream.flush();
 	}
 
 	public void finalizeOutputStream() throws IOException {
-		mOutputStream.write(new String("		</trkseg>\n" + "	</trk>\n" + "</gpx>\n").getBytes());
-		mOutputStream.flush();
-		mOutputStream.close();
+		this.mOutputStream.write(GPX_TAG_TRACK_SEGMENT_CLOSE.getBytes());
+		this.mOutputStream.write(GPX_TAG_TRACK_CLOSE.getBytes());
+		this.mOutputStream.write(GPX_TAG_CLOSE.getBytes());
+		this.mOutputStream.flush();
+		this.mOutputStream.close();
 	}
 }
