@@ -27,7 +27,7 @@ public class MapnikMap {
 	private int mHeight;
 	private String mSrs; // Spatial Reference String
 
-	private MapnikColour mBackground;
+	private int mBackground;
 	
 	private HashMap<String, MapnikFeatureTypeStyle> mStyles;
 	private Vector<MapnikLayer> mLayers;
@@ -166,12 +166,12 @@ public class MapnikMap {
 		mSrs = srs;
 	}
 	
-	public MapnikColour getBackgroundColour()
+	public int getBackgroundColour()
 	{
 		return mBackground;
 	}
 	
-	public void setBackgroundColour(MapnikColour c)
+	public void setBackgroundColour(int c)
 	{
 		mBackground = c;
 	}

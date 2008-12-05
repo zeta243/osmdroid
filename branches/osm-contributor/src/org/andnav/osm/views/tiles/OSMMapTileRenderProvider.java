@@ -4,15 +4,24 @@ package org.andnav.osm.views.tiles;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
 import org.andnav.osm.util.StreamUtils;
 import org.andnav.osm.util.constants.OSMConstants;
+import org.andnav.osm.views.tiles.renderer.mapnik.MapnikMap;
+import org.andnav.osm.views.tiles.renderer.mapnik.MapnikMapParser;
+import org.andnav.osm.views.tiles.renderer.mapnik.MapnikMapParser.MapnikInvalidXMLException;
 import org.andnav.osm.views.util.constants.OSMMapViewConstants;
+import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserException;
 
+import org.andnav.osm.R;
 import android.content.Context;
+import android.content.res.Resources;
+import android.content.res.Resources.NotFoundException;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -27,10 +36,14 @@ public class OSMMapTileRenderProvider extends OSMAbstractMapTileProvider impleme
 	// ===========================================================
 	// Constants
 	// ===========================================================
+	
+	private static final String TAG = "OSMMapTileRenderProvider";
 
 	// ===========================================================
 	// Fields
 	// ===========================================================
+	private MapnikMap mMap;
+
 
 	// ===========================================================
 	// Constructors
@@ -38,7 +51,23 @@ public class OSMMapTileRenderProvider extends OSMAbstractMapTileProvider impleme
 	
 	public OSMMapTileRenderProvider(Context ctx, OSMMapTileProviderInfo rendererInfo, OSMMapTileFilesystemCache mapTileFSProvider) {
 		super(ctx, rendererInfo, mapTileFSProvider);
+		
+		mMap = new MapnikMap();
+		MapnikMapParser parser = new MapnikMapParser();
 
+		try {
+			parser.parseMap(mMap, ctx.getResources().getXml(R.xml.default_map));
+		} catch (NotFoundException e) {
+			Log.e(TAG, e.toString());
+		} catch (XmlPullParserException e) {
+			Log.e(TAG, e.toString());
+		} catch (IOException e) {
+			Log.e(TAG, e.toString());
+		} catch (MapnikInvalidXMLException e) {
+			Log.e(TAG, e.toString());
+		}
+		Log.d(TAG, "Map Object Initialised");
+		
 	}
 
 	// ===========================================================

@@ -2,6 +2,7 @@ package org.andnav.osm.views.tiles.renderer.mapnik;
 
 import java.util.Vector;
 
+import android.graphics.Color;
 import android.graphics.Paint.Cap;
 import android.graphics.Paint.Join;
 
@@ -13,7 +14,7 @@ public class MapnikStroke {
 	static final int DASH = 0;
 	static final int GAP  = 1;
 
-	private MapnikColour mColour;
+	private int mColour;
 	private float mWidth;
 	private float mOpacity; // 0.0 - 1.0
 	private Cap mLineCap;
@@ -21,7 +22,7 @@ public class MapnikStroke {
 	private Vector<float[]> mDash;
 
 	public MapnikStroke() {
-		mColour = new MapnikColour(0,0,0);
+		mColour = Color.BLACK;
 	    mWidth = 1;
 	    mOpacity = 1;
 	    mLineCap = Cap.BUTT;
@@ -29,7 +30,7 @@ public class MapnikStroke {
 	    mDash = new Vector<float[]>();
 	}
 
-	public MapnikStroke(MapnikColour c, float width) {
+	public MapnikStroke(int c, float width) {
 		mColour = c;
 		mWidth = width;
 		mOpacity = 1;
@@ -47,11 +48,11 @@ public class MapnikStroke {
 		mDash     = s.mDash;
 	}
 	
-	public MapnikColour getColour() {
+	public int getColour() {
 		return mColour;
 	}
 	
-	public void setColour(MapnikColour c) {
+	public void setColour(int c) {
 		mColour = c;
 	}
 
