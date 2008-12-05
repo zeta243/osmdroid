@@ -1,6 +1,5 @@
 package org.andnav.osm.views.tiles.renderer.mapnik.symbolizer;
 
-import org.andnav.osm.views.tiles.renderer.mapnik.MapnikColour;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeature;
 import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikCoordTransformer;
 

@@ -155,4 +155,20 @@ public class OSMMapTileManager implements OSMConstants, OSMMapViewConstants{
 			}
 		}
 	}
+	
+	public void setRenderer(OSMMapTileProviderInfo aRendererInfo)
+	{
+		this.mProviderInfo = aRendererInfo;
+		switch (aRendererInfo.PROVIDER_TYPE)
+		{
+		case LOCAL_PROVIDER:
+			this.mTileProvider = new OSMMapTileRenderProvider(this.mCtx, aRendererInfo, this.mFSTileCache);
+			break;
+		case DOWNLOAD_PROVIDER:
+		default:
+			this.mTileProvider = new OSMMapTileDownloadProvider(this.mCtx, aRendererInfo, this.mFSTileCache);
+		break;
+		}
+
+	}
 }
