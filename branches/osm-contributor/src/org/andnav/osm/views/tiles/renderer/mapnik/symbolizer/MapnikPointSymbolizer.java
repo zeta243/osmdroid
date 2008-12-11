@@ -4,15 +4,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Vector;
 
-import org.andnav.osm.views.tiles.renderer.mapnik.MapnikImageData;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeature;
 import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikCoordTransformer;
 import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikGeometry;
 import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikVertex;
-import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikVertex.VertexCommandType;
 
 import android.graphics.Canvas;
-import android.graphics.Path;
 
 // Original from include/mapnik/point_symbolizer
 

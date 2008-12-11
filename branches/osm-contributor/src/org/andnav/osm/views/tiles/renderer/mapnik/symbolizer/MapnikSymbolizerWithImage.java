@@ -1,11 +1,8 @@
 package org.andnav.osm.views.tiles.renderer.mapnik.symbolizer;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.andnav.osm.views.tiles.renderer.mapnik.MapnikImageData;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeature;
 import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikCoordTransformer;
 
@@ -28,8 +25,12 @@ public class MapnikSymbolizerWithImage extends MapnikSymbolizer implements Mapni
 	{
 		mImage = Bitmap.createBitmap(width, height, Config.ARGB_8888);
 		mImageFilename = null;
-		int pixels[] = {Color.BLACK};
-		mImage.setPixels(pixels, 0, 1, 0, 0, width, height);
+		int pixels[] = new int[width * height];
+		
+		for (int i = 0; i < pixels.length; i++)
+			pixels[i] = Color.BLACK;
+		
+		mImage.setPixels(pixels, 0, width, 0, 0, width, height);
 	}
 	
 	public MapnikSymbolizerWithImage(Bitmap image)

@@ -96,21 +96,21 @@ public class MapnikMapParser {
 		String srs    = null;
 		String clearLabelsCache = null;
 
-		for (int i = 0; 0 < xpp.getAttributeCount(); i++)
+		for (int i = 0; i < xpp.getAttributeCount(); i++)
 		{
 			String attrName = xpp.getAttributeName(i);
 			String attrValue = xpp.getAttributeValue(i);
 			
-			if (attrName == "name")
+			if (attrName.equals("name"))
 				layerName = attrValue;
 			
-			else if (attrName == "srs")
+			else if (attrName.equals("srs"))
 				srs = attrValue;
 			
-			else if (attrName == "status" )
+			else if (attrName.equals("status" ))
 				status = attrValue;
 			
-			else if (attrName == "clear_label_cache")
+			else if (attrName.equals("clear_label_cache"))
 				clearLabelsCache = attrValue;
 			
 			else
@@ -123,12 +123,12 @@ public class MapnikMapParser {
 		MapnikLayer layer = new MapnikLayer(layerName, srs);
 		
 		if (status != null)
-			if (status == "on")
+			if (status.equals("on"))
 				layer.setActive(true);
-			else if (status == "off")
+			else if (status.equals("off"))
 				layer.setActive(false);
 			else
-				throw new MapnikInvalidXMLException(xpp, "Unexpected attribute: status");
+				throw new MapnikInvalidXMLException(xpp, "Unexpected attribute value: status (" + status + ")");
 		
 		if (clearLabelsCache != null)
 			if (clearLabelsCache == "on" || clearLabelsCache == "true")
@@ -151,10 +151,14 @@ public class MapnikMapParser {
 					if (eventType == XmlPullParser.TEXT)
 					{
 						layer.addStyle(xpp.getText());
+						eventType = xpp.next();
+						if (eventType != XmlPullParser.END_TAG)
+							throw new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
 						continue;
 					}
 					else
 						throw new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
+					
 					
 				}
 				else if (xpp.getName().equals("Datasource"))
@@ -183,21 +187,23 @@ public class MapnikMapParser {
 								if (eventType == XmlPullParser.TEXT)
 								{
 									params.set(paramName, new MapnikParameterStringValue(xpp.getText()));
+									
+									eventType = xpp.next();
+									if (eventType != XmlPullParser.END_TAG)
+										throw new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
 									continue;
 								}
 								else
 									throw new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
 							}
 						}
-						else if (eventType == XmlPullParser.END_TAG && xpp.getName().equals("Parameter"))
+						else if (eventType == XmlPullParser.END_TAG && xpp.getName().equals("Datasource"))
 						    break;
 					}
 				}
 				else
 					throw new MapnikInvalidXMLException(xpp, "Unexpected Tag");
 			}
-			else if (eventType == XmlPullParser.END_TAG && xpp.getName() == "StyleName")
-				continue;
 			else  if (eventType == XmlPullParser.END_TAG)
 				break;
 			else
@@ -234,7 +240,9 @@ public class MapnikMapParser {
 				else
 					throw new MapnikInvalidXMLException(xpp, "Unexpected Tag");
 			}
-			else if (eventType == XmlPullParser.END_TAG)
+			else if (eventType == XmlPullParser.END_TAG && xpp.getName().equals("Rule"))
+				continue;
+			else if (eventType == XmlPullParser.END_TAG && xpp.getName().equals("Style"))
 				break;
 			else
 				throw new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
@@ -278,7 +286,7 @@ public class MapnikMapParser {
 				    
 					Stack<MapnikFilter> filters = new Stack<MapnikFilter>();
 					Stack<MapnikFilterExpression> expressions = new Stack<MapnikFilterExpression>();
-					try {
+					try { 
 						MapnikFilterParser.compile(filters, expressions, xpp.getText());
 					} catch (Exception e) {
 						throw new MapnikInvalidXMLException(xpp, e.getMessage());
@@ -287,74 +295,69 @@ public class MapnikMapParser {
 				    
 				    eventType = xpp.next();
 				    if (eventType != XmlPullParser.END_TAG)
-				    	new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
+				    	throw new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
 				}
 				else if (tagName.equals("ElseFilter"))
 				{
 					rule.setElseFilter(true);
+				    eventType = xpp.next();
+				    if (eventType != XmlPullParser.END_TAG)
+				    	throw new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
 				}
 				else if (tagName.equals("MinScaleDenominator"))
 				{
 				    eventType = xpp.next();
 				    if (eventType != XmlPullParser.TEXT)
-				    	new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
+				    	throw new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
 				    
 				    rule.setMinScale(Double.parseDouble(xpp.getText()));
 				    
+				    eventType = xpp.next();
 				    if (eventType != XmlPullParser.END_TAG)
-				    	new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
+				    	throw new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
 				}
 				else if (tagName.equals("MaxScaleDenominator"))
 				{
 				    eventType = xpp.next();
 				    if (eventType != XmlPullParser.TEXT)
-				    	new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
+				    	throw new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
 				    
 				    rule.setMaxScale(Double.parseDouble(xpp.getText()));
 				    
+				    eventType = xpp.next();
 				    if (eventType != XmlPullParser.END_TAG)
-				    	new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
+				    	throw new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
 				}
 				else if (tagName.equals("PointSymbolizer"))
-				{
 					parsePointSymbolizer(rule, xpp);
-				}
+
 				else if (tagName.equals("LinePatternSymbolizer"))
-				{
 					parseLinePatternSymbolizer(rule, xpp);
-				}
+
 				else if (tagName.equals("PolygonPatternSymbolizer"))
-				{
 					parsePolygonPatternSymbolizer(rule, xpp);
-				}
+
 				else if (tagName.equals("TextSymbolizer"))
-				{
 					parseTextSymbolizer(rule, xpp);
-				}
+
 				else if (tagName.equals("ShieldSymbolizer"))
-				{
 					parseShieldSymbolizer(rule, xpp);
-				}
+
 				else if (tagName.equals("LineSymbolizer"))
-				{
 					parseLineSymbolizer(rule, xpp);
-				}
+
 				else if (tagName.equals("PolygonSymbolizer"))
-				{
 					parsePolygonSymbolizer(rule, xpp);
-				}
+
 				else if (tagName.equals("BuildingSymbolizer"))
-				{
 					parseBuildingSymbolizer(rule, xpp);
-				}
+
 				else if (tagName.equals("RasterSymbolizer"))
-				{
 					parseRasterSymbolizer(rule, xpp);
-				}
+
 				else if (tagName.equals("MarkersSymbolizer"))
-				{
 					parseMarkersSymbolizer(rule, xpp);
-				}
+
 				else
 					throw new MapnikInvalidXMLException(xpp, "Unexpected Tag");
 			}
@@ -405,7 +408,15 @@ public class MapnikMapParser {
 								eventType = xpp.next();
 								if (eventType == XmlPullParser.TEXT)
 								{
-									symbolizer.getPaint().setColor(Color.parseColor(xpp.getText()));
+									try
+									{
+									    symbolizer.getPaint().setColor(Color.parseColor(xpp.getText()));
+									}
+									catch (IllegalArgumentException e)
+									{
+										Log.e(TAG, e.toString());
+										throw new MapnikInvalidXMLException(xpp, "Invalid Colour");
+									}
 									break;
 								}
 								else
@@ -463,7 +474,15 @@ public class MapnikMapParser {
 								eventType = xpp.next();
 								if (eventType == XmlPullParser.TEXT)
 								{
-									paint.setColor(android.graphics.Color.parseColor(xpp.getText()));
+									try
+									{
+									    paint.setColor(android.graphics.Color.parseColor(xpp.getText()));
+									}
+									catch (IllegalArgumentException e)
+									{
+										Log.e(TAG, e.toString());
+										throw new MapnikInvalidXMLException(xpp, "Invalid Colour");
+									}
 									break;
 								}
 								else
@@ -498,12 +517,11 @@ public class MapnikMapParser {
 								if (eventType == XmlPullParser.TEXT)
 								{
 									String type = xpp.getText();
-									if (type == "round")
-										
+									if (type.equals("round"))
 										paint.setStrokeJoin(Join.ROUND);
-									else if (type == "miter")
+									else if (type.equals("miter"))
 										paint.setStrokeJoin(Join.MITER);
-									else if (type == "bevel")
+									else if (type.equals("bevel"))
 										paint.setStrokeJoin(Join.BEVEL);
 									else
 										throw new MapnikInvalidXMLException(xpp, "Invalid LineJoin: " + type);
@@ -588,10 +606,9 @@ public class MapnikMapParser {
 		int fill = Color.TRANSPARENT;
 		
 		String file = null;
-		String type = null;
-		int width = -1;
-		int height = -1;
 		int min_distance = -1;
+		
+		LabelPlacementEnum placement = LabelPlacementEnum.POINT_PLACEMENT;
 		
 		for (int i = 0; i < xpp.getAttributeCount(); i++)
 		{
@@ -608,38 +625,50 @@ public class MapnikMapParser {
 				size = Integer.parseInt(attrValue);
 			
 			else if (attrName.equals("fill"))
-				fill = Color.parseColor(attrValue);
+			{
+				try {
+					fill = Color.parseColor(attrValue);
+				}
+				catch (IllegalArgumentException e)
+				{
+					Log.e(TAG, e.toString());
+					throw new MapnikInvalidXMLException(xpp, "Invalid Colour");
+				}
+			}
 			
 			else if (attrName.equals("file"))
 				file = attrValue;
 			
-			else if (attrName.equals("type"))
-				type = attrValue;
-			
-			else if (attrName.equals("width"))
-				width = Integer.parseInt(attrValue);
-			
-			else if (attrName.equals("height"))
-				height = Integer.parseInt(attrValue);
-			
 			else if (attrName.equals("min_distance"))
 				min_distance = Integer.parseInt(attrValue);
+			
+			else if (attrName.equals("placement"))
+			{
+				if (attrValue.equals("line"))
+					placement = LabelPlacementEnum.LINE_PLACEMENT;
+				else if (attrValue.equals("point"))
+					placement = LabelPlacementEnum.POINT_PLACEMENT;
+				else
+					throw new MapnikInvalidXMLException(xpp, "Invalid value for attribute: " + attrName + "(" + attrValue + ")");
+			}
 			
 			else
 			    throw new MapnikInvalidXMLException(xpp, "Invalid Attribute: " + attrName);
 		}
 		
 		MapnikShieldSymbolizer symbolizer = null;
-		if (name != null && faceName != null && size > 0 &&
-			file != null && type != null && width > 0 && height > 0)
-		    symbolizer = new MapnikShieldSymbolizer(name, faceName, size, fill, file, type, width, height);
+		if (name != null && faceName != null && size > 0 && file != null)
+		    symbolizer = new MapnikShieldSymbolizer(name, faceName, size, fill, file);
 		else
-			throw new MapnikInvalidXMLException(xpp, "Missing required attributes (name, face_name, size, fill, file, type, width, height)");
+			throw new MapnikInvalidXMLException(xpp, "Missing required attributes (name, face_name, size, fill, file)");
 		
 		if (min_distance > 0)
 			symbolizer.setMinumumDistance(min_distance);
+		symbolizer.setLabelPlacement(placement);
 		
 		rule.appendSymbolizer(symbolizer);
+		
+		xpp.next();
 	}
 
 	private void parseTextSymbolizer(MapnikRule rule, XmlPullParser xpp) throws XmlPullParserException, IOException, MapnikInvalidXMLException
@@ -659,6 +688,7 @@ public class MapnikMapParser {
 		boolean avoidEdges = false;
 		boolean allowOverlap = false;
 		Double maxCharAngleDelta = null;
+		double[] displacement = {0.0,0.0};
 		
 		for (int i = 0; i < xpp.getAttributeCount(); i++)
 		{
@@ -675,8 +705,16 @@ public class MapnikMapParser {
 				size = Integer.parseInt(attrValue);
 			
 			else if (attrName.equals("fill"))
-			    fill = Color.parseColor(attrValue);
-			
+			{
+				try {
+					fill = Color.parseColor(attrValue);
+				}
+				catch (IllegalArgumentException e)
+				{
+					Log.e(TAG, e.toString());
+					throw new MapnikInvalidXMLException(xpp, "Invalid Colour");
+				}
+			}
 			else if (attrName.equals("placement"))
 			{
 				if (attrValue.equals("line"))
@@ -687,8 +725,16 @@ public class MapnikMapParser {
 					throw new MapnikInvalidXMLException(xpp, "Invalid Attribute: " + attrName);
 			}
 			else if (attrName.equals("halo_fill"))
-				halo_fill = Color.parseColor(attrValue);
-			
+			{
+				try {
+				    halo_fill = Color.parseColor(attrValue);
+				}
+				catch (IllegalArgumentException e)
+				{
+					Log.e(TAG, e.toString());
+					throw new MapnikInvalidXMLException(xpp, "Invalid Colour");
+				}
+			}
 			else if (attrName.equals("halo_radius"))
 				halo_radius = Integer.parseInt(attrValue);
 			
@@ -720,6 +766,15 @@ public class MapnikMapParser {
 			else if (attrName.equals("max_char_angle_delta"))
 				maxCharAngleDelta = Double.parseDouble(attrValue);
 			
+			else if (attrName.equals("dx"))
+				displacement[0] = Double.parseDouble(attrValue);
+			
+			else if (attrName.equals("dy"))
+				displacement[1] = Double.parseDouble(attrValue);
+			
+			else if (attrName.equals("min_distance"))
+				min_distance = Integer.parseInt(attrValue);
+			
 			else
 				throw new MapnikInvalidXMLException(xpp, "Invalid Attribute: " + attrName);
 		}
@@ -734,6 +789,8 @@ public class MapnikMapParser {
 		symbolizer.setLabelPlacement(placement);
 
 		symbolizer.setHaloFill(halo_fill);
+		
+		symbolizer.setDisplacement(displacement);
 		
 		if (halo_radius != -1)
 			symbolizer.setHaloRadius(halo_radius);
@@ -751,6 +808,8 @@ public class MapnikMapParser {
 		    symbolizer.setMaxCharAngleDelta(maxCharAngleDelta);
 		
 		rule.appendSymbolizer(symbolizer);
+		
+		xpp.next();
 	}
 
 	private void parsePolygonPatternSymbolizer(MapnikRule rule, XmlPullParser xpp) throws XmlPullParserException, IOException, MapnikInvalidXMLException
@@ -775,6 +834,7 @@ public class MapnikMapParser {
 			throw new MapnikInvalidXMLException(xpp, "Missing required attributes (file)");
 
 		rule.appendSymbolizer(symbolizer);
+		xpp.next();
 	}
 
 	private void parseLinePatternSymbolizer(MapnikRule rule, XmlPullParser xpp) throws XmlPullParserException, IOException, MapnikInvalidXMLException
@@ -799,14 +859,12 @@ public class MapnikMapParser {
 			throw new MapnikInvalidXMLException(xpp, "Missing required attributes (file, type, width, height)");
 
 		rule.appendSymbolizer(symbolizer);
+		xpp.next();
 	}
 
 	private void parsePointSymbolizer(MapnikRule rule, XmlPullParser xpp) throws XmlPullParserException, IOException, MapnikInvalidXMLException
 	{
 		String file = null;
-		String type = null;
-		int width   = -1;
-		int height  = -1;
 		boolean allow_overlap = true;
 		
 		for (int i = 0; i < xpp.getAttributeCount(); i++)
@@ -816,15 +874,6 @@ public class MapnikMapParser {
 			
 			if (attrName.equals("file"))
 				file = attrValue;
-			
-			else if (attrName.equals("type"))
-				type = attrValue;
-			
-			else if (attrName.equals("width"))
-				width = Integer.parseInt(attrValue);
-			
-			else if (attrName.equals("height"))
-			    height = Integer.parseInt(attrValue);
 			
 			else if (attrName.equals("allow_overlap"))
 			{
@@ -839,17 +888,16 @@ public class MapnikMapParser {
 				throw new MapnikInvalidXMLException(xpp, "Invalid Attribute: " + attrName);
 		}
 		MapnikPointSymbolizer symbolizer = null;
-		if (file != null && type != null && width > 0 && height > 0)
+		if (file != null)
 		{
 			symbolizer = new MapnikPointSymbolizer(file);
 		}
-		else if (file == null && type == null && width == -1 && height == -1)
-			symbolizer = new MapnikPointSymbolizer();
 		else
-			throw new MapnikInvalidXMLException(xpp, "Missing required attributes (file, type, width, height)");
+			symbolizer = new MapnikPointSymbolizer();
 
 		symbolizer.setAllowOverlap(allow_overlap);
 		rule.appendSymbolizer(symbolizer);
+		xpp.next();
 	}
 
 	public class MapnikInvalidXMLException extends Exception
@@ -865,6 +913,7 @@ public class MapnikMapParser {
 			mLineNumber = xpp.getLineNumber();
 			mTag = xpp.getName();
 			mMessage = message;
+			Log.d(TAG, this.toString());
 		}
 
 		public int getLineNumber() {
