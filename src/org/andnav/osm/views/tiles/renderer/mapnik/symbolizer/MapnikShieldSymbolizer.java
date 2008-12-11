@@ -22,9 +22,7 @@ public class MapnikShieldSymbolizer extends MapnikTextSymbolizer implements Mapn
 	
 	public MapnikShieldSymbolizer(String name, String faceName, int size,
 								int fill,
-			                      String file,
-			                      String type,
-			                      int width, int height) throws FileNotFoundException, IOException
+			                      String file) throws FileNotFoundException, IOException
 	{
 		super(name, faceName, size, fill);
 		mSymbolizerImage = new MapnikSymbolizerWithImage(file);
