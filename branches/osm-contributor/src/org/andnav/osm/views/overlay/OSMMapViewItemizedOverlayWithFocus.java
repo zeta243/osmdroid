@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.andnav.osm.R;
 import org.andnav.osm.views.OSMMapView;
-import org.andnav.osm.views.overlay.OSMMapViewItemizedOverlay.OnItemTapListener;
 
 import android.content.Context;
 import android.graphics.Canvas;

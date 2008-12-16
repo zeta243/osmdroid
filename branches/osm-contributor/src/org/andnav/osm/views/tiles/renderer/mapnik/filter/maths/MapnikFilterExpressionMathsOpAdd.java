@@ -1,7 +1,6 @@
 package org.andnav.osm.views.tiles.renderer.mapnik.filter.maths;
 
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikParameterValue;
-import org.andnav.osm.views.tiles.renderer.mapnik.MapnikParameterValue.MapnikParameterValueType;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeature;
 import org.andnav.osm.views.tiles.renderer.mapnik.filter.MapnikFilterExpression;
 

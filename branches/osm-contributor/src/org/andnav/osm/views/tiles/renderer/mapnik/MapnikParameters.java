@@ -17,19 +17,25 @@ public class MapnikParameters {
 	
 	public Integer getInt(String key, Integer def)
 	{
-		Integer r = (Integer)mParams.get(key).getValue();
-		return (r == null ? def : r);
+		MapnikParameterValue v = mParams.get(key);
+		if (v == null)
+			return def;
+		return (Integer)v.getValue();
 	}
 	
 	public String getString(String key, String def)
 	{
-		String r = (String)mParams.get(key).getValue();
-		return (r == null ? def : r);
+		MapnikParameterValue v = mParams.get(key);
+		if (v == null)
+			return def;
+		return (String) v.getValue();
 	}
 	
 	public Double getDouble(String key, Double def)
 	{
-		Double r = (Double)mParams.get(key).getValue(); 
-		return (r == null ? def : r);
+		MapnikParameterValue v = mParams.get(key);
+		if (v == null)
+			return def;
+		return (Double)v.getValue(); 
 	}
 }

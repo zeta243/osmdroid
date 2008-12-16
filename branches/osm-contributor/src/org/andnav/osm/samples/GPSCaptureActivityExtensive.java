@@ -41,8 +41,6 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 import android.widget.RelativeLayout.LayoutParams;
 
-
-
 public class GPSCaptureActivityExtensive extends Activity implements OSMConstants {
     /** Called when the activity is first created. */
 	

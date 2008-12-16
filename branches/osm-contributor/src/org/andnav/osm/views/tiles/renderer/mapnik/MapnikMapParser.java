@@ -3,6 +3,8 @@ package org.andnav.osm.views.tiles.renderer.mapnik;
 import java.io.IOException;
 import java.util.Stack;
 import java.util.Vector;
+
+import org.andnav.osm.views.tiles.renderer.mapnik.datasource.MapnikSqliteDatasource;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeatureTypeStyle;
 import org.andnav.osm.views.tiles.renderer.mapnik.filter.MapnikFilter;
 import org.andnav.osm.views.tiles.renderer.mapnik.filter.MapnikFilterExpression;
@@ -18,6 +20,7 @@ import org.andnav.osm.views.tiles.renderer.mapnik.symbolizer.MapnikTextSymbolize
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import android.database.sqlite.SQLiteException;
 import android.graphics.Color;
 import android.graphics.DashPathEffect;
 import android.graphics.Paint;
@@ -200,6 +203,22 @@ public class MapnikMapParser {
 						else if (eventType == XmlPullParser.END_TAG && xpp.getName().equals("Datasource"))
 						    break;
 					}
+					
+					String type = params.getString("type", null);
+					if (type != null && type.equals("sqlite"))
+					{
+						try
+						{
+							layer.setDataSource(new MapnikSqliteDatasource(params));
+						}
+						catch (SQLiteException e)
+						{
+							throw new MapnikInvalidXMLException(xpp, e.toString());
+						}
+					}
+					else
+						throw new MapnikInvalidXMLException(xpp, "Unsupported Datasource Type: " + type);
+
 				}
 				else
 					throw new MapnikInvalidXMLException(xpp, "Unexpected Tag");
@@ -209,6 +228,7 @@ public class MapnikMapParser {
 			else
 				throw new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
 		}
+		m.addLayer(layer);
 	}
 	
 	private void parseStyle(MapnikMap m, XmlPullParser xpp) throws XmlPullParserException, IOException, MapnikInvalidXMLException
@@ -366,6 +386,7 @@ public class MapnikMapParser {
 			else
 				throw new MapnikInvalidXMLException(xpp, "Malformed XML (Unexpected Event)");
 		}
+		style.addRule(rule);
 	}
 	
 	private void parseMarkersSymbolizer(MapnikRule rule, XmlPullParser xpp) throws XmlPullParserException, IOException, MapnikInvalidXMLException {

@@ -3,7 +3,10 @@ package org.andnav.osm.views.util;
 
 import org.andnav.osm.adt.BoundingBoxE6;
 import org.andnav.osm.adt.GeoPoint;
+import org.andnav.osm.views.tiles.renderer.mapnik.MapnikEnvelope;
 import org.andnav.osm.views.util.constants.OSMMapViewConstants;
+
+import android.util.Log;
 
 /**
  * 
@@ -58,6 +61,30 @@ public class Util implements OSMMapViewConstants{
 		final int y = aMapTile[MAPTILE_LATITUDE_INDEX];
 		final int x = aMapTile[MAPTILE_LONGITUDE_INDEX];
 		return new BoundingBoxE6(tile2lat(y, zoom), tile2lon(x + 1, zoom), tile2lat(y + 1, zoom), tile2lon(x, zoom));
+	}
+	
+	public static MapnikEnvelope getMapnikEnvelopeFromMapTile(final int[] aMapTile, final int zoom)
+	{
+		final int y = aMapTile[MAPTILE_LATITUDE_INDEX];
+		final int x = aMapTile[MAPTILE_LONGITUDE_INDEX];
+		
+		double ll_min_x = tile2lon(x, zoom);
+		double ll_max_x = tile2lon(x + 1, zoom);
+		double ll_min_y = tile2lat(y, zoom);
+		double ll_max_y = tile2lat(y + 1, zoom);
+		
+		Log.d("GetEnvelopeFromMapTile", "Top Left LL for MapTile: (" + zoom + "," + x + "," + y + ") - " + ll_min_x + "," + ll_max_y );
+
+		double[] min_xy   = MercatorElliptical.merc(ll_min_x, ll_min_y);
+		double[] max_xy   = MercatorElliptical.merc(ll_max_x, ll_max_y);
+		
+		Log.d("GetEnvelopeFromMapTile", "Top Left MP for MapTile: (" + zoom + "," + x + "," + y + ") - " + min_xy[0] + "," + max_xy[1] );
+		
+		return new MapnikEnvelope(min_xy[0],
+								  min_xy[1],
+								  max_xy[0],
+								  max_xy[1]
+				                  );
 	}
 	
 	private static double tile2lon(int x, int aZoom) {

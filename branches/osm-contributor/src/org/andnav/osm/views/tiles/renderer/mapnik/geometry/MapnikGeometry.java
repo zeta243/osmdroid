@@ -1,7 +1,6 @@
 package org.andnav.osm.views.tiles.renderer.mapnik.geometry;
 
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikEnvelope;
-import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikVertex.VertexCommandType;
 
 public abstract class MapnikGeometry {
 	

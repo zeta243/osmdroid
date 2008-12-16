@@ -8,10 +8,12 @@ import org.andnav.osm.views.tiles.renderer.mapnik.symbolizer.MapnikSymbolizer;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.util.Log;
 
 public class MapnikFeatureRenderer extends MapnikFeatureStyleProcessor {
 
-	private Bitmap mBitmap;
+	private static final String TAG = "MapnikFeatureStyleProcessor";
+	
 	private int mWidth;
 	private int mHeight;
 	private MapnikCoordTransformer mTransformer;
@@ -20,13 +22,13 @@ public class MapnikFeatureRenderer extends MapnikFeatureStyleProcessor {
 	
 	public MapnikFeatureRenderer(MapnikMap map, Bitmap bitmap, int offsetX, int offsetY) {
 		super(map);
-		mBitmap = bitmap;
 		mWidth = bitmap.getWidth();
 		mHeight = bitmap.getHeight();
 		
 		mTransformer = new MapnikCoordTransformer(map.getMapWidth(), map.getMapHeight(), map.getCurrentExtent(), offsetX, offsetY);
 		
 		mCanvas = new Canvas(bitmap);
+		mCanvas.drawColor(map.getBackgroundColour());
 	}
 
 	@Override
@@ -34,7 +36,6 @@ public class MapnikFeatureRenderer extends MapnikFeatureStyleProcessor {
 		// Draw the feature according to the symbolizer
 		symbol.draw(mCanvas, mTransformer, feature);
 	}
-
 
 	@Override
 	public void startMapProcessing(MapnikMap map) {
@@ -48,6 +49,7 @@ public class MapnikFeatureRenderer extends MapnikFeatureStyleProcessor {
 
 	@Override
 	public void startLayerProcessing(MapnikLayer layer) {
+		Log.d(TAG, "Processing Layer: " + layer.getName());
 		if (layer.isClearLabelCache())
 		{
 			// TODO: Once the collision detector is implemented, clear it here.

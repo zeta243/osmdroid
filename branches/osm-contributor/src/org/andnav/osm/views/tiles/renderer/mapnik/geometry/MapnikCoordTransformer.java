@@ -6,8 +6,6 @@ import org.andnav.osm.views.tiles.renderer.mapnik.MapnikEnvelope;
 
 public class MapnikCoordTransformer {
 	
-    private int mWidth;
-    private int mHeight;
     private double mScale;
     private MapnikEnvelope mExtent;
     private double mOffset_x;
@@ -15,8 +13,6 @@ public class MapnikCoordTransformer {
 
     public MapnikCoordTransformer(int width, int height, MapnikEnvelope extent, int offset_x, int offset_y)
     {
-    	mWidth = width;
-    	mHeight = height;
     	mExtent = extent;
     	mOffset_x = offset_x;
     	mOffset_y = offset_y;

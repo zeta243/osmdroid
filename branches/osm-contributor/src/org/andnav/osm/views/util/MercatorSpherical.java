@@ -9,7 +9,7 @@ import org.andnav.osm.views.util.constants.MathConstants;
  * @author Nicolas Gramlich
  * This class provides a way to convert from latitude and longitude to a simple Mercator projection.
  */
-public class Mercator implements MathConstants {
+public class MercatorSpherical implements MathConstants {
 	// ===========================================================
 	// Constants
 	// ===========================================================

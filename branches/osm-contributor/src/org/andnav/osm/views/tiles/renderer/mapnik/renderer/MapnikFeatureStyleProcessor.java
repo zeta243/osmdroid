@@ -18,8 +18,6 @@ import org.andnav.osm.views.tiles.renderer.mapnik.symbolizer.MapnikSymbolizer;
 public abstract class MapnikFeatureStyleProcessor {
 	
 	protected MapnikMap mMap;
-
-	protected static final double METERS_PER_DEGREE = 6378137 * 2 * Math.PI / 360;
 	
 	public MapnikFeatureStyleProcessor(MapnikMap map)
 	{
@@ -29,7 +27,7 @@ public abstract class MapnikFeatureStyleProcessor {
 	public void apply() throws Exception
 	{
 		startMapProcessing(mMap);
-		double scaleDenominator = (mMap.getScale() / 0.00028) * METERS_PER_DEGREE;
+		double scaleDenominator = (mMap.getScale() / 0.00028);
 		
 		Vector<MapnikLayer> layers = mMap.getLayers();
 		for (MapnikLayer l : layers)
@@ -72,16 +70,19 @@ public abstract class MapnikFeatureStyleProcessor {
     		Vector<MapnikRule> ifRules = new Vector<MapnikRule>();
     		Vector<MapnikRule> elseRules = new Vector<MapnikRule>();
     		
-    		for (MapnikRule r : rules)
+    		if (rules != null)
     		{
-    			if (r.active(scaleDenominator))
+    			for (MapnikRule r : rules)
     			{
-    				activeRules = true;
-    				r.accept(collector);
-    				if (r.isElseFilter())
-    					elseRules.add(r);
-    				else
-    					ifRules.add(r);
+    				if (r.active(scaleDenominator))
+    				{
+    					activeRules = true;
+    					r.accept(collector);
+    					if (r.isElseFilter())
+    						elseRules.add(r);
+    					else
+    						ifRules.add(r);
+    				}
     			}
     		}
     		

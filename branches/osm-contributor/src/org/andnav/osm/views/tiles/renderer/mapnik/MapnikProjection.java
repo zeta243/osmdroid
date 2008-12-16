@@ -1,8 +1,5 @@
 package org.andnav.osm.views.tiles.renderer.mapnik;
 
-import static org.andnav.osm.util.MyMath.gudermann;
-import static org.andnav.osm.util.MyMath.gudermannInverse;
-
 public class MapnikProjection {
 	
 	public enum MapnikProjectionDataType

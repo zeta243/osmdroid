@@ -1,19 +1,11 @@
 package org.andnav.osm.samples;
 
 import java.util.Calendar;
-import java.util.List;
 
 import org.andnav.osm.R;
-import org.andnav.osm.adt.util.TypeConverter;
 import org.andnav.osm.contributor.service.GPSCaptureCallback;
 import org.andnav.osm.contributor.service.GPSCaptureInterface;
 import org.andnav.osm.util.constants.OSMConstants;
-import org.andnav.osm.views.OSMMapView;
-import org.andnav.osm.views.controller.OSMMapViewController;
-import org.andnav.osm.views.overlay.OSMMapViewLinearOverlay;
-import org.andnav.osm.views.overlay.OSMMapViewOverlay;
-import org.andnav.osm.views.overlay.OSMMapViewSimpleLocationOverlay;
-import org.andnav.osm.views.tiles.OSMMapTileProviderInfo;
 
 import android.app.Activity;
 import android.content.ComponentName;
@@ -21,28 +13,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.os.RemoteException;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.SubMenu;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.RelativeLayout.LayoutParams;
-
-
 
 public class GPSCaptureActivitySimple extends Activity implements OSMConstants {
     /** Called when the activity is first created. */
@@ -160,7 +139,6 @@ public class GPSCaptureActivitySimple extends Activity implements OSMConstants {
         {
     	    Log.d(TAG, "Binding Failed");
         }
-        LinearLayout ll = (LinearLayout)findViewById(R.id.MainView);
     }
     
     private void startStopTrace()

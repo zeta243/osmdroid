@@ -5226,13 +5226,7 @@
   <Layer name="leisure" status="on" srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
     <StyleName>leisure</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
-
+      <Parameter name="type">sqlite</Parameter>
       <Parameter name="table_fields">*</Parameter>
       <Parameter name="table_name">planet_osm_polygon</Parameter>
       <Parameter name="table_order_by">z_order, way_area desc</Parameter>
@@ -5245,12 +5239,7 @@
   <Layer name="water_areas" status="on" srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
     <StyleName>water_areas</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <Parameter name="estimate_extent">false</Parameter>
 
       <Parameter name="table_fields">*</Parameter>
@@ -5266,12 +5255,7 @@
   <Layer name="water_lines" status="on" srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
     <StyleName>water_lines</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <Parameter name="estimate_extent">false</Parameter>
       <!-- <Parameter name="table">(select * from planet_osm_line where waterway IS NOT NULL order by z_order) as water_lines</Parameter> -->
       <Parameter name="table_fields">*</Parameter>
@@ -5285,12 +5269,7 @@
     <StyleName>tunnels-casing</StyleName>
     <StyleName>tunnels-fill</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <!-- <Parameter name="table">
       (select * from planet_osm_line order by z_order) as roads
       </Parameter> -->
@@ -5305,12 +5284,7 @@
   <Layer name="tracks-notunnel-nobridge" status="on" srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
     <StyleName>tracks-notunnel-nobridge</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <!-- <Parameter name="table">
       (select way,tracktype from planet_osm_line where highway='track' and (bridge is null or bridge in ('no','false','0')) and (tunnel is null or tunnel in ('no','false','0'))) as tracks 
       </Parameter> -->
@@ -5326,12 +5300,7 @@
   <Layer name="tracks-tunnels" status="on" srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
     <StyleName>tracks-tunnels</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <!-- <Parameter name="table">
       (select way,tracktype from planet_osm_line where highway='track' and tunnel in ('yes','true','1')) as tracks
       </Parameter> -->
@@ -5348,12 +5317,7 @@
     <StyleName>minor-roads-fill</StyleName>
     <StyleName>aerialways</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <!-- <Parameter name="table">
       (select * from planet_osm_line order by z_order) as roads
       </Parameter> -->
@@ -5370,12 +5334,7 @@
     <!--StyleName>roads-casing</StyleName-->
     <StyleName>roads</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <!-- <Parameter name="table">
       (select * from planet_osm_roads order by z_order) as roads
       </Parameter> -->
@@ -5390,12 +5349,7 @@
    <Layer name="waterway-bridges" status="on" srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
     <StyleName>waterway-bridges</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <Parameter name="estimate_extent">false</Parameter>
       <!-- <Parameter name="table">(select * from planet_osm_line where waterway IS NOT NULL or landuse='reservoir' or landuse='water' or  "natural"='lake' or "natural"='water' order by z_order) as water</Parameter> -->
       <Parameter name="table_fields">*</Parameter>
@@ -5423,12 +5377,7 @@
     <StyleName>mwaybridge_layer5_casing</StyleName>
     <StyleName>mwaybridge_layer5_fill</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <!-- <Parameter name="table">
       (select * from planet_osm_line order by z_order) as roads
       </Parameter> -->
@@ -5443,12 +5392,7 @@
    <Layer name="tracks-bridges" status="on" srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
     <StyleName>tracks-bridges</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <!-- <Parameter name="table">
       (select way,tracktype from planet_osm_line where highway='track' and bridge in ('yes','true','1')) as tracks
       </Parameter> -->
@@ -5463,12 +5407,7 @@
    <Layer name="trams" status="on" srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
     <StyleName>trams</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <!-- <Parameter name="table">
       (select * from planet_osm_line where "railway"='tram' order by z_order) as trams
       </Parameter> -->
@@ -5486,12 +5425,7 @@
     <StyleName>symbols</StyleName>
     <StyleName>points</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <!-- <Parameter name="table">(select * from planet_osm_point where amenity IS NOT NULL or tourism is NOT NULL or railway is NOT NULL or "natural" is NOT NULL or highway is NOT NULL or aeroway is NOT NULL or power_source is NOT NULL) as amenity</Parameter> -->
       <Parameter name="table_fields">*</Parameter>
       <Parameter name="table_name">planet_osm_point</Parameter>
@@ -5504,12 +5438,7 @@
    <Layer name="power" status="on" srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
     <StyleName>power</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <Parameter name="estimate_extent">false</Parameter>
       <!-- <Parameter name="table">(select way from planet_osm_line where "power"='line') as power</Parameter> -->
       <Parameter name="table_fields">way</Parameter>
@@ -5522,12 +5451,7 @@
   <Layer name="power_towers" status="on" srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
      <StyleName>power_towers</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <!-- <Parameter name="table">(select way from planet_osm_point where power='tower') as power_towers</Parameter> -->
       <Parameter name="table_fields">way</Parameter>
       <Parameter name="table_name">planet_osm_point</Parameter>
@@ -5540,12 +5464,7 @@
    <Layer name="line features" status="on" srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
      <StyleName>cliffs</StyleName>
      <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <!-- <Parameter name="table">
       (select way,highway,landuse,"natural",man_made,waterway,name,ref,char_length(ref) as length from planet_osm_line where waterway IS NULL and leisure IS NULL and landuse IS NULL) as roads
       </Parameter> -->
@@ -5565,12 +5484,7 @@
     <StyleName>village</StyleName>
     <StyleName>hamlet</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <!-- <Parameter name="table">planet_osm_point</Parameter> -->
       <Parameter name="table_fields">*</Parameter>
       <Parameter name="table_name">planet_osm_point</Parameter>
@@ -5583,12 +5497,7 @@
      <StyleName>directions</StyleName>
      <StyleName>roads-text</StyleName>
      <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <!-- <Parameter name="table">
       (select way,highway,landuse,"natural",man_made,waterway,tourism,learning,amenity,place,name,ref,oneway,char_length(ref) as length from planet_osm_line where waterway IS NULL and leisure IS NULL and landuse IS NULL) as roads
       </Parameter> -->
@@ -5604,12 +5513,7 @@
   <Layer name="area-text" status="on" srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
     <StyleName>area-text</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <!-- <Parameter name="table">(select * from planet_osm_polygon order by z_order,way_area desc) as leisure</Parameter> -->
       <Parameter name="table_fields">*</Parameter>
       <Parameter name="table_name">planet_osm_polygon</Parameter>
@@ -5623,12 +5527,7 @@
   <Layer name="text" status="on" srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
     <StyleName>text</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <!-- <Parameter name="table">planet_osm_point</Parameter> -->
       <Parameter name="table_fields">*</Parameter>
       <Parameter name="table_name">planet_osm_point</Parameter>
@@ -5640,12 +5539,7 @@
   <Layer name="admin" status="on" srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +no_defs +over">
     <StyleName>admin</StyleName>
     <Datasource>
-      <Parameter name="type">postgis</Parameter>
-      <Parameter name="password">martyn</Parameter>
-      <Parameter name="host">localhost</Parameter>
-      <Parameter name="port">5432</Parameter>
-      <Parameter name="user">postgres</Parameter>
-      <Parameter name="dbname">osm</Parameter>
+      <Parameter name="type">sqlite</Parameter>
       <!-- <Parameter name="table">
       (select way,admin_level from planet_osm_roads where "boundary"='administrative') as admin</Parameter> -->
       <Parameter name="table_fields">way, admin_level</Parameter>
@@ -5656,6 +5550,8 @@
       <Parameter name="extent">-20037508,-19929239,20037508,19929239</Parameter>
     </Datasource>
   </Layer>
+  
+  <!--
   <Layer name="places" status="on" srs="+proj=longlat +ellps=GRS80 +datum=NAD83 +no_defs">
     <StyleName>places</StyleName>
     <Datasource>
@@ -5663,4 +5559,5 @@
       <Parameter name="file">c:/boundaries/world_boundaries/places</Parameter>
     </Datasource>
   </Layer>
+  -->
 </Map>
