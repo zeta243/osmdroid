@@ -1,12 +1,9 @@
 
-
-// Include your fully-qualified package statement.
 package org.andnav.osm.contributor.service;
 
-// See the list above for which classes need
-// import statements (hint--most of them)
 
-// import org.andnav.osm.contributor.service.GPSCaptureService;
+import android.os.IBinder;
+
 
 oneway interface GPSCaptureCallback
 {

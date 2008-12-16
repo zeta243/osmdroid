@@ -5,7 +5,6 @@ import java.util.Vector;
 
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikParameterValue;
 import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikGeometry;
-import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikPoint;
 
 public class MapnikFeature {
 	

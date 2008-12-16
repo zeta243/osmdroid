@@ -12,7 +12,6 @@ import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikVertex.VertexCo
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Path;
 
 // Original from include/mapnik/shield_symbolizer.hpp
 

@@ -8,8 +8,6 @@ public class ProjectionTransformation {
 	
 	private MapnikProjection mSource;
 	private MapnikProjection mDest;
-	private boolean isSourceLatLong;
-	private boolean isDestLatLong;
 	
 	public ProjectionTransformation(MapnikProjection source, MapnikProjection dest)
 	{

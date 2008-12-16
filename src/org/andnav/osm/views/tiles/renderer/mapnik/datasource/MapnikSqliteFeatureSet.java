@@ -24,7 +24,13 @@ public class MapnikSqliteFeatureSet extends MapnikFeatureSet {
 
 	public MapnikFeature getNext()
 	{
-		mCursor.moveToNext();
-		return mDatasource.getFeature(mCursor.getInt(0));
+		if (mCursor.moveToNext())
+		    return mDatasource.getFeature(mCursor.getInt(0));
+		return null;
+	}
+	
+	public void finalize() throws Throwable
+	{
+		mCursor.close();
 	}
 }

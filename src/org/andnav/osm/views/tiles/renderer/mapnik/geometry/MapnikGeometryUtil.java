@@ -44,7 +44,6 @@ public class MapnikGeometryUtil {
 		double x0 = path.get(0).x;
 		double y0 = path.get(0).y;
 		
-        double x1,y1;
         for (MapnikVertex v : path)
         {
             if ( v.mCmd == VertexCommandType.SEG_MOVETO)

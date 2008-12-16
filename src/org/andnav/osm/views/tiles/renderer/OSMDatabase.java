@@ -6,6 +6,7 @@ import org.andnav.osm.R;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public class OSMDatabase implements OSMDatabaseConstants {
 
@@ -24,8 +25,11 @@ public class OSMDatabase implements OSMDatabaseConstants {
 
 		public OSMDatabase(final Context context) {
 			this.mCtx = context;
-			this.mDatabase = SQLiteDatabase.openDatabase("/sdcard/" + context.getString(R.string.app_name) + "/maps/map.db",
+			String db_path = "/sdcard/" + context.getString(R.string.app_name) + "/maps/map.db";
+			Log.d(TAG, "Opening " + db_path);
+			this.mDatabase = SQLiteDatabase.openDatabase(db_path,
 					null, SQLiteDatabase.OPEN_READONLY);
+			
 		}
 	}
 

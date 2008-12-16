@@ -1,13 +1,9 @@
 package org.andnav.osm.views.tiles.renderer.mapnik;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Vector;
 
-import org.andnav.osm.util.MyMath;
-import org.andnav.osm.views.tiles.renderer.mapnik.MapnikProjection.MapnikProjectionDataType;
 import org.andnav.osm.views.tiles.renderer.mapnik.datasource.MapnikDataSource;
-import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeature;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeatureSet;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeatureSetFilter;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeatureTypeStyle;
@@ -35,8 +31,8 @@ public class MapnikMap {
 	
 	public MapnikMap()
 	{
-		mWidth  = 400;
-		mHeight = 400;
+		mWidth  = 512;
+		mHeight = 512;
 		mSrs    = "+proj=latlong +datum=WGS84";
 		mStyles = new HashMap<String, MapnikFeatureTypeStyle>();
 		mLayers = new Vector<MapnikLayer>();

@@ -9,11 +9,11 @@ import android.graphics.Canvas;
 
 public class MapnikMarkersSymbolizer extends MapnikSymbolizer {
 
-	private boolean mAllowOverlap;
+	// private boolean mAllowOverlap;
 	
 	MapnikMarkersSymbolizer()
 	{
-		mAllowOverlap = false;
+		// mAllowOverlap = false;
 	}
 
 	@Override

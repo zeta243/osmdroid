@@ -1,7 +1,5 @@
 package org.andnav.osm.views.tiles.renderer.mapnik.geometry;
 
-import org.andnav.osm.views.tiles.renderer.mapnik.geometry.MapnikVertex.VertexCommandType;
-
 public class MapnikPoint extends MapnikGeometry {
 
 	private MapnikVertex mPoint;

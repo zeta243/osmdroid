@@ -11,6 +11,7 @@ public class MapnikFeatureTypeStyle {
 	private Vector<MapnikRule> mRules;
 
 	public MapnikFeatureTypeStyle() {
+		mRules = new Vector<MapnikRule>();
 	}
 
 	public MapnikFeatureTypeStyle(MapnikFeatureTypeStyle fts) {

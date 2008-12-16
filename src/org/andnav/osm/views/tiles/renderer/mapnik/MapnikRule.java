@@ -145,7 +145,9 @@ public class MapnikRule {
 	
 	public boolean active(double scale)
 	{
-		return ( scale >= mMinScale - 1e-6 && scale < mMaxScale + 1e-6);
+		double minScale = mMinScale - 1e-6;
+		double maxScale = mMaxScale + 1e-6;
+		return ( scale >= minScale && scale < maxScale);
 	}
 	
     public void accept(MapnikFilterVisitor v)
