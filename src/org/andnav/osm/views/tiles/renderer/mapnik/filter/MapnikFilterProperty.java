@@ -1,6 +1,7 @@
 package org.andnav.osm.views.tiles.renderer.mapnik.filter;
 
 import org.andnav.osm.views.tiles.renderer.mapnik.MapnikParameterStringValue;
+import org.andnav.osm.views.tiles.renderer.mapnik.MapnikParameterValue;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeature;
 
 public class MapnikFilterProperty extends MapnikFilterExpression {
@@ -33,8 +34,8 @@ public class MapnikFilterProperty extends MapnikFilterExpression {
 	}
 
 	@Override
-	public MapnikParameterStringValue getValue(MapnikFeature feature) {
-		return (MapnikParameterStringValue) feature.getProperties().get(mName);
+	public MapnikParameterValue getValue(MapnikFeature feature) {
+		return feature.getProperties().get(mName);
 	}
 
 	@Override
