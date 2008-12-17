@@ -198,7 +198,12 @@ public class MapnikSqliteDatasource  extends MapnikDataSource {
 
 	public MapnikFeature getFeature(int id) {
 		
-		Cursor c = mDatabase.rawQuery("SELECT * FROM " + mTableName + " WHERE osm_id = " + id, null);
+		String sql = "SELECT * FROM " + mTableName + " WHERE osm_id = " + id;
+		
+		Log.d(TAG, "Executing SQL Query: " + sql);
+		
+		Cursor c = mDatabase.rawQuery(sql, null);
+		c.moveToFirst();
 		
 		MapnikFeature f = new MapnikFeature(id);
 		
@@ -238,6 +243,8 @@ public class MapnikSqliteDatasource  extends MapnikDataSource {
 		}
 
 		f.addGeometry(g);
+		
+		c.close();
 		
 		return f;
 	}

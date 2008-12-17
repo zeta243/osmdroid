@@ -70,20 +70,25 @@ public class Util implements OSMMapViewConstants{
 		
 		double ll_min_x = tile2lon(x, zoom);
 		double ll_max_x = tile2lon(x + 1, zoom);
-		double ll_min_y = tile2lat(y, zoom);
-		double ll_max_y = tile2lat(y + 1, zoom);
+		double ll_min_y = tile2lat(y + 1, zoom);
+		double ll_max_y = tile2lat(y, zoom);
 		
-		Log.d("GetEnvelopeFromMapTile", "Top Left LL for MapTile: (" + zoom + "," + x + "," + y + ") - " + ll_min_x + "," + ll_max_y );
+		Log.d("GetEnvelopeFromMapTile", "LL BBox for MapTile: (" + zoom + "," + x + "," + y + ") - " + ll_min_x + "," + ll_max_y + " - " + ll_max_x + "," + ll_min_y);
 
-		double[] min_xy   = MercatorElliptical.merc(ll_min_x, ll_min_y);
-		double[] max_xy   = MercatorElliptical.merc(ll_max_x, ll_max_y);
+		double mp_min_x   = MercatorSpherical.lon2x(ll_min_x);
+		double mp_max_x   = MercatorSpherical.lon2x(ll_max_x);
+		double mp_min_y   = MercatorSpherical.lat2y(ll_min_y);
+		double mp_max_y   = MercatorSpherical.lat2y(ll_max_y);
 		
-		Log.d("GetEnvelopeFromMapTile", "Top Left MP for MapTile: (" + zoom + "," + x + "," + y + ") - " + min_xy[0] + "," + max_xy[1] );
+		//double[] min_xy   = MercatorElliptical.merc(ll_min_x, ll_min_y);
+		//double[] max_xy   = MercatorElliptical.merc(ll_max_x, ll_max_y);
 		
-		return new MapnikEnvelope(min_xy[0],
-								  min_xy[1],
-								  max_xy[0],
-								  max_xy[1]
+		Log.d("GetEnvelopeFromMapTile", "MP BBox for MapTile: (" + zoom + "," + x + "," + y + ") - " + mp_min_x + "," + mp_max_y + " - " + mp_max_x + "," + mp_min_y);
+		
+		return new MapnikEnvelope(mp_min_x,
+								  mp_min_y,
+								  mp_max_x,
+								  mp_max_y
 				                  );
 	}
 	
