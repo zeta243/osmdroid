@@ -1,5 +1,6 @@
 package org.andnav.osm.views.tiles.renderer.mapnik.filter.compare;
 
+import org.andnav.osm.views.tiles.renderer.mapnik.MapnikParameterValue;
 import org.andnav.osm.views.tiles.renderer.mapnik.feature.MapnikFeature;
 import org.andnav.osm.views.tiles.renderer.mapnik.filter.MapnikFilter;
 import org.andnav.osm.views.tiles.renderer.mapnik.filter.MapnikFilterExpression;
@@ -28,7 +29,9 @@ public class MapnikFilterCompare extends MapnikFilter {
 	@Override
 	public boolean pass(MapnikFeature feature)
 	{
-		return (mOp.compare(mLeft.getValue(feature), mRight.getValue(feature)));
+		MapnikParameterValue left = mLeft.getValue(feature);
+		MapnikParameterValue right = mRight.getValue(feature);
+		return (mOp.compare(left, right));
 	}
 	
 	@Override

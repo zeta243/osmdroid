@@ -22,6 +22,8 @@ public class MapnikLineString extends MapnikGeometry {
 
 	@Override
 	public MapnikVertex getNextVertex() {
+		if (mItr >= mVertices.size())
+			return null;
 		return mVertices.get(mItr++);
 	}
 

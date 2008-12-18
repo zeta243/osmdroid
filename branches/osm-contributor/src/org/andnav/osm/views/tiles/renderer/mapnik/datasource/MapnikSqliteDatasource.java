@@ -249,6 +249,12 @@ public class MapnikSqliteDatasource  extends MapnikDataSource {
 		return f;
 	}
 	
+	protected void finalize() throws Throwable
+	{
+		mDatabase.close();
+		super.finalize();
+	}
+	
 	public class SqliteQueryCache
 	{
 		public String mTableName;

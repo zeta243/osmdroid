@@ -6,6 +6,7 @@ public class MapnikFilterCompareOpGreaterThan extends MapnikFilterCompareOp
 {
 	@Override
 	public boolean compare(MapnikParameterValue left, MapnikParameterValue right) {
+		
 		return ((Integer)(left.getValue()) > (Integer)(right.getValue()));
 	}
 
