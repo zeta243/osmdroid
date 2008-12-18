@@ -6,7 +6,7 @@ public class MapnikFilterCompareOpEquals extends MapnikFilterCompareOp
 {
 	@Override
 	public boolean compare(MapnikParameterValue left, MapnikParameterValue right) {
-		return (left.toString() == right.toString());
+		    return (left.toString() == right.toString());
 	}
 
 	@Override

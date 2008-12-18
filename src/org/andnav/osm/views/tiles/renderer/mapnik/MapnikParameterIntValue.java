@@ -12,18 +12,15 @@ public class MapnikParameterIntValue extends MapnikParameterValue {
 		return (Integer) mValue;
 	}
 	
-	public void setValue(Integer v)
-	{
-		mValue = v;
-	}
-	
 	public String toString()
 	{
+		if (mValue == null)
+			return "";
 		return mValue.toString();
 	}
 
 	@Override
 	public void setValue(Object v) {
-		setValue((Integer)v);
+		mValue = v;
 	}
 }

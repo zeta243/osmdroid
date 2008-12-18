@@ -12,18 +12,15 @@ public class MapnikParameterDoubleValue extends MapnikParameterValue {
 		return (Double) mValue;
 	}
 	
-	public void setValue(Double v)
-	{
-		mValue = v;
-	}
-	
 	public String toString()
 	{
+		if (mValue == null)
+			return "";
 		return mValue.toString();
 	}
 
 	@Override
 	public void setValue(Object v) {
-		setValue((Double)v);
+		mValue = v;
 	}
 }

@@ -58,7 +58,7 @@ public class SampleExtensive extends Activity implements OSMConstants{
         
         final RelativeLayout rl = new RelativeLayout(this);
         
-        this.mOsmv = new OSMMapView(this, OSMMapTileProviderInfo.INTERNAL);
+        this.mOsmv = new OSMMapView(this, OSMMapTileProviderInfo.MAPNIK);
         rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
         
         /* SingleLocation-Overlay */
