@@ -1,0 +1,24 @@
+#summary Components of osmdroid
+
+= Services =
+
+== TileProviderService ==
+
+ * Provides tiles from SD-Cache or downloads them
+ * Has a database of already downloaded files
+
+{{{
+interface IOpenStreetMapTileProviderService {
+
+	String[] getTileProviders();
+
+	void getMapTile(in int rendererID, in int zoomLevel, in int tileX, in int tileY, in IOpenStreetMapTileProviderCallback callback);
+
+}
+}}}
+
+= Activities =
+
+== OpenStreetMap ==
+
+The default map view.
