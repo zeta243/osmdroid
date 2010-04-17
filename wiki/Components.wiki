@@ -2,23 +2,40 @@
 
 = Services =
 
-== TileProviderService ==
+The service API of osmdroid is not finished yet. There are several possibilities to achieve the separation of tile storage & retrieval and an app. Here is a comparison:
 
- * Provides tiles from SD-Cache or downloads them
- * Has a database of already downloaded files
+== Passing bitmap objects ==
 
-{{{
-interface IOpenStreetMapTileProviderService {
+The bitmap goes through the following steps until it is displayed:
 
-	String[] getTileProviders();
+*Service:*
+ * download or load from SD-card
+ * decode bitmap format (JPG, PNG)
+ * pass bitmap object
 
-	void getMapTile(in int rendererID, in int zoomLevel, in int tileX, in int tileY, in IOpenStreetMapTileProviderCallback callback);
+*Activity:*
+ * get bitmap object from service
+ * draw to screen
 
-}
-}}}
+*Pro:*
+ * Could be faster (SD-card needs not to be accessed in case of download)
+ * Storage on SD-card is transparent (can be ZIP-files or database or whatever)
 
-= Activities =
 
-== OpenStreetMap ==
+== Passing file paths ==
 
-The default map view.
+The bitmap goes through the following steps until it is displayed:
+
+*Service:*
+ * download
+ * store to SD-card
+ * pass file path
+
+*Activity:*
+ * get file path from service
+ * load from SD-card
+ * decode bitmap format (JPG, PNG)
+ * draw to screen
+
+*Pro:*
+ * No need to pass large objects between service and activity
