@@ -4,6 +4,7 @@
 
 The service API of osmdroid is not finished yet. There are several possibilities to achieve the separation of tile storage & retrieval and an app. Here is a comparison:
 
+<table cellspacing="20"><tr><td>
 == Passing bitmap objects ==
 
 The bitmap goes through the following steps until it is displayed:
@@ -21,7 +22,7 @@ The bitmap goes through the following steps until it is displayed:
  * Could be faster (SD-card needs not to be accessed in case of download)
  * Storage on SD-card is transparent (can be ZIP-files or database or whatever)
 
-
+</td><td>
 == Passing file paths ==
 
 The bitmap goes through the following steps until it is displayed:
@@ -39,3 +40,4 @@ The bitmap goes through the following steps until it is displayed:
 
 *Pro:*
  * No need to pass large objects between service and activity
+</td></tr></table>
