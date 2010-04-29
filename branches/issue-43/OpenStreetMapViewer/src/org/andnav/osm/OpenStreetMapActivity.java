@@ -2,8 +2,8 @@
 package org.andnav.osm;
 
 import org.andnav.osm.contributor.OSMUploader;
-import org.andnav.osm.contributor.RouteRecorder;
-import org.andnav.osm.util.constants.OpenStreetMapConstants;
+import org.andnav.osm.contributor.android.RouteRecorder;
+import org.andnav.osm.util.constants.OpenStreetMapCommonConstants;
 
 import android.app.Activity;
 import android.content.Context;
@@ -17,7 +17,7 @@ import android.os.Bundle;
  * @author Nicolas Gramlich
  *
  */
-public abstract class OpenStreetMapActivity extends Activity implements OpenStreetMapConstants {
+public abstract class OpenStreetMapActivity extends Activity implements OpenStreetMapCommonConstants {
 	// ===========================================================
 	// Constants
 	// ===========================================================

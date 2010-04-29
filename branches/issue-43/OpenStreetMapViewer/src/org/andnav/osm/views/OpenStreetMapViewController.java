@@ -3,10 +3,10 @@ package org.andnav.osm.views;
 
 import org.andnav.osm.util.BoundingBoxE6;
 import org.andnav.osm.util.GeoPoint;
+import org.andnav.osm.util.constants.MathConstants;
 import org.andnav.osm.views.OpenStreetMapView.Scaler;
 import org.andnav.osm.views.util.MyMath;
 import org.andnav.osm.views.util.Mercator;
-import org.andnav.osm.views.util.constants.MathConstants;
 
 import android.graphics.Point;
 

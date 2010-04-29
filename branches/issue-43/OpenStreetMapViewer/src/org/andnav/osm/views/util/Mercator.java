@@ -3,7 +3,7 @@ package org.andnav.osm.views.util;
 
 import org.andnav.osm.util.BoundingBoxE6;
 import org.andnav.osm.util.GeoPoint;
-import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
+import org.andnav.osm.util.constants.OpenStreetMapCommonConstants;
 
 import android.graphics.Point;
 
@@ -12,7 +12,8 @@ import android.graphics.Point;
  * @author Nicolas Gramlich
  *
  */
-public class Mercator implements OpenStreetMapViewConstants {
+public class Mercator implements OpenStreetMapCommonConstants {
+	
 	// ===========================================================
 	// Constants
 	// ===========================================================

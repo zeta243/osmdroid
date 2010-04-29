@@ -7,14 +7,14 @@ import java.util.Formatter;
 import java.util.List;
 
 import org.andnav.osm.contributor.util.constants.OpenStreetMapContributorConstants;
-import org.andnav.osm.util.constants.OpenStreetMapConstants;
+import org.andnav.osm.util.constants.OpenStreetMapCommonConstants;
 
 /**
  * Class capable of formatting a List of Points to the GPX 1.1 format.
  * @author Nicolas Gramlich
  *
  */
-public class RecordedRouteGPXFormatter implements OpenStreetMapContributorConstants, OpenStreetMapConstants{
+public class RecordedRouteGPXFormatter implements OpenStreetMapContributorConstants, OpenStreetMapCommonConstants{
 	// ===========================================================
 	// Constants
 	// ===========================================================

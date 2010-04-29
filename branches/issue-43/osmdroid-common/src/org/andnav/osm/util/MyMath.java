@@ -1,7 +1,7 @@
 // Created by plusminus on 20:36:01 - 26.09.2008
 package org.andnav.osm.util;
 
-import org.andnav.osm.views.util.constants.MathConstants;
+import org.andnav.osm.util.constants.MathConstants;
 
 /**
  * 

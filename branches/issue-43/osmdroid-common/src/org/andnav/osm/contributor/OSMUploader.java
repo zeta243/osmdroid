@@ -24,7 +24,7 @@ import org.andnav.osm.contributor.util.RecordedGeoPoint;
 import org.andnav.osm.contributor.util.RecordedRouteGPXFormatter;
 import org.andnav.osm.contributor.util.Util;
 import org.andnav.osm.contributor.util.constants.OpenStreetMapContributorConstants;
-import org.andnav.osm.util.constants.OpenStreetMapConstants;
+import org.andnav.osm.util.constants.OpenStreetMapCommonConstants;
 
 
 /**
@@ -33,7 +33,7 @@ import org.andnav.osm.util.constants.OpenStreetMapConstants;
  * @author cdaller
  * @author Nicolas Gramlich
  */
-public class OSMUploader implements OpenStreetMapConstants, OpenStreetMapContributorConstants{
+public class OSMUploader implements OpenStreetMapCommonConstants, OpenStreetMapContributorConstants{
 	// ===========================================================
 	// Constants
 	// ===========================================================

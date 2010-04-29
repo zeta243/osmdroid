@@ -1,20 +1,20 @@
-// Created by plusminus on 18:00:24 - 25.09.2008
-package org.andnav.osm.views.util.constants;
+// Created by plusminus on 23:11:31 - 22.09.2008
+package org.andnav.osm.util.constants;
 
 /**
  * 
  * @author Nicolas Gramlich
  *
  */
-public interface OpenStreetMapViewConstants {
+public interface OpenStreetMapCommonConstants {
 	// ===========================================================
 	// Final Fields
 	// ===========================================================
 	
-	// FIXME set DEBUGMODE to false
-	public static final boolean DEBUGMODE = true;
-	
-	public static final int CACHE_MAPTILECOUNT_DEFAULT = 50;
+	public static final int MAPTILE_LATITUDE_INDEX = 0;
+	public static final int MAPTILE_LONGITUDE_INDEX = 1;
+
+	public static final int NOT_SET = Integer.MIN_VALUE;
 	
 	// ===========================================================
 	// Methods

@@ -1,14 +1,17 @@
-// Created by plusminus on 12:29:23 - 21.09.2008
-package org.andnav.osm.contributor.util;
+// Created by plusminus on 12:28:16 - 21.09.2008
+package org.andnav.osm.contributor;
 
+import java.util.ArrayList;
+
+import org.andnav.osm.contributor.util.RecordedGeoPoint;
 import org.andnav.osm.util.GeoPoint;
-import org.andnav.osm.util.constants.OpenStreetMapConstants;
 
 /**
- * Extends the {@link GeoPoint} with a timeStamp.
+ * 
  * @author Nicolas Gramlich
+ *
  */
-public class RecordedGeoPoint extends GeoPoint implements OpenStreetMapConstants{
+public class RouteRecorder {
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -16,42 +19,19 @@ public class RecordedGeoPoint extends GeoPoint implements OpenStreetMapConstants
 	// ===========================================================
 	// Fields
 	// ===========================================================
-
-	protected final long mTimeStamp;
-	protected final int mNumSatellites;
+	
+	protected final ArrayList<RecordedGeoPoint> mRecords = new ArrayList<RecordedGeoPoint>();
 
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 
-	public RecordedGeoPoint(final int latitudeE6, final int longitudeE6) {
-		this(latitudeE6, longitudeE6, System.currentTimeMillis(), NOT_SET);
-	}
-	
-	public RecordedGeoPoint(final int latitudeE6, final int longitudeE6, final long aTimeStamp, final int aNumSatellites) {
-		super(latitudeE6, longitudeE6);
-		this.mTimeStamp = aTimeStamp;
-		this.mNumSatellites = aNumSatellites;
-	}
-
 	// ===========================================================
 	// Getter & Setter
 	// ===========================================================
 	
-	public long getTimeStamp() {
-		return this.mTimeStamp;
-	}
-	
-	public double getLatitudeAsDouble(){
-		return this.getLatitudeE6() / 1E6;
-	}
-	
-	public double getLongitudeAsDouble(){
-		return this.getLongitudeE6() / 1E6;
-	}
-	
-	public int getNumSatellites(){
-		return this.mNumSatellites;
+	public ArrayList<RecordedGeoPoint> getRecordedGeoPoints() {
+		return this.mRecords;
 	}
 
 	// ===========================================================
@@ -61,6 +41,14 @@ public class RecordedGeoPoint extends GeoPoint implements OpenStreetMapConstants
 	// ===========================================================
 	// Methods
 	// ===========================================================
+
+	public void add(final GeoPoint aGeoPoint, final int aNumSatellites){
+		this.mRecords.add(new RecordedGeoPoint(
+					aGeoPoint.getLatitudeE6(), 
+					aGeoPoint.getLongitudeE6(),
+					System.currentTimeMillis(),
+					aNumSatellites));
+	}
 
 	// ===========================================================
 	// Inner and Anonymous Classes

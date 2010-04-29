@@ -4,7 +4,7 @@ package org.andnav.osm.views.overlay;
 import java.util.LinkedList;
 
 import org.andnav.osm.R;
-import org.andnav.osm.util.GeoPoint;
+import org.andnav.osm.util.android.GeoPoint;
 import org.andnav.osm.util.NetworkLocationIgnorer;
 import org.andnav.osm.views.OpenStreetMapView;
 import org.andnav.osm.views.OpenStreetMapViewController;

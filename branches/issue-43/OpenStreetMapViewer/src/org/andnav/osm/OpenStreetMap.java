@@ -2,7 +2,7 @@
 package org.andnav.osm;
 
 import org.andnav.osm.samples.SampleLoader;
-import org.andnav.osm.util.GeoPoint;
+import org.andnav.osm.util.android.GeoPoint;
 import org.andnav.osm.util.constants.OpenStreetMapConstants;
 import org.andnav.osm.views.OpenStreetMapView;
 import org.andnav.osm.views.overlay.MyLocationOverlay;

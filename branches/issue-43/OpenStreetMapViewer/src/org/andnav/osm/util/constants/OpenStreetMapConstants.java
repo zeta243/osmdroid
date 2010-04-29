@@ -11,10 +11,11 @@ public interface OpenStreetMapConstants {
 	// Final Fields
 	// ===========================================================
 	
+	// FIXME set DEBUGMODE to false
+	public static final boolean DEBUGMODE = true;
+	
 	public static final String DEBUGTAG = "OPENSTREETMAP";
 
-	public static final int NOT_SET = Integer.MIN_VALUE;
-	
 	public static final String PREFS_NAME = "org.andnav.osm.prefs";
 	public static final String PREFS_RENDERER = "renderer";
 	public static final String PREFS_SCROLL_X = "scrollX";

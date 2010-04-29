@@ -1,19 +1,15 @@
-// Created by plusminus on 12:28:16 - 21.09.2008
-package org.andnav.osm.contributor;
+// Created by plusminus on 12:29:23 - 21.09.2008
+package org.andnav.osm.contributor.util;
 
-import java.util.ArrayList;
-
-import org.andnav.osm.contributor.util.RecordedGeoPoint;
 import org.andnav.osm.util.GeoPoint;
-
-import android.location.Location;
+import org.andnav.osm.util.constants.OpenStreetMapCommonConstants;
 
 /**
- * 
+ * Extends the {@link GeoPoint} with a timeStamp.
  * @author Nicolas Gramlich
- *
  */
-public class RouteRecorder {
+public class RecordedGeoPoint extends GeoPoint implements OpenStreetMapCommonConstants {
+	
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -21,19 +17,42 @@ public class RouteRecorder {
 	// ===========================================================
 	// Fields
 	// ===========================================================
-	
-	protected final ArrayList<RecordedGeoPoint> mRecords = new ArrayList<RecordedGeoPoint>();
+
+	protected final long mTimeStamp;
+	protected final int mNumSatellites;
 
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 
+	public RecordedGeoPoint(final int latitudeE6, final int longitudeE6) {
+		this(latitudeE6, longitudeE6, System.currentTimeMillis(), NOT_SET);
+	}
+	
+	public RecordedGeoPoint(final int latitudeE6, final int longitudeE6, final long aTimeStamp, final int aNumSatellites) {
+		super(latitudeE6, longitudeE6);
+		this.mTimeStamp = aTimeStamp;
+		this.mNumSatellites = aNumSatellites;
+	}
+
 	// ===========================================================
 	// Getter & Setter
 	// ===========================================================
 	
-	public ArrayList<RecordedGeoPoint> getRecordedGeoPoints() {
-		return this.mRecords;
+	public long getTimeStamp() {
+		return this.mTimeStamp;
+	}
+	
+	public double getLatitudeAsDouble(){
+		return this.getLatitudeE6() / 1E6;
+	}
+	
+	public double getLongitudeAsDouble(){
+		return this.getLongitudeE6() / 1E6;
+	}
+	
+	public int getNumSatellites(){
+		return this.mNumSatellites;
 	}
 
 	// ===========================================================
@@ -43,22 +62,6 @@ public class RouteRecorder {
 	// ===========================================================
 	// Methods
 	// ===========================================================
-
-	public void add(final Location aLocation, final int aNumSatellites){
-		this.mRecords.add(new RecordedGeoPoint(
-					(int)(aLocation.getLatitude() * 1E6), 
-					(int)(aLocation.getLongitude() * 1E6),
-					System.currentTimeMillis(),
-					aNumSatellites));
-	}
-	
-	public void add(final GeoPoint aGeoPoint, final int aNumSatellites){
-		this.mRecords.add(new RecordedGeoPoint(
-					aGeoPoint.getLatitudeE6(), 
-					aGeoPoint.getLongitudeE6(),
-					System.currentTimeMillis(),
-					aNumSatellites));
-	}
 
 	// ===========================================================
 	// Inner and Anonymous Classes
