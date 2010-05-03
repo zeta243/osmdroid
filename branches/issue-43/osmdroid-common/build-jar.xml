@@ -7,9 +7,18 @@
 		ant build jar
 	-->
 	<target name="jar">
-	    <jar destfile="osmdroid-common.jar"
+		<property name="version.num" value="1.00" />
+		<tstamp>
+			<format property="TODAY" pattern="yyyy-MM-dd HH:mm:ss" />
+		</tstamp>
+		<manifest file="MANIFEST.MF">
+			<attribute name="Implementation-Version" value="${version.num}" />
+			<attribute name="Built-Date" value="${TODAY}" />
+		</manifest>
+		<jar destfile="osmdroid-common-${version.num}.jar"
 	         basedir="bin"
 	         includes="**/*.class"
+	    	 manifest="MANIFEST.MF"
 	         />
-	  </target>
+	</target>
 </project>
