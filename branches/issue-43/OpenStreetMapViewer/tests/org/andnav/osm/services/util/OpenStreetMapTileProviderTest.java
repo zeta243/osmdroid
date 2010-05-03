@@ -1,4 +1,4 @@
-package org.andnav.osm.views.util;
+package org.andnav.osm.services.util;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;

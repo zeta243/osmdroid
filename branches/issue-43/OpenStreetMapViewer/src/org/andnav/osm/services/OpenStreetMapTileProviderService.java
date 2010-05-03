@@ -1,8 +1,8 @@
 package org.andnav.osm.services;
 
 import org.andnav.osm.services.util.OpenStreetMapTileFilesystemProvider;
-import org.andnav.osm.services.util.constants.OpenStreetMapServiceConstants;
 import org.andnav.osm.util.OpenStreetMapTile;
+import org.andnav.osm.util.constants.OpenStreetMapAndroidConstants;
 
 import android.app.Service;
 import android.content.Intent;
@@ -16,7 +16,7 @@ import android.util.Log;
  * and stores them in a file system cache.
  * @author Manuel Stahl
  */
-public class OpenStreetMapTileProviderService extends Service implements OpenStreetMapServiceConstants {
+public class OpenStreetMapTileProviderService extends Service implements OpenStreetMapAndroidConstants {
 
 	private static final String DEBUGTAG = "OSM_TILE_PROVIDER_SERVICE";
 

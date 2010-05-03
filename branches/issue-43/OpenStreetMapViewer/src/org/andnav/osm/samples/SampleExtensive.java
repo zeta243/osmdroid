@@ -1,7 +1,9 @@
 package org.andnav.osm.samples;
 
+import org.andnav.osm.IResourceProvider;
 import org.andnav.osm.OpenStreetMapActivity;
 import org.andnav.osm.R;
+import org.andnav.osm.ResourceProvider;
 import org.andnav.osm.util.android.GeoPoint;
 import org.andnav.osm.util.constants.OpenStreetMapCommonConstants;
 import org.andnav.osm.views.OpenStreetMapView;
@@ -43,6 +45,7 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
 	private OpenStreetMapView mOsmv, mOsmvMinimap;
 	private OpenStreetMapViewController mOsmvController;
 	private OpenStreetMapViewSimpleLocationOverlay mMyLocationOverlay; 
+	private IResourceProvider mResourceProvider;
 
 	// ===========================================================
 	// Constructors
@@ -120,6 +123,8 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
         }
         
         this.setContentView(rl);
+
+    	mResourceProvider = new ResourceProvider(getApplicationContext());
     }
 
 	// ===========================================================
@@ -149,7 +154,7 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
     	final SubMenu subMenu = pMenu.addSubMenu(0, MENU_RENDERER_ID, Menu.NONE, "Choose Renderer");
     	{
 	    	for(int i = 0; i < OpenStreetMapRendererInfo.values().length; i ++)
-	    		subMenu.add(0, 1000 + i, Menu.NONE, OpenStreetMapRendererInfo.values()[i].NAME);
+	    		subMenu.add(0, 1000 + i, Menu.NONE, mResourceProvider.getString(OpenStreetMapRendererInfo.values()[i].NAME));
     	}
     	
     	pMenu.add(0, MENU_ANIMATION_ID, Menu.NONE, "Run Animation");

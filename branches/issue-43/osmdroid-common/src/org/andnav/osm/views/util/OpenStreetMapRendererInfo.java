@@ -3,7 +3,7 @@ package org.andnav.osm.views.util;
 
 import java.util.Random;
 
-import org.andnav.osm.R;
+import org.andnav.osm.Resource;
 import org.andnav.osm.util.OpenStreetMapTile;
 
 /**
@@ -12,18 +12,18 @@ import org.andnav.osm.util.OpenStreetMapTile;
  *
  */
 public enum OpenStreetMapRendererInfo {
-	OSMARENDER(R.string.osmarender, ".png", 0, 17, 8, CodeScheme.X_Y,"http://tah.openstreetmap.org/Tiles/tile/"),
-	MAPNIK(R.string.mapnik, ".png", 0, 18, 8, CodeScheme.X_Y,"http://tile.openstreetmap.org/"),
-	CYCLEMAP(R.string.cyclemap, ".png", 0, 17, 8, CodeScheme.X_Y,
+	OSMARENDER(Resource.osmarender, ".png", 0, 17, 8, CodeScheme.X_Y,"http://tah.openstreetmap.org/Tiles/tile/"),
+	MAPNIK(Resource.mapnik, ".png", 0, 18, 8, CodeScheme.X_Y,"http://tile.openstreetmap.org/"),
+	CYCLEMAP(Resource.cyclemap, ".png", 0, 17, 8, CodeScheme.X_Y,
 			"http://a.andy.sandbox.cloudmade.com/tiles/cycle/",
 			"http://b.andy.sandbox.cloudmade.com/tiles/cycle/",
 			"http://c.andy.sandbox.cloudmade.com/tiles/cycle/"),
-	OPENARIELMAP( R.string.openareal_sat, ".jpg", 0, 13, 8, CodeScheme.X_Y,"http://tile.openaerialmap.org/tiles/1.0.0/openaerialmap-900913/"),
-	BASE( R.string.base, ".png", 4, 17, 8, CodeScheme.X_Y,"http://topo.openstreetmap.de/base/"),
-	TOPO(R.string.topo, ".png", 4, 17, 8, CodeScheme.X_Y,"http://topo.openstreetmap.de/topo/"),
-	HILLS(R.string.hills, ".png", 8, 17, 8, CodeScheme.X_Y,"http://topo.geofabrik.de/hills/"),
-	CLOUDMADESMALLTILES(R.string.cloudmade_small, ".png", 0, 13, 6, CodeScheme.X_Y,"http://tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/2/64/"),
-	CLOUDMADESTANDARDTILES(R.string.cloudmade_standard, ".png", 0, 18, 8, CodeScheme.X_Y,"http://tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/2/256/");
+	OPENARIELMAP( Resource.openareal_sat, ".jpg", 0, 13, 8, CodeScheme.X_Y,"http://tile.openaerialmap.org/tiles/1.0.0/openaerialmap-900913/"),
+	BASE(Resource.base, ".png", 4, 17, 8, CodeScheme.X_Y,"http://topo.openstreetmap.de/base/"),
+	TOPO(Resource.topo, ".png", 4, 17, 8, CodeScheme.X_Y,"http://topo.openstreetmap.de/topo/"),
+	HILLS(Resource.hills, ".png", 8, 17, 8, CodeScheme.X_Y,"http://topo.geofabrik.de/hills/"),
+	CLOUDMADESMALLTILES(Resource.cloudmade_small, ".png", 0, 13, 6, CodeScheme.X_Y,"http://tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/2/64/"),
+	CLOUDMADESTANDARDTILES(Resource.cloudmade_standard, ".png", 0, 18, 8, CodeScheme.X_Y,"http://tile.cloudmade.com/BC9A493B41014CAABB98F0471D759707/2/256/");
 	
 	// ===========================================================
 	// Fields
@@ -32,14 +32,15 @@ public enum OpenStreetMapRendererInfo {
 	public enum CodeScheme { X_Y, QUAD_TREE };
 	
 	public final String BASEURLS[], IMAGE_FILENAMEENDING;
-	public final int NAME, ZOOM_MINLEVEL, ZOOM_MAXLEVEL, MAPTILE_ZOOM, MAPTILE_SIZEPX;
+	public final Resource NAME;
+	public final int ZOOM_MINLEVEL, ZOOM_MAXLEVEL, MAPTILE_ZOOM, MAPTILE_SIZEPX;
 	public final CodeScheme CODE_SCHEME;
 	private final Random random;
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 	
-	private OpenStreetMapRendererInfo(final int aName,
+	private OpenStreetMapRendererInfo(final Resource aName,
 			final String aImageFilenameEnding, final int aZoomMin,
 			final int aZoomMax, final int aTileZoom, final CodeScheme aCodeScheme,final String ...aBaseUrl) {
 		this.BASEURLS = aBaseUrl;

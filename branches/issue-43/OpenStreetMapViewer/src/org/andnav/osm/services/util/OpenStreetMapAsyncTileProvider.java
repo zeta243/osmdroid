@@ -6,14 +6,14 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 
 import org.andnav.osm.services.IOpenStreetMapTileProviderCallback;
-import org.andnav.osm.services.util.constants.OpenStreetMapServiceConstants;
 import org.andnav.osm.util.OpenStreetMapTile;
+import org.andnav.osm.util.constants.OpenStreetMapAndroidConstants;
 
 import android.os.DeadObjectException;
 import android.os.RemoteException;
 import android.util.Log;
 
-public abstract class OpenStreetMapAsyncTileProvider implements OpenStreetMapServiceConstants {
+public abstract class OpenStreetMapAsyncTileProvider implements OpenStreetMapAndroidConstants {
 
 	private final int mThreadPoolSize;
 	private final int mPendingQueueSize;

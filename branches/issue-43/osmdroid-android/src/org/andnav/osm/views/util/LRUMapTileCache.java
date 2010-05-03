@@ -4,12 +4,12 @@ import java.util.ConcurrentModificationException;
 import java.util.LinkedHashMap;
 
 import org.andnav.osm.util.OpenStreetMapTile;
-import org.andnav.osm.util.constants.OpenStreetMapConstants;
+import org.andnav.osm.util.constants.OpenStreetMapAndroidConstants;
 
 import android.graphics.Bitmap;
 import android.util.Log;
 
-public class LRUMapTileCache extends LinkedHashMap<OpenStreetMapTile, Bitmap> implements OpenStreetMapConstants {
+public class LRUMapTileCache extends LinkedHashMap<OpenStreetMapTile, Bitmap> implements OpenStreetMapAndroidConstants {
 
 	private static final long serialVersionUID = -541142277575493335L;
 
@@ -51,7 +51,7 @@ public class LRUMapTileCache extends LinkedHashMap<OpenStreetMapTile, Bitmap> im
 	}
 
 	@Override
-	protected boolean removeEldestEntry(final Entry<OpenStreetMapTile, Bitmap> aEldest) {
+	protected boolean removeEldestEntry(java.util.Map.Entry<OpenStreetMapTile, Bitmap> pEldest) {
 		return size() > mCapacity;
 	}
 

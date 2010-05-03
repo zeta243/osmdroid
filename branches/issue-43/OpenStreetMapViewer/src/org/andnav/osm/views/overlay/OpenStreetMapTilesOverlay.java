@@ -1,12 +1,12 @@
 package org.andnav.osm.views.overlay;
 
+import org.andnav.osm.services.util.OpenStreetMapTileProvider;
 import org.andnav.osm.util.GeoPoint;
 import org.andnav.osm.util.MyMath;
 import org.andnav.osm.util.OpenStreetMapTile;
 import org.andnav.osm.views.OpenStreetMapView;
 import org.andnav.osm.views.OpenStreetMapView.OpenStreetMapViewProjection;
 import org.andnav.osm.views.util.OpenStreetMapRendererInfo;
-import org.andnav.osm.views.util.OpenStreetMapTileProvider;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

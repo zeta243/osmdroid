@@ -1,9 +1,9 @@
 // Created by plusminus on 00:23:14 - 03.10.2008
 package org.andnav.osm;
 
+import org.andnav.osm.constants.OpenStreetMapConstants;
 import org.andnav.osm.samples.SampleLoader;
 import org.andnav.osm.util.android.GeoPoint;
-import org.andnav.osm.util.constants.OpenStreetMapConstants;
 import org.andnav.osm.views.OpenStreetMapView;
 import org.andnav.osm.views.overlay.MyLocationOverlay;
 import org.andnav.osm.views.util.OpenStreetMapRendererInfo;
@@ -30,6 +30,7 @@ import android.widget.RelativeLayout.LayoutParams;
  *
  */
 public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
+	
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -48,6 +49,7 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 	private SharedPreferences mPrefs;
 	private OpenStreetMapView mOsmv;
 	private MyLocationOverlay mLocationOverlay;
+	private IResourceProvider mResourceProvider;
 
 	// ===========================================================
 	// Constructors
@@ -70,6 +72,8 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
     
     	mOsmv.getController().setZoom(mPrefs.getInt(PREFS_ZOOM_LEVEL, 1));
     	mOsmv.scrollTo(mPrefs.getInt(PREFS_SCROLL_X, 0), mPrefs.getInt(PREFS_SCROLL_Y, 0));
+    	
+    	mResourceProvider = new ResourceProvider(getApplicationContext());
     }
         
     @Override
@@ -109,7 +113,7 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 
 			for (OpenStreetMapRendererInfo renderer : OpenStreetMapRendererInfo
 					.values()) {
-				mapMenu.add(MENU_MAP_MODE, id++, Menu.NONE, getString(renderer.NAME));
+				mapMenu.add(MENU_MAP_MODE, id++, Menu.NONE, mResourceProvider.getString(renderer.NAME));
 			}
 			mapMenu.setGroupCheckable(MENU_MAP_MODE, true, true);
     	}
