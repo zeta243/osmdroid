@@ -9,6 +9,7 @@ import java.io.OutputStream;
 
 import org.andnav.osm.exceptions.EmptyCacheException;
 import org.andnav.osm.services.IOpenStreetMapTileProviderCallback;
+import org.andnav.osm.util.OpenStreetMapTile;
 import org.andnav.osm.views.util.OpenStreetMapRendererInfo;
 
 import android.content.Context;

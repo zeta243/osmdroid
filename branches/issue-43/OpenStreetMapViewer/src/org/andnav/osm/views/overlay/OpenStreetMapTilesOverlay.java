@@ -1,8 +1,8 @@
 package org.andnav.osm.views.overlay;
 
-import org.andnav.osm.services.util.OpenStreetMapTile;
 import org.andnav.osm.util.GeoPoint;
 import org.andnav.osm.util.MyMath;
+import org.andnav.osm.util.OpenStreetMapTile;
 import org.andnav.osm.views.OpenStreetMapView;
 import org.andnav.osm.views.OpenStreetMapView.OpenStreetMapViewProjection;
 import org.andnav.osm.views.util.OpenStreetMapRendererInfo;

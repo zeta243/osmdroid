@@ -1,4 +1,4 @@
-package org.andnav.osm.services.util;
+package org.andnav.osm.util;
 
 public class OpenStreetMapTile {
 	

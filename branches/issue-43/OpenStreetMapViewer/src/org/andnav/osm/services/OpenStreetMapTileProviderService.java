@@ -1,8 +1,8 @@
 package org.andnav.osm.services;
 
-import org.andnav.osm.services.util.OpenStreetMapTile;
 import org.andnav.osm.services.util.OpenStreetMapTileFilesystemProvider;
 import org.andnav.osm.services.util.constants.OpenStreetMapServiceConstants;
+import org.andnav.osm.util.OpenStreetMapTile;
 
 import android.app.Service;
 import android.content.Intent;

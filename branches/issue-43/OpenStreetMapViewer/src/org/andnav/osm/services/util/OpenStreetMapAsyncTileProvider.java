@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 
 import org.andnav.osm.services.IOpenStreetMapTileProviderCallback;
 import org.andnav.osm.services.util.constants.OpenStreetMapServiceConstants;
+import org.andnav.osm.util.OpenStreetMapTile;
 
 import android.os.DeadObjectException;
 import android.os.RemoteException;

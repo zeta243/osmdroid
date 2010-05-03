@@ -3,6 +3,7 @@ package org.andnav.osm.services.util;
 import java.text.SimpleDateFormat;
 
 import org.andnav.osm.exceptions.EmptyCacheException;
+import org.andnav.osm.util.OpenStreetMapTile;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
 
 import android.content.ContentValues;

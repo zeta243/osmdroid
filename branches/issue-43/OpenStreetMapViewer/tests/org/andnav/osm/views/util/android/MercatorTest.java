@@ -1,4 +1,4 @@
-package org.andnav.osm.views.util;
+package org.andnav.osm.views.util.android;
 
 import org.andnav.osm.util.GeoPoint;
 

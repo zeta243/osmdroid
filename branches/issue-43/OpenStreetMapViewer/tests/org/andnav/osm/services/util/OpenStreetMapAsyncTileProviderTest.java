@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import junit.framework.TestCase;
 
 import org.andnav.osm.services.IOpenStreetMapTileProviderCallback;
+import org.andnav.osm.util.OpenStreetMapTile;
 
 import android.os.IBinder;
 import android.os.RemoteException;

@@ -5,7 +5,7 @@ import java.io.File;
 
 import org.andnav.osm.services.IOpenStreetMapTileProviderCallback;
 import org.andnav.osm.services.IOpenStreetMapTileProviderService;
-import org.andnav.osm.services.util.OpenStreetMapTile;
+import org.andnav.osm.util.OpenStreetMapTile;
 import org.andnav.osm.util.constants.OpenStreetMapConstants;
 
 import android.content.ComponentName;

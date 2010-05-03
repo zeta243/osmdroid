@@ -3,7 +3,7 @@ package org.andnav.osm.views.util;
 import java.util.ConcurrentModificationException;
 import java.util.LinkedHashMap;
 
-import org.andnav.osm.services.util.OpenStreetMapTile;
+import org.andnav.osm.util.OpenStreetMapTile;
 import org.andnav.osm.util.constants.OpenStreetMapConstants;
 
 import android.graphics.Bitmap;

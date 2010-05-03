@@ -13,6 +13,7 @@ import java.net.URL;
 import java.net.UnknownHostException;
 
 import org.andnav.osm.services.IOpenStreetMapTileProviderCallback;
+import org.andnav.osm.util.OpenStreetMapTile;
 import org.andnav.osm.views.util.OpenStreetMapRendererInfo;
 
 import android.util.Log;
