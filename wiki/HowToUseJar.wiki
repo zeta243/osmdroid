@@ -1,0 +1,20 @@
+#summary How to use osmdroid in your application.
+
+= Introduction =
+
+This page explains how to use osmdroid in your own application.
+
+osmdroid's !OpenStreetMapView is basically a replacement for Google's !MapView class.
+In order to use it you should include osmdroid-android-1.00.jar and its dependent files into your project.
+
+
+= Contents =
+
+  * TODO
+  * Using it
+
+
+== Using it ==
+
+Now you can just use !OpenStreetMapView in much the same way as <a href="http://code.google.com/android/add-ons/google-apis/reference/com/google/android/maps/MapView.html">!MapView</a>.
+You can also use any overlays that you wish from the org.andnav.osm.views.overlay package. There are many samples activities included with osmdroid.
