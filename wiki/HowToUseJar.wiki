@@ -10,11 +10,20 @@ In order to use it you should include osmdroid-android-1.00.jar and its dependen
 
 = Contents =
 
-  * TODO
+  * Dependencies
   * Using it
+
+
+== Dependencies ==
+
+Your project should be Android level 4 or higher (1.6 or higher).
+
+You should include osmdroid-android-1.00.jar and slf4j-android-1.5.8.jar in your project.
+
+If you are going to use OSMUploader then you should also include apache-mime4j-0.4.jar and httpmime-4.0-beta1.jar.
 
 
 == Using it ==
 
-Now you can just use !OpenStreetMapView in much the same way as <a href="http://code.google.com/android/add-ons/google-apis/reference/com/google/android/maps/MapView.html">!MapView</a>.
+Now you can just use !OpenStreetMapView in much the same way as the Google <a href="http://code.google.com/android/add-ons/google-apis/reference/com/google/android/maps/MapView.html">!MapView</a>.
 You can also use any overlays that you wish from the org.andnav.osm.views.overlay package. There are many samples activities included with osmdroid.
