@@ -18,11 +18,11 @@ In order to use it you should include osmdroid-android-x.xx.jar and its dependen
 
 == Dependencies ==
 
-Your project should be Android level 4 or higher (1.6 or higher).
+Your project must be Android level 3 or higher (1.5 or higher).
 
-You should include osmdroid-android-1.00.jar and slf4j-android-1.5.8.jar in your project.
+Include osmdroid-android-1.03.jar and slf4j-android-1.5.8.jar in your project.
 
-If you are going to use OSMUploader then you should also include apache-mime4j-0.4.jar and httpmime-4.0-beta1.jar.
+If you are going to use OSMUploader then you must also include apache-mime4j-0.4.jar and httpmime-4.0-beta1.jar.
 
 
 == Using it ==
