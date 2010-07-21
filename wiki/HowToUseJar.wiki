@@ -20,7 +20,7 @@ In order to use it you should include osmdroid-android-x.xx.jar and its dependen
 
 Your project must be Android level 3 or higher (1.5 or higher).
 
-Include osmdroid-android-1.03.jar and slf4j-android-1.5.8.jar in your project.
+Include osmdroid-android-x.xx.jar and slf4j-android-1.5.8.jar in your project.
 
 If you are going to use OSMUploader then you must also include apache-mime4j-0.4.jar and httpmime-4.0-beta1.jar.
 
