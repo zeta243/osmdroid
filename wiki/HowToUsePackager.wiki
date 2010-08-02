@@ -1,3 +1,33 @@
 #summary Instructions how to use the Tile Packager
 
-_Placeholder until instructions are written_
+= Introduction =
+
+This page explains how to use the osmdroid tile packager.
+
+
+= Contents =
+
+  * Why you might want to use it
+  * Determining the map area
+  * Running the packager
+  * Using the output
+
+
+== Why you might want to use it ==
+
+You can use the tile packager in order to load tiles onto your device so that you will not need an internet connection when running an application that uses osmdroid.
+
+
+== Determining the map area ==
+
+The first thing you need to do is to decide the area that you want to download. This means determining the coordinates. The easiest way is to go to <a hef="http://openstreetmaps.org/">!OpenStreetMap.org</a>, view the area that you want to export, and then click on the "Export" tab. You can then click the "Manually select a different area" link and chose your area by dragging an area over it. The coordinates are displayed in the box.
+
+
+== Running the packager ==
+
+TODO
+
+
+== Using the output ==
+
+TODO
