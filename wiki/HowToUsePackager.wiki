@@ -9,7 +9,7 @@ This page explains how to use the osmdroid tile packager.
 
   * Why you might want to use it
   * Determining the map area
-  * Running the packager
+  * Run the tile packager
   * Using the output
 
 
@@ -20,12 +20,29 @@ You can use the tile packager in order to load tiles onto your device so that yo
 
 == Determining the map area ==
 
-The first thing you need to do is to decide the area that you want to download. This means determining the coordinates. The easiest way is to go to <a hef="http://openstreetmaps.org/">!OpenStreetMap.org</a>, view the area that you want to export, and then click on the "Export" tab. You can then click the "Manually select a different area" link and chose your area by dragging an area over it. The coordinates are displayed in the box.
+The first thing you need to do is to decide the area that you want to download. This means determining the coordinates. The easiest way is to go to <a hef="http://openstreetmaps.org/">!OpenStreetMap.org</a>, view the area that you want to download, and then click on the "Export" tab. You can then click the "Manually select a different area" link and choose your area by dragging a box over it. The coordinates are displayed in the "Area to Export" box.
+
+Below is an example of choosing the lovely town of Haarlem in The Netherlands.
+This shows that the coordinates are:<br />
+North: 52.4244<br />
+East: 4.6746<br />
+South: 52.3388<br />
+West: 4.5949
+
+[http://osmdroid.googlecode.com/files/osm_sample_export_area.png]
 
 
-== Running the packager ==
+== Run the tile packager ==
 
-TODO
+Download osmdroid-packager-x.xx.jar.
+
+Here is an example command line to download the area selected in the example above:
+
+{{{
+java -jar osmdroid-packager-1.04.jar -u http://tile.openstreetmap.org/%d/%d/%d.png -t temp -d haarlem.zip -zmax 18 -n 52.4244 -s 52.3388 -e 4.6746 -w 4.5949 -fa .andnav
+}}}
+
+TODO explain the parameters
 
 
 == Using the output ==
