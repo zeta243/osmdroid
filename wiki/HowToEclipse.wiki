@@ -66,6 +66,15 @@ Selecting 'OK' applies the changes.
 
 Now you have an Ant based eclipse project, ant output going to the Console view.
 
+=== Compile osmdroid-android ===
+This is a java project which makes uses of android libraries.
+
+=== Compile !OpenStreetMapViewer ===
+This is an android project.
+It does not use ant to perform its build.
+
+=== Compile !OSMMapTilePackager ===
+This is a straight java project.
 
 == Try out !OpenStreetMapViewer in an emulator == 
 First, start an emulator by executing the following from within Eclipse: 
