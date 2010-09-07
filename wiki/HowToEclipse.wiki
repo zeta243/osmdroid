@@ -38,9 +38,9 @@ In Eclipse, right-click on the Package area, and select the following:
  * click Next 
  * click Browse... 
  * select the checked out projects' directories
-   * osmdroid-android 
-   * OSMMapTilePackager
-   * !OpenStreetMapViewer
+   * osmdroid-android (import as a java project)
+   * OSMMapTilePackager (import as a java project)
+   * !OpenStreetMapViewer (mport as an android project)
  * click OK 
  * click Finish 
 == Compile ==
