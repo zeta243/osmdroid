@@ -14,14 +14,14 @@ Make sure to create an Android Virtual Machine by selecting the following:
    * Target: Android 1.5 - API Level 3 
    * SD Card: Size: 1024 MiB (this is important) 
  * click Create AVD 
-After this is done, set the ANDROID_SDK_DIR classpath variable in 
+After this is done, set the ANDROID_SDK_PLATFORM classpath variable in 
 Eclipse, by selecting: 
  * Window -> Preferences... 
  * Java -> Build Path -> Classpath Variables 
  * click New... 
  * enter: 
-   * Name: ANDROID_SDK_LIB 
-   * Path: /path/to/.../android-sdk-linux_86/platforms/android-3/android.jar 
+   * Name: ANDROID_SDK_PLATFORM
+   * Path: /path/to/.../android-sdk-linux_86/platforms/android-3/ (android-3 isn't the only choice but at least that API level)
  * click OK 
  * click OK 
 == Check out the sources == 
@@ -43,31 +43,28 @@ In Eclipse, right-click on the Package area, and select the following:
    * !OpenStreetMapViewer (mport as an android project)
  * click OK 
  * click Finish 
+
 == Compile ==
-The projects are built with ant build files (build.xml).
-Eclipse typically doesn't use ant builders so you will need to make some adjustments.
-You may find it helpful to make sure ant builds correctly without Eclipse.
-=== Creating a builder within Eclipse ===
-Open the project properties for the target project.
-Select the 'Builders' section, you will likely see a "Java Builder".
-We will be creating an 'Ant Builder', press the 'New' button.
-In the ensuing dialog choose 'Ant Build'. 
-
-The 'Name' field is the name of the new builder, 'Ant Builder'.
-Using the 'Browse Workspace' buttons, choose the build file (build.xml) and the project root.
-
-<wiki:comment>
-Any special instructions for targets? clean, build, etc.
-<wiki:comment>
-
-OK returns eclipse to the Builders section of the project properties dialog. 
-Ensure that 'Java Builder' is unchecked, this will probably cause Eclipse to complain, a complaint you may ignore. 
-Selecting 'OK' applies the changes. 
-
-Now you have an Ant based eclipse project, ant output going to the Console view.
+The projects are built using the eclipse "Java Builder".
+You may also build using the, Eclipse generated, ant build file (build.xml).
+When the project is imported eclipse makes an effort to identify various project properties, it is not perfect and frequently makes mistakes or omissions.
 
 === Compile osmdroid-android ===
 This is a java project which makes uses of android libraries.
+
+The checked out project will likely have missing library dependencies.
+These can be easily corrected.
+
+*'Project properties' -> 'Java Build Path' -> 'Libraries'*
+
+Make sure the following jar files and libraries are defined ( .classpath):
+  * "lib/apache-mime4j-0.4.jar" : Jar
+  * "lib/httpmime-4.0-beta1.jar" : Jar
+  * "lib/slf4j-android-1.5.8.jar" : Jar
+  * "JUnit 4.libraryclasspath" : Library
+  * "ANDROID_SDK_PLATFORM/android.jar" : var
+  * "Java JRE System Library" : Library
+
 
 === Compile !OpenStreetMapViewer ===
 This is an android project.
@@ -85,3 +82,27 @@ First, start an emulator by executing the following from within Eclipse:
 then, right-click the !OpenStreetMap project, and select: 
  * Run As -> Android Application 
 and see the application downloaded to the emulator & run 
+
+
+== Creating a builder within Eclipse ==
+The following should be unnecessary most of the time.
+
+Eclipse typically doesn't use ant builders.
+To do so you will need to make some adjustments.
+You may find it helpful to make sure ant builds correctly without Eclipse.
+
+Open the project properties for the target project.
+Select the 'Builders' section, you will likely see a "Java Builder".
+We will be creating an 'Ant Builder', press the 'New' button.
+In the ensuing dialog choose 'Ant Build'. 
+
+The 'Name' field is the name of the new builder, 'Ant Builder'.
+Using the 'Browse Workspace' buttons, choose the build file (build.xml) and the project root.
+
+Any special instructions for targets? clean, build, etc.
+
+OK returns eclipse to the Builders section of the project properties dialog. 
+Ensure that 'Java Builder' is unchecked, this will probably cause Eclipse to complain, a complaint you may ignore. 
+Selecting 'OK' applies the changes. 
+
+Now you have an Ant based eclipse project, ant output going to the Console view.
