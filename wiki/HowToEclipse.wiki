@@ -1,4 +1,5 @@
 #summary How to compile and run using Eclipse
+#labels Phase-Deploy
 
 == Install the Android SDK == 
 Install the Android SDK, including Eclipse & the Android Eclipse 
@@ -30,34 +31,22 @@ the quick steps are:
 <pre> 
 svn checkout http://osmdroid.googlecode.com/svn/trunk/ osmdroid-read-only 
 </pre> 
-== Import & compile osmdroid-android == 
+== Import ==
 In Eclipse, right-click on the Package area, and select the following: 
  * click on Import... 
  * select General -> Existing Projects into Workspace 
  * click Next 
  * click Browse... 
- * select the checked out osmdroid-android directory 
+ * select the checked out projects' directories
+=== osmdroid-android ===
+=== OSMMapTilePackager ===
+=== OpenStreetMapViewer ===
  * click OK 
  * click Finish 
-== Import & compile OSMMapTilePackager == 
-In Eclipse, right-click on the Package area, and select the following: 
- * click on Import... 
- * select General -> Existing Projects into Workspace 
- * click Next 
- * click Browse... 
- * select the checked out OSMMapTilePackager directory 
- * click OK 
- * click Finish 
-== Import & compile OpenStreetMapViewer == 
-In Eclipse, select the following: 
- * File -> New -> Project... 
- * select Android -> Android Project 
- * click Next 
- * select 'Create project from existing source' 
- * click Browse... 
- * select the OpenStreetMapViewer directory 
- * select Build Target -> Android 1.5 
- * click Finish 
+== Compile ==
+The projects presume an ant build file.
+Eclipse typically doesn't use and ant build so you will need to make some adjustments.
+
 == Try out OpenStreetMapViewer in an emulator == 
 First, start an emulator by executing the following from within Eclipse: 
  * Window -> Android SDK and AVD Manager 
