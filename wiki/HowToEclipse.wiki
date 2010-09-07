@@ -38,16 +38,36 @@ In Eclipse, right-click on the Package area, and select the following:
  * click Next 
  * click Browse... 
  * select the checked out projects' directories
-=== osmdroid-android ===
-=== OSMMapTilePackager ===
-=== OpenStreetMapViewer ===
+   * osmdroid-android 
+   * !OSMMapTilePackager
+   * !OpenStreetMapViewer
  * click OK 
  * click Finish 
 == Compile ==
-The projects presume an ant build file.
-Eclipse typically doesn't use and ant build so you will need to make some adjustments.
+The projects are built with ant build files (build.xml).
+Eclipse typically doesn't use ant builders so you will need to make some adjustments.
+You may find it helpful to make sure ant builds correctly without Eclipse.
+=== Creating a builder within Eclipse ===
+Open the project properties for the target project.
+Select the 'Builders' section, you will likely see a "Java Builder".
+We will be creating an 'Ant Builder', press the 'New' button.
+In the ensuing dialog choose 'Ant Build'. 
 
-== Try out OpenStreetMapViewer in an emulator == 
+The 'Name' field is the name of the new builder, 'Ant Builder'.
+Using the 'Browse Workspace' buttons, choose the build file (build.xml) and the project root.
+
+<wiki:comment>
+Any special instructions for targets? clean, build, etc.
+<wiki:comment>
+
+OK returns eclipse to the Builders section of the project properties dialog. 
+Ensure that 'Java Builder' is unchecked, this will probably cause Eclipse to complain, a complaint you may ignore. 
+Selecting 'OK' applies the changes. 
+
+Now you have an Ant based eclipse project, ant output going to the Console view.
+
+
+== Try out !OpenStreetMapViewer in an emulator == 
 First, start an emulator by executing the following from within Eclipse: 
  * Window -> Android SDK and AVD Manager 
  * select your virtual device 
