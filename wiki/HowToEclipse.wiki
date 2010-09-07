@@ -39,7 +39,7 @@ In Eclipse, right-click on the Package area, and select the following:
  * click Browse... 
  * select the checked out projects' directories
    * osmdroid-android 
-   * !OSMMapTilePackager
+   * OSMMapTilePackager
    * !OpenStreetMapViewer
  * click OK 
  * click Finish 
@@ -73,7 +73,7 @@ This is a java project which makes uses of android libraries.
 This is an android project.
 It does not use ant to perform its build.
 
-=== Compile !OSMMapTilePackager ===
+=== Compile OSMMapTilePackager ===
 This is a straight java project.
 
 == Try out !OpenStreetMapViewer in an emulator == 
