@@ -73,6 +73,6 @@ First, start an emulator by executing the following from within Eclipse:
  * select your virtual device 
  * click Start... 
  * wait for the emulator to start (takes a long time) 
-then, right-clik the OpenStreetMap project, and select: 
+then, right-click the !OpenStreetMap project, and select: 
  * Run As -> Android Application 
 and see the application downloaded to the emulator & run 
