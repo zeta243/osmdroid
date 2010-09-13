@@ -54,4 +54,4 @@ The -d parameter is optional, in which case it won't create a zip file.  In that
 
 == Using the output ==
 
-TODO
+If you specify the renderer name as the {{{-d}}} parameter then osmdroid can use the zip files directly. Just copy the zip to the andnav2/tiles folder on your device.
