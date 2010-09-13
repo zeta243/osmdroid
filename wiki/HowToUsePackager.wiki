@@ -44,7 +44,7 @@ java -jar osmdroid-packager-1.04.jar -u http://tile.openstreetmap.org/%d/%d/%d.p
 
 Here's what the parameters mean:<br />
 ||{{{-u}}}||{{{http://tile.openstreetmap.org/%d/%d/%d.png}}}||This is the pattern for tiles for the Mapnik format.||
-||{{{-t}}}||{{{temp}}}||Location of the temporary download location.||
+||{{{-t}}}||{{{MAPNIK}}}||Location of the temporary download location. This should be the renderer name if you intend to use the zip directly in osmdroid.||
 ||{{{-d}}}||{{{haarlem.zip}}}||Zip file to create when finished.||
 ||{{{-zmax}}}||{{{18}}}||Maximum zoom level to download tiles for.||
 ||{{{-fa}}}||{{{.andnav}}}||Extension to add to downloaded tiles. andnav is the extension used by osmdroid.||
