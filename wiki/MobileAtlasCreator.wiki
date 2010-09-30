@@ -2,7 +2,7 @@
 
 = Introduction =
 
-This page explains how to use <a href="https://sourceforge.net/projects/trekbuddyatlasc/">Mobile Atlas Creator</a> to create tile packs for use by applications using osmdroid.
+This page explains how to use <a href="https://sourceforge.net/projects/trekbuddyatlasc/">Mobile Atlas Creator</a> to create tile packs for use by ApplicationsUsingOsmdroid.
 
 TODO explain how to use it. First wait for <a href="https://sourceforge.net/tracker/?func=detail&aid=3078443&group_id=238075&atid=1105497">feature 3078443</a> to be implemented.
 
