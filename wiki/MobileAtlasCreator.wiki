@@ -13,6 +13,9 @@ The Mobile Atlas Creator has not yet been updated to construct osmdroid tile set
 
 Create a tile set suitable for AndNav.
 The suffixes will need to be changed.
+If the purpose for the extra extension at the end of the filename 
+is to prevent the tree from being visited by certain media activities
+there is a convention to place a file (may be empty) named .nomedia is in the directory.
 (This can also be programmatically accommodated in osmdroid.)
 {{{
 find . -name '*.andnav' | while read name; do mv ${name} ${name%.andnav}; done
