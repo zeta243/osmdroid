@@ -3,23 +3,17 @@
 = Introduction =
 
 This page explains how to use <a href="https://sourceforge.net/projects/trekbuddyatlasc/">Mobile Atlas Creator</a> to create tile packs for use by ApplicationsUsingOsmdroid.
+You will need version 1.8 beta 3 or later.
 
 
 = Details =
 
-TODO: explain how to use this as implemented in Mobile Atlas Creator 1.8 beta 3.
+TODO make this a bit more wordy! These are just the main points.
 
+ * Select one or more of !OpenStreetMap Mapnik, !OpenStreetMap Osmrender, !OpenStreetMap Cyclemap.
 
-== How To Use Mobile Atlas Creator Now ==
+ * Select Atlas format Osmdroid ZIP.
 
-Create a tile set suitable for AndNav.
-The suffixes will need to be changed.
-If the purpose for the extra extension at the end of the filename 
-is to prevent the tree from being visited by certain media activities
-there is a convention to place a file (may be empty) named .nomedia is in the directory.
-(This can also be programmatically accommodated in osmdroid.)
-{{{
-find . -name '*.andnav' | while read name; do mv ${name} ${name%.andnav}; done
-}}}
-Then copy the tree onto the android device.
-For example {{{adb push ./Mapnik /sdcard/osmdroid/tiles/Mapnik/}}}
+ * Click 'Create atlas'.
+
+ * Copy the resulting zip to /sdcard/osmdroid/
