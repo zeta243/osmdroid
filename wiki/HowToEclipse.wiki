@@ -49,6 +49,12 @@ The projects are built using the eclipse "Java Builder".
 You may also build using the, Eclipse generated, ant build file (build.xml).
 When the project is imported eclipse makes an effort to identify various project properties, it is not perfect and frequently makes mistakes or omissions.
 
+=== Set Java compliance level ===
+If your Eclipse default Java compliance level is not 1.6, set it on a
+per-project basis for osmdroid-android, OSMMapTilePackager and OpenStreetMap.
+
+*'Project properties' -> 'Java Compiler' -> 'Compiler compliance level'*
+
 === Compile osmdroid-android ===
 This is a java project which makes uses of android libraries.
 
