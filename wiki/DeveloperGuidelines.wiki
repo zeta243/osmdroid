@@ -1,0 +1,20 @@
+#summary Coding guidelines for code contributions.
+
+= Introduction =
+
+This page is to list some of the more important guidelines for developers contributing code to osmdroid.  This is not intended to strictly enforce a particular style - more to keep the code internally consistent.
+
+
+== General guidelines ==
+
+ * Use tabs for intending
+ * Make variables final where possible
+ * Prefix member variables with m
+ * Prefix method arguments with a
+
+== Guidelines for osmdroid-android project ==
+
+ * Use org.slf4j.Logger, not android.util.Log
+ * Use org.andnav.osm.!ResourceProxy, not Context.getResource
+
+Those are the main less obvious guidelines.  In general, try and follow the existing style.
