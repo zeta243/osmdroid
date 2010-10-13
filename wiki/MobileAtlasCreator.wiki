@@ -10,7 +10,7 @@ You will need version 1.8 beta 3 or later.
 
 TODO make this a bit more wordy! These are just the main points.
 
- * Select one or more of !OpenStreetMap Mapnik, !OpenStreetMap Osmrender, !OpenStreetMap Cyclemap.
+ * Select one or more of !OpenStreetMap Mapnik, !OpenStreetMap Osmrender, !OpenStreetMap Cyclemap, !OpenStreetMap Public Transport.
 
  * Select Atlas format Osmdroid ZIP.
 
