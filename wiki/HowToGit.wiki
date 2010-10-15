@@ -54,7 +54,7 @@ git add osmdroid-read-only
 git commit -m "initial load from upstream"
 </pre>
 Congratulations you now have a working copy that recognizes both *svn* and *git* commands.
-So how does this help.
+So how does this help?
 
 First of all once you have a sponsor, you and your sponsor can work out the 
 details without corrupting the public svn repository.
