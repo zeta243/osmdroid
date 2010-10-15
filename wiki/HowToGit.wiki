@@ -24,7 +24,11 @@ an otherwise empty *osmdroid* directory.
 
 Now you add your wonderful enhancement to the osmdroid code base.
 You want to share your patch with someone else so you make a patch 
-file (using diff) and post it to the mailing list.
+file...
+<pre>
+svn diff > ~/cool-feature.diff
+</pre>
+...and post it to the mailing list.
 Someone with rights to the repository takes a look at your patch
 and --joy of joys-- thinks it is great and adds it to the public repository.
 But your sponsor does it wrong so you iterate.
