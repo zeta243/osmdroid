@@ -24,7 +24,7 @@ If you know of any inaccuracies or additions to this page, please add a comment.
  * [http://opensatnav.org/ OpenSatNav]
  * GeOrg
  * OpenGPX
- * GeoHunter
+ * [http://code.google.com/p/geohunter/ GeoHunter] (osmdroid feature not released yet)
 
 
 == Projects using their own implementation similar to osmdroid ==
