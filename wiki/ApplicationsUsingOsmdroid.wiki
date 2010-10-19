@@ -2,12 +2,23 @@
 
 = Introduction =
 
-Add your content here.
+osmdroid was originally created by [http://code.google.com/u/NicolasGramlich/ Nicolas Gramlich], and he is still the project owner.  His focus moved to [http://andnav.org/ AndNav], which is either the parent or the child of osmdroid, depending on how you look at it.
+
+osmdroid was originally used by other projects by copying the source.  It was later converted to a simple jar that can be added as a library.
+
+This page lists projects that use osmdroid, separated into those that use the jar and those that use the source (and most likely they have their own branch based on an old version of osmdroid source).  Also listed are projects that are similar to osmdroid but have their own implementation.
 
 
-= Details =
+== Projects using osmdroid jar ==
 
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
+ * TODO
+
+
+== Projects using a copy of osmdroid source ==
+
+ * TODO
+
+
+== Projects using their own implementation similar to osmdroid ==
+
+ * TODO
