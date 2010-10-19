@@ -20,10 +20,10 @@ If you know of any inaccuracies or additions to this page, please add a comment.
 == Projects using a copy of osmdroid source ==
 
  * [http://andnav.org/ AndNav2]
- * RMaps
+ * [http://robertdeveloper.blogspot.com/2009/08/rmaps.html RMaps]
  * [http://code.google.com/p/osmtracker-android/ osmtracker-android]
  * [http://opensatnav.org/ OpenSatNav]
- * GeOrg
+ * [http://android.ranitos.de/ GeOrg]
  * [http://opengpx.sf.net/ OpenGPX]
  * [http://code.google.com/p/geohunter/ GeoHunter] (osmdroid feature not released yet)
 
