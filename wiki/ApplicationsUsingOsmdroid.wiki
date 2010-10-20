@@ -15,6 +15,7 @@ If you know of any inaccuracies or additions to this page, please add a comment.
 
  * [http://l6n.org/myspeed/ MySpeed]
  * [http://code.google.com/p/bikeroute/ BikeRoute]
+ * [http://www.cyclestreets.net/mobile/ CycleStreets]
 
 
 == Projects using a copy of osmdroid source ==
