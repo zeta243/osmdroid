@@ -15,7 +15,8 @@ If you know of any inaccuracies or additions to this page, please add a comment.
 
  * [http://l6n.org/myspeed/ MySpeed]
  * [http://code.google.com/p/bikeroute/ BikeRoute]
- * [http://www.cyclestreets.net/mobile/ CycleStreets] (Android version not released yet)
+ * [http://www.cyclestreets.net/mobile/ CycleStreets] (Android version not yet released)
+ * [http://mapzen.cloudmade.com/mapzen-poi-collector Mapzen POI Collector] (Android version not yet released)
 
 
 == Projects using a copy of osmdroid source ==
@@ -26,7 +27,7 @@ If you know of any inaccuracies or additions to this page, please add a comment.
  * [http://opensatnav.org/ OpenSatNav]
  * [http://android.ranitos.de/ GeOrg]
  * [http://opengpx.sf.net/ OpenGPX]
- * [http://code.google.com/p/geohunter/ GeoHunter] (osmdroid feature not released yet)
+ * [http://code.google.com/p/geohunter/ GeoHunter] (osmdroid feature not yet released)
  * [http://wigle.net/ WigleWifi]
 
 
