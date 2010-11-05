@@ -7,6 +7,7 @@ import java.io.InputStream;
 public class TileLoadResult {
 	boolean mSuccess;
 	InputStream mResult;
+	OpenStreetMapAsyncTileProvider mProvider;
 
 	public boolean isSuccess() {
 		return mSuccess;
@@ -16,7 +17,12 @@ public class TileLoadResult {
 		return mResult;
 	}
 
-	protected TileLoadResult() {
+	public OpenStreetMapAsyncTileProvider getProvider() {
+		return mProvider;
+	}
+
+	protected TileLoadResult(OpenStreetMapAsyncTileProvider provider) {
+		mProvider = provider;
 		setFailureResult();
 	}
 

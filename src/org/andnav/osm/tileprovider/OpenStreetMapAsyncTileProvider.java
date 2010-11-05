@@ -184,7 +184,7 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 			mWorking.remove(aState.getMapTile());
 
 			// TODO: Is this the best way to do this?
-			aState.getCallback().mapTileRequestCompleted(aState.getMapTile(),
+			aState.getCallback().mapTileRequestCompleted(aState,
 					aTileInputStream);
 		}
 
@@ -195,7 +195,7 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 			mWorking.remove(aState.getMapTile());
 
 			// TODO: Is this the best way to do this?
-			// aState.getCallback().mapTileRequestCompleted(aState.getMapTile());
+			aState.getCallback().mapTileRequestFailed(aState);
 		}
 
 		/**
@@ -207,7 +207,8 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 
 			OpenStreetMapTileRequestState state;
 			while ((state = nextTile()) != null) {
-				TileLoadResult result = new TileLoadResult();
+				TileLoadResult result = new TileLoadResult(
+						OpenStreetMapAsyncTileProvider.this);
 
 				if (DEBUGMODE)
 					logger.debug("Next tile: " + state);

@@ -166,7 +166,7 @@ public class OpenStreetMapView extends View implements
 					new CloudmadeDefaultTokenProvider(cloudmadeKey),
 					mFileSystemProvider);
 			tileProvider = new OpenStreetMapTileProviderArray(
-					new SimpleInvalidationHandler(), null, registerReceiver,
+					new SimpleInvalidationHandler(), registerReceiver,
 					new OpenStreetMapAsyncTileProvider[] { mFileSystemProvider,
 							mTileDownloaderProvider });
 		}

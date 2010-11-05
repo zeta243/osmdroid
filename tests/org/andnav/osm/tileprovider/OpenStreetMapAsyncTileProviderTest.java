@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import org.andnav.osm.views.overlay.OpenStreetMapTilesOverlay;
 import org.andnav.osm.views.util.OpenStreetMapRendererFactory;
 import org.junit.Test;
 
@@ -19,13 +20,15 @@ public class OpenStreetMapAsyncTileProviderTest {
 
 		final IOpenStreetMapTileProviderCallback tileProviderCallback = new IOpenStreetMapTileProviderCallback() {
 			@Override
-			public void mapTileRequestCompleted(final OpenStreetMapTile aTile, final String aTilePath) {
+			public void mapTileRequestCompleted(final OpenStreetMapTileRequestState aState, final String aTilePath) {
 			}
 			@Override
-			public void mapTileRequestCompleted(final OpenStreetMapTile aTile, final InputStream aTileInputStream) {
+			public void mapTileRequestCompleted(final OpenStreetMapTileRequestState aState, final InputStream aTileInputStream) {
 			}
 			@Override
-			public void mapTileRequestCompleted(final OpenStreetMapTile aTile) {
+			public void mapTileRequestCompleted(final OpenStreetMapTileRequestState aState) {
+			}
+			public void mapTileRequestFailed(final OpenStreetMapTileRequestState aState) {
 			}
 			@Override
 			public boolean useDataConnection() {
@@ -72,15 +75,18 @@ public class OpenStreetMapAsyncTileProviderTest {
 
 		final IOpenStreetMapTileProviderCallback tileProviderCallback = new IOpenStreetMapTileProviderCallback() {
 			@Override
-			public void mapTileRequestCompleted(final OpenStreetMapTile aTile, final String aTilePath) {
-				tiles.add(aTile);
+			public void mapTileRequestCompleted(final OpenStreetMapTileRequestState aState, final String aTilePath) {
+				tiles.add(aState.getMapTile());
 			}
 			@Override
-			public void mapTileRequestCompleted(final OpenStreetMapTile aTile, final InputStream aTileInputStream) {
-				tiles.add(aTile);
+			public void mapTileRequestCompleted(final OpenStreetMapTileRequestState aState, final InputStream aTileInputStream) {
+				tiles.add(aState.getMapTile());
 			}
 			@Override
-			public void mapTileRequestCompleted(final OpenStreetMapTile aTile) {
+			public void mapTileRequestCompleted(final OpenStreetMapTileRequestState aState) {
+			}
+			@Override
+			public void mapTileRequestFailed(final OpenStreetMapTileRequestState aState) {
 			}
 			@Override
 			public boolean useDataConnection() {
@@ -144,15 +150,18 @@ public class OpenStreetMapAsyncTileProviderTest {
 
 		final IOpenStreetMapTileProviderCallback tileProviderCallback = new IOpenStreetMapTileProviderCallback() {
 			@Override
-			public void mapTileRequestCompleted(final OpenStreetMapTile aTile, final String aTilePath) {
-				tiles.add(aTile);
+			public void mapTileRequestCompleted(final OpenStreetMapTileRequestState aState, final String aTilePath) {
+				tiles.add(aState.getMapTile());
 			}
 			@Override
-			public void mapTileRequestCompleted(final OpenStreetMapTile aTile, final InputStream aTileInputStream) {
-				tiles.add(aTile);
+			public void mapTileRequestCompleted(final OpenStreetMapTileRequestState aState, final InputStream aTileInputStream) {
+				tiles.add(aState.getMapTile());
 			}
 			@Override
-			public void mapTileRequestCompleted(final OpenStreetMapTile aTile) {
+			public void mapTileRequestCompleted(final OpenStreetMapTileRequestState aState) {
+			}
+			@Override
+			public void mapTileRequestFailed(final OpenStreetMapTileRequestState aState) {
 			}
 			@Override
 			public boolean useDataConnection() {
