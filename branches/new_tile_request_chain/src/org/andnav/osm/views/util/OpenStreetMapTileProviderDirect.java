@@ -1,14 +1,14 @@
 package org.andnav.osm.views.util;
 
+import org.andnav.osm.tileprovider.CloudmadeDefaultTokenProvider;
 import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
 import org.andnav.osm.tileprovider.IRegisterReceiver;
-import org.andnav.osm.tileprovider.OpenStreetMapTile;
+import org.andnav.osm.tileprovider.OpenStreetMapAsyncTileProvider;
 import org.andnav.osm.tileprovider.OpenStreetMapTileDownloader;
 import org.andnav.osm.tileprovider.OpenStreetMapTileFilesystemProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 
 /**
@@ -18,48 +18,49 @@ import android.os.Handler;
  * 
  * At present the only source which meets this criteria is the file system.
  */
-@Deprecated
-public class OpenStreetMapTileProviderDirect extends OpenStreetMapTileProvider
-		implements IOpenStreetMapTileProviderCallback {
+public class OpenStreetMapTileProviderDirect extends
+		OpenStreetMapTileProviderArray implements
+		IOpenStreetMapTileProviderCallback {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(OpenStreetMapTileProviderDirect.class);
 
+	// private final String mCloudmadeKey;
 	private final OpenStreetMapTileFilesystemProvider mFileSystemProvider;
-	private final String mCloudmadeKey;
-
 	private OpenStreetMapTileDownloader mTileDownloaderProvider;
 
 	public OpenStreetMapTileProviderDirect(
 			final Handler pDownloadFinishedListener,
 			final String aCloudmadeKey,
 			final IRegisterReceiver aRegisterReceiver) {
-		super(pDownloadFinishedListener);
+		super(pDownloadFinishedListener, aRegisterReceiver,
+				new OpenStreetMapAsyncTileProvider[] {});
 		mFileSystemProvider = new OpenStreetMapTileFilesystemProvider(
 				aRegisterReceiver);
-		mTileDownloaderProvider = new OpenStreetMapTileDownloader(null,
+		mTileDownloaderProvider = new OpenStreetMapTileDownloader(
+				new CloudmadeDefaultTokenProvider(aCloudmadeKey),
 				mFileSystemProvider);
-		mCloudmadeKey = aCloudmadeKey;
+		super.mTileProviderList.add(mFileSystemProvider);
+		super.mTileProviderList.add(mTileDownloaderProvider);
 	}
+	// @Override
+	// public void detach() {
+	// mFileSystemProvider.detach();
+	// }
 
-	@Override
-	public void detach() {
-		mFileSystemProvider.detach();
-	}
-
-	@Override
-	public Drawable getMapTile(final OpenStreetMapTile pTile) {
-		if (mTileCache.containsTile(pTile)) {
-			if (DEBUGMODE)
-				logger.debug("MapTileCache succeeded for: " + pTile);
-			return mTileCache.getMapTile(pTile);
-		} else {
-			if (DEBUGMODE)
-				logger.debug("Cache failed, trying from FS: " + pTile);
-			mFileSystemProvider.loadMapTileAsync(/* pTile */null);
-			return null;
-		}
-	}
+	// @Override
+	// public Drawable getMapTile(final OpenStreetMapTile pTile) {
+	// if (mTileCache.containsTile(pTile)) {
+	// if (DEBUGMODE)
+	// logger.debug("MapTileCache succeeded for: " + pTile);
+	// return mTileCache.getMapTile(pTile);
+	// } else {
+	// if (DEBUGMODE)
+	// logger.debug("Cache failed, trying from FS: " + pTile);
+	// mFileSystemProvider.loadMapTileAsync(/* pTile */null);
+	// return null;
+	// }
+	// }
 
 	// @Override
 	// public String getCloudmadeKey() throws CloudmadeException {

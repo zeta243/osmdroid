@@ -28,21 +28,21 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 	private static final Logger logger = LoggerFactory
 			.getLogger(OpenStreetMapTileProviderArray.class);
 
-	private final List<OpenStreetMapAsyncTileProvider> tileProviderList;
+	protected final List<OpenStreetMapAsyncTileProvider> mTileProviderList;
 
 	public OpenStreetMapTileProviderArray(
 			final Handler pDownloadFinishedListener,
 			final IRegisterReceiver aRegisterReceiver,
 			final OpenStreetMapAsyncTileProvider[] tileProviderArray) {
 		super(pDownloadFinishedListener);
-		tileProviderList = new ArrayList<OpenStreetMapAsyncTileProvider>();
-		Collections.addAll(tileProviderList, tileProviderArray);
+		mTileProviderList = new ArrayList<OpenStreetMapAsyncTileProvider>();
+		Collections.addAll(mTileProviderList, tileProviderArray);
 	}
 
 	@Override
 	public void detach() {
-		synchronized (tileProviderList) {
-			for (OpenStreetMapAsyncTileProvider tileProvider : tileProviderList) {
+		synchronized (mTileProviderList) {
+			for (OpenStreetMapAsyncTileProvider tileProvider : mTileProviderList) {
 				tileProvider.stopWorkers();
 				// TODO: Call detach?
 			}
@@ -60,11 +60,11 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 				logger.debug("Cache failed, trying from FS: " + pTile);
 
 			OpenStreetMapTileRequestState state;
-			synchronized (tileProviderList) {
-				OpenStreetMapAsyncTileProvider[] providerArray = new OpenStreetMapAsyncTileProvider[tileProviderList
+			synchronized (mTileProviderList) {
+				OpenStreetMapAsyncTileProvider[] providerArray = new OpenStreetMapAsyncTileProvider[mTileProviderList
 						.size()];
 				state = new OpenStreetMapTileRequestState(pTile,
-						tileProviderList.toArray(providerArray), this);
+						mTileProviderList.toArray(providerArray), this);
 
 			}
 
