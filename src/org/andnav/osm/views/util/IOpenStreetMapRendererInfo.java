@@ -21,7 +21,7 @@ public interface IOpenStreetMapRendererInfo {
 	int zoomMinLevel();
 	int zoomMaxLevel();
 	String imageFilenameEnding();
-	String getTileURLString(OpenStreetMapTile aTile, IOpenStreetMapTileProviderCallback aCallback, IOpenStreetMapTileProviderCloudmadeTokenCallback aCloudmadeTokenCallback) throws CloudmadeException;
+	String getTileURLString(OpenStreetMapTile aTile, IOpenStreetMapTileProviderCloudmadeTokenCallback aCloudmadeTokenCallback) throws CloudmadeException;
 	Drawable getDrawable(String aFilePath);
 	Drawable getDrawable(InputStream aTileInputStream);
 	void setCloudmadeStyle(int styleId);

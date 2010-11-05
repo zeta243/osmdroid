@@ -19,17 +19,20 @@ import org.slf4j.LoggerFactory;
 /**
  * The OpenStreetMapTileDownloader loads tiles from a server and passes them to
  * a OpenStreetMapTileFilesystemProvider.
+ * 
  * @author Nicolas Gramlich
  * @author Manuel Stahl
- *
+ * 
  */
-public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider implements IOpenStreetMapTileProviderCloudmadeTokenCallback {
+public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider
+		implements IOpenStreetMapTileProviderCloudmadeTokenCallback {
 
 	// ===========================================================
 	// Constants
 	// ===========================================================
 
-	private static final Logger logger = LoggerFactory.getLogger(OpenStreetMapTileDownloader.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(OpenStreetMapTileDownloader.class);
 
 	// ===========================================================
 	// Fields
@@ -38,13 +41,18 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 	private final OpenStreetMapTileFilesystemProvider mMapTileFSProvider;
 	private String mCloudmadeToken;
 
+	private IOpenStreetMapTileProviderCloudmadeTokenCallback mCallback;
+
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 
-	public OpenStreetMapTileDownloader(final IOpenStreetMapTileProviderCallback pCallback, final OpenStreetMapTileFilesystemProvider aMapTileFSProvider){
-		super(pCallback, NUMBER_OF_TILE_DOWNLOAD_THREADS, TILE_DOWNLOAD_MAXIMUM_QUEUE_SIZE);
+	public OpenStreetMapTileDownloader(
+			final IOpenStreetMapTileProviderCloudmadeTokenCallback pCallback,
+			final OpenStreetMapTileFilesystemProvider aMapTileFSProvider) {
+		super(NUMBER_OF_TILE_DOWNLOAD_THREADS, TILE_DOWNLOAD_MAXIMUM_QUEUE_SIZE);
 		this.mMapTileFSProvider = aMapTileFSProvider;
+		mCallback = pCallback;
 	}
 
 	// ===========================================================
@@ -69,8 +77,9 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 	// Methods
 	// ===========================================================
 
-	private String buildURL(final OpenStreetMapTile tile) throws CloudmadeException {
-		return tile.getRenderer().getTileURLString(tile, mCallback, this);
+	private String buildURL(final OpenStreetMapTile tile)
+			throws CloudmadeException {
+		return tile.getRenderer().getTileURLString(tile, this);
 	}
 
 	// ===========================================================
@@ -80,7 +89,8 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 	private class TileLoader extends OpenStreetMapAsyncTileProvider.TileLoader {
 
 		@Override
-		public void loadTile(final OpenStreetMapTile aTile) throws CantContinueException {
+		public void loadTile(final OpenStreetMapTile aTile,
+				TileLoadResult aResult) throws CantContinueException {
 
 			InputStream in = null;
 			OutputStream out = null;
@@ -90,13 +100,16 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 			try {
 				final String tileURLString = buildURL(aTile);
 
-				if(DEBUGMODE)
-					logger.debug("Downloading Maptile from url: " + tileURLString);
+				if (DEBUGMODE)
+					logger.debug("Downloading Maptile from url: "
+							+ tileURLString);
 
-				in = new BufferedInputStream(new URL(tileURLString).openStream(), StreamUtils.IO_BUFFER_SIZE);
+				in = new BufferedInputStream(new URL(tileURLString)
+						.openStream(), StreamUtils.IO_BUFFER_SIZE);
 
 				final ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
-				out = new BufferedOutputStream(dataStream, StreamUtils.IO_BUFFER_SIZE);
+				out = new BufferedOutputStream(dataStream,
+						StreamUtils.IO_BUFFER_SIZE);
 				StreamUtils.copy(in, out);
 				out.flush();
 
@@ -107,40 +120,47 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 					logger.info("Empty maptile not saved: " + aTile);
 				} else {
 					mMapTileFSProvider.saveFile(aTile, outputFile, data);
-					if(DEBUGMODE)
-						logger.debug("Maptile saved " + data.length + " bytes : " + aTile);
+					if (DEBUGMODE)
+						logger.debug("Maptile saved " + data.length
+								+ " bytes : " + aTile);
 				}
 			} catch (final UnknownHostException e) {
 				// no network connection so empty the queue
-				logger.warn("UnknownHostException downloading MapTile: " + aTile + " : " + e);
+				logger.warn("UnknownHostException downloading MapTile: "
+						+ aTile + " : " + e);
 				throw new CantContinueException(e);
-			} catch(final FileNotFoundException e){
-				logger.warn("Tile not found: " + aTile+ " : " + e);
+			} catch (final FileNotFoundException e) {
+				logger.warn("Tile not found: " + aTile + " : " + e);
 			} catch (final IOException e) {
-				logger.warn("IOException downloading MapTile: " + aTile + " : " + e);
+				logger.warn("IOException downloading MapTile: " + aTile + " : "
+						+ e);
 			} catch (final CloudmadeException e) {
-				logger.warn("CloudmadeException downloading MapTile: " + aTile + " : " + e);
-			} catch(final Throwable e) {
+				logger.warn("CloudmadeException downloading MapTile: " + aTile
+						+ " : " + e);
+			} catch (final Throwable e) {
 				logger.error("Error downloading MapTile: " + aTile, e);
 			} finally {
 				StreamUtils.closeStream(in);
 				StreamUtils.closeStream(out);
 			}
 
-			/* Don't immediately send the tile back.
-			 * If we're moving, and the internet is a bit patchy, then by the time
-			 * the download has finished we don't need this tile any more.
-			 * If we still do need it then the file system provider will get it
-			 * again next time it's needed.
-			 * That should be immediately because the view is redrawn when it
-			 * receives this completion event.
+			/*
+			 * Don't immediately send the tile back. If we're moving, and the
+			 * internet is a bit patchy, then by the time the download has
+			 * finished we don't need this tile any more. If we still do need it
+			 * then the file system provider will get it again next time it's
+			 * needed. That should be immediately because the view is redrawn
+			 * when it receives this completion event.
 			 */
-			tileLoaded(aTile, true);
+			// tileLoaded(aTile, true);
+
+			aResult.setSuccessResult(outputFile.getPath());
 		}
 	}
 
 	@Override
-	public String getCloudmadeToken(final String aKey) throws CloudmadeException {
+	public String getCloudmadeToken(final String aKey)
+			throws CloudmadeException {
 
 		if (mCloudmadeToken == null) {
 			synchronized (this) {
@@ -152,6 +172,12 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 		}
 
 		return mCloudmadeToken;
+	}
+
+	@Override
+	public String getCloudmadeKey() throws CloudmadeException {
+		// TODO Auto-generated method stub
+		return null;
 	};
 
 }
