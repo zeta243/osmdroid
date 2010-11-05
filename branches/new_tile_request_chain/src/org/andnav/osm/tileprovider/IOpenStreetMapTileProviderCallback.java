@@ -13,7 +13,8 @@ public interface IOpenStreetMapTileProviderCallback {
 	 *            the path of the requested tile, or null if request has
 	 *            completed without returning a tile path
 	 */
-	void mapTileRequestCompleted(OpenStreetMapTile aTile, String aTilePath);
+	void mapTileRequestCompleted(OpenStreetMapTileRequestState aState,
+			String aTilePath);
 
 	/**
 	 * The map tile request has completed.
@@ -24,7 +25,7 @@ public interface IOpenStreetMapTileProviderCallback {
 	 *            the input stream of the requested tile, or null if request has
 	 *            completed without returning a tile
 	 */
-	void mapTileRequestCompleted(OpenStreetMapTile aTile,
+	void mapTileRequestCompleted(OpenStreetMapTileRequestState aState,
 			final InputStream aTileInputStream);
 
 	/**
@@ -33,7 +34,15 @@ public interface IOpenStreetMapTileProviderCallback {
 	 * @param aTile
 	 *            the tile request that has completed
 	 */
-	void mapTileRequestCompleted(OpenStreetMapTile aTile);
+	void mapTileRequestCompleted(OpenStreetMapTileRequestState aState);
+
+	/**
+	 * The map tile request has completed but no tile has loaded.
+	 * 
+	 * @param aTile
+	 *            the tile request that has completed
+	 */
+	void mapTileRequestFailed(OpenStreetMapTileRequestState aState);
 
 	/**
 	 * Whether to use the network connection if it's available.

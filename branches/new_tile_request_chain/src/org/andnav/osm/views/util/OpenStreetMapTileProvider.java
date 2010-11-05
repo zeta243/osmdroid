@@ -4,6 +4,7 @@ package org.andnav.osm.views.util;
 import java.io.InputStream;
 
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
+import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,14 +52,15 @@ public abstract class OpenStreetMapTileProvider implements
 	 * @param pTilePath
 	 *            the location of the tile image obtained, usually a file path
 	 */
-	public void mapTileRequestCompleted(final OpenStreetMapTile pTile,
-			final String pTilePath) {
+	public void mapTileRequestCompleted(
+			final OpenStreetMapTileRequestState pState, final String pTilePath) {
 
 		// add the tile to the cache
 		// let the renderer convert the file to a drawable
-		final Drawable drawable = pTile.getRenderer().getDrawable(pTilePath);
+		OpenStreetMapTile tile = pState.getMapTile();
+		final Drawable drawable = tile.getRenderer().getDrawable(pTilePath);
 		if (drawable != null) {
-			mTileCache.putTile(pTile, drawable);
+			mTileCache.putTile(tile, drawable);
 		}
 
 		// tell our caller we've finished and it should update its view
@@ -66,7 +68,7 @@ public abstract class OpenStreetMapTileProvider implements
 				.sendEmptyMessage(OpenStreetMapTile.MAPTILE_SUCCESS_ID);
 
 		if (DEBUGMODE)
-			logger.debug("MapTile request complete: " + pTile);
+			logger.debug("MapTile request complete: " + tile);
 	}
 
 	/**
@@ -79,13 +81,15 @@ public abstract class OpenStreetMapTileProvider implements
 	 * @param pTileInputStream
 	 *            the open file stream to the tile image
 	 */
-	public void mapTileRequestCompleted(final OpenStreetMapTile pTile,
+	public void mapTileRequestCompleted(
+			final OpenStreetMapTileRequestState pState,
 			final InputStream pTileInputStream) {
+		OpenStreetMapTile tile = pState.getMapTile();
 		try {
-			final Drawable drawable = pTile.getRenderer().getDrawable(
+			final Drawable drawable = tile.getRenderer().getDrawable(
 					pTileInputStream);
 			if (drawable != null) {
-				mTileCache.putTile(pTile, drawable);
+				mTileCache.putTile(tile, drawable);
 			}
 		} finally {
 			try {
@@ -99,7 +103,7 @@ public abstract class OpenStreetMapTileProvider implements
 				.sendEmptyMessage(OpenStreetMapTile.MAPTILE_SUCCESS_ID);
 
 		if (DEBUGMODE)
-			logger.debug("MapTile request complete: " + pTile);
+			logger.debug("MapTile request complete: " + tile);
 	}
 
 	/**
@@ -109,12 +113,30 @@ public abstract class OpenStreetMapTileProvider implements
 	 * @param pTile
 	 *            the specification for the tile requested
 	 */
-	public void mapTileRequestCompleted(final OpenStreetMapTile pTile) {
+	public void mapTileRequestCompleted(
+			final OpenStreetMapTileRequestState pState) {
+		OpenStreetMapTile tile = pState.getMapTile();
 		mDownloadFinishedHandler
 				.sendEmptyMessage(OpenStreetMapTile.MAPTILE_SUCCESS_ID);
 
 		if (DEBUGMODE)
-			logger.debug("MapTile request complete: " + pTile);
+			logger.debug("MapTile request complete: " + tile);
+	}
+
+	/**
+	 * Informs the caller that the image has been updated. This is typically
+	 * called when the tile path or input stream have previously been posted.
+	 * 
+	 * @param pTile
+	 *            the specification for the tile requested
+	 */
+	public void mapTileRequestFailed(final OpenStreetMapTileRequestState pState) {
+		OpenStreetMapTile tile = pState.getMapTile();
+		mDownloadFinishedHandler
+				.sendEmptyMessage(OpenStreetMapTile.MAPTILE_FAIL_ID);
+
+		if (DEBUGMODE)
+			logger.debug("MapTile request failed: " + tile);
 	}
 
 	/**

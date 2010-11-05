@@ -28,17 +28,13 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 	private static final Logger logger = LoggerFactory
 			.getLogger(OpenStreetMapTileProviderArray.class);
 
-	private final String mCloudmadeKey;
-
 	private final List<OpenStreetMapAsyncTileProvider> tileProviderList;
 
 	public OpenStreetMapTileProviderArray(
 			final Handler pDownloadFinishedListener,
-			final String aCloudmadeKey,
 			final IRegisterReceiver aRegisterReceiver,
 			final OpenStreetMapAsyncTileProvider[] tileProviderArray) {
 		super(pDownloadFinishedListener);
-		mCloudmadeKey = aCloudmadeKey;
 		tileProviderList = new ArrayList<OpenStreetMapAsyncTileProvider>();
 		Collections.addAll(tileProviderList, tileProviderArray);
 	}
@@ -63,15 +59,8 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 			if (DEBUGMODE)
 				logger.debug("Cache failed, trying from FS: " + pTile);
 
-			// List<OpenStreetMapTileRequestTicket> ticketList = new
-			// ArrayList<OpenStreetMapTileRequestTicket>();
 			OpenStreetMapTileRequestState state;
 			synchronized (tileProviderList) {
-				// for (OpenStreetMapAsyncTileProvider tileProvider :
-				// tileProviderList) {
-				// TODO: Change this to tileProvider.getName();
-				// ticketList.add(tileProvider);
-				// }
 				OpenStreetMapAsyncTileProvider[] providerArray = new OpenStreetMapAsyncTileProvider[tileProviderList
 						.size()];
 				state = new OpenStreetMapTileRequestState(pTile,
@@ -87,12 +76,4 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 			return null;
 		}
 	}
-
-	// @Override
-	// public String getCloudmadeKey() throws CloudmadeException {
-	// if (mCloudmadeKey == null || mCloudmadeKey.length() == 0) {
-	// throw new CloudmadeException("Error getting Cloudmade key");
-	// }
-	// return mCloudmadeKey;
-	// }
 }
