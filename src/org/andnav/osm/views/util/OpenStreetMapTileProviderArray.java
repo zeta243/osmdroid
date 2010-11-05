@@ -1,5 +1,6 @@
 package org.andnav.osm.views.util;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,6 +25,20 @@ import android.os.Handler;
  */
 public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 		implements IOpenStreetMapTileProviderCallback {
+
+	@Override
+	public void mapTileRequestCompleted(OpenStreetMapTileRequestState pState,
+			InputStream pTileInputStream) {
+		allowProvidersPeekAtSuccessfulTile(pState, pTileInputStream);
+		super.mapTileRequestCompleted(pState, pTileInputStream);
+	}
+
+	@Override
+	public void mapTileRequestCompleted(OpenStreetMapTileRequestState pState,
+			String pTilePath) {
+		allowProvidersPeekAtSuccessfulTile(pState, pTilePath);
+		super.mapTileRequestCompleted(pState, pTilePath);
+	}
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(OpenStreetMapTileProviderArray.class);
@@ -74,6 +89,30 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 			}
 			// mFileSystemProvider.loadMapTileAsync(pTile);
 			return null;
+		}
+	}
+
+	private void allowProvidersPeekAtSuccessfulTile(
+			OpenStreetMapTileRequestState pState, InputStream stream) {
+		synchronized (mTileProviderList) {
+			for (OpenStreetMapAsyncTileProvider tileProvider : mTileProviderList) {
+				if (tileProvider instanceof IPeekSuccessfulTile) {
+					((IPeekSuccessfulTile) tileProvider).peekAtSuccessfulTile(
+							pState, stream);
+				}
+			}
+		}
+	}
+
+	private void allowProvidersPeekAtSuccessfulTile(
+			OpenStreetMapTileRequestState pState, String filename) {
+		synchronized (mTileProviderList) {
+			for (OpenStreetMapAsyncTileProvider tileProvider : mTileProviderList) {
+				if (tileProvider instanceof IPeekSuccessfulTile) {
+					((IPeekSuccessfulTile) tileProvider).peekAtSuccessfulTile(
+							pState, filename);
+				}
+			}
 		}
 	}
 }

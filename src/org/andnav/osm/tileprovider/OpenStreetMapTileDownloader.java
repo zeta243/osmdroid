@@ -3,8 +3,8 @@ package org.andnav.osm.tileprovider;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -95,8 +95,6 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider
 			InputStream in = null;
 			OutputStream out = null;
 
-			final File outputFile = mMapTileFSProvider.getOutputFile(aTile);
-
 			try {
 				final String tileURLString = buildURL(aTile);
 
@@ -114,16 +112,9 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider
 				out.flush();
 
 				final byte[] data = dataStream.toByteArray();
-
-				// sanity check - don't save an empty file
-				if (data.length == 0) {
-					logger.info("Empty maptile not saved: " + aTile);
-				} else {
-					mMapTileFSProvider.saveFile(aTile, outputFile, data);
-					if (DEBUGMODE)
-						logger.debug("Maptile saved " + data.length
-								+ " bytes : " + aTile);
-				}
+				InputStream stream = new ByteArrayInputStream(data);
+				aResult.setSuccessResult(stream);
+				return;
 			} catch (final UnknownHostException e) {
 				// no network connection so empty the queue
 				logger.warn("UnknownHostException downloading MapTile: "
@@ -154,7 +145,7 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider
 			 */
 			// tileLoaded(aTile, true);
 
-			aResult.setSuccessResult(outputFile.getPath());
+			aResult.setFailureResult();
 		}
 	}
 
