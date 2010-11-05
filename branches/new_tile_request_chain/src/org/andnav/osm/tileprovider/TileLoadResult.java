@@ -2,6 +2,7 @@ package org.andnav.osm.tileprovider;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 public class TileLoadResult {
@@ -37,13 +38,16 @@ public class TileLoadResult {
 	}
 
 	public void setSuccessResult(String fileName) {
-		FileInputStream stream;
+		InputStream stream;
 		try {
 			stream = new FileInputStream(fileName);
 			setSuccessResult(stream);
 		} catch (FileNotFoundException e) {
 			mSuccess = false;
 			mResult = null;
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 }

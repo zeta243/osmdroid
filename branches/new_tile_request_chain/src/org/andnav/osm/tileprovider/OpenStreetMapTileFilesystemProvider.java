@@ -1,9 +1,11 @@
 // Created by plusminus on 21:46:41 - 25.09.2008
 package org.andnav.osm.tileprovider;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,6 +15,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import org.andnav.osm.views.util.IOpenStreetMapRendererInfo;
+import org.andnav.osm.views.util.IPeekSuccessfulTile;
 import org.andnav.osm.views.util.OpenStreetMapTileProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +35,7 @@ import android.telephony.TelephonyManager;
  * 
  */
 public class OpenStreetMapTileFilesystemProvider extends
-		OpenStreetMapAsyncTileProvider {
+		OpenStreetMapAsyncTileProvider implements IPeekSuccessfulTile {
 
 	// ===========================================================
 	// Constants
@@ -179,6 +182,47 @@ public class OpenStreetMapTileFilesystemProvider extends
 				logger.debug("File still doesn't exist: " + pFile);
 			return false;
 		}
+	}
+
+	@Override
+	public void peekAtSuccessfulTile(OpenStreetMapTileRequestState pState,
+			InputStream pStream) {
+		try {
+			saveFile(pState.getMapTile(), getOutputFile(pState.getMapTile()),
+					pStream);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (CantContinueException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void peekAtSuccessfulTile(OpenStreetMapTileRequestState pState,
+			String pFilename) {
+		File sourceFile = new File(pFilename);
+		File destinationFile;
+		try {
+			destinationFile = getOutputFile(pState.getMapTile());
+			if (!destinationFile.equals(sourceFile)) {
+				final InputStream is = new BufferedInputStream(
+						new FileInputStream(sourceFile));
+				saveFile(pState.getMapTile(), destinationFile, is);
+			}
+		} catch (CantContinueException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	void saveFile(final OpenStreetMapTile tile, final File outputFile,
+			final InputStream stream) throws IOException {
+		final OutputStream bos = new BufferedOutputStream(new FileOutputStream(
+				outputFile, false), StreamUtils.IO_BUFFER_SIZE);
+		StreamUtils.copy(stream, bos);
+		bos.flush();
+		bos.close();
 	}
 
 	void saveFile(final OpenStreetMapTile tile, final File outputFile,
@@ -384,5 +428,4 @@ public class OpenStreetMapTileFilesystemProvider extends
 			}
 		}
 	}
-
 }
