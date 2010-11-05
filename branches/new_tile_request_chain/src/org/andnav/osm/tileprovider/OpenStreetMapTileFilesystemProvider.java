@@ -27,24 +27,23 @@ import android.os.Environment;
 import android.telephony.TelephonyManager;
 
 /**
- *
+ * 
  * @author Nicolas Gramlich
- *
+ * 
  */
-public class OpenStreetMapTileFilesystemProvider extends OpenStreetMapAsyncTileProvider {
+public class OpenStreetMapTileFilesystemProvider extends
+		OpenStreetMapAsyncTileProvider {
 
 	// ===========================================================
 	// Constants
 	// ===========================================================
 
-	private static final Logger logger = LoggerFactory.getLogger(OpenStreetMapTileFilesystemProvider.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(OpenStreetMapTileFilesystemProvider.class);
 
 	// ===========================================================
 	// Fields
 	// ===========================================================
-
-	/** online provider */
-	protected final OpenStreetMapTileDownloader mTileDownloader;
 
 	private final ArrayList<ZipFile> mZipFiles = new ArrayList<ZipFile>();
 
@@ -63,16 +62,18 @@ public class OpenStreetMapTileFilesystemProvider extends OpenStreetMapAsyncTileP
 	// ===========================================================
 
 	/**
-	 * The tiles may be found on several media.
-	 * This one works with tiles stored on the file system.
-	 * It and its friends are typically created and controlled by {@link OpenStreetMapTileProvider}.
-	 *
+	 * The tiles may be found on several media. This one works with tiles stored
+	 * on the file system. It and its friends are typically created and
+	 * controlled by {@link OpenStreetMapTileProvider}.
+	 * 
 	 * @param aCallback
 	 * @param aRegisterReceiver
 	 */
-	public OpenStreetMapTileFilesystemProvider(final IOpenStreetMapTileProviderCallback aCallback, final IRegisterReceiver aRegisterReceiver) {
-		super(aCallback, NUMBER_OF_TILE_FILESYSTEM_THREADS, TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE);
-		mTileDownloader = new OpenStreetMapTileDownloader(aCallback, this);
+	public OpenStreetMapTileFilesystemProvider(
+			final IRegisterReceiver aRegisterReceiver) {
+		super(NUMBER_OF_TILE_FILESYSTEM_THREADS,
+				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE);
+
 		this.aRegisterReceiver = aRegisterReceiver;
 		mBroadcastReceiver = new MyBroadcastReceiver();
 
@@ -115,10 +116,8 @@ public class OpenStreetMapTileFilesystemProvider extends OpenStreetMapAsyncTileP
 	};
 
 	@Override
-	public void stopWorkers()
-	{
+	public void stopWorkers() {
 		super.stopWorkers();
-		this.mTileDownloader.stopWorkers();
 	}
 
 	// ===========================================================
@@ -132,22 +131,27 @@ public class OpenStreetMapTileFilesystemProvider extends OpenStreetMapAsyncTileP
 	private String buildPath(final OpenStreetMapTile tile) {
 		final IOpenStreetMapRendererInfo renderer = tile.getRenderer();
 		return renderer.pathBase() + "/" + tile.getZoomLevel() + "/"
-					+ tile.getX() + "/" + tile.getY() + renderer.imageFilenameEnding();
+				+ tile.getX() + "/" + tile.getY()
+				+ renderer.imageFilenameEnding();
 	}
 
 	/**
 	 * Get the file location for the tile.
+	 * 
 	 * @param tile
 	 * @return
-	 * @throws CantContinueException if the directory containing the file doesn't exist
-	 * and can't be created
+	 * @throws CantContinueException
+	 *             if the directory containing the file doesn't exist and can't
+	 *             be created
 	 */
-	File getOutputFile(final OpenStreetMapTile tile) throws CantContinueException {
+	File getOutputFile(final OpenStreetMapTile tile)
+			throws CantContinueException {
 		final File file = buildFullPath(tile);
 		final File parent = file.getParentFile();
 		if (!parent.exists() && !createFolderAndCheckIfExists(parent)) {
 			checkSdCard();
-			throw new CantContinueException("Tile directory doesn't exist: " + parent);
+			throw new CantContinueException("Tile directory doesn't exist: "
+					+ parent);
 		}
 		return file;
 	}
@@ -157,7 +161,8 @@ public class OpenStreetMapTileFilesystemProvider extends OpenStreetMapAsyncTileP
 			return true;
 		}
 		if (DEBUGMODE)
-			logger.debug("Failed to create " + pFile + " - wait and check again");
+			logger.debug("Failed to create " + pFile
+					+ " - wait and check again");
 
 		// if create failed, wait a bit in case another thread created it
 		try {
@@ -176,8 +181,10 @@ public class OpenStreetMapTileFilesystemProvider extends OpenStreetMapAsyncTileP
 		}
 	}
 
-	void saveFile(final OpenStreetMapTile tile, final File outputFile, final byte[] someData) throws IOException{
-		final OutputStream bos = new BufferedOutputStream(new FileOutputStream(outputFile, false), StreamUtils.IO_BUFFER_SIZE);
+	void saveFile(final OpenStreetMapTile tile, final File outputFile,
+			final byte[] someData) throws IOException {
+		final OutputStream bos = new BufferedOutputStream(new FileOutputStream(
+				outputFile, false), StreamUtils.IO_BUFFER_SIZE);
 		bos.write(someData);
 		bos.flush();
 		bos.close();
@@ -207,14 +214,14 @@ public class OpenStreetMapTileFilesystemProvider extends OpenStreetMapAsyncTileP
 
 	private synchronized InputStream fileFromZip(final OpenStreetMapTile aTile) {
 		final String path = buildPath(aTile);
-		for(final ZipFile zipFile : mZipFiles) {
+		for (final ZipFile zipFile : mZipFiles) {
 			try {
 				final ZipEntry entry = zipFile.getEntry(path);
 				if (entry != null) {
 					final InputStream in = zipFile.getInputStream(entry);
 					return in;
 				}
-			} catch(final Throwable e) {
+			} catch (final Throwable e) {
 				logger.warn("Error getting zip stream: " + aTile, e);
 			}
 		}
@@ -240,52 +247,58 @@ public class OpenStreetMapTileFilesystemProvider extends OpenStreetMapAsyncTileP
 	private class TileLoader extends OpenStreetMapAsyncTileProvider.TileLoader {
 
 		/**
-		 * The tile loading policy for deciding which file to use...
-		 * The order of preferences is...
-		 * prefer actual tiles over dummy tiles
-		 * prefer newest tile over older
-		 * prefer local tiles over zip
-		 * prefer zip files in lexicographic order
-		 *
-		 * When a dummy tile is generated it may be constructed from
-		 * coarser tiles from a lower resolution level.
-		 *
+		 * The tile loading policy for deciding which file to use... The order
+		 * of preferences is... prefer actual tiles over dummy tiles prefer
+		 * newest tile over older prefer local tiles over zip prefer zip files
+		 * in lexicographic order
+		 * 
+		 * When a dummy tile is generated it may be constructed from coarser
+		 * tiles from a lower resolution level.
+		 * 
 		 * aTile a tile to be constructed by the method.
 		 */
 		@Override
-		public void loadTile(final OpenStreetMapTile aTile) throws CantContinueException {
+		public void loadTile(final OpenStreetMapTile aTile,
+				TileLoadResult aResult) throws CantContinueException {
 
 			// if there's no sdcard then don't do anything
 			if (!mSdCardAvailable) {
 				if (DEBUGMODE)
 					logger.debug("No sdcard - do nothing for tile: " + aTile);
-				tileLoaded(aTile, false);
+				aResult.setFailureResult();
 				return;
 			}
 
 			final File tileFile = getOutputFile(aTile);
 
-
-
 			try {
 				if (tileFile.exists()) {
 					if (DEBUGMODE)
 						logger.debug("Loaded tile: " + aTile);
-					tileLoaded(aTile, tileFile.getPath());
+					aResult.setSuccessResult(tileFile.getPath());
 
 					// check for old tile
 					final long now = System.currentTimeMillis();
 					final long lastModified = tileFile.lastModified();
 					if (now - lastModified > TILE_EXPIRY_TIME_MILLISECONDS) {
-						// XXX perhaps we should distinguish between phone and wifi data connection
-						if (mConnected && mCallback.useDataConnection()) {
-							if (DEBUGMODE)
-								logger.debug("Tile has expired, requesting new download: " + aTile);
-							mTileDownloader.loadMapTileAsync(aTile);
-						} else {
-							if (DEBUGMODE)
-								logger.debug("Tile has expired - not connected - not downloading: " + aTile);
-						}
+						aResult.setFailureResult();
+
+						// XXX perhaps we should distinguish between phone and
+						// wifi data connection
+						// TODO: re-enable this?
+						// if (mConnected && mCallback.useDataConnection()) {
+						// if (DEBUGMODE)
+						// logger
+						// .debug("Tile has expired, requesting new download: "
+						// + aTile);
+						// // mTileDownloader.loadMapTileAsync(aTile);
+						// aResult.setFailureResult();
+						// } else {
+						// if (DEBUGMODE)
+						// logger
+						// .debug("Tile has expired - not connected - not downloading: "
+						// + aTile);
+						// }
 					}
 
 				} else {
@@ -295,36 +308,44 @@ public class OpenStreetMapTileFilesystemProvider extends OpenStreetMapAsyncTileP
 
 					final InputStream fileFromZip = fileFromZip(aTile);
 					if (fileFromZip == null) {
-						// XXX perhaps we should distinguish between phone and wifi data connection
-						if (mConnected && mCallback.useDataConnection()) {
-							if (DEBUGMODE)
-								logger.debug("Request for download: " + aTile);
-							mTileDownloader.loadMapTileAsync(aTile);
-						} else {
-							if (DEBUGMODE)
-								logger.debug("Not connected - not downloading: " + aTile);
-						}
+						aResult.setFailureResult();
+
+						// XXX perhaps we should distinguish between phone and
+						// wifi data connection
+						// if (mConnected && mCallback.useDataConnection()) {
+						// if (DEBUGMODE)
+						// logger.debug("Request for download: " + aTile);
+						// // mTileDownloader.loadMapTileAsync(aTile);
+						// } else {
+						// if (DEBUGMODE)
+						// logger
+						// .debug("Not connected - not downloading: "
+						// + aTile);
+						// }
 
 						// don't refresh the screen because there's nothing new
-						tileLoaded(aTile, false);
+						// tileLoaded(aTile, false);
+						aResult.setFailureResult();
 					} else {
 						if (DEBUGMODE)
 							logger.debug("Use tile from zip: " + aTile);
-						tileLoaded(aTile, fileFromZip);
+						// tileLoaded(aTile, fileFromZip);
+						aResult.setSuccessResult(fileFromZip);
 					}
 				}
 			} catch (final Throwable e) {
 				logger.error("Error loading tile", e);
-				tileLoaded(aTile, false);
+				// tileLoaded(aTile, false);
+				aResult.setFailureResult();
 			}
 		}
 	}
 
 	/**
-	 * This broadcast receiver is responsible for determining the best
-	 * channel over which tiles may be acquired.
-	 * In other words it sets network status flags.
-	 *
+	 * This broadcast receiver is responsible for determining the best channel
+	 * over which tiles may be acquired. In other words it sets network status
+	 * flags.
+	 * 
 	 */
 	private class MyBroadcastReceiver extends BroadcastReceiver {
 
@@ -334,13 +355,19 @@ public class OpenStreetMapTileFilesystemProvider extends OpenStreetMapAsyncTileP
 			final String action = aIntent.getAction();
 			logger.info("onReceive: " + action);
 
-			final WifiManager wm = (WifiManager) aContext.getSystemService(Context.WIFI_SERVICE);
-			final int wifiState = wm.getWifiState(); // TODO check for permission or catch error
+			final WifiManager wm = (WifiManager) aContext
+					.getSystemService(Context.WIFI_SERVICE);
+			final int wifiState = wm.getWifiState(); // TODO check for
+			// permission or catch
+			// error
 			if (DEBUGMODE)
 				logger.debug("wifi state=" + wifiState);
 
-			final TelephonyManager tm = (TelephonyManager) aContext.getSystemService(Context.TELEPHONY_SERVICE);
-			final int dataState = tm.getDataState(); // TODO check for permission or catch error
+			final TelephonyManager tm = (TelephonyManager) aContext
+					.getSystemService(Context.TELEPHONY_SERVICE);
+			final int dataState = tm.getDataState(); // TODO check for
+			// permission or catch
+			// error
 			if (DEBUGMODE)
 				logger.debug("telephone data state=" + dataState);
 

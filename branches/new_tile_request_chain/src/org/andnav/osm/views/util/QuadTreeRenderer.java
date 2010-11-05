@@ -3,7 +3,6 @@ package org.andnav.osm.views.util;
 import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.ResourceProxy.string;
 import org.andnav.osm.tileprovider.CloudmadeException;
-import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
 import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCloudmadeTokenCallback;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 
@@ -13,8 +12,9 @@ class QuadTreeRenderer extends OpenStreetMapRendererBase {
 
 	QuadTreeRenderer(String aName, string aResourceId, int aZoomMinLevel,
 			int aZoomMaxLevel, int aMaptileZoom, String aImageFilenameEnding,
-			String ...aBaseUrl) {
-		super(aName, aZoomMinLevel, aZoomMaxLevel, aMaptileZoom, aImageFilenameEnding, aBaseUrl);
+			String... aBaseUrl) {
+		super(aName, aZoomMinLevel, aZoomMaxLevel, aMaptileZoom,
+				aImageFilenameEnding, aBaseUrl);
 		mResourceId = aResourceId;
 	}
 
@@ -26,7 +26,6 @@ class QuadTreeRenderer extends OpenStreetMapRendererBase {
 	@Override
 	public String getTileURLString(
 			OpenStreetMapTile aTile,
-			IOpenStreetMapTileProviderCallback aMCallback,
 			IOpenStreetMapTileProviderCloudmadeTokenCallback aCloudmadeTokenCallback)
 			throws CloudmadeException {
 		return getBaseUrl() + quadTree(aTile) + mImageFilenameEnding;
@@ -34,7 +33,9 @@ class QuadTreeRenderer extends OpenStreetMapRendererBase {
 
 	/**
 	 * Converts TMS tile coordinates to QuadTree
-	 * @param aTile The tile coordinates to convert
+	 * 
+	 * @param aTile
+	 *            The tile coordinates to convert
 	 * @return The QuadTree as String.
 	 */
 	private String quadTree(final OpenStreetMapTile aTile) {

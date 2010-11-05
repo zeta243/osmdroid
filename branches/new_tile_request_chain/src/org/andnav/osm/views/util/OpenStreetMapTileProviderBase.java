@@ -1,4 +1,3 @@
-// Created by plusminus on 21:46:22 - 25.09.2008
 package org.andnav.osm.views.util;
 
 import java.io.InputStream;
@@ -20,14 +19,14 @@ import android.os.Handler;
  * see {@link OpenStreetMapTile} for an overview of how tiles are served by this
  * provider.
  * 
- * @author Nicolas Gramlich
+ * @author Marc Kurtz (based off of work by Nicolas Gramlich)
  * 
  */
-public abstract class OpenStreetMapTileProvider implements
+public abstract class OpenStreetMapTileProviderBase implements
 		OpenStreetMapViewConstants {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(OpenStreetMapTileProvider.class);
+			.getLogger(OpenStreetMapTileProviderBase.class);
 
 	protected final OpenStreetMapTileCache mTileCache;
 	protected final Handler mDownloadFinishedHandler;
@@ -37,7 +36,7 @@ public abstract class OpenStreetMapTileProvider implements
 
 	public abstract void detach();
 
-	public OpenStreetMapTileProvider(final Handler pDownloadFinishedListener) {
+	public OpenStreetMapTileProviderBase(final Handler pDownloadFinishedListener) {
 		mTileCache = new OpenStreetMapTileCache();
 		mDownloadFinishedHandler = pDownloadFinishedListener;
 	}
