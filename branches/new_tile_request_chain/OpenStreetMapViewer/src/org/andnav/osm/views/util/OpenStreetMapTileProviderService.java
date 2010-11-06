@@ -2,7 +2,10 @@ package org.andnav.osm.views.util;
 
 import org.andnav.osm.services.IOpenStreetMapTileProviderService;
 import org.andnav.osm.services.IOpenStreetMapTileProviderServiceCallback;
+import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
+import org.andnav.osm.tileprovider.OpenStreetMapAsyncTileProvider;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
+import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -14,7 +17,7 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
-public class OpenStreetMapTileProviderService extends OpenStreetMapTileProvider implements ServiceConnection {
+public class OpenStreetMapTileProviderService extends OpenStreetMapTileProvider implements ServiceConnection, IOpenStreetMapTileProviderCallback {
 
 	public static final String DEBUGTAG = "OpenStreetMapTileProviderService";
 
@@ -141,7 +144,8 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProvider 
 	    	// TODO this will go wrong if you use a renderer that the factory doesn't know about
 			final IOpenStreetMapRendererInfo renderer = OpenStreetMapRendererFactory.getRenderer(aRendererName);
 			final OpenStreetMapTile tile = new OpenStreetMapTile(renderer, aZoomLevel, aTileX, aTileY);
-			OpenStreetMapTileProviderService.this.mapTileRequestCompleted(tile, aTilePath);
+			final OpenStreetMapTileRequestState state = new OpenStreetMapTileRequestState(tile, new OpenStreetMapAsyncTileProvider[]{}, OpenStreetMapTileProviderService.this);
+			OpenStreetMapTileProviderService.this.mapTileRequestCompleted(state, aTilePath);
 		}
 	};
 
