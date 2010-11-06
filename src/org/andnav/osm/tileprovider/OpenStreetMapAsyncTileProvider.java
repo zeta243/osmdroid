@@ -1,6 +1,13 @@
 package org.andnav.osm.tileprovider;
 
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -8,6 +15,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
+import org.andnav.osm.views.util.IMapTileFilenameProvider;
 import org.andnav.osm.views.util.OpenStreetMapTileProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,24 +48,39 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 
 	private final int mThreadPoolSize;
 	private final ThreadGroup mThreadPool = new ThreadGroup(threadGroupName());
-	private final ConcurrentHashMap<OpenStreetMapTileRequestState, Object> mWorking;
-	final LinkedHashMap<OpenStreetMapTileRequestState, Object> mPending;
-	private static final Object PRESENT = new Object();
+	private final ConcurrentHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState> mWorking;
+	final LinkedHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState> mPending;
+	// private static final Object PRESENT = new Object();
+	private IMapTileFilenameProvider mMapTileFilenameProvider;
 
 	public OpenStreetMapAsyncTileProvider(final int aThreadPoolSize,
-			final int aPendingQueueSize) {
+			final int aPendingQueueSize,
+			IMapTileFilenameProvider pMapTileFilenameProvider) {
 		mThreadPoolSize = aThreadPoolSize;
-		mWorking = new ConcurrentHashMap<OpenStreetMapTileRequestState, Object>();
-		mPending = new LinkedHashMap<OpenStreetMapTileRequestState, Object>(
+		mWorking = new ConcurrentHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState>();
+		mPending = new LinkedHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState>(
 				aPendingQueueSize + 2, 0.1f, true) {
 			private static final long serialVersionUID = 6455337315681858866L;
 
 			@Override
 			protected boolean removeEldestEntry(
-					Entry<OpenStreetMapTileRequestState, Object> pEldest) {
+					Entry<OpenStreetMapTile, OpenStreetMapTileRequestState> pEldest) {
 				return size() > aPendingQueueSize;
 			}
 		};
+		mMapTileFilenameProvider = pMapTileFilenameProvider;
+	}
+
+	/**
+	 * Returns an IMapTileFilenameProvider to be used to obtain a filename where
+	 * the downloaded tile will be saved to. This typically points to a
+	 * file-system cache that is being served via a FilesystemProvider. If it is
+	 * null, then the tile will never be cached.
+	 * 
+	 * @return
+	 */
+	protected IMapTileFilenameProvider getMapTileFilenameProvider() {
+		return mMapTileFilenameProvider;
 	}
 
 	public void loadMapTileAsync(final OpenStreetMapTileRequestState aState) {
@@ -74,7 +97,7 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 
 			// this will put the tile in the queue, or move it to the front of
 			// the queue if it's already present
-			mPending.put(aState, PRESENT);
+			mPending.put(aState.getMapTile(), aState);
 		}
 
 		if (DEBUGMODE)
@@ -123,25 +146,24 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 		 * @param aTile
 		 * @throws CantContinueException
 		 */
-		protected abstract void loadTile(OpenStreetMapTile aTile,
+		protected abstract void loadTile(OpenStreetMapTileRequestState aState,
 				TileLoadResult aResult) throws CantContinueException;
 
 		private OpenStreetMapTileRequestState nextTile() {
 
 			synchronized (mPending) {
-				OpenStreetMapTileRequestState result = null;
+				OpenStreetMapTile result = null;
 
 				// get the most recently accessed tile
 				// - the last item in the iterator that's not already being
 				// processed
-				Iterator<OpenStreetMapTileRequestState> iterator = mPending
-						.keySet().iterator();
+				Iterator<OpenStreetMapTile> iterator = mPending.keySet()
+						.iterator();
 
 				// TODO this iterates the whole list, make this faster...
 				while (iterator.hasNext()) {
 					try {
-						final OpenStreetMapTileRequestState tile = iterator
-								.next();
+						final OpenStreetMapTile tile = iterator.next();
 						if (!mWorking.containsKey(tile)) {
 							result = tile;
 						}
@@ -161,10 +183,10 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 				}
 
 				if (result != null) {
-					mWorking.put(result, PRESENT);
+					mWorking.put(result, mPending.get(result));
 				}
 
-				return result;
+				return (result != null ? mPending.get(result) : null);
 			}
 		}
 
@@ -176,16 +198,117 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 		 * @param aTileInputStream
 		 *            the input stream of the file.
 		 */
-		private void tileLoaded(final OpenStreetMapTileRequestState aState,
+		protected void tileLoaded(final OpenStreetMapTileRequestState aState,
 				final InputStream aTileInputStream) {
+			OpenStreetMapTile mapTile = aState.getMapTile();
+			synchronized (mPending) {
+				mPending.remove(mapTile);
+			}
+			mWorking.remove(mapTile);
+
+			IMapTileFilenameProvider mapTileFilenameProvider = getMapTileFilenameProvider();
+			if (mapTileFilenameProvider != null) {
+				try {
+					saveFile(mapTile, mapTileFilenameProvider
+							.getOutputFile(mapTile), aTileInputStream);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+				}
+
+				aState.getCallback().mapTileRequestCompleted(
+						aState,
+						mapTileFilenameProvider.getOutputFile(mapTile)
+								.getPath());
+			} else {
+				aState.getCallback().mapTileRequestCompleted(aState,
+						aTileInputStream);
+			}
+		}
+
+		/**
+		 * A tile has loaded.
+		 * 
+		 * @param aTile
+		 *            the tile that has loaded
+		 * @param aTileInputStream
+		 *            the input stream of the file.
+		 */
+		protected void tileLoaded(final OpenStreetMapTileRequestState aState,
+				final byte[] aByteArray) {
+			OpenStreetMapTile mapTile = aState.getMapTile();
+			synchronized (mPending) {
+				mPending.remove(mapTile);
+			}
+			mWorking.remove(mapTile);
+
+			IMapTileFilenameProvider mapTileFilenameProvider = getMapTileFilenameProvider();
+			if (mapTileFilenameProvider != null) {
+				try {
+					saveFile(mapTile, mapTileFilenameProvider
+							.getOutputFile(mapTile), aByteArray);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+				}
+			}
+
+			aState.getCallback().mapTileRequestCompleted(aState,
+					new ByteArrayInputStream(aByteArray));
+		}
+
+		/**
+		 * A tile has loaded.
+		 * 
+		 * @param aTile
+		 *            the tile that has loaded
+		 * @param aTileInputStream
+		 *            the input stream of the file.
+		 */
+		protected void tileLoaded(final OpenStreetMapTileRequestState aState,
+				final String aFilename) {
+			synchronized (mPending) {
+				mPending.remove(aState.getMapTile());
+			}
+			mWorking.remove(aState.getMapTile());
+
+			IMapTileFilenameProvider mapTileFilenameProvider = getMapTileFilenameProvider();
+			if (mapTileFilenameProvider != null) {
+				if (!aFilename.equals(mapTileFilenameProvider
+						.getOutputFile(aState.getMapTile()))) {
+					FileOutputStream fos = null;
+					FileInputStream fis = null;
+					try {
+						fos = new FileOutputStream(mapTileFilenameProvider
+								.getOutputFile(aState.getMapTile()));
+						fis = new FileInputStream(aFilename);
+						StreamUtils.copy(fis, fos);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+					} finally {
+						StreamUtils.closeStream(fos);
+						StreamUtils.closeStream(fis);
+					}
+				}
+			}
+			// TODO: Is this the best way to do this?
+			aState.getCallback().mapTileRequestCompleted(aState, aFilename);
+		}
+
+		/**
+		 * A tile has loaded.
+		 * 
+		 * @param aTile
+		 *            the tile that has loaded
+		 * @param aTileInputStream
+		 *            the input stream of the file.
+		 */
+		protected void tileLoaded(final OpenStreetMapTileRequestState aState) {
 			synchronized (mPending) {
 				mPending.remove(aState.getMapTile());
 			}
 			mWorking.remove(aState.getMapTile());
 
 			// TODO: Is this the best way to do this?
-			aState.getCallback().mapTileRequestCompleted(aState,
-					aTileInputStream);
+			aState.getCallback().mapTileRequestCompleted(aState);
 		}
 
 		private void tileLoadedFailed(final OpenStreetMapTileRequestState aState) {
@@ -196,6 +319,26 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 
 			// TODO: Is this the best way to do this?
 			aState.getCallback().mapTileRequestFailed(aState);
+		}
+
+		void saveFile(final OpenStreetMapTile tile, final File outputFile,
+				final InputStream stream) throws IOException {
+			final OutputStream bos = new BufferedOutputStream(
+					new FileOutputStream(outputFile, false),
+					StreamUtils.IO_BUFFER_SIZE);
+			StreamUtils.copy(stream, bos);
+			bos.flush();
+			bos.close();
+		}
+
+		void saveFile(final OpenStreetMapTile tile, final File outputFile,
+				final byte[] someData) throws IOException {
+			final OutputStream bos = new BufferedOutputStream(
+					new FileOutputStream(outputFile, false),
+					StreamUtils.IO_BUFFER_SIZE);
+			bos.write(someData);
+			bos.flush();
+			bos.close();
 		}
 
 		/**
@@ -213,7 +356,7 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 				if (DEBUGMODE)
 					logger.debug("Next tile: " + state);
 				try {
-					loadTile(state.getMapTile(), result);
+					loadTile(state, result);
 				} catch (final CantContinueException e) {
 					logger.info("Tile loader can't continue", e);
 					clearQueue();
@@ -223,13 +366,13 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 
 				// TODO: process result
 				if (result.isSuccess()) {
-					tileLoaded(state, result.getResult());
+					// tileLoaded(state, result.getResult());
 				} else {
 					OpenStreetMapAsyncTileProvider nextProvider = state
 							.getNextProvider();
 					if (nextProvider != null)
 						nextProvider.loadMapTileAsync(state);
-					tileLoadedFailed(state);
+					// tileLoadedFailed(state);
 				}
 			}
 			if (DEBUGMODE)

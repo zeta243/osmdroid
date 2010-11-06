@@ -1,21 +1,14 @@
 // Created by plusminus on 21:46:41 - 25.09.2008
 package org.andnav.osm.tileprovider;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
-import org.andnav.osm.views.util.IOpenStreetMapRendererInfo;
-import org.andnav.osm.views.util.IPeekSuccessfulTile;
+import org.andnav.osm.views.util.IMapTileFilenameProvider;
 import org.andnav.osm.views.util.OpenStreetMapTileProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +28,7 @@ import android.telephony.TelephonyManager;
  * 
  */
 public class OpenStreetMapTileFilesystemProvider extends
-		OpenStreetMapAsyncTileProvider implements IPeekSuccessfulTile {
+		OpenStreetMapAsyncTileProvider {
 
 	// ===========================================================
 	// Constants
@@ -73,15 +66,15 @@ public class OpenStreetMapTileFilesystemProvider extends
 	 * @param aRegisterReceiver
 	 */
 	public OpenStreetMapTileFilesystemProvider(
-			final IRegisterReceiver aRegisterReceiver) {
+			final IRegisterReceiver aRegisterReceiver,
+			IMapTileFilenameProvider pMapTileFilenameProvider) {
 		super(NUMBER_OF_TILE_FILESYSTEM_THREADS,
-				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE);
+				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, pMapTileFilenameProvider);
 
 		this.aRegisterReceiver = aRegisterReceiver;
 		mBroadcastReceiver = new MyBroadcastReceiver();
 
 		checkSdCard();
-
 		findZipFiles();
 
 		final IntentFilter networkFilter = new IntentFilter();
@@ -123,117 +116,6 @@ public class OpenStreetMapTileFilesystemProvider extends
 		super.stopWorkers();
 	}
 
-	// ===========================================================
-	// Methods
-	// ===========================================================
-
-	private File buildFullPath(final OpenStreetMapTile tile) {
-		return new File(TILE_PATH_BASE, buildPath(tile) + TILE_PATH_EXTENSION);
-	}
-
-	private String buildPath(final OpenStreetMapTile tile) {
-		final IOpenStreetMapRendererInfo renderer = tile.getRenderer();
-		return renderer.pathBase() + "/" + tile.getZoomLevel() + "/"
-				+ tile.getX() + "/" + tile.getY()
-				+ renderer.imageFilenameEnding();
-	}
-
-	/**
-	 * Get the file location for the tile.
-	 * 
-	 * @param tile
-	 * @return
-	 * @throws CantContinueException
-	 *             if the directory containing the file doesn't exist and can't
-	 *             be created
-	 */
-	File getOutputFile(final OpenStreetMapTile tile)
-			throws CantContinueException {
-		final File file = buildFullPath(tile);
-		final File parent = file.getParentFile();
-		if (!parent.exists() && !createFolderAndCheckIfExists(parent)) {
-			checkSdCard();
-			throw new CantContinueException("Tile directory doesn't exist: "
-					+ parent);
-		}
-		return file;
-	}
-
-	private boolean createFolderAndCheckIfExists(final File pFile) {
-		if (pFile.mkdirs()) {
-			return true;
-		}
-		if (DEBUGMODE)
-			logger.debug("Failed to create " + pFile
-					+ " - wait and check again");
-
-		// if create failed, wait a bit in case another thread created it
-		try {
-			Thread.sleep(500);
-		} catch (final InterruptedException ignore) {
-		}
-		// and then check again
-		if (pFile.exists()) {
-			if (DEBUGMODE)
-				logger.debug("Seems like another thread created " + pFile);
-			return true;
-		} else {
-			if (DEBUGMODE)
-				logger.debug("File still doesn't exist: " + pFile);
-			return false;
-		}
-	}
-
-	@Override
-	public void peekAtSuccessfulTile(OpenStreetMapTileRequestState pState,
-			InputStream pStream) {
-		try {
-			saveFile(pState.getMapTile(), getOutputFile(pState.getMapTile()),
-					pStream);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (CantContinueException e) {
-			e.printStackTrace();
-		}
-	}
-
-	@Override
-	public void peekAtSuccessfulTile(OpenStreetMapTileRequestState pState,
-			String pFilename) {
-		File sourceFile = new File(pFilename);
-		File destinationFile;
-		try {
-			destinationFile = getOutputFile(pState.getMapTile());
-			if (!destinationFile.equals(sourceFile)) {
-				final InputStream is = new BufferedInputStream(
-						new FileInputStream(sourceFile));
-				saveFile(pState.getMapTile(), destinationFile, is);
-			}
-		} catch (CantContinueException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	void saveFile(final OpenStreetMapTile tile, final File outputFile,
-			final InputStream stream) throws IOException {
-		final OutputStream bos = new BufferedOutputStream(new FileOutputStream(
-				outputFile, false), StreamUtils.IO_BUFFER_SIZE);
-		StreamUtils.copy(stream, bos);
-		bos.flush();
-		bos.close();
-	}
-
-	void saveFile(final OpenStreetMapTile tile, final File outputFile,
-			final byte[] someData) throws IOException {
-		final OutputStream bos = new BufferedOutputStream(new FileOutputStream(
-				outputFile, false), StreamUtils.IO_BUFFER_SIZE);
-		bos.write(someData);
-		bos.flush();
-		bos.close();
-	}
-
 	private void findZipFiles() {
 
 		mZipFiles.clear();
@@ -257,7 +139,8 @@ public class OpenStreetMapTileFilesystemProvider extends
 	}
 
 	private synchronized InputStream fileFromZip(final OpenStreetMapTile aTile) {
-		final String path = buildPath(aTile);
+		final String path = getMapTileFilenameProvider().getOutputFile(aTile)
+				.getPath();
 		for (final ZipFile zipFile : mZipFiles) {
 			try {
 				final ZipEntry entry = zipFile.getEntry(path);
@@ -302,8 +185,10 @@ public class OpenStreetMapTileFilesystemProvider extends
 		 * aTile a tile to be constructed by the method.
 		 */
 		@Override
-		public void loadTile(final OpenStreetMapTile aTile,
-				TileLoadResult aResult) throws CantContinueException {
+		public void loadTile(final OpenStreetMapTileRequestState aState,
+				TileLoadResult aResult) {
+
+			OpenStreetMapTile aTile = aState.getMapTile();
 
 			// if there's no sdcard then don't do anything
 			if (!mSdCardAvailable) {
@@ -313,13 +198,15 @@ public class OpenStreetMapTileFilesystemProvider extends
 				return;
 			}
 
-			final File tileFile = getOutputFile(aTile);
+			final File tileFile = getMapTileFilenameProvider().getOutputFile(
+					aTile);
 
 			try {
 				if (tileFile.exists()) {
 					if (DEBUGMODE)
 						logger.debug("Loaded tile: " + aTile);
-					aResult.setSuccessResult(tileFile.getPath());
+					tileLoaded(aState, tileFile.getPath());
+					aResult.setSuccessResult();
 
 					// check for old tile
 					final long now = System.currentTimeMillis();
@@ -374,7 +261,8 @@ public class OpenStreetMapTileFilesystemProvider extends
 						if (DEBUGMODE)
 							logger.debug("Use tile from zip: " + aTile);
 						// tileLoaded(aTile, fileFromZip);
-						aResult.setSuccessResult(fileFromZip);
+						tileLoaded(aState, fileFromZip);
+						aResult.setSuccessResult();
 					}
 				}
 			} catch (final Throwable e) {
