@@ -6,10 +6,10 @@ import org.andnav.osm.services.constants.OpenStreetMapServiceConstants;
 import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
 import org.andnav.osm.tileprovider.IRegisterReceiver;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
-import org.andnav.osm.tileprovider.OpenStreetMapTileFilesystemProvider;
-import org.andnav.osm.tileprovider.util.CloudmadeUtil;
+import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
 import org.andnav.osm.views.util.IOpenStreetMapRendererInfo;
 import org.andnav.osm.views.util.OpenStreetMapRendererFactory;
+import org.andnav.osm.views.util.OpenStreetMapTileProviderDirect;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -17,21 +17,25 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
 /**
- * The OpenStreetMapTileProviderService can download map tiles from a server
- * and stores them in a file system cache.
+ * The OpenStreetMapTileProviderService can download map tiles from a server and
+ * stores them in a file system cache.
+ * 
  * @author Manuel Stahl
  */
-public class OpenStreetMapTileProviderService extends Service implements OpenStreetMapServiceConstants, IOpenStreetMapTileProviderCallback {
+public class OpenStreetMapTileProviderService extends Service implements
+		OpenStreetMapServiceConstants, IOpenStreetMapTileProviderCallback {
 
 	private static final String DEBUGTAG = "OSM_TILE_PROVIDER_SERVICE";
 
-	private OpenStreetMapTileFilesystemProvider mFileSystemProvider;
 	private IOpenStreetMapTileProviderServiceCallback mCallback;
+
+	private OpenStreetMapTileProviderDirect mTileProvider;
 
 	@Override
 	public void onCreate() {
@@ -39,15 +43,18 @@ public class OpenStreetMapTileProviderService extends Service implements OpenStr
 		final Context applicationContext = this.getApplicationContext();
 		final IRegisterReceiver registerReceiver = new IRegisterReceiver() {
 			@Override
-			public Intent registerReceiver(final BroadcastReceiver aReceiver, final IntentFilter aFilter) {
+			public Intent registerReceiver(final BroadcastReceiver aReceiver,
+					final IntentFilter aFilter) {
 				return applicationContext.registerReceiver(aReceiver, aFilter);
 			}
+
 			@Override
 			public void unregisterReceiver(final BroadcastReceiver aReceiver) {
 				applicationContext.unregisterReceiver(aReceiver);
 			}
 		};
-		mFileSystemProvider = new OpenStreetMapTileFilesystemProvider(this, registerReceiver);
+		mTileProvider = new OpenStreetMapTileProviderDirect(new Handler(),
+				null, registerReceiver);
 	}
 
 	@Override
@@ -57,71 +64,78 @@ public class OpenStreetMapTileProviderService extends Service implements OpenStr
 
 	@Override
 	public void onConfigurationChanged(Configuration pNewConfig) {
-		if(DEBUGMODE)
+		if (DEBUGMODE)
 			Log.d(DEBUGTAG, "onConfigurationChanged");
 		super.onConfigurationChanged(pNewConfig);
 	}
 
 	@Override
 	public void onDestroy() {
-		if(DEBUGMODE)
+		if (DEBUGMODE)
 			Log.d(DEBUGTAG, "onDestroy");
-		mFileSystemProvider.stopWorkers();
+		mTileProvider.detach();
 		super.onDestroy();
 	}
 
 	@Override
 	public void onLowMemory() {
-		if(DEBUGMODE)
+		if (DEBUGMODE)
 			Log.d(DEBUGTAG, "onLowMemory");
 		super.onLowMemory();
 	}
 
 	@Override
 	public void onRebind(Intent pIntent) {
-		if(DEBUGMODE)
+		if (DEBUGMODE)
 			Log.d(DEBUGTAG, "onRebind");
 		super.onRebind(pIntent);
 	}
 
 	@Override
 	public void onStart(Intent pIntent, int pStartId) {
-		if(DEBUGMODE)
+		if (DEBUGMODE)
 			Log.d(DEBUGTAG, "onStart");
 		super.onStart(pIntent, pStartId);
 	}
 
 	@Override
 	public boolean onUnbind(Intent pIntent) {
-		if(DEBUGMODE)
+		if (DEBUGMODE)
 			Log.d(DEBUGTAG, "onUnbind");
 		return super.onUnbind(pIntent);
 	}
 
 	@Override
-	public void mapTileRequestCompleted(final OpenStreetMapTile pTile, final String pTilePath) {
+	public void mapTileRequestCompleted(
+			final OpenStreetMapTileRequestState pState, final String pTilePath) {
 		try {
-			mCallback.mapTileRequestCompleted(pTile.getRenderer().name(), pTile.getZoomLevel(), pTile.getX(), pTile.getY(), pTilePath);
+			OpenStreetMapTile tile = pState.getMapTile();
+			mCallback.mapTileRequestCompleted(tile.getRenderer().name(), tile
+					.getZoomLevel(), tile.getX(), tile.getY(), pTilePath);
 		} catch (final RemoteException e) {
 			Log.e(DEBUGTAG, "Error invoking callback", e);
 		}
 	}
 
 	@Override
-	public void mapTileRequestCompleted(final OpenStreetMapTile pTile, final InputStream pTileInputStream) {
+	public void mapTileRequestCompleted(
+			final OpenStreetMapTileRequestState pState,
+			final InputStream pTileInputStream) {
 		// TODO implementation
 		throw new IllegalStateException("Not implemented");
 	}
 
 	@Override
-	public void mapTileRequestCompleted(final OpenStreetMapTile pTile) {
+	public void mapTileRequestCompleted(
+			final OpenStreetMapTileRequestState pState) {
 		// TODO implementation
 		throw new IllegalStateException("Not implemented");
 	}
 
 	@Override
-	public String getCloudmadeKey() {
-		return CloudmadeUtil.getCloudmadeKey(this);
+	public void mapTileRequestFailed(final OpenStreetMapTileRequestState pState) {
+		// TODO implementation
+		// throw new IllegalStateException("Not implemented");
 	}
 
 	@Override
@@ -135,14 +149,20 @@ public class OpenStreetMapTileProviderService extends Service implements OpenStr
 	 */
 	private final IOpenStreetMapTileProviderService.Stub mBinder = new IOpenStreetMapTileProviderService.Stub() {
 		@Override
-		public void setCallback(final IOpenStreetMapTileProviderServiceCallback pCallback) throws RemoteException {
+		public void setCallback(
+				final IOpenStreetMapTileProviderServiceCallback pCallback)
+				throws RemoteException {
 			mCallback = pCallback;
 		}
+
 		@Override
-		public void requestMapTile(String rendererName, int zoomLevel, int tileX, int tileY) throws RemoteException {
-			final IOpenStreetMapRendererInfo renderer = OpenStreetMapRendererFactory.getRenderer(rendererName);
-			OpenStreetMapTile tile = new OpenStreetMapTile(renderer, zoomLevel, tileX, tileY);
-			mFileSystemProvider.loadMapTileAsync(tile);
+		public void requestMapTile(String rendererName, int zoomLevel,
+				int tileX, int tileY) throws RemoteException {
+			final IOpenStreetMapRendererInfo renderer = OpenStreetMapRendererFactory
+					.getRenderer(rendererName);
+			OpenStreetMapTile tile = new OpenStreetMapTile(renderer, zoomLevel,
+					tileX, tileY);
+			mTileProvider.getMapTile(tile);
 		}
 	};
 
