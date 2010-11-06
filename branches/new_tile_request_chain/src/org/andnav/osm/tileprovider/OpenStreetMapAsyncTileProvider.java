@@ -272,8 +272,8 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 
 			IMapTileFilenameProvider mapTileFilenameProvider = getMapTileFilenameProvider();
 			if (mapTileFilenameProvider != null) {
-				if (!aFilename.equals(mapTileFilenameProvider
-						.getOutputFile(aState.getMapTile()))) {
+				if (!aFilename.equals(mapTileFilenameProvider.getOutputFile(
+						aState.getMapTile()).getPath())) {
 					FileOutputStream fos = null;
 					FileInputStream fis = null;
 					try {
@@ -323,22 +323,30 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 
 		void saveFile(final OpenStreetMapTile tile, final File outputFile,
 				final InputStream stream) throws IOException {
-			final OutputStream bos = new BufferedOutputStream(
-					new FileOutputStream(outputFile, false),
-					StreamUtils.IO_BUFFER_SIZE);
-			StreamUtils.copy(stream, bos);
-			bos.flush();
-			bos.close();
+			OutputStream bos = null;
+			try {
+				bos = new BufferedOutputStream(new FileOutputStream(outputFile,
+						false), StreamUtils.IO_BUFFER_SIZE);
+				StreamUtils.copy(stream, bos);
+				bos.flush();
+			} finally {
+				if (bos != null)
+					bos.close();
+			}
 		}
 
 		void saveFile(final OpenStreetMapTile tile, final File outputFile,
 				final byte[] someData) throws IOException {
-			final OutputStream bos = new BufferedOutputStream(
-					new FileOutputStream(outputFile, false),
-					StreamUtils.IO_BUFFER_SIZE);
-			bos.write(someData);
-			bos.flush();
-			bos.close();
+			OutputStream bos = null;
+			try {
+				bos = new BufferedOutputStream(new FileOutputStream(outputFile,
+						false), StreamUtils.IO_BUFFER_SIZE);
+				bos.write(someData);
+				bos.flush();
+			} finally {
+				if (bos != null)
+					bos.close();
+			}
 		}
 
 		/**
@@ -372,7 +380,8 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 							.getNextProvider();
 					if (nextProvider != null)
 						nextProvider.loadMapTileAsync(state);
-					// tileLoadedFailed(state);
+					else
+						tileLoadedFailed(state);
 				}
 			}
 			if (DEBUGMODE)
