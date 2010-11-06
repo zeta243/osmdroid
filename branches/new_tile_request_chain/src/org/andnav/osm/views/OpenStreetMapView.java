@@ -12,9 +12,7 @@ import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.events.MapListener;
 import org.andnav.osm.events.ScrollEvent;
 import org.andnav.osm.events.ZoomEvent;
-import org.andnav.osm.tileprovider.CloudmadeDefaultTokenProvider;
 import org.andnav.osm.tileprovider.IRegisterReceiver;
-import org.andnav.osm.tileprovider.OpenStreetMapAsyncTileProvider;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileDownloader;
 import org.andnav.osm.tileprovider.OpenStreetMapTileFilesystemProvider;
@@ -28,7 +26,7 @@ import org.andnav.osm.views.util.IOpenStreetMapRendererInfo;
 import org.andnav.osm.views.util.Mercator;
 import org.andnav.osm.views.util.OpenStreetMapRendererFactory;
 import org.andnav.osm.views.util.OpenStreetMapTileProvider;
-import org.andnav.osm.views.util.OpenStreetMapTileProviderArray;
+import org.andnav.osm.views.util.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
 import org.metalev.multitouch.controller.MultiTouchController;
 import org.metalev.multitouch.controller.MultiTouchController.MultiTouchObjectCanvas;
@@ -160,15 +158,9 @@ public class OpenStreetMapView extends View implements
 					applicationContext.unregisterReceiver(aReceiver);
 				}
 			};
-			mFileSystemProvider = new OpenStreetMapTileFilesystemProvider(
+			tileProvider = new OpenStreetMapTileProviderDirect(
+					new SimpleInvalidationHandler(), cloudmadeKey,
 					registerReceiver);
-			mTileDownloaderProvider = new OpenStreetMapTileDownloader(
-					new CloudmadeDefaultTokenProvider(cloudmadeKey),
-					mFileSystemProvider);
-			tileProvider = new OpenStreetMapTileProviderArray(
-					new SimpleInvalidationHandler(), registerReceiver,
-					new OpenStreetMapAsyncTileProvider[] { mFileSystemProvider,
-							mTileDownloaderProvider });
 		}
 
 		this.mMapOverlay = new OpenStreetMapTilesOverlay(this,

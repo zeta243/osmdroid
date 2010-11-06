@@ -35,11 +35,12 @@ public class OpenStreetMapTileProviderDirect extends
 			final IRegisterReceiver aRegisterReceiver) {
 		super(pDownloadFinishedListener, aRegisterReceiver,
 				new OpenStreetMapAsyncTileProvider[] {});
+		IMapTileFilenameProvider mapTileFilenameProvider = new DefaultMapTileFilenameProvider();
 		mFileSystemProvider = new OpenStreetMapTileFilesystemProvider(
-				aRegisterReceiver);
+				aRegisterReceiver, mapTileFilenameProvider);
 		mTileDownloaderProvider = new OpenStreetMapTileDownloader(
 				new CloudmadeDefaultTokenProvider(aCloudmadeKey),
-				mFileSystemProvider);
+				mapTileFilenameProvider);
 		super.mTileProviderList.add(mFileSystemProvider);
 		super.mTileProviderList.add(mTileDownloaderProvider);
 	}
