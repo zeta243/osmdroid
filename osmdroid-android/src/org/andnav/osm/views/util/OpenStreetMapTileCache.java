@@ -1,15 +1,18 @@
 // Created by plusminus on 17:58:57 - 25.09.2008
 package org.andnav.osm.views.util;
 
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
 
 import android.graphics.drawable.Drawable;
 
 /**
- *
+ * 
  * @author Nicolas Gramlich
- *
+ * 
  */
 public final class OpenStreetMapTileCache implements OpenStreetMapViewConstants {
 	// ===========================================================
@@ -22,6 +25,8 @@ public final class OpenStreetMapTileCache implements OpenStreetMapViewConstants 
 
 	protected LRUMapTileCache mCachedTiles;
 
+	private final ReadWriteLock mReadWriteLock = new ReentrantReadWriteLock();
+
 	// ===========================================================
 	// Constructors
 	// ===========================================================
@@ -31,9 +36,10 @@ public final class OpenStreetMapTileCache implements OpenStreetMapViewConstants 
 	}
 
 	/**
-	 * @param aMaximumCacheSize Maximum amount of MapTiles to be hold within.
+	 * @param aMaximumCacheSize
+	 *            Maximum amount of MapTiles to be hold within.
 	 */
-	public OpenStreetMapTileCache(final int aMaximumCacheSize){
+	public OpenStreetMapTileCache(final int aMaximumCacheSize) {
 		this.mCachedTiles = new LRUMapTileCache(aMaximumCacheSize);
 	}
 
@@ -41,17 +47,24 @@ public final class OpenStreetMapTileCache implements OpenStreetMapViewConstants 
 	// Getter & Setter
 	// ===========================================================
 
-	public synchronized void ensureCapacity(final int aCapacity) {
+	public void ensureCapacity(final int aCapacity) {
+		mReadWriteLock.readLock().lock();
 		mCachedTiles.ensureCapacity(aCapacity);
+		mReadWriteLock.readLock().unlock();
 	}
 
-	public synchronized Drawable getMapTile(final OpenStreetMapTile aTile) {
-		return this.mCachedTiles.get(aTile);
+	public Drawable getMapTile(final OpenStreetMapTile aTile) {
+		mReadWriteLock.readLock().lock();
+		Drawable result = this.mCachedTiles.get(aTile);
+		mReadWriteLock.readLock().unlock();
+		return result;
 	}
 
-	public synchronized void putTile(final OpenStreetMapTile aTile, final Drawable aDrawable) {
+	public void putTile(final OpenStreetMapTile aTile, final Drawable aDrawable) {
 		if (aDrawable != null) {
+			mReadWriteLock.writeLock().lock();
 			this.mCachedTiles.put(aTile, aDrawable);
+			mReadWriteLock.writeLock().unlock();
 		}
 	}
 
@@ -63,12 +76,17 @@ public final class OpenStreetMapTileCache implements OpenStreetMapViewConstants 
 	// Methods
 	// ===========================================================
 
-	public synchronized boolean containsTile(final OpenStreetMapTile aTile) {
-		return this.mCachedTiles.containsKey(aTile);
+	public boolean containsTile(final OpenStreetMapTile aTile) {
+		mReadWriteLock.readLock().lock();
+		boolean result = this.mCachedTiles.containsKey(aTile);
+		mReadWriteLock.readLock().unlock();
+		return result;
 	}
 
-	public synchronized void clear() {
+	public void clear() {
+		mReadWriteLock.writeLock().lock();
 		this.mCachedTiles.clear();
+		mReadWriteLock.writeLock().unlock();
 	}
 
 	// ===========================================================
