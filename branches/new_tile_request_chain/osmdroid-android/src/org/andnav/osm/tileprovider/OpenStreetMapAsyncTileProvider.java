@@ -45,20 +45,21 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 
 	/**
 	 * Returns true if implementation uses a data connection, false otherwise.
-	 * This value is used to determine if the provider is disabled when the tile
-	 * provider is told to not use the data connection.
+	 * This value is used to determine if this provider should be skipped if
+	 * there is no data connection.
 	 * 
 	 * @return true if implementation uses a data connection, false otherwise
 	 */
-	protected abstract boolean getUsesDataConnection();
+	public abstract boolean getUsesDataConnection();
 
 	/**
 	 * Returns true if tiles retrieved from this data provider should be
-	 * automatically saved to any available file storage caches.
+	 * automatically saved to any available file storage caches, false
+	 * otherwise.
 	 * 
 	 * @return true if tiles should be cached to storage, false otherwise
 	 */
-	protected abstract boolean getShouldTilesBeSavedInCache();
+	public abstract boolean getShouldTilesBeSavedInCache();
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(OpenStreetMapAsyncTileProvider.class);
@@ -163,8 +164,8 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 		 * @param aTile
 		 * @throws CantContinueException
 		 */
-		protected abstract void loadTile(OpenStreetMapTileRequestState aState,
-				TileLoadResult aResult) throws CantContinueException;
+		protected abstract void loadTile(OpenStreetMapTileRequestState aState)
+				throws CantContinueException;
 
 		private OpenStreetMapTileRequestState nextTile() {
 
@@ -333,7 +334,8 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 			aState.getCallback().mapTileRequestCompleted(aState);
 		}
 
-		private void tileLoadedFailed(final OpenStreetMapTileRequestState aState) {
+		protected void tileLoadedFailed(
+				final OpenStreetMapTileRequestState aState) {
 			removeTileFromQueues(aState.getMapTile());
 
 			// TODO: Is this the best way to do this?
@@ -379,13 +381,10 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 
 			OpenStreetMapTileRequestState state;
 			while ((state = nextTile()) != null) {
-				TileLoadResult result = new TileLoadResult(
-						OpenStreetMapAsyncTileProvider.this);
-
 				if (DEBUGMODE)
 					logger.debug("Next tile: " + state);
 				try {
-					loadTile(state, result);
+					loadTile(state);
 				} catch (final CantContinueException e) {
 					logger.info("Tile loader can't continue", e);
 					clearQueue();
@@ -394,17 +393,17 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 				}
 
 				// TODO: process result
-				if (result.isSuccess()) {
-					// tileLoaded(state, result.getResult());
-				} else {
-					// TODO: This MUST be fixed!
-					OpenStreetMapAsyncTileProvider nextProvider = state
-							.getNextProvider(/* getUseDataConnection() */true);
-					if (nextProvider != null)
-						nextProvider.loadMapTileAsync(state);
-					else
-						tileLoadedFailed(state);
-				}
+				// if (result.isSuccess()) {
+				// // tileLoaded(state, result.getResult());
+				// } else {
+				// // TODO: This MUST be fixed!
+				// OpenStreetMapAsyncTileProvider nextProvider = state
+				// .getNextProvider(/* getUseDataConnection() */true);
+				// if (nextProvider != null)
+				// nextProvider.loadMapTileAsync(state);
+				// else
+				// tileLoadedFailed(state);
+				// }
 			}
 			if (DEBUGMODE)
 				logger.debug("No more tiles");
