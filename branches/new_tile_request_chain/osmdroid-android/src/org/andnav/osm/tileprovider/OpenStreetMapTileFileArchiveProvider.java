@@ -27,7 +27,7 @@ import android.telephony.TelephonyManager;
  * @author Nicolas Gramlich
  * 
  */
-public class OpenStreetMapTileFilesystemProvider extends
+public class OpenStreetMapTileFileArchiveProvider extends
 		OpenStreetMapAsyncTileProvider {
 
 	// ===========================================================
@@ -35,7 +35,7 @@ public class OpenStreetMapTileFilesystemProvider extends
 	// ===========================================================
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(OpenStreetMapTileFilesystemProvider.class);
+			.getLogger(OpenStreetMapTileFileArchiveProvider.class);
 
 	// ===========================================================
 	// Fields
@@ -65,7 +65,7 @@ public class OpenStreetMapTileFilesystemProvider extends
 	 * @param aCallback
 	 * @param aRegisterReceiver
 	 */
-	public OpenStreetMapTileFilesystemProvider(
+	public OpenStreetMapTileFileArchiveProvider(
 			final IRegisterReceiver aRegisterReceiver,
 			IMapTileFilenameProvider pMapTileFilenameProvider) {
 		super(NUMBER_OF_TILE_FILESYSTEM_THREADS,
@@ -113,7 +113,7 @@ public class OpenStreetMapTileFilesystemProvider extends
 
 	@Override
 	protected String threadGroupName() {
-		return "filesystem";
+		return "filearchive";
 	}
 
 	@Override
@@ -207,31 +207,17 @@ public class OpenStreetMapTileFilesystemProvider extends
 				return;
 			}
 
-			final File tileFile = getMapTileFilenameProvider().getOutputFile(
-					aTile);
-
 			try {
-				if (tileFile.exists()) {
-					if (DEBUGMODE)
-						logger.debug("Loaded tile: " + aTile);
-					tileLoaded(aState, tileFile.getPath());
+				if (DEBUGMODE)
+					logger.debug("Tile doesn't exist: " + aTile);
 
-					// check for old tile
-					final long now = System.currentTimeMillis();
-					final long lastModified = tileFile.lastModified();
-					if (now - lastModified > TILE_EXPIRY_TIME_MILLISECONDS) {
-						// This will trigger continuing with the tile provider
-						// change - this is currently safe to do after
-						// previously calling tileLoaded(), but maybe there is a
-						// better way to do this?
-						tileLoadedFailed(aState);
-					}
-
+				final InputStream fileFromZip = fileFromZip(aTile);
+				if (fileFromZip == null) {
+					tileLoadedFailed(aState);
 				} else {
 					if (DEBUGMODE)
-						logger.debug("Tile doesn't exist: " + aTile);
-
-					tileLoadedFailed(aState);
+						logger.debug("Use tile from zip: " + aTile);
+					tileLoaded(aState, fileFromZip);
 				}
 			} catch (final Throwable e) {
 				logger.error("Error loading tile", e);
