@@ -43,6 +43,23 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 	 */
 	protected abstract Runnable getTileLoader();
 
+	/**
+	 * Returns true if implementation uses a data connection, false otherwise.
+	 * This value is used to determine if the provider is disabled when the tile
+	 * provider is told to not use the data connection.
+	 * 
+	 * @return true if implementation uses a data connection, false otherwise
+	 */
+	protected abstract boolean getUsesDataConnection();
+
+	/**
+	 * Returns true if tiles retrieved from this data provider should be
+	 * automatically saved to any available file storage caches.
+	 * 
+	 * @return true if tiles should be cached to storage, false otherwise
+	 */
+	protected abstract boolean getShouldTilesBeSavedInCache();
+
 	private static final Logger logger = LoggerFactory
 			.getLogger(OpenStreetMapAsyncTileProvider.class);
 
@@ -50,7 +67,6 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 	private final ThreadGroup mThreadPool = new ThreadGroup(threadGroupName());
 	private final ConcurrentHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState> mWorking;
 	final LinkedHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState> mPending;
-	// private static final Object PRESENT = new Object();
 	private IMapTileFilenameProvider mMapTileFilenameProvider;
 
 	public OpenStreetMapAsyncTileProvider(final int aThreadPoolSize,
@@ -75,7 +91,8 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 	 * Returns an IMapTileFilenameProvider to be used to obtain a filename where
 	 * the downloaded tile will be saved to. This typically points to a
 	 * file-system cache that is being served via a FilesystemProvider. If it is
-	 * null, then the tile will never be cached.
+	 * null, then the tile will never be cached. If AsyncTileProviders have to
+	 * save data to storage, then they should use this value if present.
 	 * 
 	 * @return
 	 */
@@ -190,6 +207,13 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 			}
 		}
 
+		private void removeTileFromQueues(OpenStreetMapTile mapTile) {
+			synchronized (mPending) {
+				mPending.remove(mapTile);
+			}
+			mWorking.remove(mapTile);
+		}
+
 		/**
 		 * A tile has loaded.
 		 * 
@@ -201,24 +225,26 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 		protected void tileLoaded(final OpenStreetMapTileRequestState aState,
 				final InputStream aTileInputStream) {
 			OpenStreetMapTile mapTile = aState.getMapTile();
-			synchronized (mPending) {
-				mPending.remove(mapTile);
-			}
-			mWorking.remove(mapTile);
+			removeTileFromQueues(mapTile);
 
-			IMapTileFilenameProvider mapTileFilenameProvider = getMapTileFilenameProvider();
-			if (mapTileFilenameProvider != null) {
-				try {
-					saveFile(mapTile, mapTileFilenameProvider
-							.getOutputFile(mapTile), aTileInputStream);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
+			if (getShouldTilesBeSavedInCache()) {
+				IMapTileFilenameProvider mapTileFilenameProvider = getMapTileFilenameProvider();
+				if (mapTileFilenameProvider != null) {
+					try {
+						saveFile(mapTile, mapTileFilenameProvider
+								.getOutputFile(mapTile), aTileInputStream);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+					}
+
+					aState.getCallback().mapTileRequestCompleted(
+							aState,
+							mapTileFilenameProvider.getOutputFile(mapTile)
+									.getPath());
+				} else {
+					aState.getCallback().mapTileRequestCompleted(aState,
+							aTileInputStream);
 				}
-
-				aState.getCallback().mapTileRequestCompleted(
-						aState,
-						mapTileFilenameProvider.getOutputFile(mapTile)
-								.getPath());
 			} else {
 				aState.getCallback().mapTileRequestCompleted(aState,
 						aTileInputStream);
@@ -236,18 +262,17 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 		protected void tileLoaded(final OpenStreetMapTileRequestState aState,
 				final byte[] aByteArray) {
 			OpenStreetMapTile mapTile = aState.getMapTile();
-			synchronized (mPending) {
-				mPending.remove(mapTile);
-			}
-			mWorking.remove(mapTile);
+			removeTileFromQueues(mapTile);
 
-			IMapTileFilenameProvider mapTileFilenameProvider = getMapTileFilenameProvider();
-			if (mapTileFilenameProvider != null) {
-				try {
-					saveFile(mapTile, mapTileFilenameProvider
-							.getOutputFile(mapTile), aByteArray);
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
+			if (getShouldTilesBeSavedInCache()) {
+				IMapTileFilenameProvider mapTileFilenameProvider = getMapTileFilenameProvider();
+				if (mapTileFilenameProvider != null) {
+					try {
+						saveFile(mapTile, mapTileFilenameProvider
+								.getOutputFile(mapTile), aByteArray);
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+					}
 				}
 			}
 
@@ -265,27 +290,27 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 		 */
 		protected void tileLoaded(final OpenStreetMapTileRequestState aState,
 				final String aFilename) {
-			synchronized (mPending) {
-				mPending.remove(aState.getMapTile());
-			}
-			mWorking.remove(aState.getMapTile());
+			OpenStreetMapTile mapTile = aState.getMapTile();
+			removeTileFromQueues(mapTile);
 
-			IMapTileFilenameProvider mapTileFilenameProvider = getMapTileFilenameProvider();
-			if (mapTileFilenameProvider != null) {
-				if (!aFilename.equals(mapTileFilenameProvider.getOutputFile(
-						aState.getMapTile()).getPath())) {
-					FileOutputStream fos = null;
-					FileInputStream fis = null;
-					try {
-						fos = new FileOutputStream(mapTileFilenameProvider
-								.getOutputFile(aState.getMapTile()));
-						fis = new FileInputStream(aFilename);
-						StreamUtils.copy(fis, fos);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-					} finally {
-						StreamUtils.closeStream(fos);
-						StreamUtils.closeStream(fis);
+			if (getShouldTilesBeSavedInCache()) {
+				IMapTileFilenameProvider mapTileFilenameProvider = getMapTileFilenameProvider();
+				if (mapTileFilenameProvider != null) {
+					if (!aFilename.equals(mapTileFilenameProvider
+							.getOutputFile(mapTile).getPath())) {
+						FileOutputStream fos = null;
+						FileInputStream fis = null;
+						try {
+							fos = new FileOutputStream(mapTileFilenameProvider
+									.getOutputFile(mapTile));
+							fis = new FileInputStream(aFilename);
+							StreamUtils.copy(fis, fos);
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+						} finally {
+							StreamUtils.closeStream(fos);
+							StreamUtils.closeStream(fis);
+						}
 					}
 				}
 			}
@@ -302,27 +327,22 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 		 *            the input stream of the file.
 		 */
 		protected void tileLoaded(final OpenStreetMapTileRequestState aState) {
-			synchronized (mPending) {
-				mPending.remove(aState.getMapTile());
-			}
-			mWorking.remove(aState.getMapTile());
+			removeTileFromQueues(aState.getMapTile());
 
 			// TODO: Is this the best way to do this?
 			aState.getCallback().mapTileRequestCompleted(aState);
 		}
 
 		private void tileLoadedFailed(final OpenStreetMapTileRequestState aState) {
-			synchronized (mPending) {
-				mPending.remove(aState.getMapTile());
-			}
-			mWorking.remove(aState.getMapTile());
+			removeTileFromQueues(aState.getMapTile());
 
 			// TODO: Is this the best way to do this?
 			aState.getCallback().mapTileRequestFailed(aState);
 		}
 
-		void saveFile(final OpenStreetMapTile tile, final File outputFile,
-				final InputStream stream) throws IOException {
+		private void saveFile(final OpenStreetMapTile tile,
+				final File outputFile, final InputStream stream)
+				throws IOException {
 			OutputStream bos = null;
 			try {
 				bos = new BufferedOutputStream(new FileOutputStream(outputFile,
@@ -335,8 +355,9 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 			}
 		}
 
-		void saveFile(final OpenStreetMapTile tile, final File outputFile,
-				final byte[] someData) throws IOException {
+		private void saveFile(final OpenStreetMapTile tile,
+				final File outputFile, final byte[] someData)
+				throws IOException {
 			OutputStream bos = null;
 			try {
 				bos = new BufferedOutputStream(new FileOutputStream(outputFile,
@@ -376,8 +397,9 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 				if (result.isSuccess()) {
 					// tileLoaded(state, result.getResult());
 				} else {
+					// TODO: This MUST be fixed!
 					OpenStreetMapAsyncTileProvider nextProvider = state
-							.getNextProvider();
+							.getNextProvider(/* getUseDataConnection() */true);
 					if (nextProvider != null)
 						nextProvider.loadMapTileAsync(state);
 					else

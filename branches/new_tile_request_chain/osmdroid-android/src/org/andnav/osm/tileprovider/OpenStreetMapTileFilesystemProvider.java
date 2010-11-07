@@ -102,6 +102,16 @@ public class OpenStreetMapTileFilesystemProvider extends
 	// ===========================================================
 
 	@Override
+	protected boolean getShouldTilesBeSavedInCache() {
+		return false;
+	}
+
+	@Override
+	protected boolean getUsesDataConnection() {
+		return false;
+	}
+
+	@Override
 	protected String threadGroupName() {
 		return "filesystem";
 	}

@@ -63,6 +63,16 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider
 	// ===========================================================
 
 	@Override
+	protected boolean getShouldTilesBeSavedInCache() {
+		return true;
+	}
+
+	@Override
+	protected boolean getUsesDataConnection() {
+		return true;
+	}
+
+	@Override
 	protected String threadGroupName() {
 		return "downloader";
 	}
