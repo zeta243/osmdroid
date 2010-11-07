@@ -66,6 +66,16 @@ public class OpenStreetMapAsyncTileProviderTest {
 					}
 				};
 			}
+
+			@Override
+			protected boolean getShouldTilesBeSavedInCache() {
+				return false;
+			}
+
+			@Override
+			protected boolean getUsesDataConnection() {
+				return false;
+			}
 		};
 
 		final OpenStreetMapTile tile = new OpenStreetMapTile(
@@ -127,6 +137,16 @@ public class OpenStreetMapAsyncTileProviderTest {
 						aResult.setSuccessResult();
 					}
 				};
+			}
+
+			@Override
+			protected boolean getShouldTilesBeSavedInCache() {
+				return false;
+			}
+
+			@Override
+			protected boolean getUsesDataConnection() {
+				return false;
 			}
 		};
 
@@ -220,6 +240,16 @@ public class OpenStreetMapAsyncTileProviderTest {
 						aResult.setSuccessResult();
 					}
 				};
+			}
+
+			@Override
+			protected boolean getShouldTilesBeSavedInCache() {
+				return false;
+			}
+
+			@Override
+			protected boolean getUsesDataConnection() {
+				return false;
 			}
 		};
 

@@ -67,7 +67,8 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 						mTileProviderList.toArray(providerArray), this);
 			}
 
-			OpenStreetMapAsyncTileProvider provider = state.getNextProvider();
+			OpenStreetMapAsyncTileProvider provider = state
+					.getNextProvider(useDataConnection());
 			if (provider != null) {
 				provider.loadMapTileAsync(state);
 			} else
