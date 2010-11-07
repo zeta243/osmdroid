@@ -315,7 +315,7 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 					}
 				}
 			}
-			// TODO: Is this the best way to do this?
+
 			aState.getCallback().mapTileRequestCompleted(aState, aFilename);
 		}
 
@@ -330,7 +330,6 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 		protected void tileLoaded(final OpenStreetMapTileRequestState aState) {
 			removeTileFromQueues(aState.getMapTile());
 
-			// TODO: Is this the best way to do this?
 			aState.getCallback().mapTileRequestCompleted(aState);
 		}
 
@@ -338,7 +337,6 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 				final OpenStreetMapTileRequestState aState) {
 			removeTileFromQueues(aState.getMapTile());
 
-			// TODO: Is this the best way to do this?
 			aState.getCallback().mapTileRequestFailed(aState);
 		}
 
