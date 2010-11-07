@@ -58,22 +58,21 @@ public class OpenStreetMapAsyncTileProviderTest {
 				return new TileLoader() {
 					@Override
 					protected void loadTile(
-							final OpenStreetMapTileRequestState aState,
-							TileLoadResult aResult)
+							final OpenStreetMapTileRequestState aState)
 							throws CantContinueException {
 						// does nothing - doesn't call the callback
-						aResult.setFailureResult();
+						tileLoadedFailed(aState);
 					}
 				};
 			}
 
 			@Override
-			protected boolean getShouldTilesBeSavedInCache() {
+			public boolean getShouldTilesBeSavedInCache() {
 				return false;
 			}
 
 			@Override
-			protected boolean getUsesDataConnection() {
+			public boolean getUsesDataConnection() {
 				return false;
 			}
 		};
@@ -132,20 +131,20 @@ public class OpenStreetMapAsyncTileProviderTest {
 			protected Runnable getTileLoader() {
 				return new TileLoader() {
 					@Override
-					protected void loadTile(final OpenStreetMapTileRequestState aState, TileLoadResult aResult) throws CantContinueException {
+					protected void loadTile(final OpenStreetMapTileRequestState aState) throws CantContinueException {
 						try {Thread.sleep(1000);} catch (InterruptedException e) {}
-						aResult.setSuccessResult();
+						tileLoaded(aState);
 					}
 				};
 			}
 
 			@Override
-			protected boolean getShouldTilesBeSavedInCache() {
+			public boolean getShouldTilesBeSavedInCache() {
 				return false;
 			}
 
 			@Override
-			protected boolean getUsesDataConnection() {
+			public boolean getUsesDataConnection() {
 				return false;
 			}
 		};
@@ -230,25 +229,24 @@ public class OpenStreetMapAsyncTileProviderTest {
 			protected Runnable getTileLoader() {
 				return new TileLoader() {
 					@Override
-					protected void loadTile(final OpenStreetMapTileRequestState aState,
-							TileLoadResult aResult)
+					protected void loadTile(final OpenStreetMapTileRequestState aState)
 							throws CantContinueException {
 						try {
 							Thread.sleep(1000);
 						} catch (InterruptedException e) {
 						}
-						aResult.setSuccessResult();
+						tileLoaded(aState);
 					}
 				};
 			}
 
 			@Override
-			protected boolean getShouldTilesBeSavedInCache() {
+			public boolean getShouldTilesBeSavedInCache() {
 				return false;
 			}
 
 			@Override
-			protected boolean getUsesDataConnection() {
+			public boolean getUsesDataConnection() {
 				return false;
 			}
 		};

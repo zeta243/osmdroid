@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.UnknownHostException;
 
-import org.andnav.osm.tileprovider.util.CloudmadeUtil;
 import org.andnav.osm.views.util.IMapTileFilenameProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +23,7 @@ import org.slf4j.LoggerFactory;
  * @author Manuel Stahl
  * 
  */
-public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider
-		implements IOpenStreetMapTileProviderCloudmadeTokenCallback {
+public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider {
 
 	// ===========================================================
 	// Constants
@@ -63,12 +61,12 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider
 	// ===========================================================
 
 	@Override
-	protected boolean getShouldTilesBeSavedInCache() {
+	public boolean getShouldTilesBeSavedInCache() {
 		return true;
 	}
 
 	@Override
-	protected boolean getUsesDataConnection() {
+	public boolean getUsesDataConnection() {
 		return true;
 	}
 
@@ -88,7 +86,7 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider
 
 	private String buildURL(final OpenStreetMapTile tile)
 			throws CloudmadeException {
-		return tile.getRenderer().getTileURLString(tile, this);
+		return tile.getRenderer().getTileURLString(tile, mCallback);
 	}
 
 	// ===========================================================
@@ -98,8 +96,8 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider
 	private class TileLoader extends OpenStreetMapAsyncTileProvider.TileLoader {
 
 		@Override
-		public void loadTile(final OpenStreetMapTileRequestState aState,
-				TileLoadResult aResult) throws CantContinueException {
+		public void loadTile(final OpenStreetMapTileRequestState aState)
+				throws CantContinueException {
 
 			InputStream in = null;
 			OutputStream out = null;
@@ -123,7 +121,6 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider
 
 				final byte[] data = dataStream.toByteArray();
 				tileLoaded(aState, data);
-				aResult.setSuccessResult();
 				return;
 			} catch (final UnknownHostException e) {
 				// no network connection so empty the queue
@@ -154,31 +151,7 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider
 			 * when it receives this completion event.
 			 */
 			// tileLoaded(aTile, true);
-
-			aResult.setFailureResult();
+			tileLoadedFailed(aState);
 		}
 	}
-
-	@Override
-	public String getCloudmadeToken(final String aKey)
-			throws CloudmadeException {
-
-		if (mCloudmadeToken == null) {
-			synchronized (this) {
-				// check again inside the synchronised block
-				if (mCloudmadeToken == null) {
-					mCloudmadeToken = CloudmadeUtil.getCloudmadeToken(aKey);
-				}
-			}
-		}
-
-		return mCloudmadeToken;
-	}
-
-	@Override
-	public String getCloudmadeKey() throws CloudmadeException {
-		// TODO Auto-generated method stub
-		return null;
-	};
-
 }

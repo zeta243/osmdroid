@@ -31,17 +31,7 @@ public class OpenStreetMapTileRequestState {
 		return mProviderQueue.isEmpty();
 	}
 
-	public OpenStreetMapAsyncTileProvider getNextProvider(
-			boolean useDataConnection) {
-
-		OpenStreetMapAsyncTileProvider provider = null;
-		// The logic of the while statement is
-		// "Keep looping until you get null, or a provider that has a data connection if it needs one"
-		do {
-			provider = mProviderQueue.poll();
-		} while ((provider != null)
-				&& (!useDataConnection && provider.getUsesDataConnection()));
-
-		return provider;
+	public OpenStreetMapAsyncTileProvider getNextProvider() {
+		return mProviderQueue.poll();
 	}
 }

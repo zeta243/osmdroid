@@ -102,12 +102,12 @@ public class OpenStreetMapTileFilesystemProvider extends
 	// ===========================================================
 
 	@Override
-	protected boolean getShouldTilesBeSavedInCache() {
+	public boolean getShouldTilesBeSavedInCache() {
 		return false;
 	}
 
 	@Override
-	protected boolean getUsesDataConnection() {
+	public boolean getUsesDataConnection() {
 		return false;
 	}
 
@@ -195,8 +195,7 @@ public class OpenStreetMapTileFilesystemProvider extends
 		 * aTile a tile to be constructed by the method.
 		 */
 		@Override
-		public void loadTile(final OpenStreetMapTileRequestState aState,
-				TileLoadResult aResult) {
+		public void loadTile(final OpenStreetMapTileRequestState aState) {
 
 			OpenStreetMapTile aTile = aState.getMapTile();
 
@@ -204,7 +203,7 @@ public class OpenStreetMapTileFilesystemProvider extends
 			if (!mSdCardAvailable) {
 				if (DEBUGMODE)
 					logger.debug("No sdcard - do nothing for tile: " + aTile);
-				aResult.setFailureResult();
+				tileLoadedFailed(aState);
 				return;
 			}
 
@@ -216,13 +215,12 @@ public class OpenStreetMapTileFilesystemProvider extends
 					if (DEBUGMODE)
 						logger.debug("Loaded tile: " + aTile);
 					tileLoaded(aState, tileFile.getPath());
-					aResult.setSuccessResult();
 
 					// check for old tile
 					final long now = System.currentTimeMillis();
 					final long lastModified = tileFile.lastModified();
 					if (now - lastModified > TILE_EXPIRY_TIME_MILLISECONDS) {
-						aResult.setFailureResult();
+						tileLoadedFailed(aState);
 
 						// XXX perhaps we should distinguish between phone and
 						// wifi data connection
@@ -249,7 +247,7 @@ public class OpenStreetMapTileFilesystemProvider extends
 
 					final InputStream fileFromZip = fileFromZip(aTile);
 					if (fileFromZip == null) {
-						aResult.setFailureResult();
+						tileLoadedFailed(aState);
 
 						// XXX perhaps we should distinguish between phone and
 						// wifi data connection
@@ -266,19 +264,15 @@ public class OpenStreetMapTileFilesystemProvider extends
 
 						// don't refresh the screen because there's nothing new
 						// tileLoaded(aTile, false);
-						aResult.setFailureResult();
 					} else {
 						if (DEBUGMODE)
 							logger.debug("Use tile from zip: " + aTile);
-						// tileLoaded(aTile, fileFromZip);
 						tileLoaded(aState, fileFromZip);
-						aResult.setSuccessResult();
 					}
 				}
 			} catch (final Throwable e) {
 				logger.error("Error loading tile", e);
-				// tileLoaded(aTile, false);
-				aResult.setFailureResult();
+				tileLoadedFailed(aState);
 			}
 		}
 	}

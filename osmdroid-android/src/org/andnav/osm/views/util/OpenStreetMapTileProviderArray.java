@@ -57,7 +57,8 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 			return mTileCache.getMapTile(pTile);
 		} else {
 			if (DEBUGMODE)
-				logger.debug("Cache failed, trying from FS: " + pTile);
+				logger.debug("Cache failed, trying from async providers: "
+						+ pTile);
 
 			OpenStreetMapTileRequestState state;
 			synchronized (mTileProviderList) {
@@ -67,13 +68,33 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 						mTileProviderList.toArray(providerArray), this);
 			}
 
-			OpenStreetMapAsyncTileProvider provider = state
-					.getNextProvider(useDataConnection());
-			if (provider != null) {
+			OpenStreetMapAsyncTileProvider provider = findNextAppropriateProvider(state);
+			if (provider != null)
 				provider.loadMapTileAsync(state);
-			} else
+			else
 				mapTileRequestFailed(state);
 			return null;
 		}
+	}
+
+	@Override
+	public void mapTileRequestFailed(final OpenStreetMapTileRequestState aState) {
+		OpenStreetMapAsyncTileProvider nextProvider = findNextAppropriateProvider(aState);
+		if (nextProvider != null)
+			nextProvider.loadMapTileAsync(aState);
+		else
+			super.mapTileRequestFailed(aState);
+	}
+
+	private OpenStreetMapAsyncTileProvider findNextAppropriateProvider(
+			final OpenStreetMapTileRequestState aState) {
+		OpenStreetMapAsyncTileProvider provider = null;
+		// The logic of the while statement is
+		// "Keep looping until you get null, or a provider that has a data connection if it needs one"
+		do {
+			provider = aState.getNextProvider();
+		} while ((provider != null)
+				&& (!useDataConnection() && provider.getUsesDataConnection()));
+		return provider;
 	}
 }
