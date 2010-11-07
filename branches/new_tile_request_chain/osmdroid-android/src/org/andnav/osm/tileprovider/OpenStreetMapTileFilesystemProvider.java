@@ -2,11 +2,6 @@
 package org.andnav.osm.tileprovider;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 import org.andnav.osm.views.util.IMapTileFilenameProvider;
 import org.andnav.osm.views.util.OpenStreetMapTileProvider;
@@ -41,8 +36,6 @@ public class OpenStreetMapTileFilesystemProvider extends
 	// Fields
 	// ===========================================================
 
-	private final ArrayList<ZipFile> mZipFiles = new ArrayList<ZipFile>();
-
 	/** whether we have a data connection */
 	private boolean mConnected = true;
 
@@ -75,7 +68,6 @@ public class OpenStreetMapTileFilesystemProvider extends
 		mBroadcastReceiver = new MyBroadcastReceiver();
 
 		checkSdCard();
-		findZipFiles();
 
 		final IntentFilter networkFilter = new IntentFilter();
 		networkFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
@@ -126,55 +118,15 @@ public class OpenStreetMapTileFilesystemProvider extends
 		super.stopWorkers();
 	}
 
-	private void findZipFiles() {
-
-		mZipFiles.clear();
-
-		final File[] z = OSMDROID_PATH.listFiles(new FileFilter() {
-			@Override
-			public boolean accept(final File aFile) {
-				return aFile.isFile() && aFile.getName().endsWith(".zip");
-			}
-		});
-
-		if (z != null) {
-			for (final File file : z) {
-				try {
-					mZipFiles.add(new ZipFile(file));
-				} catch (final Throwable e) {
-					logger.warn("Error opening zip file: " + file, e);
-				}
-			}
-		}
-	}
-
-	private synchronized InputStream fileFromZip(final OpenStreetMapTile aTile) {
-		final String path = getMapTileFilenameProvider().getOutputFile(aTile)
-				.getPath();
-		for (final ZipFile zipFile : mZipFiles) {
-			try {
-				final ZipEntry entry = zipFile.getEntry(path);
-				if (entry != null) {
-					final InputStream in = zipFile.getInputStream(entry);
-					return in;
-				}
-			} catch (final Throwable e) {
-				logger.warn("Error getting zip stream: " + aTile, e);
-			}
-		}
-
-		return null;
-	}
-
 	private void checkSdCard() {
 		final String state = Environment.getExternalStorageState();
 		logger.info("sdcard state: " + state);
 		mSdCardAvailable = Environment.MEDIA_MOUNTED.equals(state);
 		if (DEBUGMODE)
 			logger.debug("mSdcardAvailable=" + mSdCardAvailable);
-		if (!mSdCardAvailable) {
-			mZipFiles.clear();
-		}
+		// if (!mSdCardAvailable) {
+		// mZipFiles.clear();
+		// }
 	}
 
 	// ===========================================================
@@ -278,9 +230,9 @@ public class OpenStreetMapTileFilesystemProvider extends
 
 			checkSdCard();
 
-			if (Intent.ACTION_MEDIA_MOUNTED.equals(action)) {
-				findZipFiles();
-			}
+			// if (Intent.ACTION_MEDIA_MOUNTED.equals(action)) {
+			// findZipFiles();
+			// }
 		}
 	}
 }
