@@ -9,6 +9,7 @@ public class OpenStreetMapTileRequestState {
 	final Queue<OpenStreetMapAsyncTileProvider> mProviderQueue;
 	final OpenStreetMapTile mMapTile;
 	final IOpenStreetMapTileProviderCallback mCallback;
+	OpenStreetMapAsyncTileProvider mCurrentProvider;
 
 	public OpenStreetMapTileRequestState(OpenStreetMapTile mapTile,
 			OpenStreetMapAsyncTileProvider[] providers,
@@ -32,6 +33,11 @@ public class OpenStreetMapTileRequestState {
 	}
 
 	public OpenStreetMapAsyncTileProvider getNextProvider() {
-		return mProviderQueue.poll();
+		mCurrentProvider = mProviderQueue.poll();
+		return mCurrentProvider;
+	}
+
+	public OpenStreetMapAsyncTileProvider getCurrentProvider() {
+		return mCurrentProvider;
 	}
 }

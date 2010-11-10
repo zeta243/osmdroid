@@ -11,7 +11,6 @@ import java.io.OutputStream;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
@@ -79,11 +78,12 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 				aPendingQueueSize + 2, 0.1f, true) {
 			private static final long serialVersionUID = 6455337315681858866L;
 
-			@Override
-			protected boolean removeEldestEntry(
-					Entry<OpenStreetMapTile, OpenStreetMapTileRequestState> pEldest) {
-				return size() > aPendingQueueSize;
-			}
+			// @Override
+			// protected boolean removeEldestEntry(
+			// Entry<OpenStreetMapTile, OpenStreetMapTileRequestState> pEldest)
+			// {
+			// return size() > aPendingQueueSize;
+			// }
 		};
 		mMapTileFilenameProvider = pMapTileFilenameProvider;
 	}
@@ -107,11 +107,13 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 
 		synchronized (mPending) {
 			// sanity check
-			if (activeCount == 0 && !mPending.isEmpty()) {
-				logger
-						.warn("Unexpected - no active threads but pending queue not empty");
-				clearQueue();
-			}
+			// (but really this doesn't make sense unless you synchronize the
+			// whole method)
+			// if (activeCount == 0 && !mPending.isEmpty()) {
+			// logger
+			// .warn("Unexpected - no active threads but pending queue not empty");
+			// clearQueue();
+			// }
 
 			// this will put the tile in the queue, or move it to the front of
 			// the queue if it's already present
@@ -139,6 +141,13 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 	public void stopWorkers() {
 		this.clearQueue();
 		this.mThreadPool.interrupt();
+	}
+
+	private void removeTileFromQueues(OpenStreetMapTile mapTile) {
+		synchronized (mPending) {
+			mPending.remove(mapTile);
+		}
+		mWorking.remove(mapTile);
 	}
 
 	/**
@@ -206,13 +215,6 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 
 				return (result != null ? mPending.get(result) : null);
 			}
-		}
-
-		private void removeTileFromQueues(OpenStreetMapTile mapTile) {
-			synchronized (mPending) {
-				mPending.remove(mapTile);
-			}
-			mWorking.remove(mapTile);
 		}
 
 		/**
