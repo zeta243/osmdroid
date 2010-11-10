@@ -14,7 +14,7 @@ import android.os.Parcelable;
  * @author Theodore Hong
  *
  */
-public class GeoPoint implements MathConstants, GeoConstants, Parcelable {
+public class GeoPoint implements MathConstants, GeoConstants, Parcelable, Cloneable {
 	// ===========================================================
 	// Constants
 	// ===========================================================
@@ -49,11 +49,18 @@ public class GeoPoint implements MathConstants, GeoConstants, Parcelable {
 		this.mLongitudeE6 = aGeopoint.mLongitudeE6;
 	}
 
-	protected static GeoPoint fromDoubleString(final String s, final char spacer) {
+	public static GeoPoint fromDoubleString(final String s, final char spacer) {
 		final int spacerPos = s.indexOf(spacer);
 		return new GeoPoint((int) (Double.parseDouble(s.substring(0,
 				spacerPos - 1)) * 1E6), (int) (Double.parseDouble(s.substring(
 				spacerPos + 1, s.length())) * 1E6));
+	}
+
+	public static GeoPoint fromInvertedDoubleString(final String s, final char spacer) {
+		final int spacerPos = s.indexOf(spacer);
+		return new GeoPoint((int) (Double.parseDouble(s.substring(
+				spacerPos + 1, s.length())) * 1E6), (int) (Double.parseDouble(s.substring(
+				0, spacerPos)) * 1E6));
 	}
 
 	public static GeoPoint fromIntString(final String s){
@@ -92,16 +99,17 @@ public class GeoPoint implements MathConstants, GeoConstants, Parcelable {
 	// ===========================================================
 
 	@Override
+	public Object clone() {
+		return new GeoPoint(this.mLatitudeE6, this.mLongitudeE6);
+	}
+
+	@Override
 	public String toString(){
 		return new StringBuilder().append(this.mLatitudeE6).append(",").append(this.mLongitudeE6).toString();
 	}
 
-	public String toDoubleString() {
-		return new StringBuilder().append(this.mLatitudeE6 / 1E6).append(",").append(this.mLongitudeE6  / 1E6).toString();
-	}
-
 	@Override
-	public boolean equals(Object obj) {
+	public boolean equals(final Object obj) {
 		if (obj == null) return false;
 		if (obj == this) return true;
 		if (obj.getClass() != getClass()) return false;
@@ -112,7 +120,7 @@ public class GeoPoint implements MathConstants, GeoConstants, Parcelable {
 	// ===========================================================
 	// Parcelable
 	// ===========================================================
-	private GeoPoint(Parcel in) {
+	private GeoPoint(final Parcel in) {
 		this.mLatitudeE6 = in.readInt();
 		this.mLongitudeE6 = in.readInt();
 	}
@@ -188,6 +196,47 @@ public class GeoPoint implements MathConstants, GeoConstants, Parcelable {
 		final double bearing = Math.toDegrees(Math.atan2(a, b));
 		final double bearing_normalized = (bearing + 360) % 360;
 		return bearing_normalized;
+	}
+
+	/**
+	 * Calculate a point that is the specified distance and bearing away from this point.
+	 * @see Source@ http://www.movable-type.co.uk/scripts/latlong.html
+	 * @see Source@ http://www.movable-type.co.uk/scripts/latlon.js
+	 */
+	public GeoPoint destinationPoint(final double aDistanceInMeters, float aBearingInDegrees) {
+
+		// convert distance to angular distance
+		final double dist = aDistanceInMeters / RADIUS_EARTH_METERS;
+
+		// convert bearing to radians
+		float brng = DEG2RAD * aBearingInDegrees;
+
+		// get current location in radians
+		final double lat1 = DEG2RAD * getLatitudeE6() / 1E6;
+		final double lon1 = DEG2RAD * getLongitudeE6() / 1E6;
+
+		final double lat2 = Math.asin( Math.sin(lat1) * Math.cos(dist) +
+				Math.cos(lat1) * Math.sin(dist) * Math.cos(brng));
+		final double lon2 = lon1 + Math.atan2( Math.sin(brng) * Math.sin(dist) * Math.cos(lat1),
+				Math.cos(dist) - Math.sin(lat1) * Math.sin(lat2));
+
+		final double lat2deg = lat2 / DEG2RAD;
+		final double lon2deg = lon2 / DEG2RAD;
+
+		return new GeoPoint(lat2deg, lon2deg);
+	}
+
+	public static GeoPoint fromCenterBetween(final GeoPoint geoPointA, final GeoPoint geoPointB) {
+		return new GeoPoint((geoPointA.getLatitudeE6() + geoPointB.getLatitudeE6()) / 2,
+							(geoPointA.getLongitudeE6() + geoPointB.getLongitudeE6()) / 2);
+	}
+
+	public String toDoubleString() {
+		return new StringBuilder().append(this.mLatitudeE6 / 1E6).append(",").append(this.mLongitudeE6  / 1E6).toString();
+	}
+
+	public String toInvertedDoubleString() {
+		return new StringBuilder().append(this.mLongitudeE6 / 1E6).append(",").append(this.mLatitudeE6 / 1E6).toString();
 	}
 
 	// ===========================================================
