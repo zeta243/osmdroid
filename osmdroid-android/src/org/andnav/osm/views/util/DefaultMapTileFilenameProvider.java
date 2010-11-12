@@ -70,9 +70,16 @@ public class DefaultMapTileFilenameProvider implements
 
 	private String buildPath(final OpenStreetMapTile tile) {
 		final IOpenStreetMapRendererInfo renderer = tile.getRenderer();
-		return renderer.pathBase() + "/" + tile.getZoomLevel() + "/"
-				+ tile.getX() + "/" + tile.getY()
-				+ renderer.imageFilenameEnding();
+		StringBuilder sb = new StringBuilder();
+		sb.append(renderer.pathBase());
+		sb.append('/');
+		sb.append(tile.getZoomLevel());
+		sb.append('/');
+		sb.append(tile.getX());
+		sb.append('/');
+		sb.append(tile.getY());
+		sb.append(renderer.imageFilenameEnding());
+		return sb.toString();
 	}
 
 	private void checkSdCard() {
