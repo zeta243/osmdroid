@@ -340,7 +340,7 @@ public class OpenStreetMapView extends View implements
 	}
 
 	public double getLatitudeSpan() {
-		return this.getDrawnBoundingBoxE6().getLongitudeSpanE6() / 1E6;
+		return this.getDrawnBoundingBoxE6().getLatitudeSpanE6() / 1E6;
 	}
 
 	public int getLatitudeSpanE6() {
@@ -352,7 +352,7 @@ public class OpenStreetMapView extends View implements
 	}
 
 	public int getLongitudeSpanE6() {
-		return this.getDrawnBoundingBoxE6().getLatitudeSpanE6();
+		return this.getDrawnBoundingBoxE6().getLongitudeSpanE6();
 	}
 
 	public BoundingBoxE6 getDrawnBoundingBoxE6() {
