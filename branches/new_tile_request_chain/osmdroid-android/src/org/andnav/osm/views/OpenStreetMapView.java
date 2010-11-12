@@ -189,7 +189,7 @@ public class OpenStreetMapView extends View implements
 	}
 
 	public void detach() {
-		mMapOverlay.detach();
+		onDetach();
 	}
 
 	/**
@@ -667,6 +667,12 @@ public class OpenStreetMapView extends View implements
 	// ===========================================================
 	// Methods from SuperClass/Interfaces
 	// ===========================================================
+
+	public void onDetach() {
+		mMapOverlay.detach();
+		for (OpenStreetMapViewOverlay osmvo : this.mOverlays)
+			osmvo.onDetach(this);
+	}
 
 	public void onLongPress(MotionEvent e) {
 		for (OpenStreetMapViewOverlay osmvo : this.mOverlays)
