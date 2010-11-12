@@ -143,6 +143,13 @@ public abstract class OpenStreetMapViewOverlay implements OpenStreetMapViewConst
 		return false;
 	}
 
+	/**
+	 * By default does nothing (<code>return false</code>).
+	 */
+	public void onDetach(OpenStreetMapView openStreetMapView) {
+		return;
+	}
+
 	// ===========================================================
 	// Inner and Anonymous Classes
 	// ===========================================================
