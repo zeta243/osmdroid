@@ -19,6 +19,7 @@ import org.andnav.osm.tileprovider.OpenStreetMapTileFilesystemProvider;
 import org.andnav.osm.tileprovider.util.CloudmadeUtil;
 import org.andnav.osm.util.BoundingBoxE6;
 import org.andnav.osm.util.GeoPoint;
+import org.andnav.osm.util.constants.GeoConstants;
 import org.andnav.osm.views.overlay.OpenStreetMapTilesOverlay;
 import org.andnav.osm.views.overlay.OpenStreetMapViewOverlay;
 import org.andnav.osm.views.overlay.OpenStreetMapViewOverlay.Snappable;
@@ -969,7 +970,7 @@ public class OpenStreetMapView extends View implements
 	 * @author Nicolas Gramlich
 	 * @author Manuel Stahl
 	 */
-	public class OpenStreetMapViewProjection {
+	public class OpenStreetMapViewProjection implements GeoConstants {
 
 		private final int viewWidth_2 = getWidth() / 2;
 		private final int viewHeight_2 = getHeight() / 2;
@@ -1027,8 +1028,6 @@ public class OpenStreetMapView extends View implements
 			out.offset(getScrollX(), getScrollY());
 			return out;
 		}
-
-		private static final int EQUATORCIRCUMFENCE = 40075004;
 
 		public float metersToEquatorPixels(final float aMeters) {
 			return aMeters / EQUATORCIRCUMFENCE * getWorldSizePx();
@@ -1158,6 +1157,24 @@ public class OpenStreetMapView extends View implements
 
 		public Path toPixels(final List<? extends GeoPoint> in, final Path reuse) {
 			return toPixels(in, reuse, true);
+		}
+
+		public Rect toPixels(final BoundingBoxE6 pBoundingBoxE6) {
+			final Rect rect = new Rect();
+
+			final Point reuse = new Point();
+
+			toMapPixels(new GeoPoint(pBoundingBoxE6.getLatNorthE6(),
+					pBoundingBoxE6.getLonWestE6()), reuse);
+			rect.left = reuse.x;
+			rect.top = reuse.y;
+
+			toMapPixels(new GeoPoint(pBoundingBoxE6.getLatSouthE6(),
+					pBoundingBoxE6.getLonEastE6()), reuse);
+			rect.right = reuse.x;
+			rect.bottom = reuse.y;
+
+			return rect;
 		}
 
 		protected Path toPixels(final List<? extends GeoPoint> in,

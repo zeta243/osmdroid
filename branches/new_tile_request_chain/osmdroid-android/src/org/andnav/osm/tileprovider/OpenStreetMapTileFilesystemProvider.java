@@ -65,7 +65,7 @@ public class OpenStreetMapTileFilesystemProvider extends
 				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, pMapTileFilenameProvider);
 
 		this.aRegisterReceiver = aRegisterReceiver;
-		mBroadcastReceiver = new MyBroadcastReceiver();
+		this.mBroadcastReceiver = new MyBroadcastReceiver();
 
 		checkSdCard();
 
