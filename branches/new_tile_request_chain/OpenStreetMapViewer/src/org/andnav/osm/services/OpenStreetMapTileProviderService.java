@@ -20,7 +20,9 @@ import android.content.res.Configuration;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
-import android.util.Log;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The OpenStreetMapTileProviderService can download map tiles from a server and
@@ -31,7 +33,7 @@ import android.util.Log;
 public class OpenStreetMapTileProviderService extends Service implements
 		OpenStreetMapServiceConstants, IOpenStreetMapTileProviderCallback {
 
-	private static final String DEBUGTAG = "OSM_TILE_PROVIDER_SERVICE";
+        private static final Logger logger = LoggerFactory.getLogger(OpenStreetMapTileProviderService.class);
 
 	private IOpenStreetMapTileProviderServiceCallback mCallback;
 
@@ -65,14 +67,14 @@ public class OpenStreetMapTileProviderService extends Service implements
 	@Override
 	public void onConfigurationChanged(Configuration pNewConfig) {
 		if (DEBUGMODE)
-			Log.d(DEBUGTAG, "onConfigurationChanged");
+			logger.debug("onConfigurationChanged");
 		super.onConfigurationChanged(pNewConfig);
 	}
 
 	@Override
 	public void onDestroy() {
 		if (DEBUGMODE)
-			Log.d(DEBUGTAG, "onDestroy");
+			logger.debug( "onDestroy");
 		mTileProvider.detach();
 		super.onDestroy();
 	}
@@ -80,28 +82,28 @@ public class OpenStreetMapTileProviderService extends Service implements
 	@Override
 	public void onLowMemory() {
 		if (DEBUGMODE)
-			Log.d(DEBUGTAG, "onLowMemory");
+			logger.debug( "onLowMemory");
 		super.onLowMemory();
 	}
 
 	@Override
 	public void onRebind(Intent pIntent) {
 		if (DEBUGMODE)
-			Log.d(DEBUGTAG, "onRebind");
+			logger.debug( "onRebind");
 		super.onRebind(pIntent);
 	}
 
 	@Override
 	public void onStart(Intent pIntent, int pStartId) {
 		if (DEBUGMODE)
-			Log.d(DEBUGTAG, "onStart");
+			logger.debug( "onStart");
 		super.onStart(pIntent, pStartId);
 	}
 
 	@Override
 	public boolean onUnbind(Intent pIntent) {
 		if (DEBUGMODE)
-			Log.d(DEBUGTAG, "onUnbind");
+			logger.debug( "onUnbind");
 		return super.onUnbind(pIntent);
 	}
 
@@ -113,7 +115,7 @@ public class OpenStreetMapTileProviderService extends Service implements
 			mCallback.mapTileRequestCompleted(tile.getRenderer().name(), tile
 					.getZoomLevel(), tile.getX(), tile.getY(), pTilePath);
 		} catch (final RemoteException e) {
-			Log.e(DEBUGTAG, "Error invoking callback", e);
+			logger.error( "Error invoking callback", e);
 		}
 	}
 

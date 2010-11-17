@@ -17,9 +17,12 @@ import android.os.IBinder;
 import android.os.RemoteException;
 import android.util.Log;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class OpenStreetMapTileProviderService extends OpenStreetMapTileProvider implements ServiceConnection, IOpenStreetMapTileProviderCallback {
 
-	public static final String DEBUGTAG = "OpenStreetMapTileProviderService";
+        private static final Logger logger = LoggerFactory.getLogger(OpenStreetMapTileProviderService.class);
 
 	private final Context mContext;
 
@@ -38,27 +41,27 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProvider 
 
 	@Override
 	public void onServiceConnected(final ComponentName name, final IBinder service) {
-		Log.d(DEBUGTAG, "onServiceConnected(" + name + ")");
+		logger.debug( "onServiceConnected(" + name + ")");
 
 		mTileService = IOpenStreetMapTileProviderService.Stub.asInterface(service);
 
 		try {
 			mTileService.setCallback(mServiceCallback);
 		} catch (RemoteException e) {
-			Log.e(DEBUGTAG, "Error setting callback", e);
+			logger.error( "Error setting callback", e);
 		}
 
 		try {
 			mDownloadFinishedHandler.sendEmptyMessage(OpenStreetMapTile.MAPTILE_SUCCESS_ID);
 		} catch(Exception e) {
-			Log.e(DEBUGTAG, "Error sending success message on connect", e);
+			logger.error( "Error sending success message on connect", e);
 		}
 	};
 
 	@Override
 	public void onServiceDisconnected(final ComponentName name) {
 		onDisconnect();
-		Log.d(DEBUGTAG, "disconnected");
+		logger.debug( "disconnected");
 	}
 
 	/**
@@ -76,25 +79,25 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProvider 
 	public Drawable getMapTile(final OpenStreetMapTile aTile) {
 		if (mTileCache.containsTile(aTile)) { 							// from cache
 			if (DEBUGMODE)
-				Log.d(DEBUGTAG, "MapTileCache succeeded for: " + aTile);
+				logger.debug( "MapTileCache succeeded for: " + aTile);
 			return mTileCache.getMapTile(aTile);
 		} else { 															// from service
 			if (mTileService != null) {
 				if (DEBUGMODE)
-					Log.d(DEBUGTAG, "Cache failed, trying from FS: " + aTile);
+					logger.debug( "Cache failed, trying from FS: " + aTile);
 				try {
 					mTileService.requestMapTile(aTile.getRenderer().name(), aTile.getZoomLevel(), aTile.getX(), aTile.getY());
 				} catch (Throwable e) {
-					Log.e(DEBUGTAG, "Error getting map tile from tile service: " + aTile, e);
+					logger.error( "Error getting map tile from tile service: " + aTile, e);
 				}
 			} else {
 				// try to reconnect, but the connection will take time.
 				if (!bindToService()) {
 					if (DEBUGMODE)
-						Log.d(DEBUGTAG, "Cache failed, can't get from FS because no tile service: " + aTile);
+						logger.debug( "Cache failed, can't get from FS because no tile service: " + aTile);
 				} else {
 					if (DEBUGMODE)
-						Log.d(DEBUGTAG, "Cache failed, tile service still not woken up: " + aTile);
+						logger.debug( "Cache failed, tile service still not woken up: " + aTile);
 				}
 			}
 
@@ -111,7 +114,7 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProvider 
 		if (mServiceBound)
 		{
 			if (DEBUGMODE)
-				Log.d(DEBUGTAG, "Unbinding service");
+				logger.debug( "Unbinding service");
 			mContext.unbindService(this);
 			onDisconnect();
 		}
@@ -125,7 +128,7 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProvider 
 		boolean success = mContext.bindService(new Intent(IOpenStreetMapTileProviderService.class.getName()), this, Context.BIND_AUTO_CREATE);
 
 		if (!success)
-			Log.e(DEBUGTAG, "Could not bind to " + IOpenStreetMapTileProviderService.class.getName());
+			logger.error( "Could not bind to " + IOpenStreetMapTileProviderService.class.getName());
 
 		mServiceBound = success;
 
