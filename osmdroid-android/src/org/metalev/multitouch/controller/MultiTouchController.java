@@ -54,12 +54,16 @@ import java.lang.reflect.Method;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * A class that simplifies the implementation of multitouch in applications. Subclass this and read the fields here as needed in subclasses.
  *
  * @author Luke Hutchison
  */
 public class MultiTouchController<T> {
+        private static final Logger logger = LoggerFactory.getLogger(MultiTouchController.class);
 
 	/**
 	 * Time in ms required after a change in event status (e.g. putting down or lifting off the second finger) before events actually do anything --
@@ -212,7 +216,7 @@ public class MultiTouchController<T> {
 			m_getY = MotionEvent.class.getMethod("getY", Integer.TYPE);
 			succeeded = true;
 		} catch (Exception e) {
-			Log.e("MultiTouchController", "static initializer failed", e);
+			logger.error( "static initializer failed", e);
 		}
 		multiTouchSupported = succeeded;
 		if (multiTouchSupported) {
@@ -238,12 +242,12 @@ public class MultiTouchController<T> {
 		try {
 			int pointerCount = multiTouchSupported ? (Integer) m_getPointerCount.invoke(event) : 1;
 			if (DEBUG)
-				Log.i("MultiTouch", "Got here 1 - " + multiTouchSupported + " " + mMode + " " + handleSingleTouchEvents + " " + pointerCount);
+				logger.info( "Got here 1 - " + multiTouchSupported + " " + mMode + " " + handleSingleTouchEvents + " " + pointerCount);
 			if (mMode == MODE_NOTHING && !handleSingleTouchEvents && pointerCount == 1)
 				// Not handling initial single touch events, just pass them on
 				return false;
 			if (DEBUG)
-				Log.i("MultiTouch", "Got here 2");
+				logger.info( "Got here 2");
 
 			// Handle history first (we sometimes get history with ACTION_MOVE events)
 			int action = event.getAction();
@@ -256,17 +260,17 @@ public class MultiTouchController<T> {
 					// multitouch is supported but there's only one touch point down currently -- event.getX(0) etc. throw
 					// an exception if there's only one point down.
 					if (DEBUG)
-						Log.i("MultiTouch", "Got here 3");
+						logger.info( "Got here 3");
 					xVals[0] = processingHist ? event.getHistoricalX(histIdx) : event.getX();
 					yVals[0] = processingHist ? event.getHistoricalY(histIdx) : event.getY();
 					pressureVals[0] = processingHist ? event.getHistoricalPressure(histIdx) : event.getPressure();
 				} else {
 					// Read x, y and pressure of each pointer
 					if (DEBUG)
-						Log.i("MultiTouch", "Got here 4");
+						logger.info( "Got here 4");
 					int numPointers = Math.min(pointerCount, MAX_TOUCH_POINTS);
 					if (DEBUG && pointerCount > MAX_TOUCH_POINTS)
-						Log.i("MultiTouch", "Got more pointers than MAX_TOUCH_POINTS");
+						logger.info( "Got more pointers than MAX_TOUCH_POINTS");
 					for (int ptrIdx = 0; ptrIdx < numPointers; ptrIdx++) {
 						int ptrId = (Integer) m_getPointerId.invoke(event, ptrIdx);
 						pointerIds[ptrIdx] = ptrId;
@@ -291,14 +295,14 @@ public class MultiTouchController<T> {
 			return true;
 		} catch (Exception e) {
 			// In case any of the introspection stuff fails (it shouldn't)
-			Log.e("MultiTouchController", "onTouchEvent() failed", e);
+			logger.error( "onTouchEvent() failed", e);
 			return false;
 		}
 	}
 
 	private void decodeTouchEvent(int pointerCount, float[] x, float[] y, float[] pressure, int[] pointerIds, int action, boolean down, long eventTime) {
 		if (DEBUG)
-			Log.i("MultiTouch", "Got here 5 - " + pointerCount + " " + action + " " + down);
+			logger.info( "Got here 5 - " + pointerCount + " " + action + " " + down);
 
 		// Swap curr/prev points
 		PointInfo tmp = mPrevPt;
@@ -364,7 +368,7 @@ public class MultiTouchController<T> {
 	 */
 	private void multiTouchController() {
 		if (DEBUG)
-			Log.i("MultiTouch", "Got here 6 - " + mMode + " " + mCurrPt.getNumTouchPoints() + " " + mCurrPt.isDown() + mCurrPt.isMultiTouch());
+			logger.info( "Got here 6 - " + mMode + " " + mCurrPt.getNumTouchPoints() + " " + mCurrPt.isDown() + mCurrPt.isMultiTouch());
 
 		switch (mMode) {
 		case MODE_NOTHING:
@@ -454,7 +458,7 @@ public class MultiTouchController<T> {
 			break;
 		}
 		if (DEBUG)
-			Log.i("MultiTouch", "Got here 7 - " + mMode + " " + mCurrPt.getNumTouchPoints() + " " + mCurrPt.isDown() + mCurrPt.isMultiTouch());
+			logger.info( "Got here 7 - " + mMode + " " + mCurrPt.getNumTouchPoints() + " " + mCurrPt.isDown() + mCurrPt.isMultiTouch());
 	}
 
 	// ------------------------------------------------------------------------------------
@@ -489,7 +493,7 @@ public class MultiTouchController<T> {
 		/** Set all point info */
 		private void set(int numPoints, float[] x, float[] y, float[] pressure, int[] pointerIds, int action, boolean isDown, long eventTime) {
 			if (DEBUG)
-				Log.i("MultiTouch", "Got here 8 - " + +numPoints + " " + x[0] + " " + y[0] + " " + (numPoints > 1 ? x[1] : x[0]) + " "
+				logger.info( "Got here 8 - " + +numPoints + " " + x[0] + " " + y[0] + " " + (numPoints > 1 ? x[1] : x[0]) + " "
 						+ (numPoints > 1 ? y[1] : y[0]) + " " + action + " " + isDown);
 			this.eventTime = eventTime;
 			this.action = action;

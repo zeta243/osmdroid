@@ -1,7 +1,6 @@
 // Created by plusminus on 23:18:23 - 02.10.2008
 package org.andnav.osm.views.overlay;
 
-import java.awt.Rectangle;
 import java.util.List;
 
 import org.andnav.osm.DefaultResourceProxyImpl;
