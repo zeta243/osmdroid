@@ -57,11 +57,12 @@ public class OpenStreetMapAsyncTileProviderTest {
 			protected Runnable getTileLoader() {
 				return new TileLoader() {
 					@Override
-					protected void loadTile(
+					protected boolean loadTile(
 							final OpenStreetMapTileRequestState aState)
 							throws CantContinueException {
 						// does nothing - doesn't call the callback
-						tileLoadedFailed(aState);
+						//tileLoadedFailed(aState);
+						return false;
 					}
 				};
 			}
@@ -131,9 +132,10 @@ public class OpenStreetMapAsyncTileProviderTest {
 			protected Runnable getTileLoader() {
 				return new TileLoader() {
 					@Override
-					protected void loadTile(final OpenStreetMapTileRequestState aState) throws CantContinueException {
+					protected boolean loadTile(final OpenStreetMapTileRequestState aState) throws CantContinueException {
 						try {Thread.sleep(1000);} catch (InterruptedException e) {}
 						tileLoaded(aState);
+						return true;
 					}
 				};
 			}
@@ -229,13 +231,14 @@ public class OpenStreetMapAsyncTileProviderTest {
 			protected Runnable getTileLoader() {
 				return new TileLoader() {
 					@Override
-					protected void loadTile(final OpenStreetMapTileRequestState aState)
+					protected boolean loadTile(final OpenStreetMapTileRequestState aState)
 							throws CantContinueException {
 						try {
 							Thread.sleep(1000);
 						} catch (InterruptedException e) {
 						}
 						tileLoaded(aState);
+						return true;
 					}
 				};
 			}
