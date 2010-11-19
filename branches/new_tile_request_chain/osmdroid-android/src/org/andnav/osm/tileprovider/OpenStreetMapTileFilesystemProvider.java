@@ -141,7 +141,7 @@ public class OpenStreetMapTileFilesystemProvider extends
 		 * aTile a tile to be constructed by the method.
 		 */
 		@Override
-		public void loadTile(final OpenStreetMapTileRequestState aState) {
+		public boolean loadTile(final OpenStreetMapTileRequestState aState) {
 
 			OpenStreetMapTile aTile = aState.getMapTile();
 
@@ -149,8 +149,8 @@ public class OpenStreetMapTileFilesystemProvider extends
 			if (!mSdCardAvailable) {
 				if (DEBUGMODE)
 					logger.debug("No sdcard - do nothing for tile: " + aTile);
-				tileLoadedFailed(aState);
-				return;
+				// tileLoadedFailed(aState);
+				return false;
 			}
 
 			final File tileFile = getMapTileFilenameProvider().getOutputFile(
@@ -170,19 +170,22 @@ public class OpenStreetMapTileFilesystemProvider extends
 						// change - this is currently safe to do after
 						// previously calling tileLoaded(), but maybe there is a
 						// better way to do this?
-						tileLoadedFailed(aState);
-					}
+						// tileLoadedFailed(aState);
+						return false;
+					} else
+						return true;
 
 				} else {
 					if (DEBUGMODE)
 						logger.debug("Tile doesn't exist: " + aTile);
-
-					tileLoadedFailed(aState);
+					// tileLoadedFailed(aState);
 				}
 			} catch (final Throwable e) {
 				logger.error("Error loading tile", e);
-				tileLoadedFailed(aState);
+				// tileLoadedFailed(aState);
 			}
+
+			return false;
 		}
 	}
 

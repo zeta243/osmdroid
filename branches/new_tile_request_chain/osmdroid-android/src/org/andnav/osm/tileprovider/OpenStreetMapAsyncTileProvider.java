@@ -173,7 +173,7 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 		 * @param aTile
 		 * @throws CantContinueException
 		 */
-		protected abstract void loadTile(OpenStreetMapTileRequestState aState)
+		protected abstract boolean loadTile(OpenStreetMapTileRequestState aState)
 				throws CantContinueException;
 
 		private OpenStreetMapTileRequestState nextTile() {
@@ -335,8 +335,7 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 			aState.getCallback().mapTileRequestCompleted(aState);
 		}
 
-		protected void tileLoadedFailed(
-				final OpenStreetMapTileRequestState aState) {
+		private void tileLoadedFailed(final OpenStreetMapTileRequestState aState) {
 			removeTileFromQueues(aState.getMapTile());
 
 			aState.getCallback().mapTileRequestFailed(aState);
@@ -380,17 +379,22 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 		final public void run() {
 
 			OpenStreetMapTileRequestState state;
+			boolean result = false;
 			while ((state = nextTile()) != null) {
 				if (DEBUGMODE)
 					logger.debug("Next tile: " + state);
 				try {
-					loadTile(state);
+					result = false;
+					result = loadTile(state);
 				} catch (final CantContinueException e) {
 					logger.info("Tile loader can't continue", e);
 					clearQueue();
 				} catch (final Throwable e) {
 					logger.error("Error downloading tile: " + state, e);
 				}
+
+				if (result == false)
+					tileLoadedFailed(state);
 
 				// TODO: process result
 				// if (result.isSuccess()) {

@@ -99,7 +99,7 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 	private class TileLoader extends OpenStreetMapAsyncTileProvider.TileLoader {
 
 		@Override
-		public void loadTile(final OpenStreetMapTileRequestState aState)
+		public boolean loadTile(final OpenStreetMapTileRequestState aState)
 				throws CantContinueException {
 
 			InputStream in = null;
@@ -124,7 +124,7 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 
 				final byte[] data = dataStream.toByteArray();
 				tileLoaded(aState, data);
-				return;
+				return true;
 			} catch (final UnknownHostException e) {
 				// no network connection so empty the queue
 				logger.warn("UnknownHostException downloading MapTile: " + tile
@@ -145,16 +145,9 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 				StreamUtils.closeStream(out);
 			}
 
-			/*
-			 * Don't immediately send the tile back. If we're moving, and the
-			 * internet is a bit patchy, then by the time the download has
-			 * finished we don't need this tile any more. If we still do need it
-			 * then the file system provider will get it again next time it's
-			 * needed. That should be immediately because the view is redrawn
-			 * when it receives this completion event.
-			 */
 			// tileLoaded(aTile, true);
-			tileLoadedFailed(aState);
+			// tileLoadedFailed(aState);
+			return false;
 		}
 	}
 }
