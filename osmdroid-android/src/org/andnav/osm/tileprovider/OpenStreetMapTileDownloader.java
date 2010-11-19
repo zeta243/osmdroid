@@ -36,8 +36,6 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 	// Fields
 	// ===========================================================
 
-	private String mCloudmadeToken;
-
 	private IOpenStreetMapTileProviderCloudmadeTokenCallback mCallback;
 
 	// ===========================================================
