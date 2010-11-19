@@ -14,8 +14,6 @@ import org.andnav.osm.events.ScrollEvent;
 import org.andnav.osm.events.ZoomEvent;
 import org.andnav.osm.tileprovider.IRegisterReceiver;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
-import org.andnav.osm.tileprovider.OpenStreetMapTileDownloader;
-import org.andnav.osm.tileprovider.OpenStreetMapTileFilesystemProvider;
 import org.andnav.osm.tileprovider.util.CloudmadeUtil;
 import org.andnav.osm.util.BoundingBoxE6;
 import org.andnav.osm.util.GeoPoint;
@@ -125,10 +123,6 @@ public class OpenStreetMapView extends View implements
 	private Matrix mMatrix = new Matrix();
 	private BoundingBoxE6 mBoundingBox = new BoundingBoxE6(0, 0, 0, 0);
 	private int[] mIntArray = new int[2];
-
-	private OpenStreetMapTileFilesystemProvider mFileSystemProvider;
-
-	private OpenStreetMapTileDownloader mTileDownloaderProvider;
 
 	// ===========================================================
 	// Constructors

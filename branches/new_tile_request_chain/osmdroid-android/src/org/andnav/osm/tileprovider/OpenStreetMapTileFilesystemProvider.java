@@ -121,9 +121,6 @@ public class OpenStreetMapTileFilesystemProvider extends
 		mSdCardAvailable = Environment.MEDIA_MOUNTED.equals(state);
 		if (DEBUGMODE)
 			logger.debug("mSdcardAvailable=" + mSdCardAvailable);
-		// if (!mSdCardAvailable) {
-		// mZipFiles.clear();
-		// }
 	}
 
 	// ===========================================================
@@ -226,10 +223,6 @@ public class OpenStreetMapTileFilesystemProvider extends
 				logger.debug("mConnected=" + mConnected);
 
 			checkSdCard();
-
-			// if (Intent.ACTION_MEDIA_MOUNTED.equals(action)) {
-			// findZipFiles();
-			// }
 		}
 	}
 }
