@@ -42,30 +42,4 @@ public class OpenStreetMapTileProviderDirect extends
 		super.mTileProviderList.add(mFileSystemProvider);
 		super.mTileProviderList.add(mTileDownloaderProvider);
 	}
-	// @Override
-	// public void detach() {
-	// mFileSystemProvider.detach();
-	// }
-
-	// @Override
-	// public Drawable getMapTile(final OpenStreetMapTile pTile) {
-	// if (mTileCache.containsTile(pTile)) {
-	// if (DEBUGMODE)
-	// logger.debug("MapTileCache succeeded for: " + pTile);
-	// return mTileCache.getMapTile(pTile);
-	// } else {
-	// if (DEBUGMODE)
-	// logger.debug("Cache failed, trying from FS: " + pTile);
-	// mFileSystemProvider.loadMapTileAsync(/* pTile */null);
-	// return null;
-	// }
-	// }
-
-	// @Override
-	// public String getCloudmadeKey() throws CloudmadeException {
-	// if (mCloudmadeKey == null || mCloudmadeKey.length() == 0) {
-	// throw new CloudmadeException("Error getting Cloudmade key");
-	// }
-	// return mCloudmadeKey;
-	// }
 }

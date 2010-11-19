@@ -89,10 +89,6 @@ public class OpenStreetMapTileFileArchiveProvider extends
 		aRegisterReceiver.registerReceiver(mBroadcastReceiver, mediaFilter);
 	}
 
-	public void detach() {
-		aRegisterReceiver.unregisterReceiver(mBroadcastReceiver);
-	}
-
 	// ===========================================================
 	// Getter & Setter
 	// ===========================================================
@@ -122,8 +118,9 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	};
 
 	@Override
-	public void stopWorkers() {
-		super.stopWorkers();
+	public void detach() {
+		aRegisterReceiver.unregisterReceiver(mBroadcastReceiver);
+		super.detach();
 	}
 
 	private void findZipFiles() {

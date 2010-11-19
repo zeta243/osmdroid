@@ -57,8 +57,7 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 	public void detach() {
 		synchronized (mTileProviderList) {
 			for (OpenStreetMapAsyncTileProvider tileProvider : mTileProviderList) {
-				tileProvider.stopWorkers();
-				// TODO: Call detach?
+				tileProvider.detach();
 			}
 		}
 	}

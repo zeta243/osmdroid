@@ -80,6 +80,11 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 		return new TileLoader();
 	};
 
+	@Override
+	public void detach() {
+		super.detach();
+	}
+
 	// ===========================================================
 	// Methods
 	// ===========================================================

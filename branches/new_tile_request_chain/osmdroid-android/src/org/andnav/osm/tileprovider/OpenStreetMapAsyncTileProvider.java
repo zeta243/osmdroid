@@ -136,9 +136,9 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 	}
 
 	/**
-	 * Stops all workers - we're shutting down.
+	 * Detach, we're shutting down - Stops all workers.
 	 */
-	public void stopWorkers() {
+	public void detach() {
 		this.clearQueue();
 		this.mThreadPool.interrupt();
 	}
