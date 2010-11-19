@@ -34,6 +34,13 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 
 	protected final List<OpenStreetMapAsyncTileProvider> mTileProviderList;
 
+	protected OpenStreetMapTileProviderArray(
+			final Handler pDownloadFinishedListener,
+			final IRegisterReceiver aRegisterReceiver) {
+		this(pDownloadFinishedListener, aRegisterReceiver,
+				new OpenStreetMapAsyncTileProvider[0]);
+	}
+
 	public OpenStreetMapTileProviderArray(
 			final Handler pDownloadFinishedListener,
 			final IRegisterReceiver aRegisterReceiver,
