@@ -192,7 +192,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 		 * aTile a tile to be constructed by the method.
 		 */
 		@Override
-		public void loadTile(final OpenStreetMapTileRequestState aState) {
+		public boolean loadTile(final OpenStreetMapTileRequestState aState) {
 
 			OpenStreetMapTile aTile = aState.getMapTile();
 
@@ -200,8 +200,8 @@ public class OpenStreetMapTileFileArchiveProvider extends
 			if (!mSdCardAvailable) {
 				if (DEBUGMODE)
 					logger.debug("No sdcard - do nothing for tile: " + aTile);
-				tileLoadedFailed(aState);
-				return;
+				// tileLoadedFailed(aState);
+				return false;
 			}
 
 			try {
@@ -210,16 +210,19 @@ public class OpenStreetMapTileFileArchiveProvider extends
 
 				final InputStream fileFromZip = fileFromZip(aTile);
 				if (fileFromZip == null) {
-					tileLoadedFailed(aState);
+					// tileLoadedFailed(aState);
 				} else {
 					if (DEBUGMODE)
 						logger.debug("Use tile from zip: " + aTile);
 					tileLoaded(aState, fileFromZip);
+					return true;
 				}
 			} catch (final Throwable e) {
 				logger.error("Error loading tile", e);
-				tileLoadedFailed(aState);
+				// tileLoadedFailed(aState);
 			}
+
+			return false;
 		}
 	}
 
