@@ -81,10 +81,6 @@ public class OpenStreetMapTileFilesystemProvider extends
 		aRegisterReceiver.registerReceiver(mBroadcastReceiver, mediaFilter);
 	}
 
-	public void detach() {
-		aRegisterReceiver.unregisterReceiver(mBroadcastReceiver);
-	}
-
 	// ===========================================================
 	// Getter & Setter
 	// ===========================================================
@@ -114,8 +110,9 @@ public class OpenStreetMapTileFilesystemProvider extends
 	};
 
 	@Override
-	public void stopWorkers() {
-		super.stopWorkers();
+	public void detach() {
+		aRegisterReceiver.unregisterReceiver(mBroadcastReceiver);
+		super.detach();
 	}
 
 	private void checkSdCard() {
