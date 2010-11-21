@@ -5,8 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.io.InputStream;
 import java.util.ArrayList;
 
+import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.views.overlay.OpenStreetMapTilesOverlay;
-import org.andnav.osm.views.util.OpenStreetMapRendererFactory;
 import org.junit.Test;
 
 /**

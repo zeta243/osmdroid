@@ -1,10 +1,11 @@
 // Created by plusminus on 21:46:22 - 25.09.2008
-package org.andnav.osm.views.util;
+package org.andnav.osm.tileprovider.util;
 
 import java.io.InputStream;
 
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
+import org.andnav.osm.views.util.OpenStreetMapTileCache;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package org.andnav.osm.views.util;
+package org.andnav.osm.tileprovider.renderer;
 
 import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.ResourceProxy.string;

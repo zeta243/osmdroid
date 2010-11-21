@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
 import org.andnav.osm.views.util.IMapTileFilenameProvider;
-import org.andnav.osm.views.util.OpenStreetMapTileProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

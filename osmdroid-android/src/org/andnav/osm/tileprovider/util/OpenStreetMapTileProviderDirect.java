@@ -1,10 +1,12 @@
-package org.andnav.osm.views.util;
+package org.andnav.osm.tileprovider.util;
 
 import org.andnav.osm.tileprovider.CloudmadeDefaultTokenProvider;
 import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
 import org.andnav.osm.tileprovider.IRegisterReceiver;
 import org.andnav.osm.tileprovider.OpenStreetMapTileDownloader;
 import org.andnav.osm.tileprovider.OpenStreetMapTileFilesystemProvider;
+import org.andnav.osm.views.util.DefaultMapTileFilenameProvider;
+import org.andnav.osm.views.util.IMapTileFilenameProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,6 +1,6 @@
 package org.andnav.osm.tileprovider;
 
-import org.andnav.osm.views.util.IOpenStreetMapRendererInfo;
+import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 
 /**
  * A map tile is distributed using the observer pattern.

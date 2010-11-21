@@ -14,8 +14,8 @@ import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
+import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
 import org.andnav.osm.views.util.IMapTileFilenameProvider;
-import org.andnav.osm.views.util.OpenStreetMapTileProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
