@@ -1,4 +1,4 @@
-package org.andnav.osm.views.util;
+package org.andnav.osm.tileprovider.util;
 
 import java.io.InputStream;
 import java.util.ArrayList;
