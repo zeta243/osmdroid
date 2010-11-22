@@ -155,4 +155,13 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProvider 
 		}
 	};
 
+	@Override
+	public int getMinimumZoomLevel() {
+		return 1;
+	}
+
+	@Override
+	public int getMaximumZoomLevel() {
+		return 18;
+	}
 }
