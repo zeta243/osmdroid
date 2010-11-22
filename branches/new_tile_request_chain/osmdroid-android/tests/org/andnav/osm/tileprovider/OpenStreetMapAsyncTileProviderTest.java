@@ -59,6 +59,16 @@ public class OpenStreetMapAsyncTileProviderTest {
 			public boolean getUsesDataConnection() {
 				return false;
 			}
+
+			@Override
+			public int getMinimumZoomLevel() {
+				return 0;
+			}
+
+			@Override
+			public int getMaximumZoomLevel() {
+				return 0;
+			}
 		};
 
 		final OpenStreetMapTile tile = new OpenStreetMapTile(1, 1, 1);
@@ -128,6 +138,17 @@ public class OpenStreetMapAsyncTileProviderTest {
 			public boolean getUsesDataConnection() {
 				return false;
 			}
+
+			@Override
+			public int getMinimumZoomLevel() {
+				return 0;
+			}
+
+			@Override
+			public int getMaximumZoomLevel() {
+				return 0;
+			}
+
 		};
 
 		final OpenStreetMapTile tile1 = new OpenStreetMapTile(1, 1, 1);
@@ -218,6 +239,16 @@ public class OpenStreetMapAsyncTileProviderTest {
 			@Override
 			public boolean getUsesDataConnection() {
 				return false;
+			}
+
+			@Override
+			public int getMinimumZoomLevel() {
+				return 0;
+			}
+
+			@Override
+			public int getMaximumZoomLevel() {
+				return 0;
 			}
 		};
 
