@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Random;
 
+import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,6 @@ public abstract class OpenStreetMapRendererBase implements IOpenStreetMapRendere
 		return mName;
 	}
 
-	@Override
 	public String pathBase() {
 		return mName;
 	}
@@ -78,7 +78,6 @@ public abstract class OpenStreetMapRendererBase implements IOpenStreetMapRendere
 		return mZoomMaxLevel;
 	}
 
-	@Override
 	public String imageFilenameEnding() {
 		return mImageFilenameEnding;
 	}
@@ -103,6 +102,20 @@ public abstract class OpenStreetMapRendererBase implements IOpenStreetMapRendere
 			System.gc();
 		}
 		return null;
+	}
+
+	@Override
+	public String getTileRelativeFilenameString(OpenStreetMapTile tile) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(pathBase());
+		sb.append('/');
+		sb.append(tile.getZoomLevel());
+		sb.append('/');
+		sb.append(tile.getX());
+		sb.append('/');
+		sb.append(tile.getY());
+		sb.append(imageFilenameEnding());
+		return sb.toString();
 	}
 
 	@Override

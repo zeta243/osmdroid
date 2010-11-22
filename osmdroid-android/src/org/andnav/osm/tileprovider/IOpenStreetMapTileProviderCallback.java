@@ -1,6 +1,6 @@
 package org.andnav.osm.tileprovider;
 
-import java.io.InputStream;
+import android.graphics.drawable.Drawable;
 
 public interface IOpenStreetMapTileProviderCallback {
 
@@ -8,33 +8,11 @@ public interface IOpenStreetMapTileProviderCallback {
 	 * The map tile request has completed.
 	 * 
 	 * @param aTile
-	 *            the tile request that has completed
-	 * @param aTilePath
-	 *            the path of the requested tile, or null if request has
-	 *            completed without returning a tile path
+	 *            the tile request that has completed, or null if tile was not
+	 *            loaded (but request was successful?)
 	 */
 	void mapTileRequestCompleted(OpenStreetMapTileRequestState aState,
-			String aTilePath);
-
-	/**
-	 * The map tile request has completed.
-	 * 
-	 * @param aTile
-	 *            the tile request that has completed
-	 * @param aTileInputStream
-	 *            the input stream of the requested tile, or null if request has
-	 *            completed without returning a tile
-	 */
-	void mapTileRequestCompleted(OpenStreetMapTileRequestState aState,
-			final InputStream aTileInputStream);
-
-	/**
-	 * The map tile request has completed but no tile has loaded.
-	 * 
-	 * @param aTile
-	 *            the tile request that has completed
-	 */
-	void mapTileRequestCompleted(OpenStreetMapTileRequestState aState);
+			final Drawable aDrawable);
 
 	/**
 	 * The map tile request has completed but no tile has loaded.

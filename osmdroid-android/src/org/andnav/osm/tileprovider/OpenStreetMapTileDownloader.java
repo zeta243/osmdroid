@@ -3,6 +3,7 @@ package org.andnav.osm.tileprovider;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -11,9 +12,11 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.UnknownHostException;
 
-import org.andnav.osm.views.util.IMapTileFilenameProvider;
+import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import android.graphics.drawable.Drawable;
 
 /**
  * The OpenStreetMapTileDownloader loads tiles from a server and passes them to
@@ -38,16 +41,27 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 
 	private IOpenStreetMapTileProviderCloudmadeTokenCallback mCallback;
 
+	private final IFilesystemCacheProvider mFilesystemCacheProvider;
+
+	private IFilesystemCache mFilesystemCache;
+
+	private final IOpenStreetMapRendererInfo mRendererInfo;
+
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 
 	public OpenStreetMapTileDownloader(
+			IOpenStreetMapRendererInfo pRendererInfo,
 			final IOpenStreetMapTileProviderCloudmadeTokenCallback pCallback,
-			IMapTileFilenameProvider pMapTileFilenameProvider) {
+			IFilesystemCacheProvider pFilesystemCacheProvider) {
 		super(NUMBER_OF_TILE_DOWNLOAD_THREADS,
-				TILE_DOWNLOAD_MAXIMUM_QUEUE_SIZE, pMapTileFilenameProvider);
+				TILE_DOWNLOAD_MAXIMUM_QUEUE_SIZE, pFilesystemCacheProvider);
+		mRendererInfo = pRendererInfo;
 		mCallback = pCallback;
+		mFilesystemCacheProvider = pFilesystemCacheProvider;
+		mFilesystemCache = mFilesystemCacheProvider
+				.registerRendererForFilesystemAccess(mRendererInfo);
 	}
 
 	// ===========================================================
@@ -57,11 +71,6 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 	// ===========================================================
 	// Methods from SuperClass/Interfaces
 	// ===========================================================
-
-	@Override
-	public boolean getShouldTilesBeSavedInCache() {
-		return true;
-	}
 
 	@Override
 	public boolean getUsesDataConnection() {
@@ -80,6 +89,8 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 
 	@Override
 	public void detach() {
+		mFilesystemCacheProvider
+				.unregisterRendererForFilesystemAccess(mRendererInfo);
 		super.detach();
 	}
 
@@ -89,7 +100,7 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 
 	private String buildURL(final OpenStreetMapTile tile)
 			throws CloudmadeException {
-		return tile.getRenderer().getTileURLString(tile, mCallback);
+		return mRendererInfo.getTileURLString(tile, mCallback);
 	}
 
 	// ===========================================================
@@ -99,7 +110,7 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 	private class TileLoader extends OpenStreetMapAsyncTileProvider.TileLoader {
 
 		@Override
-		public boolean loadTile(final OpenStreetMapTileRequestState aState)
+		public Drawable loadTile(final OpenStreetMapTileRequestState aState)
 				throws CantContinueException {
 
 			InputStream in = null;
@@ -121,10 +132,17 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 						StreamUtils.IO_BUFFER_SIZE);
 				StreamUtils.copy(in, out);
 				out.flush();
-
 				final byte[] data = dataStream.toByteArray();
-				tileLoaded(aState, data);
-				return true;
+
+				// Save the data to the filesystem cache
+				ByteArrayInputStream byteStream = null;
+				Drawable result = null;
+				byteStream = new ByteArrayInputStream(data);
+				mFilesystemCache.saveFile(mRendererInfo, tile, byteStream);
+				byteStream.reset();
+				result = mRendererInfo.getDrawable(byteStream);
+
+				return result;
 			} catch (final UnknownHostException e) {
 				// no network connection so empty the queue
 				logger.warn("UnknownHostException downloading MapTile: " + tile
@@ -145,9 +163,7 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 				StreamUtils.closeStream(out);
 			}
 
-			// tileLoaded(aTile, true);
-			// tileLoadedFailed(aState);
-			return false;
+			return null;
 		}
 	}
 }

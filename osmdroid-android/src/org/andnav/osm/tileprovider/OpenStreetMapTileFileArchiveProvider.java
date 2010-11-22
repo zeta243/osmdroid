@@ -8,8 +8,8 @@ import java.util.ArrayList;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
-import org.andnav.osm.views.util.IMapTileFilenameProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,10 +17,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.wifi.WifiManager;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
-import android.telephony.TelephonyManager;
 
 /**
  * 
@@ -43,15 +41,14 @@ public class OpenStreetMapTileFileArchiveProvider extends
 
 	private final ArrayList<ZipFile> mZipFiles = new ArrayList<ZipFile>();
 
-	/** whether we have a data connection */
-	private boolean mConnected = true;
-
 	/** whether the sdcard is mounted read/write */
 	private boolean mSdCardAvailable = true;
 
 	/** keep around to unregister when we're done */
 	private final IRegisterReceiver aRegisterReceiver;
 	private final MyBroadcastReceiver mBroadcastReceiver;
+
+	private final IOpenStreetMapRendererInfo mRenderInfo;
 
 	// ===========================================================
 	// Constructors
@@ -66,21 +63,18 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	 * @param aRegisterReceiver
 	 */
 	public OpenStreetMapTileFileArchiveProvider(
-			final IRegisterReceiver aRegisterReceiver,
-			IMapTileFilenameProvider pMapTileFilenameProvider) {
+			final IOpenStreetMapRendererInfo pRenderInfo,
+			final IRegisterReceiver pRegisterReceiver,
+			IFilesystemCacheProvider pFilesystemCacheProvider) {
 		super(NUMBER_OF_TILE_FILESYSTEM_THREADS,
-				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, pMapTileFilenameProvider);
+				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, pFilesystemCacheProvider);
+		mRenderInfo = pRenderInfo;
 
-		this.aRegisterReceiver = aRegisterReceiver;
+		this.aRegisterReceiver = pRegisterReceiver;
 		mBroadcastReceiver = new MyBroadcastReceiver();
 
 		checkSdCard();
 		findZipFiles();
-
-		final IntentFilter networkFilter = new IntentFilter();
-		networkFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-		networkFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-		aRegisterReceiver.registerReceiver(mBroadcastReceiver, networkFilter);
 
 		final IntentFilter mediaFilter = new IntentFilter();
 		mediaFilter.addAction(Intent.ACTION_MEDIA_MOUNTED);
@@ -96,11 +90,6 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	// ===========================================================
 	// Methods from SuperClass/Interfaces
 	// ===========================================================
-
-	@Override
-	public boolean getShouldTilesBeSavedInCache() {
-		return false;
-	}
 
 	@Override
 	public boolean getUsesDataConnection() {
@@ -146,8 +135,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	}
 
 	private synchronized InputStream fileFromZip(final OpenStreetMapTile aTile) {
-		final String path = getMapTileFilenameProvider().getOutputFile(aTile)
-				.getPath();
+		final String path = mRenderInfo.getTileRelativeFilenameString(aTile);
 		for (final ZipFile zipFile : mZipFiles) {
 			try {
 				final ZipEntry entry = zipFile.getEntry(path);
@@ -192,7 +180,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 		 * aTile a tile to be constructed by the method.
 		 */
 		@Override
-		public boolean loadTile(final OpenStreetMapTileRequestState aState) {
+		public Drawable loadTile(final OpenStreetMapTileRequestState aState) {
 
 			OpenStreetMapTile aTile = aState.getMapTile();
 
@@ -200,36 +188,37 @@ public class OpenStreetMapTileFileArchiveProvider extends
 			if (!mSdCardAvailable) {
 				if (DEBUGMODE)
 					logger.debug("No sdcard - do nothing for tile: " + aTile);
-				// tileLoadedFailed(aState);
-				return false;
+				return null;
 			}
 
+			InputStream fileFromZip = null;
 			try {
 				if (DEBUGMODE)
 					logger.debug("Tile doesn't exist: " + aTile);
 
-				final InputStream fileFromZip = fileFromZip(aTile);
+				fileFromZip = fileFromZip(aTile);
 				if (fileFromZip == null) {
 					// tileLoadedFailed(aState);
 				} else {
 					if (DEBUGMODE)
 						logger.debug("Use tile from zip: " + aTile);
-					tileLoaded(aState, fileFromZip);
-					return true;
+					Drawable drawable = mRenderInfo.getDrawable(fileFromZip);
+					return drawable;
 				}
 			} catch (final Throwable e) {
 				logger.error("Error loading tile", e);
-				// tileLoadedFailed(aState);
+			} finally {
+				if (fileFromZip != null)
+					StreamUtils.closeStream(fileFromZip);
 			}
 
-			return false;
+			return null;
 		}
 	}
 
 	/**
-	 * This broadcast receiver is responsible for determining the best channel
-	 * over which tiles may be acquired. In other words it sets network status
-	 * flags.
+	 * This broadcast receiver will recheck the sd card when the mount/unmount
+	 * messages happen
 	 * 
 	 */
 	private class MyBroadcastReceiver extends BroadcastReceiver {
@@ -239,28 +228,6 @@ public class OpenStreetMapTileFileArchiveProvider extends
 
 			final String action = aIntent.getAction();
 			logger.info("onReceive: " + action);
-
-			final WifiManager wm = (WifiManager) aContext
-					.getSystemService(Context.WIFI_SERVICE);
-			final int wifiState = wm.getWifiState(); // TODO check for
-			// permission or catch
-			// error
-			if (DEBUGMODE)
-				logger.debug("wifi state=" + wifiState);
-
-			final TelephonyManager tm = (TelephonyManager) aContext
-					.getSystemService(Context.TELEPHONY_SERVICE);
-			final int dataState = tm.getDataState(); // TODO check for
-			// permission or catch
-			// error
-			if (DEBUGMODE)
-				logger.debug("telephone data state=" + dataState);
-
-			mConnected = wifiState == WifiManager.WIFI_STATE_ENABLED
-					|| dataState == TelephonyManager.DATA_CONNECTED;
-
-			if (DEBUGMODE)
-				logger.debug("mConnected=" + mConnected);
 
 			checkSdCard();
 

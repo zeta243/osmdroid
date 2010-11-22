@@ -14,13 +14,12 @@ public interface IOpenStreetMapRendererInfo {
 
 	int ordinal();
 	String name();
-	String pathBase();
 	String localizedName(ResourceProxy proxy);
 	int maptileSizePx();
 	int maptileZoom();
 	int zoomMinLevel();
 	int zoomMaxLevel();
-	String imageFilenameEnding();
+	String getTileRelativeFilenameString(OpenStreetMapTile aTile);
 	String getTileURLString(OpenStreetMapTile aTile, IOpenStreetMapTileProviderCloudmadeTokenCallback aCloudmadeTokenCallback) throws CloudmadeException;
 	Drawable getDrawable(String aFilePath);
 	Drawable getDrawable(InputStream aTileInputStream);

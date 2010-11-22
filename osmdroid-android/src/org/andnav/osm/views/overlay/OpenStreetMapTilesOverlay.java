@@ -135,7 +135,7 @@ public class OpenStreetMapTilesOverlay extends OpenStreetMapViewOverlay {
 				/* Construct a URLString, which represents the MapTile. */
 				final int tileY = MyMath.mod(y, mapTileUpperBound);
 				final int tileX = MyMath.mod(x, mapTileUpperBound);
-				final OpenStreetMapTile tile = new OpenStreetMapTile(this.mRendererInfo, zoomLevel, tileX, tileY);
+				final OpenStreetMapTile tile = new OpenStreetMapTile(zoomLevel, tileX, tileY);
 
 				pj.toPixels(x, y, mTilePos);
 				final Drawable currentMapTile = mTileProvider.getMapTile(tile);
