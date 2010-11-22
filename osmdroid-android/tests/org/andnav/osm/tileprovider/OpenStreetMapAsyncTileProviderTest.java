@@ -2,16 +2,16 @@ package org.andnav.osm.tileprovider;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 
-import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
-import org.andnav.osm.views.overlay.OpenStreetMapTilesOverlay;
 import org.junit.Test;
+
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 
 /**
  * @author Neil Boyd
- *
+ * 
  */
 public class OpenStreetMapAsyncTileProviderTest {
 
@@ -19,21 +19,10 @@ public class OpenStreetMapAsyncTileProviderTest {
 	public void test_put_twice() {
 
 		final IOpenStreetMapTileProviderCallback tileProviderCallback = new IOpenStreetMapTileProviderCallback() {
-			@Override
-			public void mapTileRequestCompleted(
-					final OpenStreetMapTileRequestState aState,
-					final String aTilePath) {
-			}
 
 			@Override
 			public void mapTileRequestCompleted(
-					final OpenStreetMapTileRequestState aState,
-					final InputStream aTileInputStream) {
-			}
-
-			@Override
-			public void mapTileRequestCompleted(
-					final OpenStreetMapTileRequestState aState) {
+					OpenStreetMapTileRequestState aState, Drawable aDrawable) {
 			}
 
 			public void mapTileRequestFailed(
@@ -57,19 +46,13 @@ public class OpenStreetMapAsyncTileProviderTest {
 			protected Runnable getTileLoader() {
 				return new TileLoader() {
 					@Override
-					protected boolean loadTile(
+					protected Drawable loadTile(
 							final OpenStreetMapTileRequestState aState)
 							throws CantContinueException {
 						// does nothing - doesn't call the callback
-						//tileLoadedFailed(aState);
-						return false;
+						return null;
 					}
 				};
-			}
-
-			@Override
-			public boolean getShouldTilesBeSavedInCache() {
-				return false;
 			}
 
 			@Override
@@ -78,8 +61,7 @@ public class OpenStreetMapAsyncTileProviderTest {
 			}
 		};
 
-		final OpenStreetMapTile tile = new OpenStreetMapTile(
-				OpenStreetMapRendererFactory.MAPNIK, 1, 1, 1);
+		final OpenStreetMapTile tile = new OpenStreetMapTile(1, 1, 1);
 
 		// request the same tile twice
 		OpenStreetMapTileRequestState state = new OpenStreetMapTileRequestState(
@@ -94,7 +76,7 @@ public class OpenStreetMapAsyncTileProviderTest {
 
 	/**
 	 * Test that the tiles are loaded in most recently accessed order.
-	 *
+	 * 
 	 * @throws InterruptedException
 	 */
 	@Test
@@ -104,45 +86,42 @@ public class OpenStreetMapAsyncTileProviderTest {
 
 		final IOpenStreetMapTileProviderCallback tileProviderCallback = new IOpenStreetMapTileProviderCallback() {
 			@Override
-			public void mapTileRequestCompleted(final OpenStreetMapTileRequestState aState, final String aTilePath) {
-				tiles.add(aState.getMapTile());
+			public void mapTileRequestCompleted(
+					OpenStreetMapTileRequestState aState, Drawable aDrawable) {
 			}
+
 			@Override
-			public void mapTileRequestCompleted(final OpenStreetMapTileRequestState aState, final InputStream aTileInputStream) {
-				tiles.add(aState.getMapTile());
+			public void mapTileRequestFailed(
+					final OpenStreetMapTileRequestState aState) {
 			}
-			@Override
-			public void mapTileRequestCompleted(final OpenStreetMapTileRequestState aState) {
-			}
-			@Override
-			public void mapTileRequestFailed(final OpenStreetMapTileRequestState aState) {
-			}
+
 			@Override
 			public boolean useDataConnection() {
 				return false;
 			}
 		};
 
-		final OpenStreetMapAsyncTileProvider target = new OpenStreetMapAsyncTileProvider(1, 10, null) {
+		final OpenStreetMapAsyncTileProvider target = new OpenStreetMapAsyncTileProvider(
+				1, 10, null) {
 			@Override
 			protected String threadGroupName() {
 				return "OpenStreetMapAsyncTileProviderTest";
 			}
+
 			@Override
 			protected Runnable getTileLoader() {
 				return new TileLoader() {
 					@Override
-					protected boolean loadTile(final OpenStreetMapTileRequestState aState) throws CantContinueException {
-						try {Thread.sleep(1000);} catch (InterruptedException e) {}
-						tileLoaded(aState);
-						return true;
+					protected Drawable loadTile(
+							final OpenStreetMapTileRequestState aState)
+							throws CantContinueException {
+						try {
+							Thread.sleep(1000);
+						} catch (InterruptedException e) {
+						}
+						return new BitmapDrawable();
 					}
 				};
-			}
-
-			@Override
-			public boolean getShouldTilesBeSavedInCache() {
-				return false;
 			}
 
 			@Override
@@ -151,21 +130,28 @@ public class OpenStreetMapAsyncTileProviderTest {
 			}
 		};
 
-		final OpenStreetMapTile tile1 = new OpenStreetMapTile(OpenStreetMapRendererFactory.MAPNIK, 1, 1, 1);
-		final OpenStreetMapTile tile2 = new OpenStreetMapTile(OpenStreetMapRendererFactory.MAPNIK, 2, 2, 2);
-		final OpenStreetMapTile tile3 = new OpenStreetMapTile(OpenStreetMapRendererFactory.MAPNIK, 3, 3, 3);
+		final OpenStreetMapTile tile1 = new OpenStreetMapTile(1, 1, 1);
+		final OpenStreetMapTile tile2 = new OpenStreetMapTile(2, 2, 2);
+		final OpenStreetMapTile tile3 = new OpenStreetMapTile(3, 3, 3);
 
 		// request the three tiles
-		OpenStreetMapTileRequestState state1 = new OpenStreetMapTileRequestState(tile1, new OpenStreetMapAsyncTileProvider[] {}, tileProviderCallback);
+		OpenStreetMapTileRequestState state1 = new OpenStreetMapTileRequestState(
+				tile1, new OpenStreetMapAsyncTileProvider[] {},
+				tileProviderCallback);
 		target.loadMapTileAsync(state1);
 		Thread.sleep(100); // give the thread time to run
-		OpenStreetMapTileRequestState state2 = new OpenStreetMapTileRequestState(tile2, new OpenStreetMapAsyncTileProvider[] {}, tileProviderCallback);
+		OpenStreetMapTileRequestState state2 = new OpenStreetMapTileRequestState(
+				tile2, new OpenStreetMapAsyncTileProvider[] {},
+				tileProviderCallback);
 		target.loadMapTileAsync(state2);
 		Thread.sleep(100); // give the thread time to run
-		OpenStreetMapTileRequestState state3 = new OpenStreetMapTileRequestState(tile3, new OpenStreetMapAsyncTileProvider[] {}, tileProviderCallback);
+		OpenStreetMapTileRequestState state3 = new OpenStreetMapTileRequestState(
+				tile3, new OpenStreetMapAsyncTileProvider[] {},
+				tileProviderCallback);
 		target.loadMapTileAsync(state3);
 
-		// wait 4 seconds (because it takes 1 second for each tile + an extra second)
+		// wait 4 seconds (because it takes 1 second for each tile + an extra
+		// second)
 		Thread.sleep(4000);
 
 		// check that there are three tiles in the list (ie no duplicates)
@@ -181,7 +167,7 @@ public class OpenStreetMapAsyncTileProviderTest {
 
 	/**
 	 * Test that adding the same tile more than once moves it up the queue.
-	 *
+	 * 
 	 * @throws InterruptedException
 	 */
 	@Test
@@ -192,21 +178,7 @@ public class OpenStreetMapAsyncTileProviderTest {
 		final IOpenStreetMapTileProviderCallback tileProviderCallback = new IOpenStreetMapTileProviderCallback() {
 			@Override
 			public void mapTileRequestCompleted(
-					final OpenStreetMapTileRequestState aState,
-					final String aTilePath) {
-				tiles.add(aState.getMapTile());
-			}
-
-			@Override
-			public void mapTileRequestCompleted(
-					final OpenStreetMapTileRequestState aState,
-					final InputStream aTileInputStream) {
-				tiles.add(aState.getMapTile());
-			}
-
-			@Override
-			public void mapTileRequestCompleted(
-					final OpenStreetMapTileRequestState aState) {
+					OpenStreetMapTileRequestState aState, Drawable aDrawable) {
 			}
 
 			@Override
@@ -231,21 +203,16 @@ public class OpenStreetMapAsyncTileProviderTest {
 			protected Runnable getTileLoader() {
 				return new TileLoader() {
 					@Override
-					protected boolean loadTile(final OpenStreetMapTileRequestState aState)
+					protected Drawable loadTile(
+							final OpenStreetMapTileRequestState aState)
 							throws CantContinueException {
 						try {
 							Thread.sleep(1000);
 						} catch (InterruptedException e) {
 						}
-						tileLoaded(aState);
-						return true;
+						return new BitmapDrawable();
 					}
 				};
-			}
-
-			@Override
-			public boolean getShouldTilesBeSavedInCache() {
-				return false;
 			}
 
 			@Override
@@ -254,12 +221,9 @@ public class OpenStreetMapAsyncTileProviderTest {
 			}
 		};
 
-		final OpenStreetMapTile tile1 = new OpenStreetMapTile(
-				OpenStreetMapRendererFactory.MAPNIK, 1, 1, 1);
-		final OpenStreetMapTile tile2 = new OpenStreetMapTile(
-				OpenStreetMapRendererFactory.MAPNIK, 2, 2, 2);
-		final OpenStreetMapTile tile3 = new OpenStreetMapTile(
-				OpenStreetMapRendererFactory.MAPNIK, 3, 3, 3);
+		final OpenStreetMapTile tile1 = new OpenStreetMapTile(1, 1, 1);
+		final OpenStreetMapTile tile2 = new OpenStreetMapTile(2, 2, 2);
+		final OpenStreetMapTile tile3 = new OpenStreetMapTile(3, 3, 3);
 
 		// request tile1, tile2, tile3, then tile2 again
 		OpenStreetMapTileRequestState state1 = new OpenStreetMapTileRequestState(
