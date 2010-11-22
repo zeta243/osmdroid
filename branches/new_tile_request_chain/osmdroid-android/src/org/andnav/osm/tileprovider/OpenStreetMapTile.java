@@ -4,7 +4,7 @@ import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 
 /**
  * A map tile is distributed using the observer pattern.
- * The tile is delivered by a tile provider 
+ * The tile is delivered by a tile provider
  * (i.e. a descendant of {@link OpenStreetMapAsyncTileProvider}  or {@link OpenStreetMapTileProvider}
  * to a consumer of tiles (e.g.  descendant of {@link OpenStreetMapTilesOverlay}).
  * Tiles are typically images (e.g. png or jpeg).
@@ -16,20 +16,14 @@ public class OpenStreetMapTile {
 
 	// This class must be immutable because it's used as the key in the cache hash map
 	// (ie all the fields are final).
-	private final IOpenStreetMapRendererInfo renderer;
 	private final int x;
 	private final int y;
 	private final int zoomLevel;
 
-	public OpenStreetMapTile(IOpenStreetMapRendererInfo renderer, int zoomLevel, int tileX, int tileY) {
-		this.renderer = renderer;
+	public OpenStreetMapTile(int zoomLevel, int tileX, int tileY) {
 		this.zoomLevel = zoomLevel;
 		this.x = tileX;
 		this.y = tileY;
-	}
-
-	public IOpenStreetMapRendererInfo getRenderer() {
-		return renderer;
 	}
 
 	public int getZoomLevel() {
@@ -46,7 +40,7 @@ public class OpenStreetMapTile {
 
 	@Override
 	public String toString() {
-		return renderer.name() + "/" + zoomLevel + "/" + x + "/" + y;
+		return "/" + zoomLevel + "/" + x + "/" + y;
 	}
 
 	@Override
@@ -55,13 +49,12 @@ public class OpenStreetMapTile {
 		if (obj == this) return true;
 		if (obj.getClass() != getClass()) return false;
 		final OpenStreetMapTile rhs = (OpenStreetMapTile)obj;
-		return zoomLevel == rhs.zoomLevel && x == rhs.x && y == rhs.y && renderer.equals(rhs.renderer);
+		return zoomLevel == rhs.zoomLevel && x == rhs.x && y == rhs.y;
 	}
 
 	@Override
 	public int hashCode() {
 		int code = 17;
-		code *= 37 + renderer.hashCode();
 		code *= 37 + zoomLevel;
 		code *= 37 + x;
 		code *= 37 + y;

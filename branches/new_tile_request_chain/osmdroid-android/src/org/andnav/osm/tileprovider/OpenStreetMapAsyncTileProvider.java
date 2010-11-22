@@ -1,13 +1,5 @@
 package org.andnav.osm.tileprovider;
 
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -15,9 +7,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
-import org.andnav.osm.views.util.IMapTileFilenameProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import android.graphics.drawable.Drawable;
 
 /**
  * An abstract child class of {@link OpenStreetMapTileProvider} which acquires
@@ -51,15 +44,6 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 	 */
 	public abstract boolean getUsesDataConnection();
 
-	/**
-	 * Returns true if tiles retrieved from this data provider should be
-	 * automatically saved to any available file storage caches, false
-	 * otherwise.
-	 * 
-	 * @return true if tiles should be cached to storage, false otherwise
-	 */
-	public abstract boolean getShouldTilesBeSavedInCache();
-
 	private static final Logger logger = LoggerFactory
 			.getLogger(OpenStreetMapAsyncTileProvider.class);
 
@@ -67,38 +51,16 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 	private final ThreadGroup mThreadPool = new ThreadGroup(threadGroupName());
 	private final ConcurrentHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState> mWorking;
 	final LinkedHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState> mPending;
-	private IMapTileFilenameProvider mMapTileFilenameProvider;
 
 	public OpenStreetMapAsyncTileProvider(final int aThreadPoolSize,
 			final int aPendingQueueSize,
-			IMapTileFilenameProvider pMapTileFilenameProvider) {
+			IFilesystemCacheProvider pFilesystemCacheProvider) {
 		mThreadPoolSize = aThreadPoolSize;
 		mWorking = new ConcurrentHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState>();
 		mPending = new LinkedHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState>(
 				aPendingQueueSize + 2, 0.1f, true) {
 			private static final long serialVersionUID = 6455337315681858866L;
-
-			// @Override
-			// protected boolean removeEldestEntry(
-			// Entry<OpenStreetMapTile, OpenStreetMapTileRequestState> pEldest)
-			// {
-			// return size() > aPendingQueueSize;
-			// }
 		};
-		mMapTileFilenameProvider = pMapTileFilenameProvider;
-	}
-
-	/**
-	 * Returns an IMapTileFilenameProvider to be used to obtain a filename where
-	 * the downloaded tile will be saved to. This typically points to a
-	 * file-system cache that is being served via a FilesystemProvider. If it is
-	 * null, then the tile will never be cached. If AsyncTileProviders have to
-	 * save data to storage, then they should use this value if present.
-	 * 
-	 * @return
-	 */
-	protected IMapTileFilenameProvider getMapTileFilenameProvider() {
-		return mMapTileFilenameProvider;
 	}
 
 	public void loadMapTileAsync(final OpenStreetMapTileRequestState aState) {
@@ -106,15 +68,6 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 		final int activeCount = mThreadPool.activeCount();
 
 		synchronized (mPending) {
-			// sanity check
-			// (but really this doesn't make sense unless you synchronize the
-			// whole method)
-			// if (activeCount == 0 && !mPending.isEmpty()) {
-			// logger
-			// .warn("Unexpected - no active threads but pending queue not empty");
-			// clearQueue();
-			// }
-
 			// this will put the tile in the queue, or move it to the front of
 			// the queue if it's already present
 			mPending.put(aState.getMapTile(), aState);
@@ -173,7 +126,8 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 		 * @param aTile
 		 * @throws CantContinueException
 		 */
-		protected abstract boolean loadTile(OpenStreetMapTileRequestState aState)
+		protected abstract Drawable loadTile(
+				OpenStreetMapTileRequestState aState)
 				throws CantContinueException;
 
 		private OpenStreetMapTileRequestState nextTile() {
@@ -225,150 +179,17 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 		 * @param aTileInputStream
 		 *            the input stream of the file.
 		 */
-		protected void tileLoaded(final OpenStreetMapTileRequestState aState,
-				final InputStream aTileInputStream) {
-			OpenStreetMapTile mapTile = aState.getMapTile();
-			removeTileFromQueues(mapTile);
-
-			if (getShouldTilesBeSavedInCache()) {
-				IMapTileFilenameProvider mapTileFilenameProvider = getMapTileFilenameProvider();
-				if (mapTileFilenameProvider != null) {
-					try {
-						saveFile(mapTile, mapTileFilenameProvider
-								.getOutputFile(mapTile), aTileInputStream);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-					}
-
-					aState.getCallback().mapTileRequestCompleted(
-							aState,
-							mapTileFilenameProvider.getOutputFile(mapTile)
-									.getPath());
-				} else {
-					aState.getCallback().mapTileRequestCompleted(aState,
-							aTileInputStream);
-				}
-			} else {
-				aState.getCallback().mapTileRequestCompleted(aState,
-						aTileInputStream);
-			}
-		}
-
-		/**
-		 * A tile has loaded.
-		 * 
-		 * @param aTile
-		 *            the tile that has loaded
-		 * @param aTileInputStream
-		 *            the input stream of the file.
-		 */
-		protected void tileLoaded(final OpenStreetMapTileRequestState aState,
-				final byte[] aByteArray) {
-			OpenStreetMapTile mapTile = aState.getMapTile();
-			removeTileFromQueues(mapTile);
-
-			if (getShouldTilesBeSavedInCache()) {
-				IMapTileFilenameProvider mapTileFilenameProvider = getMapTileFilenameProvider();
-				if (mapTileFilenameProvider != null) {
-					try {
-						saveFile(mapTile, mapTileFilenameProvider
-								.getOutputFile(mapTile), aByteArray);
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-					}
-				}
-			}
-
-			aState.getCallback().mapTileRequestCompleted(aState,
-					new ByteArrayInputStream(aByteArray));
-		}
-
-		/**
-		 * A tile has loaded.
-		 * 
-		 * @param aTile
-		 *            the tile that has loaded
-		 * @param aTileInputStream
-		 *            the input stream of the file.
-		 */
-		protected void tileLoaded(final OpenStreetMapTileRequestState aState,
-				final String aFilename) {
-			OpenStreetMapTile mapTile = aState.getMapTile();
-			removeTileFromQueues(mapTile);
-
-			if (getShouldTilesBeSavedInCache()) {
-				IMapTileFilenameProvider mapTileFilenameProvider = getMapTileFilenameProvider();
-				if (mapTileFilenameProvider != null) {
-					if (!aFilename.equals(mapTileFilenameProvider
-							.getOutputFile(mapTile).getPath())) {
-						FileOutputStream fos = null;
-						FileInputStream fis = null;
-						try {
-							fos = new FileOutputStream(mapTileFilenameProvider
-									.getOutputFile(mapTile));
-							fis = new FileInputStream(aFilename);
-							StreamUtils.copy(fis, fos);
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-						} finally {
-							StreamUtils.closeStream(fos);
-							StreamUtils.closeStream(fis);
-						}
-					}
-				}
-			}
-
-			aState.getCallback().mapTileRequestCompleted(aState, aFilename);
-		}
-
-		/**
-		 * A tile has loaded.
-		 * 
-		 * @param aTile
-		 *            the tile that has loaded
-		 * @param aTileInputStream
-		 *            the input stream of the file.
-		 */
-		protected void tileLoaded(final OpenStreetMapTileRequestState aState) {
+		private void tileLoaded(final OpenStreetMapTileRequestState aState,
+				final Drawable aDrawable) {
 			removeTileFromQueues(aState.getMapTile());
 
-			aState.getCallback().mapTileRequestCompleted(aState);
+			aState.getCallback().mapTileRequestCompleted(aState, aDrawable);
 		}
 
 		private void tileLoadedFailed(final OpenStreetMapTileRequestState aState) {
 			removeTileFromQueues(aState.getMapTile());
 
 			aState.getCallback().mapTileRequestFailed(aState);
-		}
-
-		private void saveFile(final OpenStreetMapTile tile,
-				final File outputFile, final InputStream stream)
-				throws IOException {
-			OutputStream bos = null;
-			try {
-				bos = new BufferedOutputStream(new FileOutputStream(outputFile,
-						false), StreamUtils.IO_BUFFER_SIZE);
-				StreamUtils.copy(stream, bos);
-				bos.flush();
-			} finally {
-				if (bos != null)
-					bos.close();
-			}
-		}
-
-		private void saveFile(final OpenStreetMapTile tile,
-				final File outputFile, final byte[] someData)
-				throws IOException {
-			OutputStream bos = null;
-			try {
-				bos = new BufferedOutputStream(new FileOutputStream(outputFile,
-						false), StreamUtils.IO_BUFFER_SIZE);
-				bos.write(someData);
-				bos.flush();
-			} finally {
-				if (bos != null)
-					bos.close();
-			}
 		}
 
 		/**
@@ -379,12 +200,12 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 		final public void run() {
 
 			OpenStreetMapTileRequestState state;
-			boolean result = false;
+			Drawable result = null;
 			while ((state = nextTile()) != null) {
 				if (DEBUGMODE)
 					logger.debug("Next tile: " + state);
 				try {
-					result = false;
+					result = null;
 					result = loadTile(state);
 				} catch (final CantContinueException e) {
 					logger.info("Tile loader can't continue", e);
@@ -393,24 +214,14 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 					logger.error("Error downloading tile: " + state, e);
 				}
 
-				if (result == false)
+				if (result != null)
+					tileLoaded(state, result);
+				else
 					tileLoadedFailed(state);
 
-				// TODO: process result
-				// if (result.isSuccess()) {
-				// // tileLoaded(state, result.getResult());
-				// } else {
-				// // TODO: This MUST be fixed!
-				// OpenStreetMapAsyncTileProvider nextProvider = state
-				// .getNextProvider(/* getUseDataConnection() */true);
-				// if (nextProvider != null)
-				// nextProvider.loadMapTileAsync(state);
-				// else
-				// tileLoadedFailed(state);
-				// }
+				if (DEBUGMODE)
+					logger.debug("No more tiles");
 			}
-			if (DEBUGMODE)
-				logger.debug("No more tiles");
 		}
 	}
 

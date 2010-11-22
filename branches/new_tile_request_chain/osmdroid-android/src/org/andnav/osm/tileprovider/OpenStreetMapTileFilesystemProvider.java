@@ -1,10 +1,17 @@
 // Created by plusminus on 21:46:41 - 25.09.2008
 package org.andnav.osm.tileprovider;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
+import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
-import org.andnav.osm.views.util.IMapTileFilenameProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,10 +19,8 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.ConnectivityManager;
-import android.net.wifi.WifiManager;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
-import android.telephony.TelephonyManager;
 
 /**
  * 
@@ -23,7 +28,8 @@ import android.telephony.TelephonyManager;
  * 
  */
 public class OpenStreetMapTileFilesystemProvider extends
-		OpenStreetMapAsyncTileProvider {
+		OpenStreetMapAsyncTileProvider implements IFilesystemCache,
+		IFilesystemCacheProvider, OpenStreetMapTileProviderConstants {
 
 	// ===========================================================
 	// Constants
@@ -35,9 +41,6 @@ public class OpenStreetMapTileFilesystemProvider extends
 	// ===========================================================
 	// Fields
 	// ===========================================================
-
-	/** whether we have a data connection */
-	private boolean mConnected = true;
 
 	/** whether the sdcard is mounted read/write */
 	private boolean mSdCardAvailable = true;
@@ -59,20 +62,14 @@ public class OpenStreetMapTileFilesystemProvider extends
 	 * @param aRegisterReceiver
 	 */
 	public OpenStreetMapTileFilesystemProvider(
-			final IRegisterReceiver aRegisterReceiver,
-			IMapTileFilenameProvider pMapTileFilenameProvider) {
+			final IRegisterReceiver aRegisterReceiver) {
 		super(NUMBER_OF_TILE_FILESYSTEM_THREADS,
-				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, pMapTileFilenameProvider);
+				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, null);
 
 		this.aRegisterReceiver = aRegisterReceiver;
 		this.mBroadcastReceiver = new MyBroadcastReceiver();
 
 		checkSdCard();
-
-		final IntentFilter networkFilter = new IntentFilter();
-		networkFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
-		networkFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
-		aRegisterReceiver.registerReceiver(mBroadcastReceiver, networkFilter);
 
 		final IntentFilter mediaFilter = new IntentFilter();
 		mediaFilter.addAction(Intent.ACTION_MEDIA_MOUNTED);
@@ -88,11 +85,6 @@ public class OpenStreetMapTileFilesystemProvider extends
 	// ===========================================================
 	// Methods from SuperClass/Interfaces
 	// ===========================================================
-
-	@Override
-	public boolean getShouldTilesBeSavedInCache() {
-		return false;
-	}
 
 	@Override
 	public boolean getUsesDataConnection() {
@@ -141,7 +133,7 @@ public class OpenStreetMapTileFilesystemProvider extends
 		 * aTile a tile to be constructed by the method.
 		 */
 		@Override
-		public boolean loadTile(final OpenStreetMapTileRequestState aState) {
+		public Drawable loadTile(final OpenStreetMapTileRequestState aState) {
 
 			OpenStreetMapTile aTile = aState.getMapTile();
 
@@ -149,50 +141,57 @@ public class OpenStreetMapTileFilesystemProvider extends
 			if (!mSdCardAvailable) {
 				if (DEBUGMODE)
 					logger.debug("No sdcard - do nothing for tile: " + aTile);
-				// tileLoadedFailed(aState);
-				return false;
+				return null;
 			}
 
-			final File tileFile = getMapTileFilenameProvider().getOutputFile(
-					aTile);
-
-			try {
-				if (tileFile.exists()) {
-					if (DEBUGMODE)
-						logger.debug("Loaded tile: " + aTile);
-					tileLoaded(aState, tileFile.getPath());
-
-					// check for old tile
-					final long now = System.currentTimeMillis();
-					final long lastModified = tileFile.lastModified();
-					if (now - lastModified > TILE_EXPIRY_TIME_MILLISECONDS) {
-						// This will trigger continuing with the tile provider
-						// change - this is currently safe to do after
-						// previously calling tileLoaded(), but maybe there is a
-						// better way to do this?
-						// tileLoadedFailed(aState);
-						return false;
-					} else
-						return true;
-
-				} else {
-					if (DEBUGMODE)
-						logger.debug("Tile doesn't exist: " + aTile);
-					// tileLoadedFailed(aState);
+			// Check each registered renderer to see if their file is available
+			for (IOpenStreetMapRendererInfo renderInfo : mRenderInfoList) {
+				File file = new File(TILE_PATH_BASE, renderInfo
+						.getTileRelativeFilenameString(aTile));
+				if (file.exists()) {
+					Drawable drawable = renderInfo.getDrawable(file.getPath());
+					return drawable;
 				}
-			} catch (final Throwable e) {
-				logger.error("Error loading tile", e);
-				// tileLoadedFailed(aState);
 			}
 
-			return false;
+			// TODO: Re-integrate the tile aging checks
+
+			// try {
+			// if (tileFile.exists()) {
+			// if (DEBUGMODE)
+			// logger.debug("Loaded tile: " + aTile);
+			// tileLoaded(aState, tileFile.getPath());
+			//
+			// // check for old tile
+			// final long now = System.currentTimeMillis();
+			// final long lastModified = tileFile.lastModified();
+			// if (now - lastModified > TILE_EXPIRY_TIME_MILLISECONDS) {
+			// // This will trigger continuing with the tile provider
+			// // change - this is currently safe to do after
+			// // previously calling tileLoaded(), but maybe there is a
+			// // better way to do this?
+			// // tileLoadedFailed(aState);
+			// return false;
+			// } else
+			// return true;
+			//
+			// } else {
+			// if (DEBUGMODE)
+			// logger.debug("Tile doesn't exist: " + aTile);
+			// // tileLoadedFailed(aState);
+			// }
+			// } catch (final Throwable e) {
+			// logger.error("Error loading tile", e);
+			// // tileLoadedFailed(aState);
+			// }
+
+			return null;
 		}
 	}
 
 	/**
-	 * This broadcast receiver is responsible for determining the best channel
-	 * over which tiles may be acquired. In other words it sets network status
-	 * flags.
+	 * This broadcast receiver will recheck the sd card when the mount/unmount
+	 * messages happen
 	 * 
 	 */
 	private class MyBroadcastReceiver extends BroadcastReceiver {
@@ -203,29 +202,68 @@ public class OpenStreetMapTileFilesystemProvider extends
 			final String action = aIntent.getAction();
 			logger.info("onReceive: " + action);
 
-			final WifiManager wm = (WifiManager) aContext
-					.getSystemService(Context.WIFI_SERVICE);
-			final int wifiState = wm.getWifiState(); // TODO check for
-			// permission or catch
-			// error
-			if (DEBUGMODE)
-				logger.debug("wifi state=" + wifiState);
-
-			final TelephonyManager tm = (TelephonyManager) aContext
-					.getSystemService(Context.TELEPHONY_SERVICE);
-			final int dataState = tm.getDataState(); // TODO check for
-			// permission or catch
-			// error
-			if (DEBUGMODE)
-				logger.debug("telephone data state=" + dataState);
-
-			mConnected = wifiState == WifiManager.WIFI_STATE_ENABLED
-					|| dataState == TelephonyManager.DATA_CONNECTED;
-
-			if (DEBUGMODE)
-				logger.debug("mConnected=" + mConnected);
-
 			checkSdCard();
 		}
+	}
+
+	private boolean createFolderAndCheckIfExists(final File pFile) {
+		if (pFile.mkdirs()) {
+			return true;
+		}
+		if (DEBUGMODE)
+			logger.debug("Failed to create " + pFile
+					+ " - wait and check again");
+
+		// if create failed, wait a bit in case another thread created it
+		try {
+			Thread.sleep(500);
+		} catch (final InterruptedException ignore) {
+		}
+		// and then check again
+		if (pFile.exists()) {
+			if (DEBUGMODE)
+				logger.debug("Seems like another thread created " + pFile);
+			return true;
+		} else {
+			if (DEBUGMODE)
+				logger.debug("File still doesn't exist: " + pFile);
+			return false;
+		}
+	}
+
+	@Override
+	public boolean saveFile(IOpenStreetMapRendererInfo pRenderInfo,
+			OpenStreetMapTile pTile, InputStream pStream) {
+		File file = new File(TILE_PATH_BASE, pRenderInfo
+				.getTileRelativeFilenameString(pTile));
+		createFolderAndCheckIfExists(file.getParentFile());
+
+		BufferedOutputStream outputStream = null;
+		try {
+			outputStream = new BufferedOutputStream(new FileOutputStream(file
+					.getPath()));
+			StreamUtils.copy(pStream, outputStream);
+		} catch (IOException e) {
+			return false;
+		} finally {
+			if (outputStream != null)
+				StreamUtils.closeStream(outputStream);
+		}
+		return true;
+	}
+
+	private final List<IOpenStreetMapRendererInfo> mRenderInfoList = new LinkedList<IOpenStreetMapRendererInfo>();
+
+	@Override
+	public IFilesystemCache registerRendererForFilesystemAccess(
+			IOpenStreetMapRendererInfo pRendererInfo) {
+		mRenderInfoList.add(pRendererInfo);
+		return this;
+	}
+
+	@Override
+	public void unregisterRendererForFilesystemAccess(
+			IOpenStreetMapRendererInfo pRendererInfo) {
+		mRenderInfoList.remove(pRendererInfo);
 	}
 }

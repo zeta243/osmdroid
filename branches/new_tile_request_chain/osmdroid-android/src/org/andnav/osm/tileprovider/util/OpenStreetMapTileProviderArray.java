@@ -1,6 +1,5 @@
 package org.andnav.osm.tileprovider.util;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -108,28 +107,11 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 
 	@Override
 	public void mapTileRequestCompleted(OpenStreetMapTileRequestState aState,
-			InputStream pTileInputStream) {
+			final Drawable aDrawable) {
 		synchronized (mWorking) {
 			mWorking.remove(aState);
 		}
-		super.mapTileRequestCompleted(aState, pTileInputStream);
-	}
-
-	@Override
-	public void mapTileRequestCompleted(OpenStreetMapTileRequestState aState,
-			String pTilePath) {
-		synchronized (mWorking) {
-			mWorking.remove(aState);
-		}
-		super.mapTileRequestCompleted(aState, pTilePath);
-	}
-
-	@Override
-	public void mapTileRequestCompleted(OpenStreetMapTileRequestState aState) {
-		synchronized (mWorking) {
-			mWorking.remove(aState);
-		}
-		super.mapTileRequestCompleted(aState);
+		super.mapTileRequestCompleted(aState, aDrawable);
 	}
 
 	@Override
