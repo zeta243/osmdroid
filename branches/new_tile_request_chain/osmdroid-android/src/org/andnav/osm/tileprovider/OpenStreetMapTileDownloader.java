@@ -60,8 +60,9 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 		mRendererInfo = pRendererInfo;
 		mCallback = pCallback;
 		mFilesystemCacheProvider = pFilesystemCacheProvider;
-		mFilesystemCache = mFilesystemCacheProvider
-				.registerRendererForFilesystemAccess(mRendererInfo);
+		if (mFilesystemCacheProvider != null)
+			mFilesystemCache = mFilesystemCacheProvider
+					.registerRendererForFilesystemAccess(mRendererInfo);
 	}
 
 	// ===========================================================
@@ -89,8 +90,9 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 
 	@Override
 	public void detach() {
-		mFilesystemCacheProvider
-				.unregisterRendererForFilesystemAccess(mRendererInfo);
+		if (mFilesystemCacheProvider != null)
+			mFilesystemCacheProvider
+					.unregisterRendererForFilesystemAccess(mRendererInfo);
 		super.detach();
 	}
 
@@ -133,14 +135,14 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 				StreamUtils.copy(in, out);
 				out.flush();
 				final byte[] data = dataStream.toByteArray();
+				ByteArrayInputStream byteStream = new ByteArrayInputStream(data);
 
 				// Save the data to the filesystem cache
-				ByteArrayInputStream byteStream = null;
-				Drawable result = null;
-				byteStream = new ByteArrayInputStream(data);
-				mFilesystemCache.saveFile(mRendererInfo, tile, byteStream);
-				byteStream.reset();
-				result = mRendererInfo.getDrawable(byteStream);
+				if (mFilesystemCache != null) {
+					mFilesystemCache.saveFile(mRendererInfo, tile, byteStream);
+					byteStream.reset();
+				}
+				Drawable result = mRendererInfo.getDrawable(byteStream);
 
 				return result;
 			} catch (final UnknownHostException e) {
