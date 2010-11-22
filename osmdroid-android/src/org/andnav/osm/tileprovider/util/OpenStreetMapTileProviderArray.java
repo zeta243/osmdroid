@@ -138,4 +138,28 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 				&& (!useDataConnection() && provider.getUsesDataConnection()));
 		return provider;
 	}
+
+	@Override
+	public int getMinimumZoomLevel() {
+		int result = Integer.MAX_VALUE;
+		synchronized (mTileProviderList) {
+			for (OpenStreetMapAsyncTileProvider tileProvider : mTileProviderList) {
+				if (tileProvider.getMinimumZoomLevel() < result)
+					result = tileProvider.getMinimumZoomLevel();
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public int getMaximumZoomLevel() {
+		int result = Integer.MIN_VALUE;
+		synchronized (mTileProviderList) {
+			for (OpenStreetMapAsyncTileProvider tileProvider : mTileProviderList) {
+				if (tileProvider.getMaximumZoomLevel() > result)
+					result = tileProvider.getMaximumZoomLevel();
+			}
+		}
+		return result;
+	}
 }

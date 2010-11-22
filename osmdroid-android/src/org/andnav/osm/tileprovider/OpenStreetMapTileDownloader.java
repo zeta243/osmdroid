@@ -12,7 +12,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.UnknownHostException;
 
-import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
+import org.andnav.osm.tileprovider.renderer.HTTPRendererBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,14 +45,13 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 
 	private IFilesystemCache mFilesystemCache;
 
-	private final IOpenStreetMapRendererInfo mRendererInfo;
+	private final HTTPRendererBase mRendererInfo;
 
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 
-	public OpenStreetMapTileDownloader(
-			IOpenStreetMapRendererInfo pRendererInfo,
+	public OpenStreetMapTileDownloader(HTTPRendererBase pRendererInfo,
 			final IOpenStreetMapTileProviderCloudmadeTokenCallback pCallback,
 			IFilesystemCacheProvider pFilesystemCacheProvider) {
 		super(NUMBER_OF_TILE_DOWNLOAD_THREADS,
@@ -62,7 +61,9 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 		mFilesystemCacheProvider = pFilesystemCacheProvider;
 		if (mFilesystemCacheProvider != null)
 			mFilesystemCache = mFilesystemCacheProvider
-					.registerRendererForFilesystemAccess(mRendererInfo);
+					.registerRendererForFilesystemAccess(mRendererInfo,
+							mRendererInfo.getMinimumZoomLevel(), mRendererInfo
+									.getMaximumZoomLevel());
 	}
 
 	// ===========================================================
@@ -94,6 +95,16 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 			mFilesystemCacheProvider
 					.unregisterRendererForFilesystemAccess(mRendererInfo);
 		super.detach();
+	}
+
+	@Override
+	public int getMinimumZoomLevel() {
+		return mRendererInfo.getMinimumZoomLevel();
+	}
+
+	@Override
+	public int getMaximumZoomLevel() {
+		return mRendererInfo.getMaximumZoomLevel();
 	}
 
 	// ===========================================================

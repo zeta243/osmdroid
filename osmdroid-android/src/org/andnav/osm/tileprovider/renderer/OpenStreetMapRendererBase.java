@@ -13,9 +13,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
-public abstract class OpenStreetMapRendererBase implements IOpenStreetMapRendererInfo {
+public abstract class OpenStreetMapRendererBase implements
+		IOpenStreetMapRendererInfo {
 
-	private static final Logger logger = LoggerFactory.getLogger(OpenStreetMapRendererBase.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(OpenStreetMapRendererBase.class);
 
 	private static int globalOrdinal = 0;
 
@@ -23,25 +25,17 @@ public abstract class OpenStreetMapRendererBase implements IOpenStreetMapRendere
 	protected final String mName;
 	protected final int mMaptileSizePx;
 	private final int mMaptileZoom;
-	private final int mZoomMinLevel;
-	private final int mZoomMaxLevel;
 	protected final String mImageFilenameEnding;
-	private final String mBaseUrls[];
 	protected int cloudmadeStyle = 1;
 	protected final Random random = new Random();
 
-	public OpenStreetMapRendererBase(String aName,
-			int aZoomMinLevel, int aZoomMaxLevel,
-			int aMaptileZoom,
-			String aImageFilenameEnding, final String ...aBaseUrl) {
+	public OpenStreetMapRendererBase(String aName, int aMaptileZoom,
+			String aImageFilenameEnding) {
 		mOrdinal = globalOrdinal++;
 		mName = aName;
-		mZoomMinLevel = aZoomMinLevel;
-		mZoomMaxLevel = aZoomMaxLevel;
 		mMaptileZoom = aMaptileZoom;
 		mMaptileSizePx = 1 << aMaptileZoom;
 		mImageFilenameEnding = aImageFilenameEnding;
-		mBaseUrls = aBaseUrl;
 	}
 
 	@Override
@@ -68,16 +62,6 @@ public abstract class OpenStreetMapRendererBase implements IOpenStreetMapRendere
 		return mMaptileZoom;
 	}
 
-	@Override
-	public int zoomMinLevel() {
-		return mZoomMinLevel;
-	}
-
-	@Override
-	public int zoomMaxLevel() {
-		return mZoomMaxLevel;
-	}
-
 	public String imageFilenameEnding() {
 		return mImageFilenameEnding;
 	}
@@ -85,7 +69,8 @@ public abstract class OpenStreetMapRendererBase implements IOpenStreetMapRendere
 	@Override
 	public Drawable getDrawable(final String aFilePath) {
 		try {
-			// default implementation will load the file as a bitmap and create a BitmapDrawable from it
+			// default implementation will load the file as a bitmap and create
+			// a BitmapDrawable from it
 			final Bitmap bitmap = BitmapFactory.decodeFile(aFilePath);
 			if (bitmap != null) {
 				return new BitmapDrawable(bitmap);
@@ -94,7 +79,9 @@ public abstract class OpenStreetMapRendererBase implements IOpenStreetMapRendere
 				try {
 					new File(aFilePath).delete();
 				} catch (final Throwable e) {
-					logger.error("Error deleting invalid file: " + aFilePath, e);
+					logger
+							.error("Error deleting invalid file: " + aFilePath,
+									e);
 				}
 			}
 		} catch (final OutOfMemoryError e) {
@@ -121,7 +108,8 @@ public abstract class OpenStreetMapRendererBase implements IOpenStreetMapRendere
 	@Override
 	public Drawable getDrawable(final InputStream aFileInputStream) {
 		try {
-			// default implementation will load the file as a bitmap and create a BitmapDrawable from it
+			// default implementation will load the file as a bitmap and create
+			// a BitmapDrawable from it
 			final Bitmap bitmap = BitmapFactory.decodeStream(aFileInputStream);
 			if (bitmap != null) {
 				return new BitmapDrawable(bitmap);
@@ -132,17 +120,4 @@ public abstract class OpenStreetMapRendererBase implements IOpenStreetMapRendere
 		}
 		return null;
 	}
-
-	@Override
-	public void setCloudmadeStyle(int aStyleId) {
-		cloudmadeStyle = aStyleId;
-	}
-
-	/**
-	 * Get the base url, which will be a random one if there are more than one.
-	 */
-	protected String getBaseUrl() {
-		return mBaseUrls[random.nextInt(mBaseUrls.length)];
-	}
-
 }

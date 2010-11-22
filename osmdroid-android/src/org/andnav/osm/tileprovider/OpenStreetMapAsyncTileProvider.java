@@ -44,6 +44,10 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 	 */
 	public abstract boolean getUsesDataConnection();
 
+	public abstract int getMinimumZoomLevel();
+
+	public abstract int getMaximumZoomLevel();
+
 	private static final Logger logger = LoggerFactory
 			.getLogger(OpenStreetMapAsyncTileProvider.class);
 
