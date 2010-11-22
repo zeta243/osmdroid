@@ -22,13 +22,15 @@ import android.graphics.drawable.Drawable;
 /**
  * These objects are the principle consumer of map tiles.
  * 
- * see {@link OpenStreetMapTile} for an overview of how tiles are acquired by this overlay.
+ * see {@link OpenStreetMapTile} for an overview of how tiles are acquired by
+ * this overlay.
  * 
  */
 
 public class OpenStreetMapTilesOverlay extends OpenStreetMapViewOverlay {
 
-	private static final Logger logger = LoggerFactory.getLogger(OpenStreetMapTilesOverlay.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(OpenStreetMapTilesOverlay.class);
 
 	protected OpenStreetMapView mOsmv;
 	protected IOpenStreetMapRendererInfo mRendererInfo;
@@ -41,16 +43,15 @@ public class OpenStreetMapTilesOverlay extends OpenStreetMapViewOverlay {
 	private final Point mTilePos = new Point();
 	private final Rect mViewPort = new Rect();
 
-	public OpenStreetMapTilesOverlay(
-			final OpenStreetMapView aOsmv,
+	public OpenStreetMapTilesOverlay(final OpenStreetMapView aOsmv,
 			final IOpenStreetMapRendererInfo aRendererInfo,
 			final OpenStreetMapTileProvider aTileProvider,
 			final Context aContext) {
-		this(aOsmv, aRendererInfo, aTileProvider, new DefaultResourceProxyImpl(aContext));
+		this(aOsmv, aRendererInfo, aTileProvider, new DefaultResourceProxyImpl(
+				aContext));
 	}
 
-	public OpenStreetMapTilesOverlay(
-			final OpenStreetMapView aOsmv,
+	public OpenStreetMapTilesOverlay(final OpenStreetMapView aOsmv,
 			final IOpenStreetMapRendererInfo aRendererInfo,
 			final OpenStreetMapTileProvider aTileProvider,
 			final ResourceProxy pResourceProxy) {
@@ -77,6 +78,14 @@ public class OpenStreetMapTilesOverlay extends OpenStreetMapViewOverlay {
 		this.mPaint.setAlpha(a);
 	}
 
+	public int getMinimumZoomLevel() {
+		return mTileProvider.getMinimumZoomLevel();
+	}
+
+	public int getMaximumZoomLevel() {
+		return mTileProvider.getMaximumZoomLevel();
+	}
+
 	/**
 	 * Whether to use the network connection if it's available.
 	 */
@@ -86,9 +95,10 @@ public class OpenStreetMapTilesOverlay extends OpenStreetMapViewOverlay {
 
 	/**
 	 * Set whether to use the network connection if it's available.
+	 * 
 	 * @param aMode
-	 * if true use the network connection if it's available.
-	 * if false don't use the network connection even if it's available.
+	 *            if true use the network connection if it's available. if false
+	 *            don't use the network connection even if it's available.
 	 */
 	public void setUseDataConnection(boolean aMode) {
 		mTileProvider.setUseDataConnection(aMode);
@@ -97,7 +107,7 @@ public class OpenStreetMapTilesOverlay extends OpenStreetMapViewOverlay {
 	@Override
 	protected void onDraw(Canvas c, OpenStreetMapView osmv) {
 
-		if(DEBUGMODE)
+		if (DEBUGMODE)
 			logger.trace("onDraw");
 
 		/*
@@ -125,8 +135,9 @@ public class OpenStreetMapTilesOverlay extends OpenStreetMapViewOverlay {
 		final int mapTileUpperBound = 1 << zoomLevel;
 
 		// make sure the cache is big enough for all the tiles
-		final int numNeeded = (tileNeededToBottomOfCenter - tileNeededToTopOfCenter + 1)
-							* (tileNeededToRightOfCenter - tileNeededToLeftOfCenter + 1);
+		final int numNeeded = (tileNeededToBottomOfCenter
+				- tileNeededToTopOfCenter + 1)
+				* (tileNeededToRightOfCenter - tileNeededToLeftOfCenter + 1);
 		mTileProvider.ensureCapacity(numNeeded);
 
 		/* Draw all the MapTiles (from the upper left to the lower right). */
@@ -135,19 +146,24 @@ public class OpenStreetMapTilesOverlay extends OpenStreetMapViewOverlay {
 				/* Construct a URLString, which represents the MapTile. */
 				final int tileY = MyMath.mod(y, mapTileUpperBound);
 				final int tileX = MyMath.mod(x, mapTileUpperBound);
-				final OpenStreetMapTile tile = new OpenStreetMapTile(zoomLevel, tileX, tileY);
+				final OpenStreetMapTile tile = new OpenStreetMapTile(zoomLevel,
+						tileX, tileY);
 
 				pj.toPixels(x, y, mTilePos);
 				final Drawable currentMapTile = mTileProvider.getMapTile(tile);
 				if (currentMapTile != null) {
-					currentMapTile.setBounds(mTilePos.x, mTilePos.y, mTilePos.x + tileSizePx, mTilePos.y + tileSizePx);
+					currentMapTile.setBounds(mTilePos.x, mTilePos.y, mTilePos.x
+							+ tileSizePx, mTilePos.y + tileSizePx);
 					currentMapTile.draw(c);
 				}
 
 				if (DEBUGMODE) {
-					c.drawText(tile.toString(), mTilePos.x + 1, mTilePos.y + mPaint.getTextSize(), mPaint);
-					c.drawLine(mTilePos.x, mTilePos.y, mTilePos.x + tileSizePx, mTilePos.y, mPaint);
-					c.drawLine(mTilePos.x, mTilePos.y, mTilePos.x, mTilePos.y + tileSizePx, mPaint);
+					c.drawText(tile.toString(), mTilePos.x + 1, mTilePos.y
+							+ mPaint.getTextSize(), mPaint);
+					c.drawLine(mTilePos.x, mTilePos.y, mTilePos.x + tileSizePx,
+							mTilePos.y, mPaint);
+					c.drawLine(mTilePos.x, mTilePos.y, mTilePos.x, mTilePos.y
+							+ tileSizePx, mPaint);
 				}
 			}
 		}
@@ -156,8 +172,10 @@ public class OpenStreetMapTilesOverlay extends OpenStreetMapViewOverlay {
 		if (DEBUGMODE) {
 			final GeoPoint center = osmv.getMapCenter();
 			final Point centerPoint = pj.toMapPixels(center, null);
-			c.drawLine(centerPoint.x, centerPoint.y - 9, centerPoint.x, centerPoint.y + 9, mPaint);
-			c.drawLine(centerPoint.x - 9, centerPoint.y, centerPoint.x + 9, centerPoint.y, mPaint);
+			c.drawLine(centerPoint.x, centerPoint.y - 9, centerPoint.x,
+					centerPoint.y + 9, mPaint);
+			c.drawLine(centerPoint.x - 9, centerPoint.y, centerPoint.x + 9,
+					centerPoint.y, mPaint);
 		}
 
 	}

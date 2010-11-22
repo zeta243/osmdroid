@@ -428,10 +428,9 @@ public class OpenStreetMapView extends View implements
 	 *            Renderer chosen.
 	 */
 	int setZoomLevel(final int aZoomLevel) {
-		final int minZoomLevel = this.mMapOverlay.getRendererInfo()
-				.zoomMinLevel();
-		final int maxZoomLevel = this.mMapOverlay.getRendererInfo()
-				.zoomMaxLevel();
+		final int minZoomLevel = getMinimumZoomLevel();
+		final int maxZoomLevel = getMaximumZoomLevel();
+
 		final int newZoomLevel = Math.max(minZoomLevel, Math.min(maxZoomLevel,
 				aZoomLevel));
 		final int curZoomLevel = this.mZoomLevel;
@@ -511,25 +510,25 @@ public class OpenStreetMapView extends View implements
 	}
 
 	/*
-	 * Returns the maximum zoom level for the point currently at the center.
-	 * 
-	 * @return The maximum zoom level for the map's current center.
-	 */
-	public int getMaxZoomLevel() {
-		return getRenderer().zoomMaxLevel();
-	}
-
-	/*
 	 * Returns the minimum zoom level for the point currently at the center.
 	 * 
 	 * @return The minimum zoom level for the map's current center.
 	 */
-	public int getMinZoomLevel() {
-		return getRenderer().zoomMinLevel();
+	public int getMinimumZoomLevel() {
+		return mMapOverlay.getMinimumZoomLevel();
+	}
+
+	/*
+	 * Returns the maximum zoom level for the point currently at the center.
+	 * 
+	 * @return The maximum zoom level for the map's current center.
+	 */
+	public int getMaximumZoomLevel() {
+		return mMapOverlay.getMaximumZoomLevel();
 	}
 
 	public boolean canZoomIn() {
-		final int maxZoomLevel = getMaxZoomLevel();
+		final int maxZoomLevel = getMaximumZoomLevel();
 		if (mZoomLevel >= maxZoomLevel) {
 			return false;
 		}
@@ -541,7 +540,7 @@ public class OpenStreetMapView extends View implements
 	}
 
 	public boolean canZoomOut() {
-		final int minZoomLevel = getMinZoomLevel();
+		final int minZoomLevel = getMinimumZoomLevel();
 		if (mZoomLevel <= minZoomLevel) {
 			return false;
 		}

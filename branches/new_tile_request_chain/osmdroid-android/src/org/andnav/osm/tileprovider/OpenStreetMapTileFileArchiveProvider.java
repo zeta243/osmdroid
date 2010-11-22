@@ -50,6 +50,10 @@ public class OpenStreetMapTileFileArchiveProvider extends
 
 	private final IOpenStreetMapRendererInfo mRenderInfo;
 
+	private final int mMinimumZoomLevel;
+
+	private final int mMaximumZoomLevel;
+
 	// ===========================================================
 	// Constructors
 	// ===========================================================
@@ -65,12 +69,15 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	public OpenStreetMapTileFileArchiveProvider(
 			final IOpenStreetMapRendererInfo pRenderInfo,
 			final IRegisterReceiver pRegisterReceiver,
-			IFilesystemCacheProvider pFilesystemCacheProvider) {
+			IFilesystemCacheProvider pFilesystemCacheProvider,
+			int pMinimumZoomLevel, int pMaximumZoomLevel) {
 		super(NUMBER_OF_TILE_FILESYSTEM_THREADS,
 				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, pFilesystemCacheProvider);
 		mRenderInfo = pRenderInfo;
 
 		this.aRegisterReceiver = pRegisterReceiver;
+		mMinimumZoomLevel = pMinimumZoomLevel;
+		mMaximumZoomLevel = pMaximumZoomLevel;
 		mBroadcastReceiver = new MyBroadcastReceiver();
 
 		checkSdCard();
@@ -110,6 +117,16 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	public void detach() {
 		aRegisterReceiver.unregisterReceiver(mBroadcastReceiver);
 		super.detach();
+	}
+
+	@Override
+	public int getMinimumZoomLevel() {
+		return mMinimumZoomLevel;
+	}
+
+	@Override
+	public int getMaximumZoomLevel() {
+		return mMaximumZoomLevel;
 	}
 
 	private void findZipFiles() {

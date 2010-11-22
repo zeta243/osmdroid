@@ -6,7 +6,7 @@ import org.andnav.osm.tileprovider.CloudmadeException;
 import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCloudmadeTokenCallback;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 
-class QuadTreeRenderer extends OpenStreetMapRendererBase {
+class QuadTreeRenderer extends HTTPRendererBase {
 
 	private final ResourceProxy.string mResourceId;
 

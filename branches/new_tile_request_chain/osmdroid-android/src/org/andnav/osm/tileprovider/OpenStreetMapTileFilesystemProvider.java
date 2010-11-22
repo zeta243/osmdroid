@@ -49,6 +49,9 @@ public class OpenStreetMapTileFilesystemProvider extends
 	private final IRegisterReceiver aRegisterReceiver;
 	private final MyBroadcastReceiver mBroadcastReceiver;
 
+	private int mMinimumZoomLevel = Integer.MAX_VALUE;
+	private int mMaximumZoomLevel = Integer.MIN_VALUE;
+
 	// ===========================================================
 	// Constructors
 	// ===========================================================
@@ -107,12 +110,30 @@ public class OpenStreetMapTileFilesystemProvider extends
 		super.detach();
 	}
 
+	@Override
+	public int getMinimumZoomLevel() {
+		return mMinimumZoomLevel;
+	}
+
+	@Override
+	public int getMaximumZoomLevel() {
+		return mMaximumZoomLevel;
+	}
+
 	private void checkSdCard() {
 		final String state = Environment.getExternalStorageState();
 		logger.info("sdcard state: " + state);
 		mSdCardAvailable = Environment.MEDIA_MOUNTED.equals(state);
 		if (DEBUGMODE)
 			logger.debug("mSdcardAvailable=" + mSdCardAvailable);
+	}
+
+	private void adjustMinimumMaximumZoomLevels(int pZoomLevel) {
+		if (pZoomLevel < mMinimumZoomLevel)
+			mMinimumZoomLevel = pZoomLevel;
+
+		if (pZoomLevel > mMaximumZoomLevel)
+			mMaximumZoomLevel = pZoomLevel;
 	}
 
 	// ===========================================================
@@ -234,6 +255,9 @@ public class OpenStreetMapTileFilesystemProvider extends
 	@Override
 	public boolean saveFile(IOpenStreetMapRendererInfo pRenderInfo,
 			OpenStreetMapTile pTile, InputStream pStream) {
+
+		adjustMinimumMaximumZoomLevels(pTile.getZoomLevel());
+
 		File file = new File(TILE_PATH_BASE, pRenderInfo
 				.getTileRelativeFilenameString(pTile));
 		createFolderAndCheckIfExists(file.getParentFile());
@@ -256,7 +280,11 @@ public class OpenStreetMapTileFilesystemProvider extends
 
 	@Override
 	public IFilesystemCache registerRendererForFilesystemAccess(
-			IOpenStreetMapRendererInfo pRendererInfo) {
+			IOpenStreetMapRendererInfo pRendererInfo, int pMinimumZoomLevel,
+			int pMaximumZoomLevel) {
+
+		adjustMinimumMaximumZoomLevels(pMinimumZoomLevel);
+		adjustMinimumMaximumZoomLevels(pMaximumZoomLevel);
 		mRenderInfoList.add(pRendererInfo);
 		return this;
 	}

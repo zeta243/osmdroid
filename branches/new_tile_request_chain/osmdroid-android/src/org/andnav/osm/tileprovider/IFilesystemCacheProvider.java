@@ -4,7 +4,8 @@ import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 
 public interface IFilesystemCacheProvider {
 	IFilesystemCache registerRendererForFilesystemAccess(
-			IOpenStreetMapRendererInfo pRendererInfo);
+			IOpenStreetMapRendererInfo pRendererInfo, int minimumZoomLevel,
+			int maximumZoomLevel);
 
 	void unregisterRendererForFilesystemAccess(
 			IOpenStreetMapRendererInfo pRendererInfo);

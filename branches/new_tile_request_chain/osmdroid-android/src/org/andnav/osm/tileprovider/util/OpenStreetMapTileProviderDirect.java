@@ -5,6 +5,7 @@ import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
 import org.andnav.osm.tileprovider.IRegisterReceiver;
 import org.andnav.osm.tileprovider.OpenStreetMapTileDownloader;
 import org.andnav.osm.tileprovider.OpenStreetMapTileFilesystemProvider;
+import org.andnav.osm.tileprovider.renderer.HTTPRendererBase;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,7 @@ public class OpenStreetMapTileProviderDirect extends
 		mFileSystemProvider = new OpenStreetMapTileFilesystemProvider(
 				aRegisterReceiver);
 		mTileDownloaderProvider = new OpenStreetMapTileDownloader(
-				OpenStreetMapRendererFactory.MAPNIK,
+				(HTTPRendererBase) OpenStreetMapRendererFactory.MAPNIK,
 				new CloudmadeDefaultTokenProvider(aCloudmadeKey),
 				mFileSystemProvider);
 		super.mTileProviderList.add(mFileSystemProvider);

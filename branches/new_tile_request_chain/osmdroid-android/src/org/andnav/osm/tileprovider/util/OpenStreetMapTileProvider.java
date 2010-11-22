@@ -37,6 +37,10 @@ public abstract class OpenStreetMapTileProvider implements
 
 	public abstract void detach();
 
+	public abstract int getMinimumZoomLevel();
+
+	public abstract int getMaximumZoomLevel();
+
 	public OpenStreetMapTileProvider(final Handler pDownloadFinishedListener) {
 		mTileCache = new OpenStreetMapTileCache();
 		mDownloadFinishedHandler = pDownloadFinishedListener;
