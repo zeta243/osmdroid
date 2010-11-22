@@ -2,8 +2,8 @@
 package org.andnav.osm.samples;
 
 import org.andnav.osm.R;
+import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.views.OpenStreetMapView;
-import org.andnav.osm.views.util.OpenStreetMapRendererFactory;
 
 import android.app.Activity;
 import android.os.Bundle;

@@ -1,11 +1,11 @@
 package org.andnav.osm.samples;
 
 import org.andnav.osm.tileprovider.IRegisterReceiver;
+import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
+import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.util.GeoPoint;
 import org.andnav.osm.views.OpenStreetMapView;
 import org.andnav.osm.views.overlay.OpenStreetMapTilesOverlay;
-import org.andnav.osm.views.util.OpenStreetMapRendererFactory;
-import org.andnav.osm.views.util.OpenStreetMapTileProviderDirect;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;
