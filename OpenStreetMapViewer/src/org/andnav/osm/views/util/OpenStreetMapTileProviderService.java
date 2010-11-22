@@ -6,6 +6,9 @@ import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
 import org.andnav.osm.tileprovider.OpenStreetMapAsyncTileProvider;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
+import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
+import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
+import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -86,7 +89,7 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProvider 
 				if (DEBUGMODE)
 					logger.debug( "Cache failed, trying from FS: " + aTile);
 				try {
-					mTileService.requestMapTile(aTile.getRenderer().name(), aTile.getZoomLevel(), aTile.getX(), aTile.getY());
+					mTileService.requestMapTile(OpenStreetMapRendererFactory.MAPNIK.name(), aTile.getZoomLevel(), aTile.getX(), aTile.getY());
 				} catch (Throwable e) {
 					logger.error( "Error getting map tile from tile service: " + aTile, e);
 				}
@@ -146,9 +149,9 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProvider 
 		public void mapTileRequestCompleted(final String aRendererName, final int aZoomLevel, final int aTileX, final int aTileY, final String aTilePath) throws RemoteException {
 	    	// TODO this will go wrong if you use a renderer that the factory doesn't know about
 			final IOpenStreetMapRendererInfo renderer = OpenStreetMapRendererFactory.getRenderer(aRendererName);
-			final OpenStreetMapTile tile = new OpenStreetMapTile(renderer, aZoomLevel, aTileX, aTileY);
+			final OpenStreetMapTile tile = new OpenStreetMapTile(aZoomLevel, aTileX, aTileY);
 			final OpenStreetMapTileRequestState state = new OpenStreetMapTileRequestState(tile, new OpenStreetMapAsyncTileProvider[]{}, OpenStreetMapTileProviderService.this);
-			OpenStreetMapTileProviderService.this.mapTileRequestCompleted(state, aTilePath);
+			OpenStreetMapTileProviderService.this.mapTileRequestCompleted(state, renderer.getDrawable(aTilePath));
 		}
 	};
 

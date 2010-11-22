@@ -7,9 +7,8 @@ import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
 import org.andnav.osm.tileprovider.IRegisterReceiver;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
-import org.andnav.osm.views.util.IOpenStreetMapRendererInfo;
-import org.andnav.osm.views.util.OpenStreetMapRendererFactory;
-import org.andnav.osm.views.util.OpenStreetMapTileProviderDirect;
+import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
+import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -17,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The OpenStreetMapTileProviderService can download map tiles from a server and
  * stores them in a file system cache.
- * 
+ *
  * @author Manuel Stahl
  */
 public class OpenStreetMapTileProviderService extends Service implements
@@ -109,27 +109,8 @@ public class OpenStreetMapTileProviderService extends Service implements
 
 	@Override
 	public void mapTileRequestCompleted(
-			final OpenStreetMapTileRequestState pState, final String pTilePath) {
-		try {
-			OpenStreetMapTile tile = pState.getMapTile();
-			mCallback.mapTileRequestCompleted(tile.getRenderer().name(), tile
-					.getZoomLevel(), tile.getX(), tile.getY(), pTilePath);
-		} catch (final RemoteException e) {
-			logger.error( "Error invoking callback", e);
-		}
-	}
-
-	@Override
-	public void mapTileRequestCompleted(
 			final OpenStreetMapTileRequestState pState,
-			final InputStream pTileInputStream) {
-		// TODO implementation
-		throw new IllegalStateException("Not implemented");
-	}
-
-	@Override
-	public void mapTileRequestCompleted(
-			final OpenStreetMapTileRequestState pState) {
+			final Drawable pDrawable) {
 		// TODO implementation
 		throw new IllegalStateException("Not implemented");
 	}
@@ -137,7 +118,7 @@ public class OpenStreetMapTileProviderService extends Service implements
 	@Override
 	public void mapTileRequestFailed(final OpenStreetMapTileRequestState pState) {
 		// TODO implementation
-		// throw new IllegalStateException("Not implemented");
+		throw new IllegalStateException("Not implemented");
 	}
 
 	@Override
@@ -160,9 +141,7 @@ public class OpenStreetMapTileProviderService extends Service implements
 		@Override
 		public void requestMapTile(String rendererName, int zoomLevel,
 				int tileX, int tileY) throws RemoteException {
-			final IOpenStreetMapRendererInfo renderer = OpenStreetMapRendererFactory
-					.getRenderer(rendererName);
-			OpenStreetMapTile tile = new OpenStreetMapTile(renderer, zoomLevel,
+			OpenStreetMapTile tile = new OpenStreetMapTile(zoomLevel,
 					tileX, tileY);
 			mTileProvider.getMapTile(tile);
 		}
