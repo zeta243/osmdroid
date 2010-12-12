@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Random;
 
+import org.andnav.osm.tileprovider.CloudmadeException;
+import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCloudmadeTokenCallback;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,16 +23,25 @@ public abstract class OpenStreetMapRendererBase implements
 
 	private static int globalOrdinal = 0;
 
+	private final String mBaseUrls[];
+	protected int cloudmadeStyle = 1;
+	private int mMinimumZoomLevel;
+	private int mMaximumZoomLevel;
+
 	private final int mOrdinal;
 	protected final String mName;
 	protected final String mImageFilenameEnding;
-	protected int cloudmadeStyle = 1;
 	protected final Random random = new Random();
 
-	public OpenStreetMapRendererBase(String aName, String aImageFilenameEnding) {
+	public OpenStreetMapRendererBase(String aName, int aZoomMinLevel,
+			int aZoomMaxLevel, String aImageFilenameEnding,
+			final String... aBaseUrl) {
 		mOrdinal = globalOrdinal++;
 		mName = aName;
+		mMinimumZoomLevel = aZoomMinLevel;
+		mMaximumZoomLevel = aZoomMaxLevel;
 		mImageFilenameEnding = aImageFilenameEnding;
+		mBaseUrls = aBaseUrl;
 	}
 
 	@Override
@@ -49,6 +60,30 @@ public abstract class OpenStreetMapRendererBase implements
 
 	public String imageFilenameEnding() {
 		return mImageFilenameEnding;
+	}
+
+	public abstract String getTileURLString(
+			OpenStreetMapTile aTile,
+			IOpenStreetMapTileProviderCloudmadeTokenCallback aCloudmadeTokenCallback)
+			throws CloudmadeException;
+
+	public void setCloudmadeStyle(int aStyleId) {
+		cloudmadeStyle = aStyleId;
+	}
+
+	public int getMinimumZoomLevel() {
+		return mMinimumZoomLevel;
+	}
+
+	public int getMaximumZoomLevel() {
+		return mMaximumZoomLevel;
+	}
+
+	/**
+	 * Get the base url, which will be a random one if there are more than one.
+	 */
+	protected String getBaseUrl() {
+		return mBaseUrls[random.nextInt(mBaseUrls.length)];
 	}
 
 	@Override

@@ -6,7 +6,7 @@ import org.andnav.osm.tileprovider.CloudmadeException;
 import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCloudmadeTokenCallback;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 
-class XYRenderer extends HTTPRendererBase {
+class XYRenderer extends OpenStreetMapRendererBase {
 
 	private final ResourceProxy.string mResourceId;
 
