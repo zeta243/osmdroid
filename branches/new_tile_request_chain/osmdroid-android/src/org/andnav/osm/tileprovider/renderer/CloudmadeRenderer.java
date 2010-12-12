@@ -9,12 +9,15 @@ import org.andnav.osm.tileprovider.OpenStreetMapTile;
 class CloudmadeRenderer extends OpenStreetMapRendererBase {
 
 	private final ResourceProxy.string mResourceId;
+	private final int mMaptileZoom;
 
 	CloudmadeRenderer(String aName, string aResourceId, int aZoomMinLevel,
-			int aZoomMaxLevel, String aImageFilenameEnding, String... aBaseUrl) {
+			int aZoomMaxLevel, int aMaptileZoom, String aImageFilenameEnding,
+			String... aBaseUrl) {
 		super(aName, aZoomMinLevel, aZoomMaxLevel, aImageFilenameEnding,
 				aBaseUrl);
 		mResourceId = aResourceId;
+		mMaptileZoom = aMaptileZoom;
 	}
 
 	@Override
@@ -39,8 +42,7 @@ class CloudmadeRenderer extends OpenStreetMapRendererBase {
 		final String key = aCloudmadeTokenCallback.getCloudmadeKey();
 		final String token = aCloudmadeTokenCallback.getCloudmadeToken(key);
 		return String.format(getBaseUrl(), key, cloudmadeStyle,
-				aTile.getZoomLevel(), aTile.getX(), aTile.getY(),
-				mImageFilenameEnding, token);
+				1 << mMaptileZoom, aTile.getZoomLevel(), aTile.getX(),
+				aTile.getY(), mImageFilenameEnding, token);
 	}
-
 }

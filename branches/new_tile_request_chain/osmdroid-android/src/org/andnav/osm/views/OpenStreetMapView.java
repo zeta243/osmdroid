@@ -14,7 +14,6 @@ import org.andnav.osm.events.ScrollEvent;
 import org.andnav.osm.events.ZoomEvent;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
-import org.andnav.osm.tileprovider.util.CloudmadeUtil;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
 import org.andnav.osm.util.BoundingBoxE6;
 import org.andnav.osm.util.GeoPoint;
@@ -877,9 +876,9 @@ public class OpenStreetMapView extends View implements
 	// because we only have the context in the constructor
 	// the alternative would be to only get it when needed,
 	// but that would mean keeping a handle on the context
-	private String getCloudmadeKey(final Context aContext) {
-		return CloudmadeUtil.getCloudmadeKey(aContext);
-	}
+	// private String getCloudmadeKey(final Context aContext) {
+	// return CloudmadeUtil.getCloudmadeKey(aContext);
+	// }
 
 	private void checkZoomButtons() {
 		this.mZoomController.setZoomInEnabled(canZoomIn());

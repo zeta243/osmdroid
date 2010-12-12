@@ -144,7 +144,7 @@ public class OpenStreetMapRendererFactory {
 
 	public static final IOpenStreetMapRendererInfo CLOUDMADESTANDARDTILES = new CloudmadeRenderer(
 			"CloudMadeStandardTiles", ResourceProxy.string.cloudmade_standard,
-			0, 18, ".png",
+			0, 18, 8, ".png",
 			"http://a.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s",
 			"http://b.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s",
 			"http://c.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s");
@@ -152,7 +152,8 @@ public class OpenStreetMapRendererFactory {
 	// FYI - This renderer has a tileSize of "6"
 	public static final IOpenStreetMapRendererInfo CLOUDMADESMALLTILES = new CloudmadeRenderer(
 			"CloudMadeSmallTiles", ResourceProxy.string.cloudmade_small, 0, 21,
-			".png", "http://a.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s",
+			6, ".png",
+			"http://a.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s",
 			"http://b.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s",
 			"http://c.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s");
 
