@@ -14,6 +14,7 @@ import org.andnav.osm.events.ScrollEvent;
 import org.andnav.osm.events.ZoomEvent;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
+import org.andnav.osm.tileprovider.util.SimpleInvalidationHandler;
 import org.andnav.osm.util.BoundingBoxE6;
 import org.andnav.osm.util.GeoPoint;
 import org.andnav.osm.util.constants.GeoConstants;
@@ -39,6 +40,7 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
@@ -122,6 +124,12 @@ public class OpenStreetMapView extends View implements
 
 	private OpenStreetMapView(final Context context, final AttributeSet attrs,
 			OpenStreetMapTileProvider tileProvider) {
+		this(context, null, attrs, tileProvider);
+	}
+
+	private OpenStreetMapView(final Context context,
+			final Handler tileRequestCompleteHandler, final AttributeSet attrs,
+			OpenStreetMapTileProvider tileProvider) {
 		super(context, attrs);
 		mResourceProxy = new DefaultResourceProxyImpl(context);
 		this.mController = new OpenStreetMapViewController(this);
@@ -133,6 +141,9 @@ public class OpenStreetMapView extends View implements
 		}
 
 		mTileProvider = tileProvider;
+		mTileProvider
+				.setTileRequestCompleteHandler(tileRequestCompleteHandler == null ? new SimpleInvalidationHandler(
+						this) : tileRequestCompleteHandler);
 
 		// TODO: Map tile zoom size is fixed at 8, but it should be configurable
 		this.mMapOverlay = new OpenStreetMapTilesOverlay(this, 8,

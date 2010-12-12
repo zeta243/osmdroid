@@ -9,7 +9,7 @@ import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import android.os.Handler;
+import android.content.Context;
 
 /**
  * Objects of this class provide access to tiles which are amenable to
@@ -29,10 +29,13 @@ public class OpenStreetMapTileProviderDirect extends
 	private final OpenStreetMapTileFilesystemProvider mFileSystemProvider;
 	private OpenStreetMapTileDownloader mTileDownloaderProvider;
 
+	public OpenStreetMapTileProviderDirect(final Context pContext) {
+		this(new SimpleRegisterReceiver(pContext));
+	}
+
 	public OpenStreetMapTileProviderDirect(
-			final Handler pDownloadFinishedListener,
 			final IRegisterReceiver aRegisterReceiver) {
-		super(pDownloadFinishedListener, aRegisterReceiver);
+		super(aRegisterReceiver);
 		mFileSystemProvider = new OpenStreetMapTileFilesystemProvider(
 				aRegisterReceiver);
 		mTileDownloaderProvider = new OpenStreetMapTileDownloader(
