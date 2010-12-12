@@ -46,7 +46,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 
 	/** keep around to unregister when we're done */
 	private final IRegisterReceiver aRegisterReceiver;
-	private final MyBroadcastReceiver mBroadcastReceiver;
+	private MyBroadcastReceiver mBroadcastReceiver;
 
 	private final IOpenStreetMapRendererInfo mRenderInfo;
 
@@ -115,7 +115,10 @@ public class OpenStreetMapTileFileArchiveProvider extends
 
 	@Override
 	public void detach() {
-		aRegisterReceiver.unregisterReceiver(mBroadcastReceiver);
+		if (mBroadcastReceiver != null) {
+			aRegisterReceiver.unregisterReceiver(mBroadcastReceiver);
+			mBroadcastReceiver = null;
+		}
 		super.detach();
 	}
 

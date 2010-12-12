@@ -47,7 +47,7 @@ public class OpenStreetMapTileFilesystemProvider extends
 
 	/** keep around to unregister when we're done */
 	private final IRegisterReceiver aRegisterReceiver;
-	private final MyBroadcastReceiver mBroadcastReceiver;
+	private MyBroadcastReceiver mBroadcastReceiver;
 
 	private int mMinimumZoomLevel = Integer.MAX_VALUE;
 	private int mMaximumZoomLevel = Integer.MIN_VALUE;
@@ -106,7 +106,10 @@ public class OpenStreetMapTileFilesystemProvider extends
 
 	@Override
 	public void detach() {
-		aRegisterReceiver.unregisterReceiver(mBroadcastReceiver);
+		if (mBroadcastReceiver != null) {
+			aRegisterReceiver.unregisterReceiver(mBroadcastReceiver);
+			mBroadcastReceiver = null;
+		}
 		super.detach();
 	}
 
@@ -167,8 +170,8 @@ public class OpenStreetMapTileFilesystemProvider extends
 
 			// Check each registered renderer to see if their file is available
 			for (IOpenStreetMapRendererInfo renderInfo : mRenderInfoList) {
-				File file = new File(TILE_PATH_BASE, renderInfo
-						.getTileRelativeFilenameString(aTile));
+				File file = new File(TILE_PATH_BASE,
+						renderInfo.getTileRelativeFilenameString(aTile));
 				if (file.exists()) {
 					Drawable drawable = renderInfo.getDrawable(file.getPath());
 					return drawable;
@@ -258,14 +261,14 @@ public class OpenStreetMapTileFilesystemProvider extends
 
 		adjustMinimumMaximumZoomLevels(pTile.getZoomLevel());
 
-		File file = new File(TILE_PATH_BASE, pRenderInfo
-				.getTileRelativeFilenameString(pTile));
+		File file = new File(TILE_PATH_BASE,
+				pRenderInfo.getTileRelativeFilenameString(pTile));
 		createFolderAndCheckIfExists(file.getParentFile());
 
 		BufferedOutputStream outputStream = null;
 		try {
-			outputStream = new BufferedOutputStream(new FileOutputStream(file
-					.getPath()));
+			outputStream = new BufferedOutputStream(new FileOutputStream(
+					file.getPath()));
 			StreamUtils.copy(pStream, outputStream);
 		} catch (IOException e) {
 			return false;
