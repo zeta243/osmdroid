@@ -9,7 +9,9 @@ import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
 import org.andnav.osm.tileprovider.IRegisterReceiver;
 import org.andnav.osm.tileprovider.OpenStreetMapAsyncTileProvider;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
+import org.andnav.osm.tileprovider.OpenStreetMapTileDownloader;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
+import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -161,5 +163,18 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 			}
 		}
 		return result;
+	}
+
+	@Override
+	public void setRenderer(IOpenStreetMapRendererInfo aRenderer) {
+		for (OpenStreetMapAsyncTileProvider tileProvider : mTileProviderList) {
+			// We could identify tile providers by an Interface if we wanted to
+			// make this extensible.
+			if (tileProvider instanceof OpenStreetMapTileDownloader) {
+				((OpenStreetMapTileDownloader) tileProvider)
+						.setRenderer(aRenderer);
+				clearTileCache();
+			}
+		}
 	}
 }

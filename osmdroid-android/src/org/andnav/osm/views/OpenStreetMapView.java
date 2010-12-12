@@ -217,17 +217,9 @@ public class OpenStreetMapView extends View implements
 		aOsmvMinimap.setMaxiMap(this);
 
 		// make sure that the zoom level of the minimap is set correctly. this
-		// is done when
-		// setting the zoom level of the main map
+		// is done when setting the zoom level of the main map
 		this.setZoomLevel(this.getZoomLevel());
 
-		// TODO: Set identical map renderer
-		// this.mMiniMap.setRenderer(this.getRenderer());
-
-		// Note the "false" parameter at the end - do NOT pass it further to
-		// other maps here
-		// this.mMiniMap.setMapCenter(this.getMapCenterLatitudeE6(),
-		// this.getMapCenterLongitudeE6(), false);
 		this.mMiniMap.getController().setCenter(this.getMapCenter());
 	}
 
@@ -364,18 +356,14 @@ public class OpenStreetMapView extends View implements
 		}
 	}
 
-	// TODO: Do we need to re-implement some of these things when we change
-	// renderers?
-	// public void setRenderer(final IOpenStreetMapRendererInfo aRenderer) {
-	// // this.mMapOverlay.setRendererInfo(aRenderer);
-	// if (aRenderer instanceof HTTPRendererBase)
-	// this.mTileProvider.setRenderer((HTTPRendererBase) aRenderer);
-	// if (this.mMiniMap != null)
-	// this.mMiniMap.setRenderer(aRenderer);
-	// this.checkZoomButtons();
-	// this.setZoomLevel(mZoomLevel); // revalidate zoom level
-	// postInvalidate();
-	// }
+	public void setRenderer(final IOpenStreetMapRendererInfo aRenderer) {
+		mTileProvider.setRenderer(aRenderer);
+		if (this.mMiniMap != null)
+			this.mMiniMap.setRenderer(aRenderer);
+		this.checkZoomButtons();
+		this.setZoomLevel(mZoomLevel); // revalidate zoom level
+		postInvalidate();
+	}
 
 	/**
 	 * @param aZoomLevel
