@@ -3,6 +3,7 @@ package org.andnav.osm.views.util;
 
 import org.andnav.osm.services.IOpenStreetMapTileProviderService;
 import org.andnav.osm.tileprovider.IRegisterReceiver;
+import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.views.OpenStreetMapView;
@@ -54,7 +55,8 @@ public class OpenStreetMapTileProviderFactory implements OpenStreetMapViewConsta
 					applicationContext.unregisterReceiver(aReceiver);
 				}
 			};
-			return new OpenStreetMapTileProviderDirect(aDownloadFinishedListener, aCloudmadeKey, registerReceiver);
+			OpenStreetMapRendererFactory.setCloudmadeKey(aCloudmadeKey);
+			return new OpenStreetMapTileProviderDirect(aDownloadFinishedListener, registerReceiver);
 		} else {
 			logger.info( "Using tile provider service");
 			return new OpenStreetMapTileProviderService(aContext, aDownloadFinishedListener);

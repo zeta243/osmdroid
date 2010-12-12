@@ -1,13 +1,10 @@
 package org.andnav.osm.services;
 
-import java.io.InputStream;
-
 import org.andnav.osm.services.constants.OpenStreetMapServiceConstants;
 import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
 import org.andnav.osm.tileprovider.IRegisterReceiver;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
-import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
 
 import android.app.Service;
@@ -55,8 +52,7 @@ public class OpenStreetMapTileProviderService extends Service implements
 				applicationContext.unregisterReceiver(aReceiver);
 			}
 		};
-		mTileProvider = new OpenStreetMapTileProviderDirect(new Handler(),
-				null, registerReceiver);
+		mTileProvider = new OpenStreetMapTileProviderDirect(new Handler(), registerReceiver);
 	}
 
 	@Override
