@@ -7,6 +7,9 @@ import org.andnav.osm.ResourceProxyImpl;
 import org.andnav.osm.constants.OpenStreetMapConstants;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
+import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
+import org.andnav.osm.tileprovider.util.SimpleInvalidationHandler;
+import org.andnav.osm.tileprovider.util.SimpleRegisterReceiver;
 import org.andnav.osm.util.GeoPoint;
 import org.andnav.osm.views.OpenStreetMapView;
 import org.andnav.osm.views.OpenStreetMapViewController;
@@ -49,6 +52,7 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
 	private OpenStreetMapViewSimpleLocationOverlay mMyLocationOverlay;
 	private ResourceProxy mResourceProxy;
 	private ScaleBarOverlay mScaleBarOverlay;
+	private OpenStreetMapTileProviderDirect mTileProvider;
 
 	// ===========================================================
 	// Constructors
@@ -63,7 +67,12 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
 
         final RelativeLayout rl = new RelativeLayout(this);
 
-        this.mOsmv = new OpenStreetMapView(this);
+		final String cloudmadeKey = ""; // getCloudmadeKey(applicationContext);
+		mTileProvider = new OpenStreetMapTileProviderDirect(
+				new SimpleInvalidationHandler(rl), cloudmadeKey,
+				new SimpleRegisterReceiver(getApplicationContext()));
+
+        this.mOsmv = new OpenStreetMapView(this,mTileProvider);
         this.mOsmvController = this.mOsmv.getController();
         rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 
@@ -74,7 +83,7 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
         	// Scale bar tries to draw as 1-inch, so to put it in the top center, set x offset to half screen width, minus half an inch.
         	this.mScaleBarOverlay.setScaleBarOffset(getResources().getDisplayMetrics().widthPixels/2 - getResources().getDisplayMetrics().xdpi/2, 10);
         }
-        
+
         /* SingleLocation-Overlay */
         {
 	        /* Create a static Overlay showing a single location. (Gets updated in onLocationChanged(Location loc)! */

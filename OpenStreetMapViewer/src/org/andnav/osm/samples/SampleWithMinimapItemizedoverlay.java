@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.ResourceProxyImpl;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
+import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
+import org.andnav.osm.tileprovider.util.SimpleInvalidationHandler;
+import org.andnav.osm.tileprovider.util.SimpleRegisterReceiver;
 import org.andnav.osm.util.GeoPoint;
 import org.andnav.osm.views.OpenStreetMapView;
 import org.andnav.osm.views.overlay.OpenStreetMapViewItemizedOverlay;
@@ -41,6 +44,7 @@ public class SampleWithMinimapItemizedoverlay extends Activity {
 	private OpenStreetMapView mOsmv, mOsmvMinimap;
 	private OpenStreetMapViewItemizedOverlay<OpenStreetMapViewOverlayItem> mMyLocationOverlay;
 	private ResourceProxy mResourceProxy;
+	private OpenStreetMapTileProviderDirect mTileProvider;
 
 	// ===========================================================
 	// Constructors
@@ -54,7 +58,12 @@ public class SampleWithMinimapItemizedoverlay extends Activity {
 
         final RelativeLayout rl = new RelativeLayout(this);
 
-        this.mOsmv = new OpenStreetMapView(this);
+		final String cloudmadeKey = ""; // getCloudmadeKey(applicationContext);
+		mTileProvider = new OpenStreetMapTileProviderDirect(
+				new SimpleInvalidationHandler(rl), cloudmadeKey,
+				new SimpleRegisterReceiver(getApplicationContext()));
+
+        this.mOsmv = new OpenStreetMapView(this, mTileProvider);
         rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 
 
@@ -68,18 +77,18 @@ public class SampleWithMinimapItemizedoverlay extends Activity {
 	        items.add(new OpenStreetMapViewOverlayItem("San Francisco", "SampleDescription", new GeoPoint(37779300, -122419200))); // San Francisco
 
 	        /* OnTapListener for the Markers, shows a simple Toast. */
-	        this.mMyLocationOverlay = new OpenStreetMapViewItemizedOverlay<OpenStreetMapViewOverlayItem>(this, items, 
+	        this.mMyLocationOverlay = new OpenStreetMapViewItemizedOverlay<OpenStreetMapViewOverlayItem>(this, items,
 	        		new OpenStreetMapViewItemizedOverlay.OnItemGestureListener<OpenStreetMapViewOverlayItem>(){
 						@Override
 						public boolean onItemSingleTapUp(int index, OpenStreetMapViewOverlayItem item) {
-							Toast.makeText(SampleWithMinimapItemizedoverlay.this, 
+							Toast.makeText(SampleWithMinimapItemizedoverlay.this,
 									"Item '" + item.mTitle + "' (index=" + index + ") got single tapped up", Toast.LENGTH_LONG).show();
 							return true; // We 'handled' this event.
 						}
-		
+
 						@Override
 						public boolean onItemLongPress(int index, OpenStreetMapViewOverlayItem item) {
-							Toast.makeText(SampleWithMinimapItemizedoverlay.this, 
+							Toast.makeText(SampleWithMinimapItemizedoverlay.this,
 									"Item '" + item.mTitle + "' (index=" + index + ") got long pressed", Toast.LENGTH_LONG).show();
 							return false;
 						}

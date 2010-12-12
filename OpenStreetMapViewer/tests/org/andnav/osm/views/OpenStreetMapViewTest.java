@@ -1,5 +1,8 @@
 package org.andnav.osm.views;
 
+import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
+import org.andnav.osm.tileprovider.util.SimpleInvalidationHandler;
+import org.andnav.osm.tileprovider.util.SimpleRegisterReceiver;
 import org.andnav.osm.util.GeoPoint;
 import org.andnav.osm.views.OpenStreetMapView.OpenStreetMapViewProjection;
 
@@ -19,7 +22,7 @@ public class OpenStreetMapViewTest extends AndroidTestCase {
 
 	private static final int WIDTH = 300;
 	private static final int HEIGHT = 500;
-	
+
 	private OpenStreetMapView mOpenStreetMapView;
 
 	@Override
@@ -33,12 +36,17 @@ public class OpenStreetMapViewTest extends AndroidTestCase {
 				return getContext().getSystemService(pName);
 			}
 		};
-		
-		mOpenStreetMapView = new OpenStreetMapView(context);
+
+		final String cloudmadeKey = ""; // getCloudmadeKey(applicationContext);
+		OpenStreetMapTileProviderDirect mTileProvider = new OpenStreetMapTileProviderDirect(
+				new SimpleInvalidationHandler(null), cloudmadeKey,
+				new SimpleRegisterReceiver(context));
+
+		mOpenStreetMapView = new OpenStreetMapView(context, mTileProvider);
 		final Bitmap bitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Config.RGB_565);
 		final Canvas canvas = new Canvas(bitmap);
 		mOpenStreetMapView.onDraw(canvas);
-		
+
 		super.setUp();
 	}
 
@@ -46,15 +54,15 @@ public class OpenStreetMapViewTest extends AndroidTestCase {
 	 * This test was retrospectively added based on current implementation.
 	 * TODO a manual calculation and verify that this test gives the correct result.
 	 */
-	public void test_toMapPixels_0_0() {		
-		
+	public void test_toMapPixels_0_0() {
+
         final GeoPoint zz = new GeoPoint(0, 0);
 		mOpenStreetMapView.getController().setCenter(zz);
 		mOpenStreetMapView.getController().setZoom(8);
 		final OpenStreetMapViewProjection projection = mOpenStreetMapView.getProjection();
 
 		final Point point = projection.toMapPixels(zz, null);
-		
+
 		final Point expected = new Point(0, 0);
 		assertEquals("TODO describe test", expected, point);
 	}
@@ -63,15 +71,15 @@ public class OpenStreetMapViewTest extends AndroidTestCase {
 	 * This test was retrospectively added based on current implementation.
 	 * TODO a manual calculation and verify that this test gives the correct result.
 	 */
-	public void test_toMapPixels_Hannover() {		
-		
+	public void test_toMapPixels_Hannover() {
+
         final GeoPoint hannover = new GeoPoint(52370816, 9735936);
 		mOpenStreetMapView.getController().setCenter(hannover);
 		mOpenStreetMapView.getController().setZoom(8);
 		final OpenStreetMapViewProjection projection = mOpenStreetMapView.getProjection();
 
 		final Point point = projection.toMapPixels(hannover, null);
-		
+
 		final Point expected = new Point(1772, -11231);
 		assertEquals("TODO describe test", expected, point);
 	}
