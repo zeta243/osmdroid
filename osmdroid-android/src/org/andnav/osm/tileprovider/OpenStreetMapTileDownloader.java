@@ -39,8 +39,6 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 	// Fields
 	// ===========================================================
 
-	private IOpenStreetMapTileProviderCloudmadeTokenCallback mCallback;
-
 	private final IFilesystemCacheProvider mFilesystemCacheProvider;
 
 	private IFilesystemCache mFilesystemCache;
@@ -53,11 +51,9 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 
 	public OpenStreetMapTileDownloader(
 			IOpenStreetMapRendererInfo pRendererInfo,
-			final IOpenStreetMapTileProviderCloudmadeTokenCallback pCallback,
 			IFilesystemCacheProvider pFilesystemCacheProvider) {
 		super(NUMBER_OF_TILE_DOWNLOAD_THREADS,
 				TILE_DOWNLOAD_MAXIMUM_QUEUE_SIZE, pFilesystemCacheProvider);
-		mCallback = pCallback;
 		mFilesystemCacheProvider = pFilesystemCacheProvider;
 		setRenderer(pRendererInfo);
 	}
@@ -109,7 +105,7 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 
 	private String buildURL(final OpenStreetMapTile tile)
 			throws CloudmadeException {
-		return mRendererInfo.getTileURLString(tile, mCallback);
+		return mRendererInfo.getTileURLString(tile);
 	}
 
 	public IOpenStreetMapRendererInfo getRenderer() {
