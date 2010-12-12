@@ -13,7 +13,6 @@ import org.andnav.osm.events.MapListener;
 import org.andnav.osm.events.ScrollEvent;
 import org.andnav.osm.events.ZoomEvent;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
-import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
 import org.andnav.osm.util.BoundingBoxE6;
 import org.andnav.osm.util.GeoPoint;
@@ -122,7 +121,6 @@ public class OpenStreetMapView extends View implements
 	// ===========================================================
 
 	private OpenStreetMapView(final Context context, final AttributeSet attrs,
-			final IOpenStreetMapRendererInfo rendererInfo,
 			OpenStreetMapTileProvider tileProvider) {
 		super(context, attrs);
 		mResourceProxy = new DefaultResourceProxyImpl(context);
@@ -168,32 +166,22 @@ public class OpenStreetMapView extends View implements
 	/**
 	 * Constructor used by XML layout resource (uses default renderer).
 	 */
-	public OpenStreetMapView(Context context, AttributeSet attrs) {
-		this(context, attrs, null, null);
-	}
-
-	/**
-	 * Standard Constructor (uses default renderer).
-	 */
-	public OpenStreetMapView(final Context context,
-			final OpenStreetMapTileProvider aTileProvider) {
-		this(context, null, OpenStreetMapRendererFactory.MAPNIK, aTileProvider);
-	}
+	// TODO: Fix this? We can't pass null as the tile renderer
+	// public OpenStreetMapView(Context context, AttributeSet attrs) {
+	// this(context, attrs, null);
+	// }
 
 	/**
 	 * Standard Constructor.
 	 */
 	public OpenStreetMapView(final Context context,
-			final IOpenStreetMapRendererInfo aRendererInfo,
 			final OpenStreetMapTileProvider aTileProvider) {
-		this(context, null, aRendererInfo, aTileProvider);
+		this(context, null, aTileProvider);
 	}
 
 	/**
 	 * 
 	 * @param context
-	 * @param aRendererInfo
-	 *            pass a {@link IOpenStreetMapRendererInfo} you like.
 	 * @param osmv
 	 *            another {@link OpenStreetMapView}, to share the TileProvider
 	 *            with.<br/>
@@ -201,10 +189,8 @@ public class OpenStreetMapView extends View implements
 	 *            same {@link IOpenStreetMapRendererInfo}.
 	 */
 	public OpenStreetMapView(final Context context,
-			final IOpenStreetMapRendererInfo aRendererInfo,
 			final OpenStreetMapView aMapToShareTheTileProviderWith) {
-		this(context, null, aRendererInfo,
-				aMapToShareTheTileProviderWith.mTileProvider);
+		this(context, null, aMapToShareTheTileProviderWith.mTileProvider);
 	}
 
 	// ===========================================================
