@@ -5,6 +5,7 @@ import org.andnav.osm.R;
 import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.ResourceProxyImpl;
 import org.andnav.osm.constants.OpenStreetMapConstants;
+import org.andnav.osm.tileprovider.renderer.HTTPRendererBase;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
@@ -225,7 +226,7 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
 				return true;
 
 			default:
-				this.mOsmv.setRenderer(OpenStreetMapRendererFactory.getRenderer(item.getItemId() - 1000));
+				mTileProvider.setRenderer((HTTPRendererBase) OpenStreetMapRendererFactory.getRenderer(item.getItemId() - 1000));
 		}
 		return false;
 	}
