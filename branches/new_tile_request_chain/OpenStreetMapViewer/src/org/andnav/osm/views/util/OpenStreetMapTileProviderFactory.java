@@ -45,18 +45,8 @@ public class OpenStreetMapTileProviderFactory implements OpenStreetMapViewConsta
 		if (ri == null) {
 			logger.info( "Service not found - using direct tile provider");
 			final Context applicationContext = aContext.getApplicationContext();
-			final IRegisterReceiver registerReceiver = new IRegisterReceiver() {
-				@Override
-				public Intent registerReceiver(final BroadcastReceiver aReceiver, final IntentFilter aFilter) {
-					return applicationContext.registerReceiver(aReceiver, aFilter);
-				}
-				@Override
-				public void unregisterReceiver(final BroadcastReceiver aReceiver) {
-					applicationContext.unregisterReceiver(aReceiver);
-				}
-			};
 			OpenStreetMapRendererFactory.setCloudmadeKey(aCloudmadeKey);
-			return new OpenStreetMapTileProviderDirect(aDownloadFinishedListener, registerReceiver);
+			return new OpenStreetMapTileProviderDirect(applicationContext);
 		} else {
 			logger.info( "Using tile provider service");
 			return new OpenStreetMapTileProviderService(aContext, aDownloadFinishedListener);

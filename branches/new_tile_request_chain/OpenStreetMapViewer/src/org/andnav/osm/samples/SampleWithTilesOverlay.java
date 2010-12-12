@@ -52,7 +52,7 @@ public class SampleWithTilesOverlay extends Activity {
 
 		final String cloudmadeKey = CloudmadeUtil.getCloudmadeKey(getApplicationContext());
 		OpenStreetMapRendererFactory.setCloudmadeKey(cloudmadeKey);
-		mTileProvider = new OpenStreetMapTileProviderDirect(new SimpleInvalidationHandler(rl), new SimpleRegisterReceiver(getApplicationContext()));
+		mTileProvider = new OpenStreetMapTileProviderDirect(getApplicationContext());
 
 		this.mOsmv = new OpenStreetMapView(this, mTileProvider);
 		rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
@@ -72,7 +72,7 @@ public class SampleWithTilesOverlay extends Activity {
 			public void unregisterReceiver(final BroadcastReceiver aReceiver) {
 			}
 		};
-		mProvider = new OpenStreetMapTileProviderDirect(new Handler(), registerReceiver);
+		mProvider = new OpenStreetMapTileProviderDirect(registerReceiver);
 		mOsmv.setRenderer(OpenStreetMapRendererFactory.FIETS_OVERLAY_NL);
 		this.mTilesOverlay = new OpenStreetMapTilesOverlay (this.mOsmv, 8, mProvider, this.getBaseContext());
 		this.mOsmv.getOverlays().add(this.mTilesOverlay);

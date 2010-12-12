@@ -52,7 +52,7 @@ public class OpenStreetMapTileProviderService extends Service implements
 				applicationContext.unregisterReceiver(aReceiver);
 			}
 		};
-		mTileProvider = new OpenStreetMapTileProviderDirect(new Handler(), registerReceiver);
+		mTileProvider = new OpenStreetMapTileProviderDirect(registerReceiver);
 	}
 
 	@Override
