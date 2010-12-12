@@ -31,9 +31,9 @@ import android.widget.Toast;
 
 /**
  * Default map view activity.
- * 
+ *
  * @author Manuel Stahl
- * 
+ *
  */
 public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 	// ===========================================================
@@ -79,8 +79,7 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 				new SimpleInvalidationHandler(rl), new SimpleRegisterReceiver(
 						getApplicationContext()));
 
-		this.mOsmv = new OpenStreetMapView(this,
-				OpenStreetMapRendererFactory.MAPNIK, mTileProvider);
+		this.mOsmv = new OpenStreetMapView(this, mTileProvider);
 		this.mOsmv.setResourceProxy(mResourceProxy);
 		this.mLocationOverlay = new MyLocationOverlay(this.getBaseContext(),
 				this.mOsmv, mResourceProxy);
