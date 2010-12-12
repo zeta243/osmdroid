@@ -58,7 +58,7 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProvider
 		}
 
 		try {
-			mDownloadFinishedHandler
+			mTileRequestCompleteHandler
 					.sendEmptyMessage(OpenStreetMapTile.MAPTILE_SUCCESS_ID);
 		} catch (Exception e) {
 			logger.error("Error sending success message on connect", e);

@@ -7,8 +7,6 @@ import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.CloudmadeUtil;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
-import org.andnav.osm.tileprovider.util.SimpleInvalidationHandler;
-import org.andnav.osm.tileprovider.util.SimpleRegisterReceiver;
 import org.andnav.osm.util.GeoPoint;
 import org.andnav.osm.views.OpenStreetMapView;
 import org.andnav.osm.views.overlay.MyLocationOverlay;
@@ -75,9 +73,7 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 		final String cloudmadeKey = CloudmadeUtil
 				.getCloudmadeKey(getApplicationContext());
 		OpenStreetMapRendererFactory.setCloudmadeKey(cloudmadeKey);
-		mTileProvider = new OpenStreetMapTileProviderDirect(
-				new SimpleInvalidationHandler(rl), new SimpleRegisterReceiver(
-						getApplicationContext()));
+		mTileProvider = new OpenStreetMapTileProviderDirect(this);
 
 		this.mOsmv = new OpenStreetMapView(this, mTileProvider);
 		this.mOsmv.setResourceProxy(mResourceProxy);
