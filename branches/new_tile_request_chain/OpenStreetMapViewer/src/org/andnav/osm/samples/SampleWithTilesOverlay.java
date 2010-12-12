@@ -1,8 +1,11 @@
 package org.andnav.osm.samples;
 
 import org.andnav.osm.tileprovider.IRegisterReceiver;
+import org.andnav.osm.tileprovider.renderer.HTTPRendererBase;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
+import org.andnav.osm.tileprovider.util.SimpleInvalidationHandler;
+import org.andnav.osm.tileprovider.util.SimpleRegisterReceiver;
 import org.andnav.osm.util.GeoPoint;
 import org.andnav.osm.views.OpenStreetMapView;
 import org.andnav.osm.views.overlay.OpenStreetMapTilesOverlay;
@@ -34,6 +37,7 @@ public class SampleWithTilesOverlay extends Activity {
 	private OpenStreetMapView mOsmv;
 	private OpenStreetMapTilesOverlay mTilesOverlay;
 	private OpenStreetMapTileProviderDirect mProvider;
+	private OpenStreetMapTileProviderDirect mTileProvider;
 
 	// ===========================================================
 	// Constructors
@@ -45,7 +49,13 @@ public class SampleWithTilesOverlay extends Activity {
 
 		// Setup base map
 		final RelativeLayout rl = new RelativeLayout(this);
-		this.mOsmv = new OpenStreetMapView(this);
+
+		final String cloudmadeKey = ""; // getCloudmadeKey(applicationContext);
+		mTileProvider = new OpenStreetMapTileProviderDirect(
+				new SimpleInvalidationHandler(rl), cloudmadeKey,
+				new SimpleRegisterReceiver(getApplicationContext()));
+
+		this.mOsmv = new OpenStreetMapView(this, mTileProvider);
 		rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 		this.mOsmv.setBuiltInZoomControls(true);
 
@@ -64,7 +74,8 @@ public class SampleWithTilesOverlay extends Activity {
 			}
 		};
 		mProvider = new OpenStreetMapTileProviderDirect(new Handler(), "key", registerReceiver);
-		this.mTilesOverlay = new OpenStreetMapTilesOverlay (this.mOsmv, OpenStreetMapRendererFactory.FIETS_OVERLAY_NL, mProvider, this.getBaseContext());
+		mProvider.setRenderer((HTTPRendererBase)OpenStreetMapRendererFactory.FIETS_OVERLAY_NL);
+		this.mTilesOverlay = new OpenStreetMapTilesOverlay (this.mOsmv, 8, mProvider, this.getBaseContext());
 		this.mOsmv.getOverlays().add(this.mTilesOverlay);
 
 		this.setContentView(rl);

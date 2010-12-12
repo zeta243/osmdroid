@@ -3,6 +3,9 @@ package org.andnav.osm.samples;
 
 import org.andnav.osm.R;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
+import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
+import org.andnav.osm.tileprovider.util.SimpleInvalidationHandler;
+import org.andnav.osm.tileprovider.util.SimpleRegisterReceiver;
 import org.andnav.osm.views.OpenStreetMapView;
 
 import android.app.Activity;
@@ -29,6 +32,7 @@ public class SampleWithMinimapZoomcontrols extends Activity {
 	// ===========================================================
 
 	private OpenStreetMapView mOsmv, mOsmvMinimap;
+	private OpenStreetMapTileProviderDirect mTileProvider;
 
 	// ===========================================================
 	// Constructors
@@ -40,7 +44,12 @@ public class SampleWithMinimapZoomcontrols extends Activity {
 
         final RelativeLayout rl = new RelativeLayout(this);
 
-        this.mOsmv = new OpenStreetMapView(this);
+		final String cloudmadeKey = ""; // getCloudmadeKey(applicationContext);
+		mTileProvider = new OpenStreetMapTileProviderDirect(
+				new SimpleInvalidationHandler(rl), cloudmadeKey,
+				new SimpleRegisterReceiver(getApplicationContext()));
+
+        this.mOsmv = new OpenStreetMapView(this, mTileProvider);
         rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 
 
