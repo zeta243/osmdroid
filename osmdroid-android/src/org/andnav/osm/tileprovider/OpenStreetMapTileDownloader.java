@@ -103,8 +103,7 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 	// Methods
 	// ===========================================================
 
-	private String buildURL(final OpenStreetMapTile tile)
-			throws CloudmadeException {
+	private String buildURL(final OpenStreetMapTile tile) {
 		return mRendererInfo.getTileURLString(tile);
 	}
 
@@ -178,9 +177,6 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 			} catch (final IOException e) {
 				logger.warn("IOException downloading MapTile: " + tile + " : "
 						+ e);
-			} catch (final CloudmadeException e) {
-				logger.warn("CloudmadeException downloading MapTile: " + tile
-						+ " : " + e);
 			} catch (final Throwable e) {
 				logger.error("Error downloading MapTile: " + tile, e);
 			} finally {
