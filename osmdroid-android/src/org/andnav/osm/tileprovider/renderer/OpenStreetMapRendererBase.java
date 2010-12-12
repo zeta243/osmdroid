@@ -23,18 +23,13 @@ public abstract class OpenStreetMapRendererBase implements
 
 	private final int mOrdinal;
 	protected final String mName;
-	protected final int mMaptileSizePx;
-	private final int mMaptileZoom;
 	protected final String mImageFilenameEnding;
 	protected int cloudmadeStyle = 1;
 	protected final Random random = new Random();
 
-	public OpenStreetMapRendererBase(String aName, int aMaptileZoom,
-			String aImageFilenameEnding) {
+	public OpenStreetMapRendererBase(String aName, String aImageFilenameEnding) {
 		mOrdinal = globalOrdinal++;
 		mName = aName;
-		mMaptileZoom = aMaptileZoom;
-		mMaptileSizePx = 1 << aMaptileZoom;
 		mImageFilenameEnding = aImageFilenameEnding;
 	}
 
@@ -50,16 +45,6 @@ public abstract class OpenStreetMapRendererBase implements
 
 	public String pathBase() {
 		return mName;
-	}
-
-	@Override
-	public int maptileSizePx() {
-		return mMaptileSizePx;
-	}
-
-	@Override
-	public int maptileZoom() {
-		return mMaptileZoom;
 	}
 
 	public String imageFilenameEnding() {
@@ -79,9 +64,7 @@ public abstract class OpenStreetMapRendererBase implements
 				try {
 					new File(aFilePath).delete();
 				} catch (final Throwable e) {
-					logger
-							.error("Error deleting invalid file: " + aFilePath,
-									e);
+					logger.error("Error deleting invalid file: " + aFilePath, e);
 				}
 			}
 		} catch (final OutOfMemoryError e) {

@@ -11,10 +11,9 @@ class QuadTreeRenderer extends HTTPRendererBase {
 	private final ResourceProxy.string mResourceId;
 
 	QuadTreeRenderer(String aName, string aResourceId, int aZoomMinLevel,
-			int aZoomMaxLevel, int aMaptileZoom, String aImageFilenameEnding,
-			String... aBaseUrl) {
-		super(aName, aZoomMinLevel, aZoomMaxLevel, aMaptileZoom,
-				aImageFilenameEnding, aBaseUrl);
+			int aZoomMaxLevel, String aImageFilenameEnding, String... aBaseUrl) {
+		super(aName, aZoomMinLevel, aZoomMaxLevel, aImageFilenameEnding,
+				aBaseUrl);
 		mResourceId = aResourceId;
 	}
 

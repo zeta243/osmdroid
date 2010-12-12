@@ -3,7 +3,6 @@ package org.andnav.osm.views.overlay;
 import org.andnav.osm.DefaultResourceProxyImpl;
 import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
-import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
 import org.andnav.osm.util.GeoPoint;
 import org.andnav.osm.util.MyMath;
@@ -33,7 +32,6 @@ public class OpenStreetMapTilesOverlay extends OpenStreetMapViewOverlay {
 			.getLogger(OpenStreetMapTilesOverlay.class);
 
 	protected OpenStreetMapView mOsmv;
-	protected IOpenStreetMapRendererInfo mRendererInfo;
 
 	/** Current renderer */
 	protected final OpenStreetMapTileProvider mTileProvider;
@@ -43,35 +41,29 @@ public class OpenStreetMapTilesOverlay extends OpenStreetMapViewOverlay {
 	private final Point mTilePos = new Point();
 	private final Rect mViewPort = new Rect();
 
+	private final int mTileSizePx;
+
+	private final int mTileZoom;
+
 	public OpenStreetMapTilesOverlay(final OpenStreetMapView aOsmv,
-			final IOpenStreetMapRendererInfo aRendererInfo,
-			final OpenStreetMapTileProvider aTileProvider,
+			final int tileZoom, final OpenStreetMapTileProvider aTileProvider,
 			final Context aContext) {
-		this(aOsmv, aRendererInfo, aTileProvider, new DefaultResourceProxyImpl(
+		this(aOsmv, tileZoom, aTileProvider, new DefaultResourceProxyImpl(
 				aContext));
 	}
 
 	public OpenStreetMapTilesOverlay(final OpenStreetMapView aOsmv,
-			final IOpenStreetMapRendererInfo aRendererInfo,
-			final OpenStreetMapTileProvider aTileProvider,
+			final int tileZoom, final OpenStreetMapTileProvider aTileProvider,
 			final ResourceProxy pResourceProxy) {
 		super(pResourceProxy);
 		this.mOsmv = aOsmv;
-		this.mRendererInfo = aRendererInfo;
+		mTileZoom = tileZoom;
+		mTileSizePx = 1 << mTileZoom;
 		this.mTileProvider = aTileProvider; // TODO check for null
 	}
 
 	public void detach() {
 		this.mTileProvider.detach();
-	}
-
-	public IOpenStreetMapRendererInfo getRendererInfo() {
-		return mRendererInfo;
-	}
-
-	public void setRendererInfo(final IOpenStreetMapRendererInfo aRendererInfo) {
-		this.mRendererInfo = aRendererInfo;
-		// XXX perhaps we should set the cache capacity back to default here
 	}
 
 	public void setAlpha(int a) {
@@ -118,8 +110,8 @@ public class OpenStreetMapTilesOverlay extends OpenStreetMapViewOverlay {
 		final int zoomLevel = osmv.getZoomLevel(false);
 
 		c.getClipBounds(mViewPort);
-		final int tileSizePx = this.mRendererInfo.maptileSizePx();
-		final int tileZoom = this.mRendererInfo.maptileZoom();
+		final int tileSizePx = mTileSizePx;
+		final int tileZoom = mTileZoom;
 		final int worldSize_2 = 1 << (zoomLevel + tileZoom - 1);
 
 		/*

@@ -11,9 +11,8 @@ public abstract class HTTPRendererBase extends OpenStreetMapRendererBase {
 	private int mMaximumZoomLevel;
 
 	public HTTPRendererBase(String aName, int aZoomMinLevel, int aZoomMaxLevel,
-			int aMaptileZoom, String aImageFilenameEnding,
-			final String... aBaseUrl) {
-		super(aName, aMaptileZoom, aImageFilenameEnding);
+			String aImageFilenameEnding, final String... aBaseUrl) {
+		super(aName, aImageFilenameEnding);
 		mMinimumZoomLevel = aZoomMinLevel;
 		mMaximumZoomLevel = aZoomMaxLevel;
 		mBaseUrls = aBaseUrl;

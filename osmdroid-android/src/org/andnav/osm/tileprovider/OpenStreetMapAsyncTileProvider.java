@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.andnav.osm.tileprovider.OpenStreetMapAsyncTileProvider.CantContinueException;
 import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
 import org.slf4j.Logger;
@@ -154,9 +155,8 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 						}
 					} catch (final ConcurrentModificationException e) {
 						if (DEBUGMODE)
-							logger
-									.warn("ConcurrentModificationException break: "
-											+ (result != null));
+							logger.warn("ConcurrentModificationException break: "
+									+ (result != null));
 
 						// if we've got a result return it, otherwise try again
 						if (result != null) {
@@ -229,7 +229,7 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 		}
 	}
 
-	class CantContinueException extends Exception {
+	public class CantContinueException extends Exception {
 		private static final long serialVersionUID = 146526524087765133L;
 
 		public CantContinueException(final String aDetailMessage) {

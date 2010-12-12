@@ -3,6 +3,7 @@ package org.andnav.osm.tileprovider.util;
 
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
+import org.andnav.osm.tileprovider.renderer.HTTPRendererBase;
 import org.andnav.osm.views.util.OpenStreetMapTileCache;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
 import org.slf4j.Logger;
@@ -40,6 +41,8 @@ public abstract class OpenStreetMapTileProvider implements
 	public abstract int getMinimumZoomLevel();
 
 	public abstract int getMaximumZoomLevel();
+
+	public abstract void setRenderer(HTTPRendererBase httpRenderer);
 
 	public OpenStreetMapTileProvider(final Handler pDownloadFinishedListener) {
 		mTileCache = new OpenStreetMapTileCache();

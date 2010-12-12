@@ -45,7 +45,7 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 
 	private IFilesystemCache mFilesystemCache;
 
-	private final HTTPRendererBase mRendererInfo;
+	private HTTPRendererBase mRendererInfo;
 
 	// ===========================================================
 	// Constructors
@@ -56,14 +56,9 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 			IFilesystemCacheProvider pFilesystemCacheProvider) {
 		super(NUMBER_OF_TILE_DOWNLOAD_THREADS,
 				TILE_DOWNLOAD_MAXIMUM_QUEUE_SIZE, pFilesystemCacheProvider);
-		mRendererInfo = pRendererInfo;
 		mCallback = pCallback;
 		mFilesystemCacheProvider = pFilesystemCacheProvider;
-		if (mFilesystemCacheProvider != null)
-			mFilesystemCache = mFilesystemCacheProvider
-					.registerRendererForFilesystemAccess(mRendererInfo,
-							mRendererInfo.getMinimumZoomLevel(), mRendererInfo
-									.getMaximumZoomLevel());
+		setRenderer(pRendererInfo);
 	}
 
 	// ===========================================================
@@ -116,6 +111,25 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 		return mRendererInfo.getTileURLString(tile, mCallback);
 	}
 
+	public HTTPRendererBase getRenderer() {
+		return mRendererInfo;
+	}
+
+	public void setRenderer(HTTPRendererBase renderer) {
+		if (mFilesystemCacheProvider != null) {
+			if ((mFilesystemCache != null) && (mRendererInfo != null))
+				mFilesystemCacheProvider
+						.unregisterRendererForFilesystemAccess(mRendererInfo);
+
+			mRendererInfo = renderer;
+
+			mFilesystemCache = mFilesystemCacheProvider
+					.registerRendererForFilesystemAccess(mRendererInfo,
+							mRendererInfo.getMinimumZoomLevel(),
+							mRendererInfo.getMaximumZoomLevel());
+		}
+	}
+
 	// ===========================================================
 	// Inner and Anonymous Classes
 	// ===========================================================
@@ -137,8 +151,9 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 					logger.debug("Downloading Maptile from url: "
 							+ tileURLString);
 
-				in = new BufferedInputStream(new URL(tileURLString)
-						.openStream(), StreamUtils.IO_BUFFER_SIZE);
+				in = new BufferedInputStream(
+						new URL(tileURLString).openStream(),
+						StreamUtils.IO_BUFFER_SIZE);
 
 				final ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
 				out = new BufferedOutputStream(dataStream,
