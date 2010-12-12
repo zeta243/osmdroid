@@ -5,6 +5,7 @@ import org.andnav.osm.constants.OpenStreetMapConstants;
 import org.andnav.osm.samples.SampleLoader;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
+import org.andnav.osm.tileprovider.util.CloudmadeUtil;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.tileprovider.util.SimpleInvalidationHandler;
 import org.andnav.osm.tileprovider.util.SimpleRegisterReceiver;
@@ -30,9 +31,9 @@ import android.widget.Toast;
 
 /**
  * Default map view activity.
- * 
+ *
  * @author Manuel Stahl
- * 
+ *
  */
 public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 	// ===========================================================
@@ -71,7 +72,7 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 
 		final RelativeLayout rl = new RelativeLayout(this);
 
-		final String cloudmadeKey = ""; // getCloudmadeKey(applicationContext);
+		final String cloudmadeKey = CloudmadeUtil.getCloudmadeKey(getApplicationContext());
 		mTileProvider = new OpenStreetMapTileProviderDirect(
 				new SimpleInvalidationHandler(rl), cloudmadeKey,
 				new SimpleRegisterReceiver(getApplicationContext()));
