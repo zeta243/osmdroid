@@ -11,10 +11,9 @@ class CloudmadeRenderer extends HTTPRendererBase {
 	private final ResourceProxy.string mResourceId;
 
 	CloudmadeRenderer(String aName, string aResourceId, int aZoomMinLevel,
-			int aZoomMaxLevel, int aMaptileZoom, String aImageFilenameEnding,
-			String... aBaseUrl) {
-		super(aName, aZoomMinLevel, aZoomMaxLevel, aMaptileZoom,
-				aImageFilenameEnding, aBaseUrl);
+			int aZoomMaxLevel, String aImageFilenameEnding, String... aBaseUrl) {
+		super(aName, aZoomMinLevel, aZoomMaxLevel, aImageFilenameEnding,
+				aBaseUrl);
 		mResourceId = aResourceId;
 	}
 
@@ -39,7 +38,7 @@ class CloudmadeRenderer extends HTTPRendererBase {
 			throws CloudmadeException {
 		final String key = aCloudmadeTokenCallback.getCloudmadeKey();
 		final String token = aCloudmadeTokenCallback.getCloudmadeToken(key);
-		return String.format(getBaseUrl(), key, cloudmadeStyle, mMaptileSizePx,
+		return String.format(getBaseUrl(), key, cloudmadeStyle,
 				aTile.getZoomLevel(), aTile.getX(), aTile.getY(),
 				mImageFilenameEnding, token);
 	}

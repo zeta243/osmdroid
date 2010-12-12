@@ -44,4 +44,12 @@ public class OpenStreetMapTileProviderDirect extends
 		super.mTileProviderList.add(mFileSystemProvider);
 		super.mTileProviderList.add(mTileDownloaderProvider);
 	}
+
+	public HTTPRendererBase getRenderer() {
+		return mTileDownloaderProvider.getRenderer();
+	}
+
+	public void setRenderer(HTTPRendererBase renderer) {
+		mTileDownloaderProvider.setRenderer(renderer);
+	}
 }

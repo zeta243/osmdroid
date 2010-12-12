@@ -12,13 +12,11 @@ import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.events.MapListener;
 import org.andnav.osm.events.ScrollEvent;
 import org.andnav.osm.events.ZoomEvent;
-import org.andnav.osm.tileprovider.IRegisterReceiver;
-import org.andnav.osm.tileprovider.OpenStreetMapTile;
+import org.andnav.osm.tileprovider.renderer.HTTPRendererBase;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.CloudmadeUtil;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
-import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.util.BoundingBoxE6;
 import org.andnav.osm.util.GeoPoint;
 import org.andnav.osm.util.constants.GeoConstants;
@@ -34,30 +32,25 @@ import org.metalev.multitouch.controller.MultiTouchController.PositionAndScale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.Paint.Style;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
+import android.view.GestureDetector.OnGestureListener;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.GestureDetector.OnGestureListener;
 import android.view.animation.Animation;
-import android.view.animation.ScaleAnimation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.ScaleAnimation;
 import android.widget.Scroller;
 
 public class OpenStreetMapView extends View implements
@@ -124,6 +117,8 @@ public class OpenStreetMapView extends View implements
 	private BoundingBoxE6 mBoundingBox = new BoundingBoxE6(0, 0, 0, 0);
 	private int[] mIntArray = new int[2];
 
+	private OpenStreetMapTileProvider mTileProvider;
+
 	// ===========================================================
 	// Constructors
 	// ===========================================================
@@ -137,30 +132,15 @@ public class OpenStreetMapView extends View implements
 		this.mScroller = new Scroller(context);
 
 		if (tileProvider == null) {
-			final Context applicationContext = context.getApplicationContext();
-			final String cloudmadeKey = getCloudmadeKey(applicationContext);
-			final IRegisterReceiver registerReceiver = new IRegisterReceiver() {
-				@Override
-				public Intent registerReceiver(
-						final BroadcastReceiver aReceiver,
-						final IntentFilter aFilter) {
-					return applicationContext.registerReceiver(aReceiver,
-							aFilter);
-				}
-
-				@Override
-				public void unregisterReceiver(final BroadcastReceiver aReceiver) {
-					applicationContext.unregisterReceiver(aReceiver);
-				}
-			};
-			tileProvider = new OpenStreetMapTileProviderDirect(
-					new SimpleInvalidationHandler(), cloudmadeKey,
-					registerReceiver);
+			throw new IllegalArgumentException(
+					"Cannot pass null as tileProvider. Use OpenStreetMapTileProviderDirect.");
 		}
 
-		this.mMapOverlay = new OpenStreetMapTilesOverlay(this,
-				OpenStreetMapRendererFactory.getRenderer(rendererInfo, attrs),
-				tileProvider, mResourceProxy);
+		mTileProvider = tileProvider;
+
+		// TODO: Map tile zoom size is fixed at 8, but it should be configurable
+		this.mMapOverlay = new OpenStreetMapTilesOverlay(this, 8,
+				mTileProvider, mResourceProxy);
 		mOverlays.add(this.mMapOverlay);
 		this.mZoomController = new ZoomButtonsController(this);
 		this.mZoomController
@@ -195,18 +175,11 @@ public class OpenStreetMapView extends View implements
 	}
 
 	/**
-	 * Standard Constructor.
-	 */
-	public OpenStreetMapView(final Context context,
-			final IOpenStreetMapRendererInfo aRendererInfo) {
-		this(context, null, aRendererInfo, null);
-	}
-
-	/**
 	 * Standard Constructor (uses default renderer).
 	 */
-	public OpenStreetMapView(final Context context) {
-		this(context, null, null, null);
+	public OpenStreetMapView(final Context context,
+			final OpenStreetMapTileProvider aTileProvider) {
+		this(context, null, OpenStreetMapRendererFactory.MAPNIK, aTileProvider);
 	}
 
 	/**
@@ -232,11 +205,8 @@ public class OpenStreetMapView extends View implements
 	public OpenStreetMapView(final Context context,
 			final IOpenStreetMapRendererInfo aRendererInfo,
 			final OpenStreetMapView aMapToShareTheTileProviderWith) {
-		this(context, null, aRendererInfo, /*
-											 * TODO
-											 * aMapToShareTheTileProviderWith
-											 * .mTileProvider
-											 */null);
+		this(context, null, aRendererInfo,
+				aMapToShareTheTileProviderWith.mTileProvider);
 	}
 
 	// ===========================================================
@@ -267,8 +237,8 @@ public class OpenStreetMapView extends View implements
 		// setting the zoom level of the main map
 		this.setZoomLevel(this.getZoomLevel());
 
-		// Set identical map renderer
-		this.mMiniMap.setRenderer(this.getRenderer());
+		// TODO: Set identical map renderer
+		// this.mMiniMap.setRenderer(this.getRenderer());
 
 		// Note the "false" parameter at the end - do NOT pass it further to
 		// other maps here
@@ -360,7 +330,8 @@ public class OpenStreetMapView extends View implements
 
 	private BoundingBoxE6 getBoundingBox(final int pViewWidth,
 			final int pViewHeight) {
-		final int mapTileZoom = mMapOverlay.getRendererInfo().maptileZoom();
+		// TODO: Map tile zoom size is fixed at 8, but it should be configurable
+		final int mapTileZoom = 8; // mMapOverlay.getRendererInfo().maptileZoom();
 		final int world_2 = (1 << mZoomLevel + mapTileZoom - 1);
 		final int north = world_2 + getScrollY() - getHeight() / 2;
 		final int south = world_2 + getScrollY() + getHeight() / 2;
@@ -409,12 +380,10 @@ public class OpenStreetMapView extends View implements
 		}
 	}
 
-	public IOpenStreetMapRendererInfo getRenderer() {
-		return this.mMapOverlay.getRendererInfo();
-	}
-
 	public void setRenderer(final IOpenStreetMapRendererInfo aRenderer) {
-		this.mMapOverlay.setRendererInfo(aRenderer);
+		// this.mMapOverlay.setRendererInfo(aRenderer);
+		if (aRenderer instanceof HTTPRendererBase)
+			this.mTileProvider.setRenderer((HTTPRendererBase) aRenderer);
 		if (this.mMiniMap != null)
 			this.mMiniMap.setRenderer(aRenderer);
 		this.checkZoomButtons();
@@ -431,8 +400,8 @@ public class OpenStreetMapView extends View implements
 		final int minZoomLevel = getMinimumZoomLevel();
 		final int maxZoomLevel = getMaximumZoomLevel();
 
-		final int newZoomLevel = Math.max(minZoomLevel, Math.min(maxZoomLevel,
-				aZoomLevel));
+		final int newZoomLevel = Math.max(minZoomLevel,
+				Math.min(maxZoomLevel, aZoomLevel));
 		final int curZoomLevel = this.mZoomLevel;
 
 		if (this.mMiniMap != null) {
@@ -620,7 +589,8 @@ public class OpenStreetMapView extends View implements
 	}
 
 	public void onSaveInstanceState(Bundle state) {
-		state.putString(BUNDLE_RENDERER, getRenderer().name());
+		// TODO: Fix this!!
+		// state.putString(BUNDLE_RENDERER, getRenderer().name());
 		state.putInt(BUNDLE_SCROLL_X, getScrollX());
 		state.putInt(BUNDLE_SCROLL_Y, getScrollY());
 		state.putInt(BUNDLE_ZOOM_LEVEL, getZoomLevel());
@@ -636,8 +606,8 @@ public class OpenStreetMapView extends View implements
 		setRenderer(renderer);
 
 		setZoomLevel(state.getInt(BUNDLE_ZOOM_LEVEL, 1));
-		scrollTo(state.getInt(BUNDLE_SCROLL_X, 0), state.getInt(
-				BUNDLE_SCROLL_Y, 0));
+		scrollTo(state.getInt(BUNDLE_SCROLL_X, 0),
+				state.getInt(BUNDLE_SCROLL_Y, 0));
 	}
 
 	/**
@@ -891,8 +861,8 @@ public class OpenStreetMapView extends View implements
 	 * Get the equivalent zoom level on pixel scale
 	 */
 	int getPixelZoomLevel() {
-		return this.mZoomLevel
-				+ this.mMapOverlay.getRendererInfo().maptileZoom();
+		// TODO: Map tile zoom size is fixed at 8, but it should be configurable
+		return this.mZoomLevel + 8; // this.mMapOverlay.getRendererInfo().maptileZoom();
 	}
 
 	// ===========================================================
@@ -913,8 +883,8 @@ public class OpenStreetMapView extends View implements
 	}
 
 	private int[] getCenterMapTileCoords() {
-		final int mapTileZoom = this.mMapOverlay.getRendererInfo()
-				.maptileZoom();
+		// TODO: Map tile zoom size is fixed at 8, but it should be configurable
+		final int mapTileZoom = 8;// this.mMapOverlay.getRendererInfo().maptileZoom();
 		final int worldTiles_2 = 1 << (mZoomLevel - 1);
 		// convert to tile coordinate and make positive
 		return new int[] { (getScrollY() >> mapTileZoom) + worldTiles_2,
@@ -990,7 +960,9 @@ public class OpenStreetMapView extends View implements
 			// make it only
 			// 'valid' for a
 			// short time.
-			tileSizePx = getRenderer().maptileSizePx();
+			// TODO: Map tile zoom size is fixed at 8, but it should be
+			// configurable
+			tileSizePx = 1 << 8; // getRenderer().maptileSizePx();
 
 			/*
 			 * Get the center MapTile which is above this.mLatitudeE6 and
@@ -1328,17 +1300,5 @@ public class OpenStreetMapView extends View implements
 			animating = true;
 		}
 
-	}
-
-	private class SimpleInvalidationHandler extends Handler {
-
-		@Override
-		public void handleMessage(final Message msg) {
-			switch (msg.what) {
-			case OpenStreetMapTile.MAPTILE_SUCCESS_ID:
-				invalidate();
-				break;
-			}
-		}
 	}
 }
