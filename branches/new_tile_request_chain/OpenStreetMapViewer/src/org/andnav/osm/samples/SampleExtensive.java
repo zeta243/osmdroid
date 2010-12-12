@@ -69,9 +69,8 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
         final RelativeLayout rl = new RelativeLayout(this);
 
 		final String cloudmadeKey = CloudmadeUtil.getCloudmadeKey(getApplicationContext());
-		mTileProvider = new OpenStreetMapTileProviderDirect(
-				new SimpleInvalidationHandler(rl), cloudmadeKey,
-				new SimpleRegisterReceiver(getApplicationContext()));
+		OpenStreetMapRendererFactory.setCloudmadeKey(cloudmadeKey);
+		mTileProvider = new OpenStreetMapTileProviderDirect(new SimpleInvalidationHandler(rl), new SimpleRegisterReceiver(getApplicationContext()));
 
         this.mOsmv = new OpenStreetMapView(this,mTileProvider);
         this.mOsmvController = this.mOsmv.getController();

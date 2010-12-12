@@ -31,9 +31,9 @@ import android.widget.Toast;
 
 /**
  * Default map view activity.
- *
+ * 
  * @author Manuel Stahl
- *
+ * 
  */
 public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 	// ===========================================================
@@ -72,10 +72,12 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 
 		final RelativeLayout rl = new RelativeLayout(this);
 
-		final String cloudmadeKey = CloudmadeUtil.getCloudmadeKey(getApplicationContext());
+		final String cloudmadeKey = CloudmadeUtil
+				.getCloudmadeKey(getApplicationContext());
+		OpenStreetMapRendererFactory.setCloudmadeKey(cloudmadeKey);
 		mTileProvider = new OpenStreetMapTileProviderDirect(
-				new SimpleInvalidationHandler(rl), cloudmadeKey,
-				new SimpleRegisterReceiver(getApplicationContext()));
+				new SimpleInvalidationHandler(rl), new SimpleRegisterReceiver(
+						getApplicationContext()));
 
 		this.mOsmv = new OpenStreetMapView(this,
 				OpenStreetMapRendererFactory.MAPNIK, mTileProvider);

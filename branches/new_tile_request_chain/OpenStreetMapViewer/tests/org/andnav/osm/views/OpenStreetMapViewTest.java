@@ -37,10 +37,9 @@ public class OpenStreetMapViewTest extends AndroidTestCase {
 			}
 		};
 
-		final String cloudmadeKey = ""; // getCloudmadeKey(applicationContext);
+		//final String cloudmadeKey = getCloudmadeKey(applicationContext);
 		OpenStreetMapTileProviderDirect mTileProvider = new OpenStreetMapTileProviderDirect(
-				new SimpleInvalidationHandler(null), cloudmadeKey,
-				new SimpleRegisterReceiver(context));
+				new SimpleInvalidationHandler(null), new SimpleRegisterReceiver(context));
 
 		mOpenStreetMapView = new OpenStreetMapView(context, mTileProvider);
 		final Bitmap bitmap = Bitmap.createBitmap(WIDTH, HEIGHT, Config.RGB_565);

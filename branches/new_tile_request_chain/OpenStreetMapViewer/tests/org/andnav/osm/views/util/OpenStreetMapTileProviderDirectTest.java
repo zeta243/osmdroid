@@ -46,7 +46,7 @@ public class OpenStreetMapTileProviderDirectTest extends AndroidTestCase {
 			public void unregisterReceiver(final BroadcastReceiver aReceiver) {
 			}
 		};
-		mProvider = new OpenStreetMapTileProviderDirect(new Handler(), "key", registerReceiver);
+		mProvider = new OpenStreetMapTileProviderDirect(new Handler(), registerReceiver);
 
 		super.setUp();
 	}

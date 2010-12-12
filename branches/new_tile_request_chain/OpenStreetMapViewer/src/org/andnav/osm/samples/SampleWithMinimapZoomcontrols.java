@@ -46,9 +46,8 @@ public class SampleWithMinimapZoomcontrols extends Activity {
         final RelativeLayout rl = new RelativeLayout(this);
 
 		final String cloudmadeKey = CloudmadeUtil.getCloudmadeKey(getApplicationContext());
-		mTileProvider = new OpenStreetMapTileProviderDirect(
-				new SimpleInvalidationHandler(rl), cloudmadeKey,
-				new SimpleRegisterReceiver(getApplicationContext()));
+		OpenStreetMapRendererFactory.setCloudmadeKey(cloudmadeKey);
+		mTileProvider = new OpenStreetMapTileProviderDirect(new SimpleInvalidationHandler(rl), new SimpleRegisterReceiver(getApplicationContext()));
 
         this.mOsmv = new OpenStreetMapView(this, mTileProvider);
         rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
