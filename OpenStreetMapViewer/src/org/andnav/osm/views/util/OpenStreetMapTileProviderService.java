@@ -180,4 +180,9 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProvider
 	public int getMaximumZoomLevel() {
 		return 18;
 	}
+
+	@Override
+	public void setRenderer(IOpenStreetMapRendererInfo pRenderer) {
+		// TODO Auto-generated method stub
+	}
 }

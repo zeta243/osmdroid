@@ -31,9 +31,9 @@ import android.widget.Toast;
 
 /**
  * Default map view activity.
- *
+ * 
  * @author Manuel Stahl
- *
+ * 
  */
 public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 	// ===========================================================
@@ -122,7 +122,7 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 		try {
 			final IOpenStreetMapRendererInfo renderer = OpenStreetMapRendererFactory
 					.getRenderer(rendererName);
-			mTileProvider.setRenderer(renderer);
+			mOsmv.setRenderer(renderer);
 		} catch (IllegalArgumentException ignore) {
 		}
 		if (mPrefs.getBoolean(PREFS_SHOW_LOCATION, false))
@@ -210,8 +210,8 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 			return true;
 
 		default: // Map mode submenu items
-			mTileProvider.setRenderer(OpenStreetMapRendererFactory
-					.getRenderer(item.getItemId() - 1000));
+			mOsmv.setRenderer(OpenStreetMapRendererFactory.getRenderer(item
+					.getItemId() - 1000));
 		}
 		return false;
 	}
