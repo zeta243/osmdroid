@@ -44,8 +44,4 @@ public class OpenStreetMapTileProviderDirect extends
 	public IOpenStreetMapRendererInfo getRenderer() {
 		return mTileDownloaderProvider.getRenderer();
 	}
-
-	public void setRenderer(IOpenStreetMapRendererInfo renderer) {
-		mTileDownloaderProvider.setRenderer(renderer);
-	}
 }
