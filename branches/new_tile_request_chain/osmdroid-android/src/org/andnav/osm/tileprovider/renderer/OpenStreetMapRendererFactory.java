@@ -1,6 +1,7 @@
 package org.andnav.osm.tileprovider.renderer;
 
 import org.andnav.osm.ResourceProxy;
+import org.andnav.osm.tileprovider.CloudmadeDefaultTokenProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +97,7 @@ public class OpenStreetMapRendererFactory {
 					final int s = Integer.valueOf(style);
 					logger.info("Using Cloudmade style specified in layout attributes: "
 							+ s);
-					((CloudmadeRenderer) renderer).cloudmadeStyle = s;
+					OpenStreetMapRendererFactory.setCloudmadeStyle(s);
 				} catch (final NumberFormatException e) {
 					logger.warn("Invalid Cloudmade style specified in layout attributes: "
 							+ style);
@@ -110,6 +111,17 @@ public class OpenStreetMapRendererFactory {
 
 	public static IOpenStreetMapRendererInfo[] getRenderers() {
 		return mRenderers;
+	}
+
+	private static CloudmadeDefaultTokenProvider mCloudmadeCallback = new CloudmadeDefaultTokenProvider(
+			"", 1);
+
+	public static void setCloudmadeKey(String aCloudmadeKey) {
+		mCloudmadeCallback.setCloudmadeKey(aCloudmadeKey);
+	}
+
+	public static void setCloudmadeStyle(int aCloudmadeStyle) {
+		mCloudmadeCallback.setCloudmadeStyle(aCloudmadeStyle);
 	}
 
 	public static final IOpenStreetMapRendererInfo OSMARENDER = new XYRenderer(
@@ -143,16 +155,16 @@ public class OpenStreetMapRendererFactory {
 			"http://topo.geofabrik.de/hills/");
 
 	public static final IOpenStreetMapRendererInfo CLOUDMADESTANDARDTILES = new CloudmadeRenderer(
-			"CloudMadeStandardTiles", ResourceProxy.string.cloudmade_standard,
-			0, 18, 8, ".png",
+			mCloudmadeCallback, "CloudMadeStandardTiles",
+			ResourceProxy.string.cloudmade_standard, 0, 18, 8, ".png",
 			"http://a.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s",
 			"http://b.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s",
 			"http://c.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s");
 
 	// FYI - This renderer has a tileSize of "6"
 	public static final IOpenStreetMapRendererInfo CLOUDMADESMALLTILES = new CloudmadeRenderer(
-			"CloudMadeSmallTiles", ResourceProxy.string.cloudmade_small, 0, 21,
-			6, ".png",
+			mCloudmadeCallback, "CloudMadeSmallTiles",
+			ResourceProxy.string.cloudmade_small, 0, 21, 6, ".png",
 			"http://a.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s",
 			"http://b.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s",
 			"http://c.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s");

@@ -1,6 +1,6 @@
 package org.andnav.osm.tileprovider;
 
-public interface IOpenStreetMapTileProviderCloudmadeTokenCallback {
+public interface ICloudmadeTokenCallback {
 
 	/**
 	 * Get the token for Cloudmade tiles. See
@@ -20,4 +20,11 @@ public interface IOpenStreetMapTileProviderCloudmadeTokenCallback {
 	 * @return
 	 */
 	String getCloudmadeKey() throws CloudmadeException;
+
+	/**
+	 * Get the style for Cloudmade tiles.
+	 * 
+	 * @return
+	 */
+	int getCloudmadeStyle();
 }

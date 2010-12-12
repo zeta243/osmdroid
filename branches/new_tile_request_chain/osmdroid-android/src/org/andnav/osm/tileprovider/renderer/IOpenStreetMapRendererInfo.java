@@ -4,7 +4,6 @@ import java.io.InputStream;
 
 import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.tileprovider.CloudmadeException;
-import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCloudmadeTokenCallback;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 
 import android.graphics.drawable.Drawable;
@@ -27,8 +26,6 @@ public interface IOpenStreetMapRendererInfo {
 
 	public int getMaximumZoomLevel();
 
-	public abstract String getTileURLString(
-			OpenStreetMapTile aTile,
-			IOpenStreetMapTileProviderCloudmadeTokenCallback aCloudmadeTokenCallback)
+	public abstract String getTileURLString(OpenStreetMapTile aTile)
 			throws CloudmadeException;
 }

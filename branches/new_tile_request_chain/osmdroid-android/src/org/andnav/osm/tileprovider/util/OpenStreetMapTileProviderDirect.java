@@ -1,6 +1,5 @@
 package org.andnav.osm.tileprovider.util;
 
-import org.andnav.osm.tileprovider.CloudmadeDefaultTokenProvider;
 import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
 import org.andnav.osm.tileprovider.IRegisterReceiver;
 import org.andnav.osm.tileprovider.OpenStreetMapTileDownloader;
@@ -32,15 +31,12 @@ public class OpenStreetMapTileProviderDirect extends
 
 	public OpenStreetMapTileProviderDirect(
 			final Handler pDownloadFinishedListener,
-			final String aCloudmadeKey,
 			final IRegisterReceiver aRegisterReceiver) {
 		super(pDownloadFinishedListener, aRegisterReceiver);
 		mFileSystemProvider = new OpenStreetMapTileFilesystemProvider(
 				aRegisterReceiver);
 		mTileDownloaderProvider = new OpenStreetMapTileDownloader(
-				OpenStreetMapRendererFactory.MAPNIK,
-				new CloudmadeDefaultTokenProvider(aCloudmadeKey),
-				mFileSystemProvider);
+				OpenStreetMapRendererFactory.MAPNIK, mFileSystemProvider);
 		super.mTileProviderList.add(mFileSystemProvider);
 		super.mTileProviderList.add(mTileDownloaderProvider);
 	}

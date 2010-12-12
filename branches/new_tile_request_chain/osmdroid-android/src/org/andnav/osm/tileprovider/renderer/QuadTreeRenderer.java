@@ -3,7 +3,6 @@ package org.andnav.osm.tileprovider.renderer;
 import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.ResourceProxy.string;
 import org.andnav.osm.tileprovider.CloudmadeException;
-import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCloudmadeTokenCallback;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 
 class QuadTreeRenderer extends OpenStreetMapRendererBase {
@@ -23,9 +22,7 @@ class QuadTreeRenderer extends OpenStreetMapRendererBase {
 	}
 
 	@Override
-	public String getTileURLString(
-			OpenStreetMapTile aTile,
-			IOpenStreetMapTileProviderCloudmadeTokenCallback aCloudmadeTokenCallback)
+	public String getTileURLString(OpenStreetMapTile aTile)
 			throws CloudmadeException {
 		return getBaseUrl() + quadTree(aTile) + mImageFilenameEnding;
 	}
