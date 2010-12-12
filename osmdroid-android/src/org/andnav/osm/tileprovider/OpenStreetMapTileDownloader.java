@@ -12,7 +12,7 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.UnknownHostException;
 
-import org.andnav.osm.tileprovider.renderer.HTTPRendererBase;
+import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,13 +45,14 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 
 	private IFilesystemCache mFilesystemCache;
 
-	private HTTPRendererBase mRendererInfo;
+	private IOpenStreetMapRendererInfo mRendererInfo;
 
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 
-	public OpenStreetMapTileDownloader(HTTPRendererBase pRendererInfo,
+	public OpenStreetMapTileDownloader(
+			IOpenStreetMapRendererInfo pRendererInfo,
 			final IOpenStreetMapTileProviderCloudmadeTokenCallback pCallback,
 			IFilesystemCacheProvider pFilesystemCacheProvider) {
 		super(NUMBER_OF_TILE_DOWNLOAD_THREADS,
@@ -111,11 +112,11 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 		return mRendererInfo.getTileURLString(tile, mCallback);
 	}
 
-	public HTTPRendererBase getRenderer() {
+	public IOpenStreetMapRendererInfo getRenderer() {
 		return mRendererInfo;
 	}
 
-	public void setRenderer(HTTPRendererBase renderer) {
+	public void setRenderer(IOpenStreetMapRendererInfo renderer) {
 		if (mFilesystemCacheProvider != null) {
 			if ((mFilesystemCache != null) && (mRendererInfo != null))
 				mFilesystemCacheProvider
