@@ -38,4 +38,9 @@ public class CloudmadeDefaultTokenProvider implements ICloudmadeTokenCallback,
 	public String getCloudmadeToken(String aKey) throws CloudmadeException {
 		return CloudmadeUtil.getCloudmadeToken(aKey);
 	}
+
+	@Override
+	public void onCloudmadeError(CloudmadeException pE) {
+		// Do nothing for now...
+	}
 }

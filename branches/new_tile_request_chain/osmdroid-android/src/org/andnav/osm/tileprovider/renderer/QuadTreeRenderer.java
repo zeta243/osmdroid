@@ -2,7 +2,6 @@ package org.andnav.osm.tileprovider.renderer;
 
 import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.ResourceProxy.string;
-import org.andnav.osm.tileprovider.CloudmadeException;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 
 class QuadTreeRenderer extends OpenStreetMapRendererBase {
@@ -22,8 +21,7 @@ class QuadTreeRenderer extends OpenStreetMapRendererBase {
 	}
 
 	@Override
-	public String getTileURLString(OpenStreetMapTile aTile)
-			throws CloudmadeException {
+	public String getTileURLString(OpenStreetMapTile aTile) {
 		return getBaseUrl() + quadTree(aTile) + mImageFilenameEnding;
 	}
 

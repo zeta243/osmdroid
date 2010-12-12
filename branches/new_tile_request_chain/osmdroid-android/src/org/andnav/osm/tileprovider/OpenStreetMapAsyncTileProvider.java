@@ -118,8 +118,6 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 	 *            the tile to load
 	 * @throws CantContinueException
 	 *             if it is not possible to continue with processing the queue
-	 * @throws CloudmadeException
-	 *             if there's an error authorizing for Cloudmade tiles
 	 */
 	protected abstract class TileLoader implements Runnable {
 

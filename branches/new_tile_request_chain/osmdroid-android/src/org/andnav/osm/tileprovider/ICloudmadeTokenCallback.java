@@ -27,4 +27,6 @@ public interface ICloudmadeTokenCallback {
 	 * @return
 	 */
 	int getCloudmadeStyle();
+
+	void onCloudmadeError(CloudmadeException e);
 }
