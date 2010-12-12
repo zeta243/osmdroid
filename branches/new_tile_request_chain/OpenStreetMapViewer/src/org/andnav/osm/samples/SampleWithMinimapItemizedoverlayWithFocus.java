@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.ResourceProxyImpl;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
+import org.andnav.osm.tileprovider.util.CloudmadeUtil;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.tileprovider.util.SimpleInvalidationHandler;
 import org.andnav.osm.tileprovider.util.SimpleRegisterReceiver;
@@ -59,7 +60,7 @@ public class SampleWithMinimapItemizedoverlayWithFocus extends Activity {
 
         final RelativeLayout rl = new RelativeLayout(this);
 
-		final String cloudmadeKey = ""; // getCloudmadeKey(applicationContext);
+		final String cloudmadeKey = CloudmadeUtil.getCloudmadeKey(getApplicationContext());
 		mTileProvider = new OpenStreetMapTileProviderDirect(
 				new SimpleInvalidationHandler(rl), cloudmadeKey,
 				new SimpleRegisterReceiver(getApplicationContext()));

@@ -2,6 +2,7 @@ package org.andnav.osm.samples;
 
 import org.andnav.osm.tileprovider.IRegisterReceiver;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
+import org.andnav.osm.tileprovider.util.CloudmadeUtil;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.tileprovider.util.SimpleInvalidationHandler;
 import org.andnav.osm.tileprovider.util.SimpleRegisterReceiver;
@@ -49,7 +50,7 @@ public class SampleWithTilesOverlay extends Activity {
 		// Setup base map
 		final RelativeLayout rl = new RelativeLayout(this);
 
-		final String cloudmadeKey = ""; // getCloudmadeKey(applicationContext);
+		final String cloudmadeKey = CloudmadeUtil.getCloudmadeKey(getApplicationContext());
 		mTileProvider = new OpenStreetMapTileProviderDirect(
 				new SimpleInvalidationHandler(rl), cloudmadeKey,
 				new SimpleRegisterReceiver(getApplicationContext()));
