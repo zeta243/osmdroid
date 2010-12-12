@@ -31,7 +31,7 @@ public abstract class OpenStreetMapTileProvider implements
 			.getLogger(OpenStreetMapTileProvider.class);
 
 	protected final OpenStreetMapTileCache mTileCache;
-	protected final Handler mDownloadFinishedHandler;
+	protected Handler mTileRequestCompleteHandler;
 	protected boolean mUseDataConnection = true;
 
 	public abstract Drawable getMapTile(OpenStreetMapTile pTile);
@@ -44,9 +44,13 @@ public abstract class OpenStreetMapTileProvider implements
 
 	public abstract void setRenderer(IOpenStreetMapRendererInfo renderer);
 
+	public OpenStreetMapTileProvider() {
+		this(null);
+	}
+
 	public OpenStreetMapTileProvider(final Handler pDownloadFinishedListener) {
 		mTileCache = new OpenStreetMapTileCache();
-		mDownloadFinishedHandler = pDownloadFinishedListener;
+		mTileRequestCompleteHandler = pDownloadFinishedListener;
 	}
 
 	/**
@@ -67,8 +71,9 @@ public abstract class OpenStreetMapTileProvider implements
 		}
 
 		// tell our caller we've finished and it should update its view
-		mDownloadFinishedHandler
-				.sendEmptyMessage(OpenStreetMapTile.MAPTILE_SUCCESS_ID);
+		if (mTileRequestCompleteHandler != null)
+			mTileRequestCompleteHandler
+					.sendEmptyMessage(OpenStreetMapTile.MAPTILE_SUCCESS_ID);
 
 		if (DEBUGMODE)
 			logger.debug("MapTile request complete: " + tile);
@@ -83,18 +88,18 @@ public abstract class OpenStreetMapTileProvider implements
 	 */
 	public void mapTileRequestFailed(final OpenStreetMapTileRequestState pState) {
 		OpenStreetMapTile tile = pState.getMapTile();
-		mDownloadFinishedHandler
-				.sendEmptyMessage(OpenStreetMapTile.MAPTILE_FAIL_ID);
+		if (mTileRequestCompleteHandler != null)
+			mTileRequestCompleteHandler
+					.sendEmptyMessage(OpenStreetMapTile.MAPTILE_FAIL_ID);
 
 		if (DEBUGMODE)
 			logger.debug("MapTile request failed: " + tile);
 	}
 
-	/**
-	 * TODO:
-	 * 
-	 * @param aCapacity
-	 */
+	public void setTileRequestCompleteHandler(Handler handler) {
+		mTileRequestCompleteHandler = handler;
+	}
+
 	public void ensureCapacity(final int aCapacity) {
 		mTileCache.ensureCapacity(aCapacity);
 	}

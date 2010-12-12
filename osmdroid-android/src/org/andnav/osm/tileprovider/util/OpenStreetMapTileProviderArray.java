@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 
 /**
  * Objects of this class provide access to tiles which are amenable to
@@ -36,17 +35,14 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 	protected final List<OpenStreetMapAsyncTileProvider> mTileProviderList;
 
 	protected OpenStreetMapTileProviderArray(
-			final Handler pDownloadFinishedListener,
 			final IRegisterReceiver aRegisterReceiver) {
-		this(pDownloadFinishedListener, aRegisterReceiver,
-				new OpenStreetMapAsyncTileProvider[0]);
+		this(aRegisterReceiver, new OpenStreetMapAsyncTileProvider[0]);
 	}
 
 	public OpenStreetMapTileProviderArray(
-			final Handler pDownloadFinishedListener,
 			final IRegisterReceiver aRegisterReceiver,
 			final OpenStreetMapAsyncTileProvider[] tileProviderArray) {
-		super(pDownloadFinishedListener);
+		super();
 
 		mWorking = new ConcurrentHashMap<OpenStreetMapTileRequestState, OpenStreetMapTile>();
 
