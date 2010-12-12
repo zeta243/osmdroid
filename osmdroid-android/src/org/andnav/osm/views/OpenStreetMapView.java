@@ -12,7 +12,6 @@ import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.events.MapListener;
 import org.andnav.osm.events.ScrollEvent;
 import org.andnav.osm.events.ZoomEvent;
-import org.andnav.osm.tileprovider.renderer.HTTPRendererBase;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.CloudmadeUtil;
@@ -380,16 +379,18 @@ public class OpenStreetMapView extends View implements
 		}
 	}
 
-	public void setRenderer(final IOpenStreetMapRendererInfo aRenderer) {
-		// this.mMapOverlay.setRendererInfo(aRenderer);
-		if (aRenderer instanceof HTTPRendererBase)
-			this.mTileProvider.setRenderer((HTTPRendererBase) aRenderer);
-		if (this.mMiniMap != null)
-			this.mMiniMap.setRenderer(aRenderer);
-		this.checkZoomButtons();
-		this.setZoomLevel(mZoomLevel); // revalidate zoom level
-		postInvalidate();
-	}
+	// TODO: Do we need to re-implement some of these things when we change
+	// renderers?
+	// public void setRenderer(final IOpenStreetMapRendererInfo aRenderer) {
+	// // this.mMapOverlay.setRendererInfo(aRenderer);
+	// if (aRenderer instanceof HTTPRendererBase)
+	// this.mTileProvider.setRenderer((HTTPRendererBase) aRenderer);
+	// if (this.mMiniMap != null)
+	// this.mMiniMap.setRenderer(aRenderer);
+	// this.checkZoomButtons();
+	// this.setZoomLevel(mZoomLevel); // revalidate zoom level
+	// postInvalidate();
+	// }
 
 	/**
 	 * @param aZoomLevel
@@ -589,7 +590,7 @@ public class OpenStreetMapView extends View implements
 	}
 
 	public void onSaveInstanceState(Bundle state) {
-		// TODO: Fix this!!
+		// TODO: Fix this?
 		// state.putString(BUNDLE_RENDERER, getRenderer().name());
 		state.putInt(BUNDLE_SCROLL_X, getScrollX());
 		state.putInt(BUNDLE_SCROLL_Y, getScrollY());
@@ -598,12 +599,15 @@ public class OpenStreetMapView extends View implements
 
 	public void onRestoreInstanceState(Bundle state) {
 
-		final String rendererName = state.containsKey(BUNDLE_RENDERER) ? state
-				.getString(BUNDLE_RENDERER)
-				: OpenStreetMapRendererFactory.DEFAULT_RENDERER.name();
-		final IOpenStreetMapRendererInfo renderer = OpenStreetMapRendererFactory
-				.getRenderer(rendererName);
-		setRenderer(renderer);
+		// TODO: Fix this?
+		// final String rendererName = state.containsKey(BUNDLE_RENDERER) ?
+		// state
+		// .getString(BUNDLE_RENDERER)
+		// : OpenStreetMapRendererFactory.DEFAULT_RENDERER.name();
+		// final IOpenStreetMapRendererInfo renderer =
+		// OpenStreetMapRendererFactory
+		// .getRenderer(rendererName);
+		// setRenderer(renderer);
 
 		setZoomLevel(state.getInt(BUNDLE_ZOOM_LEVEL, 1));
 		scrollTo(state.getInt(BUNDLE_SCROLL_X, 0),
