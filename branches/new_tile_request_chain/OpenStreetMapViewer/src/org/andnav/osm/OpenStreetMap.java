@@ -3,7 +3,6 @@ package org.andnav.osm;
 
 import org.andnav.osm.constants.OpenStreetMapConstants;
 import org.andnav.osm.samples.SampleLoader;
-import org.andnav.osm.tileprovider.renderer.HTTPRendererBase;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
@@ -121,7 +120,7 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 		try {
 			final IOpenStreetMapRendererInfo renderer = OpenStreetMapRendererFactory
 					.getRenderer(rendererName);
-			mTileProvider.setRenderer((HTTPRendererBase) renderer);
+			mTileProvider.setRenderer(renderer);
 		} catch (IllegalArgumentException ignore) {
 		}
 		if (mPrefs.getBoolean(PREFS_SHOW_LOCATION, false))
@@ -209,9 +208,8 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 			return true;
 
 		default: // Map mode submenu items
-			mTileProvider
-					.setRenderer((HTTPRendererBase) OpenStreetMapRendererFactory
-							.getRenderer(item.getItemId() - 1000));
+			mTileProvider.setRenderer(OpenStreetMapRendererFactory
+					.getRenderer(item.getItemId() - 1000));
 		}
 		return false;
 	}
