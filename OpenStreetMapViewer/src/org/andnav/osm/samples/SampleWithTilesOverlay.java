@@ -1,7 +1,6 @@
 package org.andnav.osm.samples;
 
 import org.andnav.osm.tileprovider.IRegisterReceiver;
-import org.andnav.osm.tileprovider.renderer.HTTPRendererBase;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.tileprovider.util.SimpleInvalidationHandler;
@@ -74,7 +73,7 @@ public class SampleWithTilesOverlay extends Activity {
 			}
 		};
 		mProvider = new OpenStreetMapTileProviderDirect(new Handler(), "key", registerReceiver);
-		mProvider.setRenderer((HTTPRendererBase)OpenStreetMapRendererFactory.FIETS_OVERLAY_NL);
+		mProvider.setRenderer(OpenStreetMapRendererFactory.FIETS_OVERLAY_NL);
 		this.mTilesOverlay = new OpenStreetMapTilesOverlay (this.mOsmv, 8, mProvider, this.getBaseContext());
 		this.mOsmv.getOverlays().add(this.mTilesOverlay);
 
