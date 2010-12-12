@@ -6,7 +6,6 @@ import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
 import org.andnav.osm.tileprovider.OpenStreetMapAsyncTileProvider;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
-import org.andnav.osm.tileprovider.renderer.HTTPRendererBase;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
@@ -180,10 +179,5 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProvider
 	@Override
 	public int getMaximumZoomLevel() {
 		return 18;
-	}
-
-	@Override
-	public void setRenderer(HTTPRendererBase pHttpRenderer) {
-		// TODO Auto-generated method stub
 	}
 }
