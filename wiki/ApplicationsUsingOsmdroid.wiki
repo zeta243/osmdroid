@@ -16,6 +16,7 @@ If you know of any inaccuracies or additions to this page, please add a comment.
  * [http://l6n.org/myspeed/ MySpeed]
  * [http://code.google.com/p/bikeroute/ BikeRoute]
  * [http://mapzen.cloudmade.com/mapzen-poi-collector Mapzen POI Collector]
+ * [http://code.google.com/p/open-gpstracker/ Open GPS Tracker]
  * [http://www.cyclestreets.net/mobile/ CycleStreets] (Android version not yet released)
 
 
