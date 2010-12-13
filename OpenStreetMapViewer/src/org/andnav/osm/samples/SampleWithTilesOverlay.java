@@ -54,7 +54,7 @@ public class SampleWithTilesOverlay extends Activity {
 		OpenStreetMapRendererFactory.setCloudmadeKey(cloudmadeKey);
 		mTileProvider = new OpenStreetMapTileProviderDirect(getApplicationContext());
 
-		this.mOsmv = new OpenStreetMapView(this, mTileProvider);
+		this.mOsmv = new OpenStreetMapView(this, 256, mTileProvider);
 		rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 		this.mOsmv.setBuiltInZoomControls(true);
 
@@ -74,7 +74,7 @@ public class SampleWithTilesOverlay extends Activity {
 		};
 		mProvider = new OpenStreetMapTileProviderDirect(registerReceiver);
 		mOsmv.setRenderer(OpenStreetMapRendererFactory.FIETS_OVERLAY_NL);
-		this.mTilesOverlay = new OpenStreetMapTilesOverlay (this.mOsmv, 8, mProvider, this.getBaseContext());
+		this.mTilesOverlay = new OpenStreetMapTilesOverlay (this.mOsmv, mProvider, this.getBaseContext());
 		this.mOsmv.getOverlays().add(this.mTilesOverlay);
 
 		this.setContentView(rl);

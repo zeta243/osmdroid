@@ -64,7 +64,7 @@ public class SampleWithMinimapItemizedoverlayWithFocus extends Activity {
 		OpenStreetMapRendererFactory.setCloudmadeKey(cloudmadeKey);
 		mTileProvider = new OpenStreetMapTileProviderDirect(getApplicationContext());
 
-		this.mOsmv = new OpenStreetMapView(this, mTileProvider);
+		this.mOsmv = new OpenStreetMapView(this, 256, mTileProvider);
         rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 
 
