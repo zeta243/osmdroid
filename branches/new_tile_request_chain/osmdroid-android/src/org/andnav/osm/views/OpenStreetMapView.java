@@ -120,6 +120,8 @@ public class OpenStreetMapView extends View implements
 
 	private OpenStreetMapTileProvider mTileProvider;
 
+	private final Handler mTileRequestCompleteHandler;
+
 	// ===========================================================
 	// Constructors
 	// ===========================================================
@@ -138,10 +140,11 @@ public class OpenStreetMapView extends View implements
 					"Cannot pass null as tileProvider. Use OpenStreetMapTileProviderDirect.");
 		}
 
+		mTileRequestCompleteHandler = (tileRequestCompleteHandler == null ? new SimpleInvalidationHandler(
+				this) : tileRequestCompleteHandler);
 		mTileProvider = tileProvider;
 		mTileProvider
-				.setTileRequestCompleteHandler(tileRequestCompleteHandler == null ? new SimpleInvalidationHandler(
-						this) : tileRequestCompleteHandler);
+				.setTileRequestCompleteHandler(mTileRequestCompleteHandler);
 
 		this.mMapOverlay = new OpenStreetMapTilesOverlay(this, mTileProvider,
 				mResourceProxy);
@@ -205,8 +208,10 @@ public class OpenStreetMapView extends View implements
 	 */
 	public OpenStreetMapView(final Context context,
 			final OpenStreetMapView aMapToShareTheTileProviderWith) {
-		this(context, null, aMapToShareTheTileProviderWith.getProjection()
-				.getTileSizePixels(),
+		this(context,
+				aMapToShareTheTileProviderWith.mTileRequestCompleteHandler,
+				null, aMapToShareTheTileProviderWith.getProjection()
+						.getTileSizePixels(),
 				aMapToShareTheTileProviderWith.mTileProvider);
 	}
 
