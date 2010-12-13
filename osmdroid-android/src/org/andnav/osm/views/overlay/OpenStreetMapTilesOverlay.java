@@ -41,24 +41,17 @@ public class OpenStreetMapTilesOverlay extends OpenStreetMapViewOverlay {
 	private final Point mTilePos = new Point();
 	private final Rect mViewPort = new Rect();
 
-	private final int mTileSizePx;
-
-	private final int mTileZoom;
-
 	public OpenStreetMapTilesOverlay(final OpenStreetMapView aOsmv,
-			final int tileZoom, final OpenStreetMapTileProvider aTileProvider,
+			final OpenStreetMapTileProvider aTileProvider,
 			final Context aContext) {
-		this(aOsmv, tileZoom, aTileProvider, new DefaultResourceProxyImpl(
-				aContext));
+		this(aOsmv, aTileProvider, new DefaultResourceProxyImpl(aContext));
 	}
 
 	public OpenStreetMapTilesOverlay(final OpenStreetMapView aOsmv,
-			final int tileZoom, final OpenStreetMapTileProvider aTileProvider,
+			final OpenStreetMapTileProvider aTileProvider,
 			final ResourceProxy pResourceProxy) {
 		super(pResourceProxy);
 		this.mOsmv = aOsmv;
-		mTileZoom = tileZoom;
-		mTileSizePx = 1 << mTileZoom;
 		this.mTileProvider = aTileProvider; // TODO check for null
 	}
 
@@ -110,8 +103,8 @@ public class OpenStreetMapTilesOverlay extends OpenStreetMapViewOverlay {
 		final int zoomLevel = osmv.getZoomLevel(false);
 
 		c.getClipBounds(mViewPort);
-		final int tileSizePx = mTileSizePx;
-		final int tileZoom = mTileZoom;
+		final int tileSizePx = pj.getTileSizePixels();
+		final int tileZoom = pj.getTileMapZoom();
 		final int worldSize_2 = 1 << (zoomLevel + tileZoom - 1);
 
 		/*
