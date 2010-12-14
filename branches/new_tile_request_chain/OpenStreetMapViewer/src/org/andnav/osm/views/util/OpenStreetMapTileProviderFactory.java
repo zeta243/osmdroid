@@ -3,9 +3,9 @@ package org.andnav.osm.views.util;
 
 import org.andnav.osm.services.IOpenStreetMapTileProviderService;
 import org.andnav.osm.tileprovider.IRegisterReceiver;
+import org.andnav.osm.tileprovider.OpenStreetMapTileProviderBase;
+import org.andnav.osm.tileprovider.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
-import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
-import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.views.OpenStreetMapView;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
 
@@ -37,7 +37,7 @@ public class OpenStreetMapTileProviderFactory implements OpenStreetMapViewConsta
 	 * @param pDownloadFinishedListener
 	 * @return
 	 */
-	public static OpenStreetMapTileProvider getInstance(final Context aContext,
+	public static OpenStreetMapTileProviderBase getInstance(final Context aContext,
 			final Handler aDownloadFinishedListener,
 			final String aCloudmadeKey) {
 		final Intent intent = new Intent(IOpenStreetMapTileProviderService.class.getName());

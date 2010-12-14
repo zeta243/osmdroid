@@ -5,11 +5,11 @@ import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 
 import org.andnav.osm.tileprovider.IRegisterReceiver;
-import org.andnav.osm.tileprovider.OpenStreetMapAsyncTileProvider;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
+import org.andnav.osm.tileprovider.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
+import org.andnav.osm.tileprovider.modules.OpenStreetMapTileModuleProviderBase;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
-import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
 
 import android.content.BroadcastReceiver;
 import android.content.Intent;
@@ -71,7 +71,7 @@ public class OpenStreetMapTileProviderDirectTest extends AndroidTestCase {
 		final FileOutputStream fos = new FileOutputStream(path);
 		bitmap1.compress(CompressFormat.PNG, 100, fos);
 
-		OpenStreetMapTileRequestState state = new OpenStreetMapTileRequestState(tile, new OpenStreetMapAsyncTileProvider[] {}, mProvider);
+		OpenStreetMapTileRequestState state = new OpenStreetMapTileRequestState(tile, new OpenStreetMapTileModuleProviderBase[] {}, mProvider);
 		mProvider.mapTileRequestCompleted(state, OpenStreetMapRendererFactory.MAPNIK.getDrawable(path));
 
 		// do the test

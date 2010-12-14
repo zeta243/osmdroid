@@ -4,8 +4,8 @@ import org.andnav.osm.services.constants.OpenStreetMapServiceConstants;
 import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
 import org.andnav.osm.tileprovider.IRegisterReceiver;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
+import org.andnav.osm.tileprovider.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
-import org.andnav.osm.tileprovider.util.OpenStreetMapTileProviderDirect;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
