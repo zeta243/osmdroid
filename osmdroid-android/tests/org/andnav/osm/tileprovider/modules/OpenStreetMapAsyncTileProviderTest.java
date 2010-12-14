@@ -1,11 +1,12 @@
-package org.andnav.osm.tileprovider;
+package org.andnav.osm.tileprovider.modules;
 
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
-import org.andnav.osm.tileprovider.modules.OpenStreetMapTileDownloader;
-import org.andnav.osm.tileprovider.modules.OpenStreetMapTileModuleProviderBase;
+import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
+import org.andnav.osm.tileprovider.OpenStreetMapTile;
+import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
 import org.junit.Test;
 
 import android.graphics.drawable.Drawable;
