@@ -1,5 +1,5 @@
 // Created by plusminus on 21:31:36 - 25.09.2008
-package org.andnav.osm.tileprovider;
+package org.andnav.osm.tileprovider.modules;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -12,7 +12,10 @@ import java.io.OutputStream;
 import java.net.URL;
 import java.net.UnknownHostException;
 
+import org.andnav.osm.tileprovider.OpenStreetMapTile;
+import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
+import org.andnav.osm.tileprovider.util.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,7 +29,8 @@ import android.graphics.drawable.Drawable;
  * @author Manuel Stahl
  * 
  */
-public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider {
+public class OpenStreetMapTileDownloader extends
+		OpenStreetMapTileModuleProviderBase {
 
 	// ===========================================================
 	// Constants
@@ -130,7 +134,8 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapAsyncTileProvider 
 	// Inner and Anonymous Classes
 	// ===========================================================
 
-	private class TileLoader extends OpenStreetMapAsyncTileProvider.TileLoader {
+	private class TileLoader extends
+			OpenStreetMapTileModuleProviderBase.TileLoader {
 
 		@Override
 		public Drawable loadTile(final OpenStreetMapTileRequestState aState)

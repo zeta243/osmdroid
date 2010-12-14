@@ -12,8 +12,8 @@ import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.events.MapListener;
 import org.andnav.osm.events.ScrollEvent;
 import org.andnav.osm.events.ZoomEvent;
+import org.andnav.osm.tileprovider.OpenStreetMapTileProviderBase;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
-import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
 import org.andnav.osm.tileprovider.util.SimpleInvalidationHandler;
 import org.andnav.osm.util.BoundingBoxE6;
 import org.andnav.osm.util.GeoPoint;
@@ -118,7 +118,7 @@ public class OpenStreetMapView extends View implements
 	private BoundingBoxE6 mBoundingBox = new BoundingBoxE6(0, 0, 0, 0);
 	private int[] mIntArray = new int[2];
 
-	private OpenStreetMapTileProvider mTileProvider;
+	private OpenStreetMapTileProviderBase mTileProvider;
 
 	private final Handler mTileRequestCompleteHandler;
 
@@ -128,7 +128,7 @@ public class OpenStreetMapView extends View implements
 
 	private OpenStreetMapView(final Context context,
 			final Handler tileRequestCompleteHandler, final AttributeSet attrs,
-			final int tileSizePixels, OpenStreetMapTileProvider tileProvider) {
+			final int tileSizePixels, OpenStreetMapTileProviderBase tileProvider) {
 		super(context, attrs);
 		mResourceProxy = new DefaultResourceProxyImpl(context);
 		this.mController = new OpenStreetMapViewController(this);
@@ -186,13 +186,13 @@ public class OpenStreetMapView extends View implements
 	 * Standard Constructor.
 	 */
 	public OpenStreetMapView(final Context context, final int tileSizePixels,
-			final OpenStreetMapTileProvider aTileProvider) {
+			final OpenStreetMapTileProviderBase aTileProvider) {
 		this(context, null, null, tileSizePixels, aTileProvider);
 	}
 
 	public OpenStreetMapView(final Context context,
 			final Handler tileRequestCompleteHandler, final int tileSizePixels,
-			OpenStreetMapTileProvider aTileProvider) {
+			OpenStreetMapTileProviderBase aTileProvider) {
 		this(context, tileRequestCompleteHandler, null, tileSizePixels,
 				aTileProvider);
 	}

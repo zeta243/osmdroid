@@ -1,5 +1,6 @@
 package org.andnav.osm.tileprovider;
 
+
 import android.graphics.drawable.Drawable;
 
 public interface IOpenStreetMapTileProviderCallback {

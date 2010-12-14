@@ -1,7 +1,6 @@
 package org.andnav.osm.tileprovider.renderer;
 
 import org.andnav.osm.ResourceProxy;
-import org.andnav.osm.tileprovider.CloudmadeDefaultTokenProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

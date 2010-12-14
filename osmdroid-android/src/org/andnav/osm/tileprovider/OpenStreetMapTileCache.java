@@ -1,11 +1,10 @@
 // Created by plusminus on 17:58:57 - 25.09.2008
-package org.andnav.osm.views.util;
+package org.andnav.osm.tileprovider;
 
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.andnav.osm.tileprovider.OpenStreetMapTile;
-import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
+import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
 
 import android.graphics.drawable.Drawable;
 
@@ -14,7 +13,8 @@ import android.graphics.drawable.Drawable;
  * @author Nicolas Gramlich
  * 
  */
-public final class OpenStreetMapTileCache implements OpenStreetMapViewConstants {
+public final class OpenStreetMapTileCache implements
+		OpenStreetMapTileProviderConstants {
 	// ===========================================================
 	// Constants
 	// ===========================================================
