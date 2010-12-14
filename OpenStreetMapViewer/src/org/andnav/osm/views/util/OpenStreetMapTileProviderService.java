@@ -3,12 +3,12 @@ package org.andnav.osm.views.util;
 import org.andnav.osm.services.IOpenStreetMapTileProviderService;
 import org.andnav.osm.services.IOpenStreetMapTileProviderServiceCallback;
 import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
-import org.andnav.osm.tileprovider.OpenStreetMapAsyncTileProvider;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
+import org.andnav.osm.tileprovider.OpenStreetMapTileProviderBase;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
+import org.andnav.osm.tileprovider.modules.OpenStreetMapTileModuleProviderBase;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
-import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +21,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-public class OpenStreetMapTileProviderService extends OpenStreetMapTileProvider
+public class OpenStreetMapTileProviderService extends OpenStreetMapTileProviderBase
 		implements ServiceConnection, IOpenStreetMapTileProviderCallback {
 
 	private static final Logger logger = LoggerFactory
@@ -164,7 +164,7 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProvider
 			final OpenStreetMapTile tile = new OpenStreetMapTile(aZoomLevel,
 					aTileX, aTileY);
 			final OpenStreetMapTileRequestState state = new OpenStreetMapTileRequestState(
-					tile, new OpenStreetMapAsyncTileProvider[] {},
+					tile, new OpenStreetMapTileModuleProviderBase[] {},
 					OpenStreetMapTileProviderService.this);
 			OpenStreetMapTileProviderService.this.mapTileRequestCompleted(
 					state, renderer.getDrawable(aTilePath));
