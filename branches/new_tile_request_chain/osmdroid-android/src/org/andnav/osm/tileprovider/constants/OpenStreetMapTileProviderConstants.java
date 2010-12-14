@@ -35,6 +35,14 @@ public interface OpenStreetMapTileProviderConstants {
 
 	public static final int NUMBER_OF_TILE_FILESYSTEM_THREADS = 8;
 
+	public static final long ONE_SECOND = 1000;
+	public static final long ONE_MINUTE = ONE_SECOND * 60;
+	public static final long ONE_HOUR = ONE_MINUTE * 60;
+	public static final long ONE_DAY = ONE_HOUR * 24;
+	public static final long ONE_WEEK = ONE_DAY * 7;
+	public static final long ONE_YEAR = ONE_DAY * 365;
+	public static final long DEFAULT_MAXIMUM_CACHED_FILE_AGE = ONE_WEEK;
+
 	public static final int TILE_DOWNLOAD_MAXIMUM_QUEUE_SIZE = 40;
 	public static final int TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE = 40;
 

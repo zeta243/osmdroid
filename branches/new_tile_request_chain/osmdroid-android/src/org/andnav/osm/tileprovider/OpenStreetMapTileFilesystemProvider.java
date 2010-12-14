@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
-import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,24 +51,30 @@ public class OpenStreetMapTileFilesystemProvider extends
 	private int mMinimumZoomLevel = Integer.MAX_VALUE;
 	private int mMaximumZoomLevel = Integer.MIN_VALUE;
 
+	private final long mMaximumCachedFileAge;
+
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 
+	public OpenStreetMapTileFilesystemProvider(
+			final IRegisterReceiver aRegisterReceiver) {
+		this(aRegisterReceiver, DEFAULT_MAXIMUM_CACHED_FILE_AGE);
+	}
+
 	/**
-	 * The tiles may be found on several media. This one works with tiles stored
-	 * on the file system. It and its friends are typically created and
-	 * controlled by {@link OpenStreetMapTileProvider}.
+	 * Provides a file system based cache tile provider. Other providers can
+	 * register and store data in the cache.
 	 * 
-	 * @param aCallback
 	 * @param aRegisterReceiver
 	 */
 	public OpenStreetMapTileFilesystemProvider(
-			final IRegisterReceiver aRegisterReceiver) {
+			final IRegisterReceiver aRegisterReceiver, long maximumCachedFileAge) {
 		super(NUMBER_OF_TILE_FILESYSTEM_THREADS,
 				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, null);
 
 		this.aRegisterReceiver = aRegisterReceiver;
+		this.mMaximumCachedFileAge = maximumCachedFileAge;
 		this.mBroadcastReceiver = new MyBroadcastReceiver();
 
 		checkSdCard();
@@ -169,46 +174,42 @@ public class OpenStreetMapTileFilesystemProvider extends
 			}
 
 			// Check each registered renderer to see if their file is available
+			// and if so, then render the drawable and return the tile
 			for (IOpenStreetMapRendererInfo renderInfo : mRenderInfoList) {
 				File file = new File(TILE_PATH_BASE,
 						renderInfo.getTileRelativeFilenameString(aTile));
 				if (file.exists()) {
-					Drawable drawable = renderInfo.getDrawable(file.getPath());
-					return drawable;
+
+					// Check to see if file has expired
+					final long now = System.currentTimeMillis();
+					final long lastModified = file.lastModified();
+					boolean fileExpired = lastModified < now
+							- mMaximumCachedFileAge;
+
+					if (!fileExpired) {
+						// If the file has not expired, then render it and
+						// return it!
+						Drawable drawable = renderInfo.getDrawable(file
+								.getPath());
+						return drawable;
+					} else {
+						// If the file has expired then we don't use it but we
+						// update the time-stamp on the file. If another tile
+						// provider down the line can provide this tile, then it
+						// will replace this file in the file cache and the new
+						// tile will be provided. If it cannot, then this
+						// request will ultimately fail, and the original file
+						// will be provided in the next iteration of this
+						// request since the time-stamp is now no longer
+						// expired.
+						if (fileExpired) {
+							file.setLastModified(System.currentTimeMillis());
+						}
+					}
 				}
 			}
 
-			// TODO: Re-integrate the tile aging checks
-
-			// try {
-			// if (tileFile.exists()) {
-			// if (DEBUGMODE)
-			// logger.debug("Loaded tile: " + aTile);
-			// tileLoaded(aState, tileFile.getPath());
-			//
-			// // check for old tile
-			// final long now = System.currentTimeMillis();
-			// final long lastModified = tileFile.lastModified();
-			// if (now - lastModified > TILE_EXPIRY_TIME_MILLISECONDS) {
-			// // This will trigger continuing with the tile provider
-			// // change - this is currently safe to do after
-			// // previously calling tileLoaded(), but maybe there is a
-			// // better way to do this?
-			// // tileLoadedFailed(aState);
-			// return false;
-			// } else
-			// return true;
-			//
-			// } else {
-			// if (DEBUGMODE)
-			// logger.debug("Tile doesn't exist: " + aTile);
-			// // tileLoadedFailed(aState);
-			// }
-			// } catch (final Throwable e) {
-			// logger.error("Error loading tile", e);
-			// // tileLoadedFailed(aState);
-			// }
-
+			// If we get here then there is no file in the file cache
 			return null;
 		}
 	}
