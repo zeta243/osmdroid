@@ -1,8 +1,6 @@
 package org.andnav.osm.tileprovider.renderer;
 
 import org.andnav.osm.ResourceProxy;
-import org.andnav.osm.tileprovider.CloudmadeException;
-import org.andnav.osm.tileprovider.ICloudmadeTokenCallback;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.util.CloudmadeUtil;
 

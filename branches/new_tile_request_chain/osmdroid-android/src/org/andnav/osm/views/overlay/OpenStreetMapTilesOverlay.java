@@ -3,7 +3,7 @@ package org.andnav.osm.views.overlay;
 import org.andnav.osm.DefaultResourceProxyImpl;
 import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
-import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
+import org.andnav.osm.tileprovider.OpenStreetMapTileProviderBase;
 import org.andnav.osm.util.GeoPoint;
 import org.andnav.osm.util.MyMath;
 import org.andnav.osm.views.OpenStreetMapView;
@@ -34,7 +34,7 @@ public class OpenStreetMapTilesOverlay extends OpenStreetMapViewOverlay {
 	protected OpenStreetMapView mOsmv;
 
 	/** Current renderer */
-	protected final OpenStreetMapTileProvider mTileProvider;
+	protected final OpenStreetMapTileProviderBase mTileProvider;
 	protected final Paint mPaint = new Paint();
 
 	/* to avoid allocations during draw */
@@ -42,13 +42,13 @@ public class OpenStreetMapTilesOverlay extends OpenStreetMapViewOverlay {
 	private final Rect mViewPort = new Rect();
 
 	public OpenStreetMapTilesOverlay(final OpenStreetMapView aOsmv,
-			final OpenStreetMapTileProvider aTileProvider,
+			final OpenStreetMapTileProviderBase aTileProvider,
 			final Context aContext) {
 		this(aOsmv, aTileProvider, new DefaultResourceProxyImpl(aContext));
 	}
 
 	public OpenStreetMapTilesOverlay(final OpenStreetMapView aOsmv,
-			final OpenStreetMapTileProvider aTileProvider,
+			final OpenStreetMapTileProviderBase aTileProvider,
 			final ResourceProxy pResourceProxy) {
 		super(pResourceProxy);
 		this.mOsmv = aOsmv;

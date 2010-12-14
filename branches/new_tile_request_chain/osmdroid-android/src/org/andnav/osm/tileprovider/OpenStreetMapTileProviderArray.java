@@ -1,16 +1,12 @@
-package org.andnav.osm.tileprovider.util;
+package org.andnav.osm.tileprovider;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
-import org.andnav.osm.tileprovider.IRegisterReceiver;
-import org.andnav.osm.tileprovider.OpenStreetMapAsyncTileProvider;
-import org.andnav.osm.tileprovider.OpenStreetMapTile;
-import org.andnav.osm.tileprovider.OpenStreetMapTileDownloader;
-import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
+import org.andnav.osm.tileprovider.modules.OpenStreetMapTileDownloader;
+import org.andnav.osm.tileprovider.modules.OpenStreetMapTileModuleProviderBase;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +20,7 @@ import android.graphics.drawable.Drawable;
  * 
  * At present the only source which meets this criteria is the file system.
  */
-public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
+public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProviderBase
 		implements IOpenStreetMapTileProviderCallback {
 
 	private final ConcurrentHashMap<OpenStreetMapTileRequestState, OpenStreetMapTile> mWorking;
@@ -32,28 +28,28 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 	private static final Logger logger = LoggerFactory
 			.getLogger(OpenStreetMapTileProviderArray.class);
 
-	protected final List<OpenStreetMapAsyncTileProvider> mTileProviderList;
+	protected final List<OpenStreetMapTileModuleProviderBase> mTileProviderList;
 
 	protected OpenStreetMapTileProviderArray(
 			final IRegisterReceiver aRegisterReceiver) {
-		this(aRegisterReceiver, new OpenStreetMapAsyncTileProvider[0]);
+		this(aRegisterReceiver, new OpenStreetMapTileModuleProviderBase[0]);
 	}
 
 	public OpenStreetMapTileProviderArray(
 			final IRegisterReceiver aRegisterReceiver,
-			final OpenStreetMapAsyncTileProvider[] tileProviderArray) {
+			final OpenStreetMapTileModuleProviderBase[] tileProviderArray) {
 		super();
 
 		mWorking = new ConcurrentHashMap<OpenStreetMapTileRequestState, OpenStreetMapTile>();
 
-		mTileProviderList = new ArrayList<OpenStreetMapAsyncTileProvider>();
+		mTileProviderList = new ArrayList<OpenStreetMapTileModuleProviderBase>();
 		Collections.addAll(mTileProviderList, tileProviderArray);
 	}
 
 	@Override
 	public void detach() {
 		synchronized (mTileProviderList) {
-			for (OpenStreetMapAsyncTileProvider tileProvider : mTileProviderList) {
+			for (OpenStreetMapTileModuleProviderBase tileProvider : mTileProviderList) {
 				tileProvider.detach();
 			}
 		}
@@ -78,7 +74,7 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 
 				OpenStreetMapTileRequestState state;
 				synchronized (mTileProviderList) {
-					OpenStreetMapAsyncTileProvider[] providerArray = new OpenStreetMapAsyncTileProvider[mTileProviderList
+					OpenStreetMapTileModuleProviderBase[] providerArray = new OpenStreetMapTileModuleProviderBase[mTileProviderList
 							.size()];
 					state = new OpenStreetMapTileRequestState(pTile,
 							mTileProviderList.toArray(providerArray), this);
@@ -93,7 +89,7 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 					mWorking.put(state, pTile);
 				}
 
-				OpenStreetMapAsyncTileProvider provider = findNextAppropriateProvider(state);
+				OpenStreetMapTileModuleProviderBase provider = findNextAppropriateProvider(state);
 				if (provider != null)
 					provider.loadMapTileAsync(state);
 				else
@@ -114,7 +110,7 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 
 	@Override
 	public void mapTileRequestFailed(final OpenStreetMapTileRequestState aState) {
-		OpenStreetMapAsyncTileProvider nextProvider = findNextAppropriateProvider(aState);
+		OpenStreetMapTileModuleProviderBase nextProvider = findNextAppropriateProvider(aState);
 		if (nextProvider != null) {
 			nextProvider.loadMapTileAsync(aState);
 		} else {
@@ -125,9 +121,9 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 		}
 	}
 
-	private OpenStreetMapAsyncTileProvider findNextAppropriateProvider(
+	private OpenStreetMapTileModuleProviderBase findNextAppropriateProvider(
 			final OpenStreetMapTileRequestState aState) {
-		OpenStreetMapAsyncTileProvider provider = null;
+		OpenStreetMapTileModuleProviderBase provider = null;
 		// The logic of the while statement is
 		// "Keep looping until you get null, or a provider that has a data connection if it needs one"
 		do {
@@ -141,7 +137,7 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 	public int getMinimumZoomLevel() {
 		int result = Integer.MAX_VALUE;
 		synchronized (mTileProviderList) {
-			for (OpenStreetMapAsyncTileProvider tileProvider : mTileProviderList) {
+			for (OpenStreetMapTileModuleProviderBase tileProvider : mTileProviderList) {
 				if (tileProvider.getMinimumZoomLevel() < result)
 					result = tileProvider.getMinimumZoomLevel();
 			}
@@ -153,7 +149,7 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 	public int getMaximumZoomLevel() {
 		int result = Integer.MIN_VALUE;
 		synchronized (mTileProviderList) {
-			for (OpenStreetMapAsyncTileProvider tileProvider : mTileProviderList) {
+			for (OpenStreetMapTileModuleProviderBase tileProvider : mTileProviderList) {
 				if (tileProvider.getMaximumZoomLevel() > result)
 					result = tileProvider.getMaximumZoomLevel();
 			}
@@ -163,7 +159,7 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProvider
 
 	@Override
 	public void setRenderer(IOpenStreetMapRendererInfo aRenderer) {
-		for (OpenStreetMapAsyncTileProvider tileProvider : mTileProviderList) {
+		for (OpenStreetMapTileModuleProviderBase tileProvider : mTileProviderList) {
 			// We could identify tile providers by an Interface if we wanted to
 			// make this extensible.
 			if (tileProvider instanceof OpenStreetMapTileDownloader) {

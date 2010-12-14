@@ -1,4 +1,4 @@
-package org.andnav.osm.tileprovider;
+package org.andnav.osm.tileprovider.renderer;
 
 import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.andnav.osm.tileprovider.util.CloudmadeUtil;

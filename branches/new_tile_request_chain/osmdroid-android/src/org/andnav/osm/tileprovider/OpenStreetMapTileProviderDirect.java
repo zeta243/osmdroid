@@ -1,11 +1,10 @@
-package org.andnav.osm.tileprovider.util;
+package org.andnav.osm.tileprovider;
 
-import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
-import org.andnav.osm.tileprovider.IRegisterReceiver;
-import org.andnav.osm.tileprovider.OpenStreetMapTileDownloader;
-import org.andnav.osm.tileprovider.OpenStreetMapTileFilesystemProvider;
+import org.andnav.osm.tileprovider.modules.OpenStreetMapTileDownloader;
+import org.andnav.osm.tileprovider.modules.OpenStreetMapTileFilesystemProvider;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
+import org.andnav.osm.tileprovider.util.SimpleRegisterReceiver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

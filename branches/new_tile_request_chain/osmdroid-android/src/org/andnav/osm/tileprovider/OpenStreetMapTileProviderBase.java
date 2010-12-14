@@ -1,10 +1,7 @@
 // Created by plusminus on 21:46:22 - 25.09.2008
-package org.andnav.osm.tileprovider.util;
+package org.andnav.osm.tileprovider;
 
-import org.andnav.osm.tileprovider.OpenStreetMapTile;
-import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
-import org.andnav.osm.views.util.OpenStreetMapTileCache;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,11 +21,11 @@ import android.os.Handler;
  * @author Nicolas Gramlich
  * 
  */
-public abstract class OpenStreetMapTileProvider implements
+public abstract class OpenStreetMapTileProviderBase implements
 		OpenStreetMapViewConstants {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(OpenStreetMapTileProvider.class);
+			.getLogger(OpenStreetMapTileProviderBase.class);
 
 	protected final OpenStreetMapTileCache mTileCache;
 	protected Handler mTileRequestCompleteHandler;
@@ -44,11 +41,11 @@ public abstract class OpenStreetMapTileProvider implements
 
 	public abstract void setRenderer(IOpenStreetMapRendererInfo renderer);
 
-	public OpenStreetMapTileProvider() {
+	public OpenStreetMapTileProviderBase() {
 		this(null);
 	}
 
-	public OpenStreetMapTileProvider(final Handler pDownloadFinishedListener) {
+	public OpenStreetMapTileProviderBase(final Handler pDownloadFinishedListener) {
 		mTileCache = new OpenStreetMapTileCache();
 		mTileRequestCompleteHandler = pDownloadFinishedListener;
 	}

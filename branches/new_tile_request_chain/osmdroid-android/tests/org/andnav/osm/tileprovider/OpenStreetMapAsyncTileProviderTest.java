@@ -4,14 +4,15 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 
+import org.andnav.osm.tileprovider.modules.OpenStreetMapTileDownloader;
+import org.andnav.osm.tileprovider.modules.OpenStreetMapTileModuleProviderBase;
 import org.junit.Test;
 
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 /**
  * @author Neil Boyd
- *
+ * 
  */
 public class OpenStreetMapAsyncTileProviderTest {
 
@@ -32,7 +33,7 @@ public class OpenStreetMapAsyncTileProviderTest {
 		}
 	};
 
-	final OpenStreetMapAsyncTileProvider mTileProvider = new OpenStreetMapAsyncTileProvider(
+	final OpenStreetMapTileModuleProviderBase mTileProvider = new OpenStreetMapTileModuleProviderBase(
 			1, 10, null) {
 		@Override
 		protected String threadGroupName() {
@@ -86,7 +87,7 @@ public class OpenStreetMapAsyncTileProviderTest {
 
 	/**
 	 * Test that the tiles are loaded in most recently accessed order.
-	 *
+	 * 
 	 * @throws InterruptedException
 	 */
 	@Test
@@ -100,17 +101,17 @@ public class OpenStreetMapAsyncTileProviderTest {
 
 		// request the three tiles
 		OpenStreetMapTileRequestState state1 = new OpenStreetMapTileRequestState(
-				tile1, new OpenStreetMapAsyncTileProvider[] {},
+				tile1, new OpenStreetMapTileModuleProviderBase[] {},
 				mTileProviderCallback);
 		mTileProvider.loadMapTileAsync(state1);
 		Thread.sleep(100); // give the thread time to run
 		OpenStreetMapTileRequestState state2 = new OpenStreetMapTileRequestState(
-				tile2, new OpenStreetMapAsyncTileProvider[] {},
+				tile2, new OpenStreetMapTileModuleProviderBase[] {},
 				mTileProviderCallback);
 		mTileProvider.loadMapTileAsync(state2);
 		Thread.sleep(100); // give the thread time to run
 		OpenStreetMapTileRequestState state3 = new OpenStreetMapTileRequestState(
-				tile3, new OpenStreetMapAsyncTileProvider[] {},
+				tile3, new OpenStreetMapTileModuleProviderBase[] {},
 				mTileProviderCallback);
 		mTileProvider.loadMapTileAsync(state3);
 
@@ -131,7 +132,7 @@ public class OpenStreetMapAsyncTileProviderTest {
 
 	/**
 	 * Test that adding the same tile more than once moves it up the queue.
-	 *
+	 * 
 	 * @throws InterruptedException
 	 */
 	@Test
@@ -145,22 +146,22 @@ public class OpenStreetMapAsyncTileProviderTest {
 
 		// request tile1, tile2, tile3, then tile2 again
 		OpenStreetMapTileRequestState state1 = new OpenStreetMapTileRequestState(
-				tile1, new OpenStreetMapAsyncTileProvider[] {},
+				tile1, new OpenStreetMapTileModuleProviderBase[] {},
 				mTileProviderCallback);
 		mTileProvider.loadMapTileAsync(state1);
 		Thread.sleep(100); // give the thread time to run
 		OpenStreetMapTileRequestState state2 = new OpenStreetMapTileRequestState(
-				tile2, new OpenStreetMapAsyncTileProvider[] {},
+				tile2, new OpenStreetMapTileModuleProviderBase[] {},
 				mTileProviderCallback);
 		mTileProvider.loadMapTileAsync(state2);
 		Thread.sleep(100); // give the thread time to run
 		OpenStreetMapTileRequestState state3 = new OpenStreetMapTileRequestState(
-				tile3, new OpenStreetMapAsyncTileProvider[] {},
+				tile3, new OpenStreetMapTileModuleProviderBase[] {},
 				mTileProviderCallback);
 		mTileProvider.loadMapTileAsync(state3);
 		Thread.sleep(100); // give the thread time to run
 		OpenStreetMapTileRequestState state4 = new OpenStreetMapTileRequestState(
-				tile2, new OpenStreetMapAsyncTileProvider[] {},
+				tile2, new OpenStreetMapTileModuleProviderBase[] {},
 				mTileProviderCallback);
 		mTileProvider.loadMapTileAsync(state4);
 

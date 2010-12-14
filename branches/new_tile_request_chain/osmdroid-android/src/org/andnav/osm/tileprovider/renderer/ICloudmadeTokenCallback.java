@@ -1,4 +1,4 @@
-package org.andnav.osm.tileprovider;
+package org.andnav.osm.tileprovider.renderer;
 
 public interface ICloudmadeTokenCallback {
 

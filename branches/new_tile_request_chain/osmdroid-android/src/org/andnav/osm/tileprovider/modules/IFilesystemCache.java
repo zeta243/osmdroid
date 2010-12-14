@@ -1,7 +1,8 @@
-package org.andnav.osm.tileprovider;
+package org.andnav.osm.tileprovider.modules;
 
 import java.io.InputStream;
 
+import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 
 public interface IFilesystemCache {

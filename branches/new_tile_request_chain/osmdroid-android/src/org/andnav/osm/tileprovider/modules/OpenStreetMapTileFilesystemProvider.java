@@ -1,5 +1,5 @@
 // Created by plusminus on 21:46:41 - 25.09.2008
-package org.andnav.osm.tileprovider;
+package org.andnav.osm.tileprovider.modules;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -9,8 +9,12 @@ import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.andnav.osm.tileprovider.IRegisterReceiver;
+import org.andnav.osm.tileprovider.OpenStreetMapTile;
+import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
 import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
+import org.andnav.osm.tileprovider.util.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +31,7 @@ import android.os.Environment;
  * 
  */
 public class OpenStreetMapTileFilesystemProvider extends
-		OpenStreetMapAsyncTileProvider implements IFilesystemCache,
+		OpenStreetMapTileModuleProviderBase implements IFilesystemCache,
 		IFilesystemCacheProvider, OpenStreetMapTileProviderConstants {
 
 	// ===========================================================
@@ -148,7 +152,7 @@ public class OpenStreetMapTileFilesystemProvider extends
 	// Inner and Anonymous Classes
 	// ===========================================================
 
-	private class TileLoader extends OpenStreetMapAsyncTileProvider.TileLoader {
+	private class TileLoader extends OpenStreetMapTileModuleProviderBase.TileLoader {
 
 		/**
 		 * The tile loading policy for deciding which file to use... The order

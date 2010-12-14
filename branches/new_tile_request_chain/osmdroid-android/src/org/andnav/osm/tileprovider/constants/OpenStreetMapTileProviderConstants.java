@@ -28,6 +28,14 @@ public interface OpenStreetMapTileProviderConstants {
 	public static final String TILE_PATH_EXTENSION = ".tile";
 
 	/**
+	 * Initial tile cache size.
+	 * The size will be increased as required by calling
+	 * {@link LRUMapTileCache.ensureCapacity(int)}
+	 * The tile cache will always be at least 3x3.
+	 */
+	public static final int CACHE_MAPTILECOUNT_DEFAULT = 9;
+
+	/**
 	 * number of tile download threads, conforming to OSM policy:
 	 * http://wiki.openstreetmap.org/wiki/Tile_usage_policy
 	 */

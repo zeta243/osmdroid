@@ -1,24 +1,26 @@
-package org.andnav.osm.tileprovider;
+package org.andnav.osm.tileprovider.modules;
 
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.andnav.osm.tileprovider.OpenStreetMapAsyncTileProvider.CantContinueException;
+import org.andnav.osm.tileprovider.OpenStreetMapTile;
+import org.andnav.osm.tileprovider.OpenStreetMapTileProviderBase;
+import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
 import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
-import org.andnav.osm.tileprovider.util.OpenStreetMapTileProvider;
+import org.andnav.osm.tileprovider.modules.OpenStreetMapTileModuleProviderBase.CantContinueException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import android.graphics.drawable.Drawable;
 
 /**
- * An abstract child class of {@link OpenStreetMapTileProvider} which acquires
+ * An abstract child class of {@link OpenStreetMapTileProviderBase} which acquires
  * tile images asynchronously from some network source. The key unimplemented
  * methods are 'threadGroupname' and 'getTileLoader'.
  */
-public abstract class OpenStreetMapAsyncTileProvider implements
+public abstract class OpenStreetMapTileModuleProviderBase implements
 		OpenStreetMapTileProviderConstants {
 
 	/**
@@ -50,14 +52,14 @@ public abstract class OpenStreetMapAsyncTileProvider implements
 	public abstract int getMaximumZoomLevel();
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(OpenStreetMapAsyncTileProvider.class);
+			.getLogger(OpenStreetMapTileModuleProviderBase.class);
 
 	private final int mThreadPoolSize;
 	private final ThreadGroup mThreadPool = new ThreadGroup(threadGroupName());
 	private final ConcurrentHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState> mWorking;
 	final LinkedHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState> mPending;
 
-	public OpenStreetMapAsyncTileProvider(final int aThreadPoolSize,
+	public OpenStreetMapTileModuleProviderBase(final int aThreadPoolSize,
 			final int aPendingQueueSize,
 			IFilesystemCacheProvider pFilesystemCacheProvider) {
 		mThreadPoolSize = aThreadPoolSize;

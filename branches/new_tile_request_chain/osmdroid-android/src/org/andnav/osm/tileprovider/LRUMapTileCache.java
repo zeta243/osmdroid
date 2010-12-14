@@ -1,9 +1,8 @@
-package org.andnav.osm.views.util;
+package org.andnav.osm.tileprovider;
 
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 
-import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
