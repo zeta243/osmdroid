@@ -14,7 +14,7 @@ import android.content.Context;
  * Objects of this class provide access to tiles which are amenable to
  * synchronous access. They are expected to return quickly enough so that a
  * person will perceive it as instantaneous.
- * 
+ *
  * At present the only source which meets this criteria is the file system.
  */
 public class OpenStreetMapTileProviderDirect extends
@@ -24,7 +24,6 @@ public class OpenStreetMapTileProviderDirect extends
 	private static final Logger logger = LoggerFactory
 			.getLogger(OpenStreetMapTileProviderDirect.class);
 
-	// private final String mCloudmadeKey;
 	private final OpenStreetMapTileFilesystemProvider mFileSystemProvider;
 	private OpenStreetMapTileDownloader mTileDownloaderProvider;
 
@@ -38,7 +37,7 @@ public class OpenStreetMapTileProviderDirect extends
 		mFileSystemProvider = new OpenStreetMapTileFilesystemProvider(
 				aRegisterReceiver);
 		mTileDownloaderProvider = new OpenStreetMapTileDownloader(
-				OpenStreetMapRendererFactory.MAPNIK, mFileSystemProvider);
+				OpenStreetMapRendererFactory.DEFAULT_RENDERER, mFileSystemProvider);
 		super.mTileProviderList.add(mFileSystemProvider);
 		super.mTileProviderList.add(mTileDownloaderProvider);
 	}
