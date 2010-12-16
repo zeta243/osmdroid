@@ -1,6 +1,5 @@
 package org.andnav.osm.tileprovider;
 
-
 import android.graphics.drawable.Drawable;
 
 public interface IOpenStreetMapTileProviderCallback {
@@ -8,23 +7,26 @@ public interface IOpenStreetMapTileProviderCallback {
 	/**
 	 * The map tile request has completed.
 	 * 
-	 * @param aTile
-	 *            the tile request that has completed, or null if tile was not
-	 *            loaded (but request was successful?)
+	 * @param aState
+	 *            a state object
+	 * @param aDrawable
+	 *            a drawable
 	 */
 	void mapTileRequestCompleted(OpenStreetMapTileRequestState aState,
 			final Drawable aDrawable);
 
 	/**
-	 * The map tile request has completed but no tile has loaded.
+	 * The map tile request has failed.
 	 * 
-	 * @param aTile
-	 *            the tile request that has completed
+	 * @param aState
+	 *            a state object
 	 */
 	void mapTileRequestFailed(OpenStreetMapTileRequestState aState);
 
 	/**
-	 * Whether to use the network connection if it's available.
+	 * Returns true if the network connection should be used, false if not.
+	 * 
+	 * @return true if data connection should be used, false otherwise
 	 */
 	public boolean useDataConnection();
 }

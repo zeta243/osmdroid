@@ -26,7 +26,13 @@ import android.graphics.drawable.Drawable;
 import android.os.Environment;
 
 /**
+ * Implements a file system cache and provides cached tiles. This functions as a
+ * tile provider by serving cached tiles. It also implements an
+ * IFilesystemCacheProvider which can be used by other tile providers to
+ * register for file system cache access so they can put their tiles in the file
+ * system cache.
  * 
+ * @author Marc Kurtz
  * @author Nicolas Gramlich
  * 
  */
@@ -152,7 +158,8 @@ public class OpenStreetMapTileFilesystemProvider extends
 	// Inner and Anonymous Classes
 	// ===========================================================
 
-	private class TileLoader extends OpenStreetMapTileModuleProviderBase.TileLoader {
+	private class TileLoader extends
+			OpenStreetMapTileModuleProviderBase.TileLoader {
 
 		/**
 		 * The tile loading policy for deciding which file to use... The order

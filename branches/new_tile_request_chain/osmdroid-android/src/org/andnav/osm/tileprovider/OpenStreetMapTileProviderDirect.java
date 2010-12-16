@@ -11,11 +11,12 @@ import org.slf4j.LoggerFactory;
 import android.content.Context;
 
 /**
- * Objects of this class provide access to tiles which are amenable to
- * synchronous access. They are expected to return quickly enough so that a
- * person will perceive it as instantaneous.
+ * This top-level tile provider implements a default tile request chain which
+ * includes a FileSystemProvider (a file-system cache), and a
+ * TileDownloaderProvider (downloads map tiles via Render).
  *
- * At present the only source which meets this criteria is the file system.
+ * @author Marc Kurtz
+ * 
  */
 public class OpenStreetMapTileProviderDirect extends
 		OpenStreetMapTileProviderArray implements
@@ -27,10 +28,22 @@ public class OpenStreetMapTileProviderDirect extends
 	private final OpenStreetMapTileFilesystemProvider mFileSystemProvider;
 	private OpenStreetMapTileDownloader mTileDownloaderProvider;
 
+	/**
+	 * Creates an OpenStreetMapTileProviderDirect.
+	 * 
+	 * @param pContext
+	 *            a context
+	 */
 	public OpenStreetMapTileProviderDirect(final Context pContext) {
 		this(new SimpleRegisterReceiver(pContext));
 	}
 
+	/**
+	 * Creates an OpenStreetMapTileProviderDirect.
+	 * 
+	 * @param aRegisterReceiver
+	 *            a RegisterReceiver
+	 */
 	public OpenStreetMapTileProviderDirect(
 			final IRegisterReceiver aRegisterReceiver) {
 		super(aRegisterReceiver);
