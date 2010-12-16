@@ -25,5 +25,7 @@ public interface IOpenStreetMapRendererInfo {
 
 	public int getMaximumZoomLevel();
 
-	public abstract String getTileURLString(OpenStreetMapTile aTile);
+	public int getTileSizePixels();
+
+	public String getTileURLString(OpenStreetMapTile aTile);
 }

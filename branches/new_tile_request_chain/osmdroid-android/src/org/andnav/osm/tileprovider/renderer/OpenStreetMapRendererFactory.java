@@ -124,38 +124,38 @@ public class OpenStreetMapRendererFactory {
 	}
 
 	public static final IOpenStreetMapRendererInfo OSMARENDER = new XYRenderer(
-			"Osmarender", ResourceProxy.string.osmarender, 0, 17, ".png",
+			"Osmarender", ResourceProxy.string.osmarender, 0, 17, 256, ".png",
 			"http://tah.openstreetmap.org/Tiles/tile/");
 
 	public static final IOpenStreetMapRendererInfo MAPNIK = new XYRenderer(
-			"Mapnik", ResourceProxy.string.mapnik, 0, 18, ".png",
+			"Mapnik", ResourceProxy.string.mapnik, 0, 18, 256, ".png",
 			"http://tile.openstreetmap.org/");
 
 	public static final IOpenStreetMapRendererInfo CYCLEMAP = new XYRenderer(
-			"CycleMap", ResourceProxy.string.cyclemap, 0, 17, ".png",
+			"CycleMap", ResourceProxy.string.cyclemap, 0, 17, 256, ".png",
 			"http://a.andy.sandbox.cloudmade.com/tiles/cycle/",
 			"http://b.andy.sandbox.cloudmade.com/tiles/cycle/",
 			"http://c.andy.sandbox.cloudmade.com/tiles/cycle/");
 
 	public static final IOpenStreetMapRendererInfo PUBLIC_TRANSPORT = new XYRenderer(
 			"OSMPublicTransport", ResourceProxy.string.public_transport, 0, 17,
-			".png", "http://tile.xn--pnvkarte-m4a.de/tilegen/");
+			256, ".png", "http://tile.xn--pnvkarte-m4a.de/tilegen/");
 
 	public static final IOpenStreetMapRendererInfo BASE = new XYRenderer(
-			"Base", ResourceProxy.string.base, 4, 17, ".png",
+			"Base", ResourceProxy.string.base, 4, 17, 256, ".png",
 			"http://topo.openstreetmap.de/base/");
 
 	public static final IOpenStreetMapRendererInfo TOPO = new XYRenderer(
-			"Topo", ResourceProxy.string.topo, 4, 17, ".png",
+			"Topo", ResourceProxy.string.topo, 4, 17, 256, ".png",
 			"http://topo.openstreetmap.de/topo/");
 
 	public static final IOpenStreetMapRendererInfo HILLS = new XYRenderer(
-			"Hills", ResourceProxy.string.hills, 8, 17, ".png",
+			"Hills", ResourceProxy.string.hills, 8, 17, 256, ".png",
 			"http://topo.geofabrik.de/hills/");
 
 	public static final IOpenStreetMapRendererInfo CLOUDMADESTANDARDTILES = new CloudmadeRenderer(
 			mCloudmadeCallback, "CloudMadeStandardTiles",
-			ResourceProxy.string.cloudmade_standard, 0, 18, 8, ".png",
+			ResourceProxy.string.cloudmade_standard, 0, 18, 256, ".png",
 			"http://a.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s",
 			"http://b.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s",
 			"http://c.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s");
@@ -163,7 +163,7 @@ public class OpenStreetMapRendererFactory {
 	// FYI - This renderer has a tileSize of "6"
 	public static final IOpenStreetMapRendererInfo CLOUDMADESMALLTILES = new CloudmadeRenderer(
 			mCloudmadeCallback, "CloudMadeSmallTiles",
-			ResourceProxy.string.cloudmade_small, 0, 21, 6, ".png",
+			ResourceProxy.string.cloudmade_small, 0, 21, 64, ".png",
 			"http://a.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s",
 			"http://b.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s",
 			"http://c.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s");
@@ -174,15 +174,15 @@ public class OpenStreetMapRendererFactory {
 	// They are therefore not in mRenderers.
 
 	public static final IOpenStreetMapRendererInfo FIETS_OVERLAY_NL = new XYRenderer(
-			"Fiets", ResourceProxy.string.fiets_nl, 3, 16, ".png",
+			"Fiets", ResourceProxy.string.fiets_nl, 3, 16, 256, ".png",
 			"http://overlay.openstreetmap.nl/openfietskaart-overlay/");
 
 	public static final IOpenStreetMapRendererInfo BASE_OVERLAY_NL = new XYRenderer(
-			"BaseNL", ResourceProxy.string.base_nl, 0, 18, ".png",
+			"BaseNL", ResourceProxy.string.base_nl, 0, 18, 256, ".png",
 			"http://overlay.openstreetmap.nl/basemap/");
 
 	public static final IOpenStreetMapRendererInfo ROADS_OVERLAY_NL = new XYRenderer(
-			"RoadsNL", ResourceProxy.string.roads_nl, 0, 18, ".png",
+			"RoadsNL", ResourceProxy.string.roads_nl, 0, 18, 256, ".png",
 			"http://overlay.openstreetmap.nl/roads/");
 
 	// FIXME the whole point of this implementation is that the list of
