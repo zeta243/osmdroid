@@ -18,14 +18,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Implements a file system cache and provides cached tiles. This functions as a
- * tile provider by serving cached tiles. It also implements an
- * IFilesystemCacheProvider which can be used by other tile providers to
- * register for file system cache access so they can put their tiles in the file
- * system cache.
+ * An implementation of {@link IFilesystemCache}.
+ * It writes tiles to the file system cache.
+ * If the cache exceeds 600 Mb then it will be trimmed to 500 Mb.
  *
- * @author Marc Kurtz
- * @author Nicolas Gramlich
+ * @author Neil Boyd
  *
  */
 public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderConstants {
