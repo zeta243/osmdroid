@@ -31,6 +31,7 @@ import android.os.Environment;
  * @author Nicolas Gramlich
  *
  */
+//FIXME move the code from this class elsewhere then delete this class
 public class OpenStreetMapTileFilesystemProvider extends
 		OpenStreetMapTileModuleProviderBase implements
 		IFilesystemCacheProvider, OpenStreetMapTileProviderConstants {

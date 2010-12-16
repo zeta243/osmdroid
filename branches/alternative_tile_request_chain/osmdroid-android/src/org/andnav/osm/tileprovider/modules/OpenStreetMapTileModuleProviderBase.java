@@ -19,12 +19,13 @@ import android.graphics.drawable.Drawable;
  * An abstract child class of {@link OpenStreetMapTileProviderBase} which
  * acquires tile images asynchronously from some network source.
  */
+//FIXME move the code from this class elsewhere then delete this class
 public abstract class OpenStreetMapTileModuleProviderBase implements
 		OpenStreetMapTileProviderConstants {
 
 	/**
 	 * Gets the name assigned to the thread for this provider.
-	 * 
+	 *
 	 * @return the thread name
 	 */
 	protected abstract String threadGroupName();
@@ -33,7 +34,7 @@ public abstract class OpenStreetMapTileModuleProviderBase implements
 	 * It is expected that the implementation will construct an internal member
 	 * which internally implements a {@link TileLoader}. This method is expected
 	 * to return a that internal member to methods of the parent methods.
-	 * 
+	 *
 	 * @return the internal member of this tile provider.
 	 */
 	protected abstract Runnable getTileLoader();
@@ -42,21 +43,21 @@ public abstract class OpenStreetMapTileModuleProviderBase implements
 	 * Returns true if implementation uses a data connection, false otherwise.
 	 * This value is used to determine if this provider should be skipped if
 	 * there is no data connection.
-	 * 
+	 *
 	 * @return true if implementation uses a data connection, false otherwise
 	 */
 	public abstract boolean getUsesDataConnection();
 
 	/**
 	 * Gets the minimum zoom level this tile provider can provide
-	 * 
+	 *
 	 * @return the minimum zoom level
 	 */
 	public abstract int getMinimumZoomLevel();
 
 	/**
 	 * Gets the maximum zoom level this tile provider can provide
-	 * 
+	 *
 	 * @return the maximum zoom level
 	 */
 	public abstract int getMaximumZoomLevel();
@@ -125,7 +126,7 @@ public abstract class OpenStreetMapTileModuleProviderBase implements
 	 * used by worker threads to acquire tiles from servers. It processes tiles
 	 * from the 'pending' set to the 'working' set as they become available. The
 	 * key unimplemented method is 'loadTile'.
-	 * 
+	 *
 	 * @param aTile
 	 *            the tile to load
 	 * @throws CantContinueException
@@ -135,7 +136,7 @@ public abstract class OpenStreetMapTileModuleProviderBase implements
 
 		/**
 		 * The key unimplemented method.
-		 * 
+		 *
 		 * @return true if the tile was loaded successfully and other tile
 		 *         providers need not be called, false otherwise
 		 * @param aTile
@@ -187,7 +188,7 @@ public abstract class OpenStreetMapTileModuleProviderBase implements
 
 		/**
 		 * A tile has loaded.
-		 * 
+		 *
 		 * @param aTile
 		 *            the tile that has loaded
 		 * @param aTileInputStream

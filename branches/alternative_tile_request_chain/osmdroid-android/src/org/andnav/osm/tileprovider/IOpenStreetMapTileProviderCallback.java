@@ -6,7 +6,7 @@ public interface IOpenStreetMapTileProviderCallback {
 
 	/**
 	 * The map tile request has completed.
-	 * 
+	 *
 	 * @param aState
 	 *            a state object
 	 * @param aDrawable
@@ -17,7 +17,7 @@ public interface IOpenStreetMapTileProviderCallback {
 
 	/**
 	 * The map tile request has failed.
-	 * 
+	 *
 	 * @param aState
 	 *            a state object
 	 */
@@ -25,8 +25,10 @@ public interface IOpenStreetMapTileProviderCallback {
 
 	/**
 	 * Returns true if the network connection should be used, false if not.
-	 * 
+	 *
 	 * @return true if data connection should be used, false otherwise
 	 */
 	public boolean useDataConnection();
+
+	public void setNextProvider(TileProviderBase pTileProvider);
 }

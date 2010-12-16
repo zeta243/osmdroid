@@ -6,6 +6,7 @@ import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderBase;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
+import org.andnav.osm.tileprovider.TileProviderBase;
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileModuleProviderBase;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
@@ -77,7 +78,7 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProviderB
 	 * turn, the service will request it from the file system. If it's found in
 	 * the file system it will notify the callback. If not it will initiate a
 	 * download. When the download has finished it will notify the callback.
-	 * 
+	 *
 	 * @param aTile
 	 *            the tile being requested
 	 * @return the tile bitmap if found in the cache, null otherwise
@@ -182,7 +183,14 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProviderB
 	}
 
 	@Override
-	public void setRenderer(IOpenStreetMapRendererInfo pRenderer) {
-		// TODO Auto-generated method stub
+	public void setRenderer(final IOpenStreetMapRendererInfo pRenderer) {
+		// TODO implementation
+		throw new IllegalStateException("Not implemented");
+	}
+
+	@Override
+	public void setNextProvider(final TileProviderBase pTileProvider) {
+		// TODO implementation
+		throw new IllegalStateException("Not implemented");
 	}
 }

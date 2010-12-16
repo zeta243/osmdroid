@@ -25,10 +25,11 @@ import android.graphics.drawable.Drawable;
 import android.os.Environment;
 
 /**
- * 
+ *
  * @author Nicolas Gramlich
- * 
+ *
  */
+//FIXME move the code from this class elsewhere then delete this class
 public class OpenStreetMapTileFileArchiveProvider extends
 		OpenStreetMapTileModuleProviderBase {
 
@@ -66,7 +67,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	 * The tiles may be found on several media. This one works with tiles stored
 	 * on the file system. It and its friends are typically created and
 	 * controlled by {@link OpenStreetMapTileProviderBase}.
-	 * 
+	 *
 	 * @param aCallback
 	 * @param aRegisterReceiver
 	 */
@@ -197,10 +198,10 @@ public class OpenStreetMapTileFileArchiveProvider extends
 		 * of preferences is... prefer actual tiles over dummy tiles prefer
 		 * newest tile over older prefer local tiles over zip prefer zip files
 		 * in lexicographic order
-		 * 
+		 *
 		 * When a dummy tile is generated it may be constructed from coarser
 		 * tiles from a lower resolution level.
-		 * 
+		 *
 		 * aTile a tile to be constructed by the method.
 		 */
 		@Override
@@ -243,7 +244,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	/**
 	 * This broadcast receiver will recheck the sd card when the mount/unmount
 	 * messages happen
-	 * 
+	 *
 	 */
 	private class MyBroadcastReceiver extends BroadcastReceiver {
 

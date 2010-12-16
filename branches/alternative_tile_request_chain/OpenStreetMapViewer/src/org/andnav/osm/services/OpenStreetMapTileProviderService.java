@@ -6,6 +6,9 @@ import org.andnav.osm.tileprovider.IRegisterReceiver;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
+import org.andnav.osm.tileprovider.TileProviderBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -14,12 +17,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The OpenStreetMapTileProviderService can download map tiles from a server and
@@ -121,6 +120,12 @@ public class OpenStreetMapTileProviderService extends Service implements
 	public boolean useDataConnection() {
 		// TODO implementation
 		return true;
+	}
+
+	@Override
+	public void setNextProvider(final TileProviderBase pTileProvider) {
+		// TODO implementation
+		throw new IllegalStateException("Not implemented");
 	}
 
 	/**

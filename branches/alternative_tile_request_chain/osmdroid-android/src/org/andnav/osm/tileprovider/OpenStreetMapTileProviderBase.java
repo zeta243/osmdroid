@@ -17,10 +17,11 @@ import android.os.Handler;
  * </ul>
  * see {@link OpenStreetMapTile} for an overview of how tiles are served by this
  * provider.
- * 
+ *
  * @author Nicolas Gramlich
- * 
+ *
  */
+//FIXME move the code from this class elsewhere then delete this class
 public abstract class OpenStreetMapTileProviderBase implements
 		OpenStreetMapViewConstants {
 
@@ -54,7 +55,7 @@ public abstract class OpenStreetMapTileProviderBase implements
 	 * Called by implementation class methods indicating that they have
 	 * completed the request as best it can. The tile is added to the cache. Let
 	 * the renderer convert the file to a drawable.
-	 * 
+	 *
 	 * @param pTile
 	 *            the specification for the tile requested
 	 * @param pTileInputStream
@@ -79,7 +80,7 @@ public abstract class OpenStreetMapTileProviderBase implements
 	/**
 	 * Informs the caller that the image has been updated. This is typically
 	 * called when the tile path or input stream have previously been posted.
-	 * 
+	 *
 	 * @param pTile
 	 *            the specification for the tile requested
 	 */
@@ -114,7 +115,7 @@ public abstract class OpenStreetMapTileProviderBase implements
 
 	/**
 	 * Set whether to use the network connection if it's available.
-	 * 
+	 *
 	 * @param aMode
 	 *            if true use the network connection if it's available. if false
 	 *            don't use the network connection even if it's available.

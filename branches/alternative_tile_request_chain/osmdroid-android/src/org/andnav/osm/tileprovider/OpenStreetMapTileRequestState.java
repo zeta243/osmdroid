@@ -6,6 +6,7 @@ import java.util.Queue;
 
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileModuleProviderBase;
 
+//FIXME move the code from this class elsewhere then delete this class
 public class OpenStreetMapTileRequestState {
 
 	final Queue<OpenStreetMapTileModuleProviderBase> mProviderQueue;
