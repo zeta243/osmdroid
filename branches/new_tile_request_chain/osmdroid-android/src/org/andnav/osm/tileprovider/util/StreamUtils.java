@@ -51,15 +51,19 @@ public class StreamUtils {
 	 *
 	 * @param in The input stream to copy from.
 	 * @param out The output stream to copy to.
+	 * @return the total length copied
 	 *
 	 * @throws IOException If any error occurs during the copy.
 	 */
-	public static void copy(InputStream in, OutputStream out) throws IOException {
+	public static int copy(InputStream in, OutputStream out) throws IOException {
+		int length = 0;
 		byte[] b = new byte[IO_BUFFER_SIZE];
 		int read;
 		while ((read = in.read(b)) != -1) {
 			out.write(b, 0, read);
+			length += read;
 		}
+		return length;
 	}
 
 	/**

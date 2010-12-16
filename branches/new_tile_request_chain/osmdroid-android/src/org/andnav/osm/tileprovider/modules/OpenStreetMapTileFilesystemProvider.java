@@ -1,11 +1,7 @@
 // Created by plusminus on 21:46:41 - 25.09.2008
 package org.andnav.osm.tileprovider.modules;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -14,7 +10,6 @@ import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
 import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
-import org.andnav.osm.tileprovider.util.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,13 +26,13 @@ import android.os.Environment;
  * IFilesystemCacheProvider which can be used by other tile providers to
  * register for file system cache access so they can put their tiles in the file
  * system cache.
- * 
+ *
  * @author Marc Kurtz
  * @author Nicolas Gramlich
- * 
+ *
  */
 public class OpenStreetMapTileFilesystemProvider extends
-		OpenStreetMapTileModuleProviderBase implements IFilesystemCache,
+		OpenStreetMapTileModuleProviderBase implements
 		IFilesystemCacheProvider, OpenStreetMapTileProviderConstants {
 
 	// ===========================================================
@@ -58,10 +53,9 @@ public class OpenStreetMapTileFilesystemProvider extends
 	private final IRegisterReceiver aRegisterReceiver;
 	private MyBroadcastReceiver mBroadcastReceiver;
 
-	private int mMinimumZoomLevel = Integer.MAX_VALUE;
-	private int mMaximumZoomLevel = Integer.MIN_VALUE;
-
 	private final long mMaximumCachedFileAge;
+
+	private final TileWriter mTileWriter;
 
 	// ===========================================================
 	// Constructors
@@ -75,7 +69,7 @@ public class OpenStreetMapTileFilesystemProvider extends
 	/**
 	 * Provides a file system based cache tile provider. Other providers can
 	 * register and store data in the cache.
-	 * 
+	 *
 	 * @param aRegisterReceiver
 	 */
 	public OpenStreetMapTileFilesystemProvider(
@@ -94,6 +88,8 @@ public class OpenStreetMapTileFilesystemProvider extends
 		mediaFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
 		mediaFilter.addDataScheme("file");
 		aRegisterReceiver.registerReceiver(mBroadcastReceiver, mediaFilter);
+
+		mTileWriter = new TileWriter();
 	}
 
 	// ===========================================================
@@ -130,12 +126,12 @@ public class OpenStreetMapTileFilesystemProvider extends
 
 	@Override
 	public int getMinimumZoomLevel() {
-		return mMinimumZoomLevel;
+		return mTileWriter.getMinimumZoomLevel();
 	}
 
 	@Override
 	public int getMaximumZoomLevel() {
-		return mMaximumZoomLevel;
+		return mTileWriter.getMaximumZoomLevel();
 	}
 
 	private void checkSdCard() {
@@ -144,14 +140,6 @@ public class OpenStreetMapTileFilesystemProvider extends
 		mSdCardAvailable = Environment.MEDIA_MOUNTED.equals(state);
 		if (DEBUGMODE)
 			logger.debug("mSdcardAvailable=" + mSdCardAvailable);
-	}
-
-	private void adjustMinimumMaximumZoomLevels(int pZoomLevel) {
-		if (pZoomLevel < mMinimumZoomLevel)
-			mMinimumZoomLevel = pZoomLevel;
-
-		if (pZoomLevel > mMaximumZoomLevel)
-			mMaximumZoomLevel = pZoomLevel;
 	}
 
 	// ===========================================================
@@ -166,10 +154,10 @@ public class OpenStreetMapTileFilesystemProvider extends
 		 * of preferences is... prefer actual tiles over dummy tiles prefer
 		 * newest tile over older prefer local tiles over zip prefer zip files
 		 * in lexicographic order
-		 * 
+		 *
 		 * When a dummy tile is generated it may be constructed from coarser
 		 * tiles from a lower resolution level.
-		 * 
+		 *
 		 * aTile a tile to be constructed by the method.
 		 */
 		@Override
@@ -228,7 +216,7 @@ public class OpenStreetMapTileFilesystemProvider extends
 	/**
 	 * This broadcast receiver will recheck the sd card when the mount/unmount
 	 * messages happen
-	 * 
+	 *
 	 */
 	private class MyBroadcastReceiver extends BroadcastReceiver {
 
@@ -242,55 +230,6 @@ public class OpenStreetMapTileFilesystemProvider extends
 		}
 	}
 
-	private boolean createFolderAndCheckIfExists(final File pFile) {
-		if (pFile.mkdirs()) {
-			return true;
-		}
-		if (DEBUGMODE)
-			logger.debug("Failed to create " + pFile
-					+ " - wait and check again");
-
-		// if create failed, wait a bit in case another thread created it
-		try {
-			Thread.sleep(500);
-		} catch (final InterruptedException ignore) {
-		}
-		// and then check again
-		if (pFile.exists()) {
-			if (DEBUGMODE)
-				logger.debug("Seems like another thread created " + pFile);
-			return true;
-		} else {
-			if (DEBUGMODE)
-				logger.debug("File still doesn't exist: " + pFile);
-			return false;
-		}
-	}
-
-	@Override
-	public boolean saveFile(IOpenStreetMapRendererInfo pRenderInfo,
-			OpenStreetMapTile pTile, InputStream pStream) {
-
-		adjustMinimumMaximumZoomLevels(pTile.getZoomLevel());
-
-		File file = new File(TILE_PATH_BASE,
-				pRenderInfo.getTileRelativeFilenameString(pTile));
-		createFolderAndCheckIfExists(file.getParentFile());
-
-		BufferedOutputStream outputStream = null;
-		try {
-			outputStream = new BufferedOutputStream(new FileOutputStream(
-					file.getPath()));
-			StreamUtils.copy(pStream, outputStream);
-		} catch (IOException e) {
-			return false;
-		} finally {
-			if (outputStream != null)
-				StreamUtils.closeStream(outputStream);
-		}
-		return true;
-	}
-
 	private final List<IOpenStreetMapRendererInfo> mRenderInfoList = new LinkedList<IOpenStreetMapRendererInfo>();
 
 	@Override
@@ -298,10 +237,10 @@ public class OpenStreetMapTileFilesystemProvider extends
 			IOpenStreetMapRendererInfo pRendererInfo, int pMinimumZoomLevel,
 			int pMaximumZoomLevel) {
 
-		adjustMinimumMaximumZoomLevels(pMinimumZoomLevel);
-		adjustMinimumMaximumZoomLevels(pMaximumZoomLevel);
+		mTileWriter.addZoomLevel(pMinimumZoomLevel);
+		mTileWriter.addZoomLevel(pMaximumZoomLevel);
 		mRenderInfoList.add(pRendererInfo);
-		return this;
+		return mTileWriter;
 	}
 
 	@Override
