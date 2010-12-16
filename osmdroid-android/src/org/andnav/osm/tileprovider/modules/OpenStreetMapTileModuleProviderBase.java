@@ -16,16 +16,16 @@ import org.slf4j.LoggerFactory;
 import android.graphics.drawable.Drawable;
 
 /**
- * An abstract child class of {@link OpenStreetMapTileProviderBase} which acquires
- * tile images asynchronously from some network source. The key unimplemented
- * methods are 'threadGroupname' and 'getTileLoader'.
+ * An abstract child class of {@link OpenStreetMapTileProviderBase} which
+ * acquires tile images asynchronously from some network source.
  */
 public abstract class OpenStreetMapTileModuleProviderBase implements
 		OpenStreetMapTileProviderConstants {
 
 	/**
+	 * Gets the name assigned to the thread for this provider.
 	 * 
-	 * @return
+	 * @return the thread name
 	 */
 	protected abstract String threadGroupName();
 
@@ -47,8 +47,18 @@ public abstract class OpenStreetMapTileModuleProviderBase implements
 	 */
 	public abstract boolean getUsesDataConnection();
 
+	/**
+	 * Gets the minimum zoom level this tile provider can provide
+	 * 
+	 * @return the minimum zoom level
+	 */
 	public abstract int getMinimumZoomLevel();
 
+	/**
+	 * Gets the maximum zoom level this tile provider can provide
+	 * 
+	 * @return the maximum zoom level
+	 */
 	public abstract int getMaximumZoomLevel();
 
 	private static final Logger logger = LoggerFactory

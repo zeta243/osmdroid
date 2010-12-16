@@ -22,9 +22,10 @@ import org.slf4j.LoggerFactory;
 import android.graphics.drawable.Drawable;
 
 /**
- * The OpenStreetMapTileDownloader loads tiles from a server and passes them to
- * a OpenStreetMapTileFilesystemProvider.
+ * The OpenStreetMapTileDownloader loads tiles from an HTTP server. It
+ * subscribes to a FilesystemCacheProvider if available and saves data in it.
  * 
+ * @author Marc Kurtz
  * @author Nicolas Gramlich
  * @author Manuel Stahl
  * 
@@ -52,6 +53,10 @@ public class OpenStreetMapTileDownloader extends
 	// ===========================================================
 	// Constructors
 	// ===========================================================
+
+	public OpenStreetMapTileDownloader(IOpenStreetMapRendererInfo pRendererInfo) {
+		this(pRendererInfo, null);
+	}
 
 	public OpenStreetMapTileDownloader(
 			IOpenStreetMapRendererInfo pRendererInfo,

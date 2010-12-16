@@ -14,14 +14,25 @@ import org.slf4j.LoggerFactory;
 import android.graphics.drawable.Drawable;
 
 /**
- * Objects of this class provide access to tiles which are amenable to
- * synchronous access. They are expected to return quickly enough so that a
- * person will perceive it as instantaneous.
+ * This top-level tile provider allows a consumer to provide an array of modular
+ * asynchronous tile providers to be used to obtain map tiles. When a tile is
+ * requested, the ArrayProvider first checks the MapTileCache (synchronously)
+ * and returns the tile if available. If not, then the ArrayProvider returns
+ * null and sends the tile request through the asynchronous tile request chain.
+ * Each asynchronous tile provider returns success/failure to the ArrayProvider.
+ * If successful, the ArrayProvider passes the result to the base class. If
+ * failed, then the next asynchronous tile provider is called in the chain. If
+ * there are no more asynchronous tile providers in the chain, then the failure
+ * result is passed to the base class. The ArrayProvider provides a mechanism so
+ * that only one unique tile-request can be in the map tile request chain at a
+ * time.
  * 
- * At present the only source which meets this criteria is the file system.
+ * @author Marc Kurtz
+ * 
  */
-public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProviderBase
-		implements IOpenStreetMapTileProviderCallback {
+public class OpenStreetMapTileProviderArray extends
+		OpenStreetMapTileProviderBase implements
+		IOpenStreetMapTileProviderCallback {
 
 	private final ConcurrentHashMap<OpenStreetMapTileRequestState, OpenStreetMapTile> mWorking;
 
@@ -30,11 +41,26 @@ public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProviderBas
 
 	protected final List<OpenStreetMapTileModuleProviderBase> mTileProviderList;
 
+	/**
+	 * Creates an OpenStreetMapTileProviderArray with no tile providers.
+	 * 
+	 * @param aRegisterReceiver
+	 *            a RegisterReceiver
+	 */
 	protected OpenStreetMapTileProviderArray(
 			final IRegisterReceiver aRegisterReceiver) {
 		this(aRegisterReceiver, new OpenStreetMapTileModuleProviderBase[0]);
 	}
 
+	/**
+	 * Creates an OpenStreetMapTileProviderArray with the specified tile
+	 * providers.
+	 * 
+	 * @param aRegisterReceiver
+	 *            a RegisterReceiver
+	 * @param tileProviderArray
+	 *            an array of OpenStreetMapTileModuleProviderBase
+	 */
 	public OpenStreetMapTileProviderArray(
 			final IRegisterReceiver aRegisterReceiver,
 			final OpenStreetMapTileModuleProviderBase[] tileProviderArray) {
