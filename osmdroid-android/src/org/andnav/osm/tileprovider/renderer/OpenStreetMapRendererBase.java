@@ -30,13 +30,16 @@ public abstract class OpenStreetMapRendererBase implements
 	protected final String mImageFilenameEnding;
 	protected final Random random = new Random();
 
+	private final int mTileSizePixels;
+
 	public OpenStreetMapRendererBase(String aName, int aZoomMinLevel,
-			int aZoomMaxLevel, String aImageFilenameEnding,
-			final String... aBaseUrl) {
+			int aZoomMaxLevel, int aTileSizePixels,
+			String aImageFilenameEnding, final String... aBaseUrl) {
 		mOrdinal = globalOrdinal++;
 		mName = aName;
 		mMinimumZoomLevel = aZoomMinLevel;
 		mMaximumZoomLevel = aZoomMaxLevel;
+		mTileSizePixels = aTileSizePixels;
 		mImageFilenameEnding = aImageFilenameEnding;
 		mBaseUrls = aBaseUrl;
 	}
@@ -67,6 +70,10 @@ public abstract class OpenStreetMapRendererBase implements
 
 	public int getMaximumZoomLevel() {
 		return mMaximumZoomLevel;
+	}
+
+	public int getTileSizePixels() {
+		return mTileSizePixels;
 	}
 
 	/**

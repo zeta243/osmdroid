@@ -394,6 +394,7 @@ public class OpenStreetMapView extends View implements
 
 	public void setRenderer(final IOpenStreetMapRendererInfo aRenderer) {
 		mTileProvider.setRenderer(aRenderer);
+		mTileSizePixels = aRenderer.getTileSizePixels();
 		if (this.mMiniMap != null)
 			this.mMiniMap.setRenderer(aRenderer);
 		this.checkZoomButtons();
