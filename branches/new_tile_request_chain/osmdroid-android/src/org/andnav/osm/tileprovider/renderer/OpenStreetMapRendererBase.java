@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.Random;
 
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
+import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +15,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
 public abstract class OpenStreetMapRendererBase implements
-		IOpenStreetMapRendererInfo {
+		IOpenStreetMapRendererInfo, OpenStreetMapTileProviderConstants {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(OpenStreetMapRendererBase.class);
@@ -117,6 +118,7 @@ public abstract class OpenStreetMapRendererBase implements
 		sb.append('/');
 		sb.append(tile.getY());
 		sb.append(imageFilenameEnding());
+		sb.append(TILE_PATH_EXTENSION);
 		return sb.toString();
 	}
 
