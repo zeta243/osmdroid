@@ -55,8 +55,8 @@ public class StreamUtils {
 	 *
 	 * @throws IOException If any error occurs during the copy.
 	 */
-	public static int copy(InputStream in, OutputStream out) throws IOException {
-		int length = 0;
+	public static long copy(InputStream in, OutputStream out) throws IOException {
+		long length = 0;
 		byte[] b = new byte[IO_BUFFER_SIZE];
 		int read;
 		while ((read = in.read(b)) != -1) {
