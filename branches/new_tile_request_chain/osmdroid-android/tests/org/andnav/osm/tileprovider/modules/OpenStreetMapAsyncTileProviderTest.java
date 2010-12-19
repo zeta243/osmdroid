@@ -40,7 +40,7 @@ public class OpenStreetMapAsyncTileProviderTest {
 	final OpenStreetMapTileModuleProviderBase mTileProvider = new OpenStreetMapTileModuleProviderBase(
 			1, 10, null) {
 		@Override
-		protected String threadGroupName() {
+		protected String getThreadGroupName() {
 			return "OpenStreetMapAsyncTileProviderTest";
 		}
 
@@ -70,6 +70,11 @@ public class OpenStreetMapAsyncTileProviderTest {
 		@Override
 		public int getMaximumZoomLevel() {
 			return 0;
+		}
+
+		@Override
+		protected String getName() {
+			return "test";
 		}
 	};
 
