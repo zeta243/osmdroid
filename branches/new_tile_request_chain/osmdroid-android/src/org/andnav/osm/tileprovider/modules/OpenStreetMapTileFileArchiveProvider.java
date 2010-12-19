@@ -108,7 +108,12 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	}
 
 	@Override
-	protected String threadGroupName() {
+	protected String getName() {
+		return "File Archive Provider";
+	}
+
+	@Override
+	protected String getThreadGroupName() {
 		return "filearchive";
 	}
 
@@ -190,7 +195,8 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	// Inner and Anonymous Classes
 	// ===========================================================
 
-	private class TileLoader extends OpenStreetMapTileModuleProviderBase.TileLoader {
+	private class TileLoader extends
+			OpenStreetMapTileModuleProviderBase.TileLoader {
 
 		/**
 		 * The tile loading policy for deciding which file to use... The order
