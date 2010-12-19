@@ -50,20 +50,30 @@ public class OpenStreetMapTileDownloader extends
 
 	private IOpenStreetMapRendererInfo mRendererInfo;
 
+	private final INetworkAvailablityCheck mNetworkAvailablityCheck;
+
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 
 	public OpenStreetMapTileDownloader(IOpenStreetMapRendererInfo pRendererInfo) {
-		this(pRendererInfo, null);
+		this(pRendererInfo, null, null);
 	}
 
 	public OpenStreetMapTileDownloader(
 			IOpenStreetMapRendererInfo pRendererInfo,
 			IFilesystemCacheProvider pFilesystemCacheProvider) {
+		this(pRendererInfo, pFilesystemCacheProvider, null);
+	}
+
+	public OpenStreetMapTileDownloader(
+			IOpenStreetMapRendererInfo pRendererInfo,
+			IFilesystemCacheProvider pFilesystemCacheProvider,
+			INetworkAvailablityCheck pNetworkAvailablityCheck) {
 		super(NUMBER_OF_TILE_DOWNLOAD_THREADS,
 				TILE_DOWNLOAD_MAXIMUM_QUEUE_SIZE, pFilesystemCacheProvider);
 		mFilesystemCacheProvider = pFilesystemCacheProvider;
+		mNetworkAvailablityCheck = pNetworkAvailablityCheck;
 		setRenderer(pRendererInfo);
 	}
 
@@ -151,6 +161,14 @@ public class OpenStreetMapTileDownloader extends
 			OpenStreetMapTile tile = aState.getMapTile();
 
 			try {
+
+				if (mNetworkAvailablityCheck != null
+						&& !mNetworkAvailablityCheck.getNetworkAvailable()) {
+					if (DEBUGMODE)
+						logger.debug("Skipping OpenStreetMapTileDownloader due to NetworkAvailabliltyCheck.");
+					return null;
+				}
+
 				final String tileURLString = buildURL(tile);
 
 				if (DEBUGMODE)
