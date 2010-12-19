@@ -13,6 +13,7 @@ import org.andnav.osm.events.MapListener;
 import org.andnav.osm.events.ScrollEvent;
 import org.andnav.osm.events.ZoomEvent;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderBase;
+import org.andnav.osm.tileprovider.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.util.SimpleInvalidationHandler;
 import org.andnav.osm.util.BoundingBoxE6;
@@ -136,8 +137,7 @@ public class OpenStreetMapView extends View implements
 		this.mTileSizePixels = tileSizePixels;
 
 		if (tileProvider == null) {
-			throw new IllegalArgumentException(
-					"Cannot pass null as tileProvider. Use OpenStreetMapTileProviderDirect.");
+			tileProvider = new OpenStreetMapTileProviderDirect(context);
 		}
 
 		mTileRequestCompleteHandler = (tileRequestCompleteHandler == null ? new SimpleInvalidationHandler(
@@ -177,10 +177,9 @@ public class OpenStreetMapView extends View implements
 	/**
 	 * Constructor used by XML layout resource (uses default renderer).
 	 */
-	// TODO: Fix this? We can't pass null as the tile renderer
-	// public OpenStreetMapView(Context context, AttributeSet attrs) {
-	// this(context, attrs, null);
-	// }
+	public OpenStreetMapView(Context context, AttributeSet attrs) {
+		this(context, null, attrs, 256, null);
+	}
 
 	/**
 	 * Standard Constructor.
@@ -188,6 +187,10 @@ public class OpenStreetMapView extends View implements
 	public OpenStreetMapView(final Context context, final int tileSizePixels,
 			final OpenStreetMapTileProviderBase aTileProvider) {
 		this(context, null, null, tileSizePixels, aTileProvider);
+	}
+
+	public OpenStreetMapView(final Context context, final int tileSizePixels) {
+		this(context, null, null, tileSizePixels, null);
 	}
 
 	public OpenStreetMapView(final Context context,
