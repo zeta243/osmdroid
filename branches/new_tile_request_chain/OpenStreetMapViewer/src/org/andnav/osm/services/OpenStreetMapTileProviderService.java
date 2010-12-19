@@ -112,6 +112,14 @@ public class OpenStreetMapTileProviderService extends Service implements
 	}
 
 	@Override
+	public void mapTileRequestCandidate(
+			final OpenStreetMapTileRequestState pState,
+			final Drawable pDrawable) {
+		// TODO implementation
+		throw new IllegalStateException("Not implemented");
+	}
+
+	@Override
 	public void mapTileRequestFailed(final OpenStreetMapTileRequestState pState) {
 		// TODO implementation
 		throw new IllegalStateException("Not implemented");
