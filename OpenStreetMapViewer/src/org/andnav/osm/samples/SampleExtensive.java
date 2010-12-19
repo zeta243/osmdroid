@@ -53,7 +53,6 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
 	private OpenStreetMapViewSimpleLocationOverlay mMyLocationOverlay;
 	private ResourceProxy mResourceProxy;
 	private ScaleBarOverlay mScaleBarOverlay;
-	private OpenStreetMapTileProviderDirect mTileProvider;
 
 	// ===========================================================
 	// Constructors
@@ -70,9 +69,8 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
 
 		final String cloudmadeKey = CloudmadeUtil.getCloudmadeKey(getApplicationContext());
 		OpenStreetMapRendererFactory.setCloudmadeKey(cloudmadeKey);
-		mTileProvider = new OpenStreetMapTileProviderDirect(getApplicationContext());
 
-        this.mOsmv = new OpenStreetMapView(this, 256, mTileProvider);
+        this.mOsmv = new OpenStreetMapView(this, 256);
         this.mOsmvController = this.mOsmv.getController();
         rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 

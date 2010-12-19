@@ -37,7 +37,6 @@ public class SampleWithTilesOverlay extends Activity {
 	private OpenStreetMapView mOsmv;
 	private OpenStreetMapTilesOverlay mTilesOverlay;
 	private OpenStreetMapTileProviderDirect mProvider;
-	private OpenStreetMapTileProviderDirect mTileProvider;
 
 	// ===========================================================
 	// Constructors
@@ -52,9 +51,8 @@ public class SampleWithTilesOverlay extends Activity {
 
 		final String cloudmadeKey = CloudmadeUtil.getCloudmadeKey(getApplicationContext());
 		OpenStreetMapRendererFactory.setCloudmadeKey(cloudmadeKey);
-		mTileProvider = new OpenStreetMapTileProviderDirect(getApplicationContext());
 
-		this.mOsmv = new OpenStreetMapView(this, 256, mTileProvider);
+		this.mOsmv = new OpenStreetMapView(this, 256);
 		rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 		this.mOsmv.setBuiltInZoomControls(true);
 
