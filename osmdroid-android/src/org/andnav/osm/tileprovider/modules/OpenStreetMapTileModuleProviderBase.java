@@ -23,11 +23,18 @@ public abstract class OpenStreetMapTileModuleProviderBase implements
 		OpenStreetMapTileProviderConstants {
 
 	/**
+	 * Gets the human-friendly name assigned to this tile provider.
+	 * 
+	 * @return the thread name
+	 */
+	protected abstract String getName();
+
+	/**
 	 * Gets the name assigned to the thread for this provider.
 	 * 
 	 * @return the thread name
 	 */
-	protected abstract String threadGroupName();
+	protected abstract String getThreadGroupName();
 
 	/**
 	 * It is expected that the implementation will construct an internal member
@@ -65,7 +72,8 @@ public abstract class OpenStreetMapTileModuleProviderBase implements
 			.getLogger(OpenStreetMapTileModuleProviderBase.class);
 
 	private final int mThreadPoolSize;
-	private final ThreadGroup mThreadPool = new ThreadGroup(threadGroupName());
+	private final ThreadGroup mThreadPool = new ThreadGroup(
+			getThreadGroupName());
 	private final ConcurrentHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState> mWorking;
 	final LinkedHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState> mPending;
 

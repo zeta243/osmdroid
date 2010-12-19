@@ -106,7 +106,12 @@ public class OpenStreetMapTileFilesystemProvider extends
 	}
 
 	@Override
-	protected String threadGroupName() {
+	protected String getName() {
+		return "File System Cache Provider";
+	}
+
+	@Override
+	protected String getThreadGroupName() {
 		return "filesystem";
 	}
 

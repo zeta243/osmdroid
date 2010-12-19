@@ -91,7 +91,12 @@ public class OpenStreetMapTileDownloader extends
 	}
 
 	@Override
-	protected String threadGroupName() {
+	protected String getName() {
+		return "Online Tile Download Provider";
+	}
+
+	@Override
+	protected String getThreadGroupName() {
 		return "downloader";
 	}
 
@@ -165,7 +170,8 @@ public class OpenStreetMapTileDownloader extends
 				if (mNetworkAvailablityCheck != null
 						&& !mNetworkAvailablityCheck.getNetworkAvailable()) {
 					if (DEBUGMODE)
-						logger.debug("Skipping OpenStreetMapTileDownloader due to NetworkAvailabliltyCheck.");
+						logger.debug("Skipping " + getName()
+								+ " due to NetworkAvailabliltyCheck.");
 					return null;
 				}
 
