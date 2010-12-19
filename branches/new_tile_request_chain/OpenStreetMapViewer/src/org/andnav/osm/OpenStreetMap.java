@@ -73,9 +73,8 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 		final String cloudmadeKey = CloudmadeUtil
 				.getCloudmadeKey(getApplicationContext());
 		OpenStreetMapRendererFactory.setCloudmadeKey(cloudmadeKey);
-		mTileProvider = new OpenStreetMapTileProviderDirect(this);
 
-		this.mOsmv = new OpenStreetMapView(this, 256, mTileProvider);
+		this.mOsmv = new OpenStreetMapView(this, 256);
 		this.mOsmv.setResourceProxy(mResourceProxy);
 		this.mLocationOverlay = new MyLocationOverlay(this.getBaseContext(),
 				this.mOsmv, mResourceProxy);

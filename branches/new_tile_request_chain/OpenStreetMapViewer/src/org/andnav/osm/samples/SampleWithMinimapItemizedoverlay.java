@@ -45,7 +45,6 @@ public class SampleWithMinimapItemizedoverlay extends Activity {
 	private OpenStreetMapView mOsmv, mOsmvMinimap;
 	private OpenStreetMapViewItemizedOverlay<OpenStreetMapViewOverlayItem> mMyLocationOverlay;
 	private ResourceProxy mResourceProxy;
-	private OpenStreetMapTileProviderDirect mTileProvider;
 
 	// ===========================================================
 	// Constructors
@@ -61,9 +60,8 @@ public class SampleWithMinimapItemizedoverlay extends Activity {
 
 		final String cloudmadeKey = CloudmadeUtil.getCloudmadeKey(getApplicationContext());
 		OpenStreetMapRendererFactory.setCloudmadeKey(cloudmadeKey);
-		mTileProvider = new OpenStreetMapTileProviderDirect(getApplicationContext());
 
-        this.mOsmv = new OpenStreetMapView(this, 256, mTileProvider);
+        this.mOsmv = new OpenStreetMapView(this, 256);
         rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 
 
