@@ -19,8 +19,11 @@ public class OpenStreetMapAsyncTileProviderTest {
 
 	final IOpenStreetMapTileProviderCallback mTileProviderCallback = new IOpenStreetMapTileProviderCallback() {
 
-		@Override
 		public void mapTileRequestCompleted(
+				OpenStreetMapTileRequestState aState, Drawable aDrawable) {
+		}
+
+		public void mapTileRequestCandidate(
 				OpenStreetMapTileRequestState aState, Drawable aDrawable) {
 		}
 

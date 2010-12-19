@@ -200,6 +200,12 @@ public abstract class OpenStreetMapTileModuleProviderBase implements
 			aState.getCallback().mapTileRequestCompleted(aState, aDrawable);
 		}
 
+		protected void tileCandidateLoaded(
+				final OpenStreetMapTileRequestState aState,
+				final Drawable aDrawable) {
+			aState.getCallback().mapTileRequestCandidate(aState, aDrawable);
+		}
+
 		private void tileLoadedFailed(final OpenStreetMapTileRequestState aState) {
 			removeTileFromQueues(aState.getMapTile());
 

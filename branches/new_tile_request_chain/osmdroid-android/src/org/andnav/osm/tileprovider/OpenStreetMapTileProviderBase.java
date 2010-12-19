@@ -22,7 +22,7 @@ import android.os.Handler;
  * 
  */
 public abstract class OpenStreetMapTileProviderBase implements
-		OpenStreetMapViewConstants {
+		IOpenStreetMapTileProviderCallback, OpenStreetMapViewConstants {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(OpenStreetMapTileProviderBase.class);
@@ -52,13 +52,13 @@ public abstract class OpenStreetMapTileProviderBase implements
 
 	/**
 	 * Called by implementation class methods indicating that they have
-	 * completed the request as best it can. The tile is added to the cache. Let
-	 * the renderer convert the file to a drawable.
+	 * completed the request as best it can. The tile is added to the cache, and
+	 * a MAPTILE_SUCCESS_ID message is sent.
 	 * 
-	 * @param pTile
-	 *            the specification for the tile requested
-	 * @param pTileInputStream
-	 *            the open file stream to the tile image
+	 * @param pState
+	 *            the map tile request state object
+	 * @param pDrawable
+	 *            the Drawable of the map tile
 	 */
 	public void mapTileRequestCompleted(
 			final OpenStreetMapTileRequestState pState, final Drawable pDrawable) {
@@ -77,11 +77,24 @@ public abstract class OpenStreetMapTileProviderBase implements
 	}
 
 	/**
-	 * Informs the caller that the image has been updated. This is typically
-	 * called when the tile path or input stream have previously been posted.
+	 * Default implementation is to call mapTileRequestCompleted
 	 * 
-	 * @param pTile
-	 *            the specification for the tile requested
+	 * @param pState
+	 *            the map tile request state object
+	 * @param pDrawable
+	 *            the Drawable of the map tile
+	 */
+	public void mapTileRequestCandidate(OpenStreetMapTileRequestState aState,
+			final Drawable aDrawable) {
+		mapTileRequestCompleted(aState, aDrawable);
+	}
+
+	/**
+	 * Called by implementation class methods indicating that they have failed
+	 * to retrieve the requested map tile. a MAPTILE_FAIL_ID message is sent.
+	 * 
+	 * @param pState
+	 *            the map tile request state object
 	 */
 	public void mapTileRequestFailed(final OpenStreetMapTileRequestState pState) {
 		OpenStreetMapTile tile = pState.getMapTile();
