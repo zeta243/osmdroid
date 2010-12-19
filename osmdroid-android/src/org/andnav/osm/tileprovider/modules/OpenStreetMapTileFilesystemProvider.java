@@ -26,10 +26,10 @@ import android.os.Environment;
  * IFilesystemCacheProvider which can be used by other tile providers to
  * register for file system cache access so they can put their tiles in the file
  * system cache.
- *
+ * 
  * @author Marc Kurtz
  * @author Nicolas Gramlich
- *
+ * 
  */
 public class OpenStreetMapTileFilesystemProvider extends
 		OpenStreetMapTileModuleProviderBase implements
@@ -69,7 +69,7 @@ public class OpenStreetMapTileFilesystemProvider extends
 	/**
 	 * Provides a file system based cache tile provider. Other providers can
 	 * register and store data in the cache.
-	 *
+	 * 
 	 * @param aRegisterReceiver
 	 */
 	public OpenStreetMapTileFilesystemProvider(
@@ -154,10 +154,10 @@ public class OpenStreetMapTileFilesystemProvider extends
 		 * of preferences is... prefer actual tiles over dummy tiles prefer
 		 * newest tile over older prefer local tiles over zip prefer zip files
 		 * in lexicographic order
-		 *
+		 * 
 		 * When a dummy tile is generated it may be constructed from coarser
 		 * tiles from a lower resolution level.
-		 *
+		 * 
 		 * aTile a tile to be constructed by the method.
 		 */
 		@Override
@@ -192,18 +192,14 @@ public class OpenStreetMapTileFilesystemProvider extends
 								.getPath());
 						return drawable;
 					} else {
-						// If the file has expired then we don't use it but we
-						// update the time-stamp on the file. If another tile
-						// provider down the line can provide this tile, then it
-						// will replace this file in the file cache and the new
-						// tile will be provided. If it cannot, then this
-						// request will ultimately fail, and the original file
-						// will be provided in the next iteration of this
-						// request since the time-stamp is now no longer
-						// expired.
-						if (fileExpired) {
-							file.setLastModified(System.currentTimeMillis());
-						}
+						// If the file has expired then we render it, but we
+						// return it as a candidate and then fail on the
+						// request. This allows the tile to be loaded, but also
+						// allows other tile providers to do a better job.
+						Drawable drawable = renderInfo.getDrawable(file
+								.getPath());
+						tileCandidateLoaded(aState, drawable);
+						return null;
 					}
 				}
 			}
@@ -216,7 +212,7 @@ public class OpenStreetMapTileFilesystemProvider extends
 	/**
 	 * This broadcast receiver will recheck the sd card when the mount/unmount
 	 * messages happen
-	 *
+	 * 
 	 */
 	private class MyBroadcastReceiver extends BroadcastReceiver {
 

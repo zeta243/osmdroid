@@ -16,6 +16,19 @@ public interface IOpenStreetMapTileProviderCallback {
 			final Drawable aDrawable);
 
 	/**
+	 * The map tile request has produced a candidate tile. A candidate tile can
+	 * fulfill the request but may be sub-optimal or may be one of a series of
+	 * potential suitable tiles.
+	 * 
+	 * @param aState
+	 *            a state object
+	 * @param aDrawable
+	 *            a drawable
+	 */
+	void mapTileRequestCandidate(OpenStreetMapTileRequestState aState,
+			final Drawable aDrawable);
+
+	/**
 	 * The map tile request has failed.
 	 * 
 	 * @param aState

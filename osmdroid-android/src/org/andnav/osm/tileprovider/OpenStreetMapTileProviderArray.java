@@ -31,8 +31,7 @@ import android.graphics.drawable.Drawable;
  * 
  */
 public class OpenStreetMapTileProviderArray extends
-		OpenStreetMapTileProviderBase implements
-		IOpenStreetMapTileProviderCallback {
+		OpenStreetMapTileProviderBase {
 
 	private final ConcurrentHashMap<OpenStreetMapTileRequestState, OpenStreetMapTile> mWorking;
 
