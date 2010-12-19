@@ -600,24 +600,12 @@ public class OpenStreetMapView extends View implements
 	}
 
 	public void onSaveInstanceState(Bundle state) {
-		// TODO: Fix this?
-		// state.putString(BUNDLE_RENDERER, getRenderer().name());
 		state.putInt(BUNDLE_SCROLL_X, getScrollX());
 		state.putInt(BUNDLE_SCROLL_Y, getScrollY());
 		state.putInt(BUNDLE_ZOOM_LEVEL, getZoomLevel());
 	}
 
 	public void onRestoreInstanceState(Bundle state) {
-
-		// TODO: Fix this?
-		// final String rendererName = state.containsKey(BUNDLE_RENDERER) ?
-		// state
-		// .getString(BUNDLE_RENDERER)
-		// : OpenStreetMapRendererFactory.DEFAULT_RENDERER.name();
-		// final IOpenStreetMapRendererInfo renderer =
-		// OpenStreetMapRendererFactory
-		// .getRenderer(rendererName);
-		// setRenderer(renderer);
 
 		setZoomLevel(state.getInt(BUNDLE_ZOOM_LEVEL, 1));
 		scrollTo(state.getInt(BUNDLE_SCROLL_X, 0),
