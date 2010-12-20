@@ -70,11 +70,11 @@ public class OpenStreetMapTileDownloader extends
 	}
 
 	public OpenStreetMapTileDownloader(
-			OpenStreetMapOnlineTileRendererBase pRendererInfo,
-			IFilesystemCacheProvider pFilesystemCacheProvider,
-			INetworkAvailablityCheck pNetworkAvailablityCheck) {
+			final OpenStreetMapOnlineTileRendererBase pRendererInfo,
+			final IFilesystemCacheProvider pFilesystemCacheProvider,
+			final INetworkAvailablityCheck pNetworkAvailablityCheck) {
 		super(NUMBER_OF_TILE_DOWNLOAD_THREADS,
-				TILE_DOWNLOAD_MAXIMUM_QUEUE_SIZE, pFilesystemCacheProvider);
+				TILE_DOWNLOAD_MAXIMUM_QUEUE_SIZE);
 
 		mFilesystemCacheProvider = pFilesystemCacheProvider;
 		mNetworkAvailablityCheck = pNetworkAvailablityCheck;
@@ -140,7 +140,7 @@ public class OpenStreetMapTileDownloader extends
 	}
 
 	@Override
-	public void onPreferredRendererChanged(IOpenStreetMapRendererInfo renderer) {
+	public void onPreferredRendererChanged(final IOpenStreetMapRendererInfo renderer) {
 
 		// We are only interested in OpenStreetMapOnlineTileRendererBase
 		// renderers

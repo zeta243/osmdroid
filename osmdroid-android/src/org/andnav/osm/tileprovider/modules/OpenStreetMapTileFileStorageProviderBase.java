@@ -17,10 +17,11 @@ public abstract class OpenStreetMapTileFileStorageProviderBase extends
 	private final IRegisterReceiver mRegisterReceiver;
 	private MyBroadcastReceiver mBroadcastReceiver;
 
-	public OpenStreetMapTileFileStorageProviderBase(int aThreadPoolSize,
-			int aPendingQueueSize, final IRegisterReceiver aRegisterReceiver,
-			IFilesystemCacheProvider aFilesystemCacheProvider) {
-		super(aThreadPoolSize, aPendingQueueSize, aFilesystemCacheProvider);
+	public OpenStreetMapTileFileStorageProviderBase(
+			final int aThreadPoolSize,
+			final int aPendingQueueSize,
+			final IRegisterReceiver aRegisterReceiver) {
+		super(aThreadPoolSize, aPendingQueueSize);
 
 		checkSdCard();
 
@@ -34,7 +35,7 @@ public abstract class OpenStreetMapTileFileStorageProviderBase extends
 		aRegisterReceiver.registerReceiver(mBroadcastReceiver, mediaFilter);
 	}
 
-	protected void checkSdCard() {
+	private void checkSdCard() {
 		final String state = Environment.getExternalStorageState();
 		mSdCardAvailable = Environment.MEDIA_MOUNTED.equals(state);
 	}
@@ -63,7 +64,7 @@ public abstract class OpenStreetMapTileFileStorageProviderBase extends
 	/**
 	 * This broadcast receiver will recheck the sd card when the mount/unmount
 	 * messages happen
-	 * 
+	 *
 	 */
 	private class MyBroadcastReceiver extends BroadcastReceiver {
 

@@ -137,18 +137,17 @@ public class OpenStreetMapView extends View implements
 			tileProvider = new OpenStreetMapTileProviderDirect(context);
 		}
 
-		mTileRequestCompleteHandler = (tileRequestCompleteHandler == null ? new SimpleInvalidationHandler(
-				this) : tileRequestCompleteHandler);
+		mTileRequestCompleteHandler =
+			tileRequestCompleteHandler == null ?
+					new SimpleInvalidationHandler(this) :
+						tileRequestCompleteHandler;
 		mTileProvider = tileProvider;
-		mTileProvider
-				.setTileRequestCompleteHandler(mTileRequestCompleteHandler);
+		mTileProvider.setTileRequestCompleteHandler(mTileRequestCompleteHandler);
 
-		this.mMapOverlay = new OpenStreetMapTilesOverlay(this, mTileProvider,
-				mResourceProxy);
+		this.mMapOverlay = new OpenStreetMapTilesOverlay(this, mTileProvider, mResourceProxy);
 		mOverlays.add(this.mMapOverlay);
 		this.mZoomController = new ZoomButtonsController(this);
-		this.mZoomController
-				.setOnZoomListener(new OpenStreetMapViewZoomListener());
+		this.mZoomController.setOnZoomListener(new OpenStreetMapViewZoomListener());
 
 		mZoomInAnimation = new ScaleAnimation(1, 2, 1, 2,
 				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
@@ -163,8 +162,7 @@ public class OpenStreetMapView extends View implements
 
 		mGestureDetector = new GestureDetector(context,
 				new OpenStreetMapViewGestureDetectorListener());
-		mGestureDetector
-				.setOnDoubleTapListener(new OpenStreetMapViewDoubleClickListener());
+		mGestureDetector.setOnDoubleTapListener(new OpenStreetMapViewDoubleClickListener());
 	}
 
 	public void detach() {

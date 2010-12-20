@@ -21,10 +21,10 @@ import android.graphics.drawable.Drawable;
  * IFilesystemCacheProvider which can be used by other tile providers to
  * register for file system cache access so they can put their tiles in the file
  * system cache.
- * 
+ *
  * @author Marc Kurtz
  * @author Nicolas Gramlich
- * 
+ *
  */
 public class OpenStreetMapTileFilesystemProvider extends
 		OpenStreetMapTileFileStorageProviderBase implements
@@ -57,13 +57,13 @@ public class OpenStreetMapTileFilesystemProvider extends
 	/**
 	 * Provides a file system based cache tile provider. Other providers can
 	 * register and store data in the cache.
-	 * 
+	 *
 	 * @param aRegisterReceiver
 	 */
 	public OpenStreetMapTileFilesystemProvider(
-			final IRegisterReceiver aRegisterReceiver, long maximumCachedFileAge) {
+			final IRegisterReceiver aRegisterReceiver, final long maximumCachedFileAge) {
 		super(NUMBER_OF_TILE_FILESYSTEM_THREADS,
-				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, aRegisterReceiver, null);
+				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, aRegisterReceiver);
 
 		mMaximumCachedFileAge = maximumCachedFileAge;
 		mTileWriter = new TileWriter();
@@ -119,16 +119,16 @@ public class OpenStreetMapTileFilesystemProvider extends
 		 * of preferences is... prefer actual tiles over dummy tiles prefer
 		 * newest tile over older prefer local tiles over zip prefer zip files
 		 * in lexicographic order
-		 * 
+		 *
 		 * When a dummy tile is generated it may be constructed from coarser
 		 * tiles from a lower resolution level.
-		 * 
+		 *
 		 * aTile a tile to be constructed by the method.
 		 */
 		@Override
 		public Drawable loadTile(final OpenStreetMapTileRequestState aState) {
 
-			OpenStreetMapTile aTile = aState.getMapTile();
+			final OpenStreetMapTile aTile = aState.getMapTile();
 
 			// if there's no sdcard then don't do anything
 			if (!getSdCardAvailable()) {
@@ -139,30 +139,26 @@ public class OpenStreetMapTileFilesystemProvider extends
 
 			// Check each registered renderer to see if their file is available
 			// and if so, then render the drawable and return the tile
-			for (IOpenStreetMapRendererInfo renderInfo : mRenderInfoList) {
-				File file = new File(TILE_PATH_BASE,
-						renderInfo.getTileRelativeFilenameString(aTile));
+			for (final IOpenStreetMapRendererInfo renderInfo : mRenderInfoList) {
+				final File file = new File(TILE_PATH_BASE, renderInfo.getTileRelativeFilenameString(aTile));
 				if (file.exists()) {
 
 					// Check to see if file has expired
 					final long now = System.currentTimeMillis();
 					final long lastModified = file.lastModified();
-					boolean fileExpired = lastModified < now
-							- mMaximumCachedFileAge;
+					final boolean fileExpired = lastModified < now - mMaximumCachedFileAge;
 
 					if (!fileExpired) {
 						// If the file has not expired, then render it and
 						// return it!
-						Drawable drawable = renderInfo.getDrawable(file
-								.getPath());
+						final Drawable drawable = renderInfo.getDrawable(file.getPath());
 						return drawable;
 					} else {
 						// If the file has expired then we render it, but we
 						// return it as a candidate and then fail on the
 						// request. This allows the tile to be loaded, but also
 						// allows other tile providers to do a better job.
-						Drawable drawable = renderInfo.getDrawable(file
-								.getPath());
+						final Drawable drawable = renderInfo.getDrawable(file.getPath());
 						tileCandidateLoaded(aState, drawable);
 						return null;
 					}

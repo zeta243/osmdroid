@@ -1,8 +1,8 @@
 package org.andnav.osm.tileprovider;
 
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileDownloader;
+import org.andnav.osm.tileprovider.modules.OpenStreetMapTileFileArchiveProvider;
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileFilesystemProvider;
-import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.SimpleRegisterReceiver;
 import org.slf4j.Logger;
@@ -16,7 +16,7 @@ import android.content.Context;
  * TileDownloaderProvider (downloads map tiles via Render).
  *
  * @author Marc Kurtz
- * 
+ *
  */
 public class OpenStreetMapTileProviderDirect extends
 		OpenStreetMapTileProviderArray implements
@@ -25,12 +25,9 @@ public class OpenStreetMapTileProviderDirect extends
 	private static final Logger logger = LoggerFactory
 			.getLogger(OpenStreetMapTileProviderDirect.class);
 
-	private final OpenStreetMapTileFilesystemProvider mFileSystemProvider;
-	private OpenStreetMapTileDownloader mTileDownloaderProvider;
-
 	/**
 	 * Creates an OpenStreetMapTileProviderDirect.
-	 * 
+	 *
 	 * @param pContext
 	 *            a context
 	 */
@@ -40,22 +37,20 @@ public class OpenStreetMapTileProviderDirect extends
 
 	/**
 	 * Creates an OpenStreetMapTileProviderDirect.
-	 * 
+	 *
 	 * @param aRegisterReceiver
 	 *            a RegisterReceiver
 	 */
 	public OpenStreetMapTileProviderDirect(
 			final IRegisterReceiver aRegisterReceiver) {
 		super(aRegisterReceiver);
-		mFileSystemProvider = new OpenStreetMapTileFilesystemProvider(
-				aRegisterReceiver);
-		mTileDownloaderProvider = new OpenStreetMapTileDownloader(
-				OpenStreetMapRendererFactory.DEFAULT_RENDERER, mFileSystemProvider);
-		super.mTileProviderList.add(mFileSystemProvider);
-		super.mTileProviderList.add(mTileDownloaderProvider);
-	}
 
-	public IOpenStreetMapRendererInfo getRenderer() {
-		return mTileDownloaderProvider.getRenderer();
+		final OpenStreetMapTileFilesystemProvider fileSystemProvider = new OpenStreetMapTileFilesystemProvider(aRegisterReceiver);
+		final OpenStreetMapTileFileArchiveProvider archiveProvider = new OpenStreetMapTileFileArchiveProvider(aRegisterReceiver, null);
+		final OpenStreetMapTileDownloader downloaderProvider = new OpenStreetMapTileDownloader(OpenStreetMapRendererFactory.DEFAULT_RENDERER, fileSystemProvider);
+
+		mTileProviderList.add(fileSystemProvider);
+		mTileProviderList.add(archiveProvider);
+		mTileProviderList.add(downloaderProvider);
 	}
 }

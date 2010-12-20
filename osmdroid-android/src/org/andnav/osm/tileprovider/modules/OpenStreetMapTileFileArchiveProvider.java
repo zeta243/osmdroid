@@ -13,6 +13,7 @@ import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderBase;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
+import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,9 +21,9 @@ import org.slf4j.LoggerFactory;
 import android.graphics.drawable.Drawable;
 
 /**
- * 
+ *
  * @author Nicolas Gramlich
- * 
+ *
  */
 public class OpenStreetMapTileFileArchiveProvider extends
 		OpenStreetMapTileFileStorageProviderBase {
@@ -40,11 +41,8 @@ public class OpenStreetMapTileFileArchiveProvider extends
 
 	private final ArrayList<ZipFile> mZipFiles = new ArrayList<ZipFile>();
 
-	private final IOpenStreetMapRendererInfo mRenderInfo;
-
-	private final int mMinimumZoomLevel;
-
-	private final int mMaximumZoomLevel;
+	// FIXME remove this and get the renderer from the tile request
+	private final IOpenStreetMapRendererInfo mRenderInfo = OpenStreetMapRendererFactory.DEFAULT_RENDERER;
 
 	// ===========================================================
 	// Constructors
@@ -54,22 +52,15 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	 * The tiles may be found on several media. This one works with tiles stored
 	 * on the file system. It and its friends are typically created and
 	 * controlled by {@link OpenStreetMapTileProviderBase}.
-	 * 
+	 *
 	 * @param aCallback
 	 * @param aRegisterReceiver
 	 */
 	public OpenStreetMapTileFileArchiveProvider(
-			final IOpenStreetMapRendererInfo pRenderInfo,
 			final IRegisterReceiver pRegisterReceiver,
-			IFilesystemCacheProvider pFilesystemCacheProvider,
-			int pMinimumZoomLevel, int pMaximumZoomLevel) {
+			IFilesystemCacheProvider pFilesystemCacheProvider) {
 		super(NUMBER_OF_TILE_FILESYSTEM_THREADS,
-				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, pRegisterReceiver,
-				pFilesystemCacheProvider);
-		mRenderInfo = pRenderInfo;
-
-		mMinimumZoomLevel = pMinimumZoomLevel;
-		mMaximumZoomLevel = pMaximumZoomLevel;
+				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, pRegisterReceiver);
 
 		findZipFiles();
 	}
@@ -104,12 +95,12 @@ public class OpenStreetMapTileFileArchiveProvider extends
 
 	@Override
 	public int getMinimumZoomLevel() {
-		return mMinimumZoomLevel;
+		return 0; // TODO what should this return?
 	}
 
 	@Override
 	public int getMaximumZoomLevel() {
-		return mMaximumZoomLevel;
+		return 18; // TODO what should this return?
 	}
 
 	@Override
@@ -149,6 +140,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	}
 
 	private synchronized InputStream fileFromZip(final OpenStreetMapTile aTile) {
+		// FIXME where am I supposed to get my render info from ???
 		final String path = mRenderInfo.getTileRelativeFilenameString(aTile);
 		for (final ZipFile zipFile : mZipFiles) {
 			try {
@@ -175,7 +167,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 		@Override
 		public Drawable loadTile(final OpenStreetMapTileRequestState aState) {
 
-			OpenStreetMapTile aTile = aState.getMapTile();
+			final OpenStreetMapTile aTile = aState.getMapTile();
 
 			// if there's no sdcard then don't do anything
 			if (!getSdCardAvailable()) {
@@ -193,7 +185,8 @@ public class OpenStreetMapTileFileArchiveProvider extends
 				if (fileFromZip != null) {
 					if (DEBUGMODE)
 						logger.debug("Use tile from zip: " + aTile);
-					Drawable drawable = mRenderInfo.getDrawable(fileFromZip);
+					// FIXME where am I supposed to get my render info from ???
+					final Drawable drawable = mRenderInfo.getDrawable(fileFromZip);
 					return drawable;
 				}
 			} catch (final Throwable e) {
