@@ -182,7 +182,13 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProviderB
 	}
 
 	@Override
-	public void setRenderer(IOpenStreetMapRendererInfo pRenderer) {
+	public IOpenStreetMapRendererInfo getPreferredRenderer() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setPreferredRenderer(IOpenStreetMapRendererInfo pRenderer) {
 		// TODO Auto-generated method stub
 	}
 }

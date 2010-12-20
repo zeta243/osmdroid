@@ -3,7 +3,6 @@ package org.andnav.osm;
 
 import org.andnav.osm.constants.OpenStreetMapConstants;
 import org.andnav.osm.samples.SampleLoader;
-import org.andnav.osm.tileprovider.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.CloudmadeUtil;
@@ -54,7 +53,6 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 	private OpenStreetMapView mOsmv;
 	private MyLocationOverlay mLocationOverlay;
 	private ResourceProxy mResourceProxy;
-	private OpenStreetMapTileProviderDirect mTileProvider;
 
 	// ===========================================================
 	// Constructors
@@ -94,7 +92,8 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 	@Override
 	protected void onPause() {
 		SharedPreferences.Editor edit = mPrefs.edit();
-		edit.putString(PREFS_RENDERER, mTileProvider.getRenderer().name());
+		edit.putString(PREFS_RENDERER, mOsmv.getTileProvider()
+				.getPreferredRenderer().name());
 		edit.putInt(PREFS_SCROLL_X, mOsmv.getScrollX());
 		edit.putInt(PREFS_SCROLL_Y, mOsmv.getScrollY());
 		edit.putInt(PREFS_ZOOM_LEVEL, mOsmv.getZoomLevel());
@@ -117,7 +116,7 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 		try {
 			final IOpenStreetMapRendererInfo renderer = OpenStreetMapRendererFactory
 					.getRenderer(rendererName);
-			mOsmv.setRenderer(renderer);
+			mOsmv.setPreferredRenderer(renderer);
 		} catch (IllegalArgumentException ignore) {
 		}
 		if (mPrefs.getBoolean(PREFS_SHOW_LOCATION, false))
@@ -158,7 +157,7 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		int ordinal = mTileProvider.getRenderer().ordinal();
+		int ordinal = mOsmv.getTileProvider().getPreferredRenderer().ordinal();
 		menu.findItem(1000 + ordinal).setChecked(true);
 		return true;
 	}
@@ -205,8 +204,8 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 			return true;
 
 		default: // Map mode submenu items
-			mOsmv.setRenderer(OpenStreetMapRendererFactory.getRenderer(item
-					.getItemId() - 1000));
+			mOsmv.setPreferredRenderer(OpenStreetMapRendererFactory
+					.getRenderer(item.getItemId() - 1000));
 		}
 		return false;
 	}

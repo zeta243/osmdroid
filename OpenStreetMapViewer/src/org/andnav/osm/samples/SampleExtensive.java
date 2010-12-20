@@ -223,7 +223,7 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
 				return true;
 
 			default:
-				mOsmv.setRenderer(OpenStreetMapRendererFactory.getRenderer(item.getItemId() - 1000));
+				mOsmv.setPreferredRenderer(OpenStreetMapRendererFactory.getRenderer(item.getItemId() - 1000));
 		}
 		return false;
 	}
