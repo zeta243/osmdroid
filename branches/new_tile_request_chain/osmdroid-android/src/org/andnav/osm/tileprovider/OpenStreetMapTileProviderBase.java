@@ -17,9 +17,9 @@ import android.os.Handler;
  * </ul>
  * see {@link OpenStreetMapTile} for an overview of how tiles are served by this
  * provider.
- * 
+ *
  * @author Nicolas Gramlich
- * 
+ *
  */
 public abstract class OpenStreetMapTileProviderBase implements
 		IOpenStreetMapTileProviderCallback, OpenStreetMapViewConstants {
@@ -57,12 +57,13 @@ public abstract class OpenStreetMapTileProviderBase implements
 	 * Called by implementation class methods indicating that they have
 	 * completed the request as best it can. The tile is added to the cache, and
 	 * a MAPTILE_SUCCESS_ID message is sent.
-	 * 
+	 *
 	 * @param pState
 	 *            the map tile request state object
 	 * @param pDrawable
 	 *            the Drawable of the map tile
 	 */
+	@Override
 	public void mapTileRequestCompleted(
 			final OpenStreetMapTileRequestState pState, final Drawable pDrawable) {
 		OpenStreetMapTile tile = pState.getMapTile();
@@ -81,12 +82,13 @@ public abstract class OpenStreetMapTileProviderBase implements
 
 	/**
 	 * Default implementation is to call mapTileRequestCompleted
-	 * 
+	 *
 	 * @param pState
 	 *            the map tile request state object
 	 * @param pDrawable
 	 *            the Drawable of the map tile
 	 */
+	@Override
 	public void mapTileRequestCandidate(OpenStreetMapTileRequestState aState,
 			final Drawable aDrawable) {
 		mapTileRequestCompleted(aState, aDrawable);
@@ -95,10 +97,11 @@ public abstract class OpenStreetMapTileProviderBase implements
 	/**
 	 * Called by implementation class methods indicating that they have failed
 	 * to retrieve the requested map tile. a MAPTILE_FAIL_ID message is sent.
-	 * 
+	 *
 	 * @param pState
 	 *            the map tile request state object
 	 */
+	@Override
 	public void mapTileRequestFailed(final OpenStreetMapTileRequestState pState) {
 		OpenStreetMapTile tile = pState.getMapTile();
 		if (mTileRequestCompleteHandler != null)
@@ -124,13 +127,14 @@ public abstract class OpenStreetMapTileProviderBase implements
 	/**
 	 * Whether to use the network connection if it's available.
 	 */
+	@Override
 	public boolean useDataConnection() {
 		return mUseDataConnection;
 	}
 
 	/**
 	 * Set whether to use the network connection if it's available.
-	 * 
+	 *
 	 * @param aMode
 	 *            if true use the network connection if it's available. if false
 	 *            don't use the network connection even if it's available.

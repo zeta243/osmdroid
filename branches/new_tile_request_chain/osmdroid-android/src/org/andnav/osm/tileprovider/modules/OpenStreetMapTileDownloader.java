@@ -25,11 +25,11 @@ import android.graphics.drawable.Drawable;
 /**
  * The OpenStreetMapTileDownloader loads tiles from an HTTP server. It
  * subscribes to a FilesystemCacheProvider if available and saves data in it.
- * 
+ *
  * @author Marc Kurtz
  * @author Nicolas Gramlich
  * @author Manuel Stahl
- * 
+ *
  */
 public class OpenStreetMapTileDownloader extends
 		OpenStreetMapTileModuleProviderBase implements
@@ -139,6 +139,7 @@ public class OpenStreetMapTileDownloader extends
 		return mRendererInfo;
 	}
 
+	@Override
 	public void onPreferredRendererChanged(IOpenStreetMapRendererInfo renderer) {
 
 		// We are only interested in OpenStreetMapOnlineTileRendererBase

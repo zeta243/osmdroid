@@ -8,9 +8,9 @@ import android.net.NetworkInfo;
  * A straightforward network check implementation. NOTE: Requires
  * android.permission.ACCESS_NETWORK_STATE and
  * android.permission.ACCESS_WIFI_STATE (?) and android.permission.INTERNET (?)
- * 
+ *
  * @author Marc Kurtz
- * 
+ *
  */
 
 public class NetworkAvailabliltyCheck implements INetworkAvailablityCheck {
@@ -30,16 +30,14 @@ public class NetworkAvailabliltyCheck implements INetworkAvailablityCheck {
 
 	@Override
 	public boolean getWiFiNetworkAvailable() {
-		final android.net.NetworkInfo wifi = mConnectionManager
-				.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+		final NetworkInfo wifi = mConnectionManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
 
 		return wifi.isAvailable();
 	}
 
 	@Override
 	public boolean getCellularDataNetworkAvailable() {
-		final android.net.NetworkInfo mobile = mConnectionManager
-				.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+		final NetworkInfo mobile = mConnectionManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
 		return mobile.isAvailable();
 	}

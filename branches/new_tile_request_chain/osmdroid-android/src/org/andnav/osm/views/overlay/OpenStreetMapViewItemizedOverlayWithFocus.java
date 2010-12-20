@@ -6,7 +6,6 @@ import java.util.List;
 import org.andnav.osm.DefaultResourceProxyImpl;
 import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.views.OpenStreetMapView;
-import org.andnav.osm.views.overlay.OpenStreetMapViewItemizedOverlay.ActiveItem;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -15,11 +14,9 @@ import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
-import android.view.MotionEvent;
 
-
-public class OpenStreetMapViewItemizedOverlayWithFocus<T extends OpenStreetMapViewOverlayItem> 
-extends OpenStreetMapViewItemizedOverlay<T> 
+public class OpenStreetMapViewItemizedOverlayWithFocus<T extends OpenStreetMapViewOverlayItem>
+extends OpenStreetMapViewItemizedOverlay<T>
 {
 
 	// ===========================================================
@@ -270,7 +267,7 @@ extends OpenStreetMapViewItemizedOverlay<T>
 	@Override
 	protected void onDrawItem(final Canvas c, final int index, final Point screenCoords) {
 		if (this.mFocusedItemIndex != NOT_SET && index == this.mFocusedItemIndex){
-			// Because we are reusing the screencoords passed here, we cannot simply store the reference. 
+			// Because we are reusing the screencoords passed here, we cannot simply store the reference.
 			this.mFocusedScreenCoords.set(screenCoords.x, screenCoords.y);
 		}else{
 			super.onDrawItem(c, index, screenCoords);
