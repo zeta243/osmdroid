@@ -116,9 +116,6 @@ public class OpenStreetMapView extends View implements
 
 	// for speed (avoiding allocations)
 	private Matrix mMatrix = new Matrix();
-	private BoundingBoxE6 mBoundingBox = new BoundingBoxE6(0, 0, 0, 0);
-	private int[] mIntArray = new int[2];
-
 	private OpenStreetMapTileProviderBase mTileProvider;
 
 	private final Handler mTileRequestCompleteHandler;
@@ -201,7 +198,7 @@ public class OpenStreetMapView extends View implements
 	}
 
 	/**
-	 * 
+	 *
 	 * @param context
 	 * @param osmv
 	 *            another {@link OpenStreetMapView}, to share the TileProvider
@@ -228,7 +225,7 @@ public class OpenStreetMapView extends View implements
 	 * I.e. it zooms it to x levels less than itself and centers it the same
 	 * coords.<br />
 	 * Its pretty useful when the MiniMap uses the same TileProvider.
-	 * 
+	 *
 	 * @see OpenStreetMapView.OpenStreetMapView(
 	 * @param aOsmvMinimap
 	 * @param aZoomDiff
@@ -265,7 +262,7 @@ public class OpenStreetMapView extends View implements
 	 * never. Use {@link View}.GONE , {@link View}.VISIBLE, {@link View}
 	 * .INVISIBLE. Use {@link OpenStreetMapViewConstants}.NOT_SET to reset this
 	 * feature.
-	 * 
+	 *
 	 * @param aVisiblity
 	 */
 	public void setOverrideMiniMapVisiblity(final int aVisiblity) {
@@ -362,7 +359,7 @@ public class OpenStreetMapView extends View implements
 	/**
 	 * This class is only meant to be used during on call of onDraw(). Otherwise
 	 * it may produce strange results.
-	 * 
+	 *
 	 * @return
 	 */
 	public OpenStreetMapViewProjection getProjection() {
@@ -470,7 +467,7 @@ public class OpenStreetMapView extends View implements
 
 	/**
 	 * Get the current ZoomLevel for the map tiles.
-	 * 
+	 *
 	 * @return the current ZoomLevel between 0 (equator) and 18/19(closest),
 	 *         depending on the Renderer chosen.
 	 */
@@ -480,7 +477,7 @@ public class OpenStreetMapView extends View implements
 
 	/**
 	 * Get the current ZoomLevel for the map tiles.
-	 * 
+	 *
 	 * @param aPending
 	 *            if true and we're animating then return the zoom level that
 	 *            we're animating towards, otherwise return the current zoom
@@ -498,7 +495,7 @@ public class OpenStreetMapView extends View implements
 
 	/*
 	 * Returns the minimum zoom level for the point currently at the center.
-	 * 
+	 *
 	 * @return The minimum zoom level for the map's current center.
 	 */
 	public int getMinimumZoomLevel() {
@@ -507,7 +504,7 @@ public class OpenStreetMapView extends View implements
 
 	/*
 	 * Returns the maximum zoom level for the point currently at the center.
-	 * 
+	 *
 	 * @return The maximum zoom level for the map's current center.
 	 */
 	public int getMaximumZoomLevel() {
@@ -628,7 +625,7 @@ public class OpenStreetMapView extends View implements
 
 	/**
 	 * Set whether to use the network connection if it's available.
-	 * 
+	 *
 	 * @param aMode
 	 *            if true use the network connection if it's available. if false
 	 *            don't use the network connection even if it's available.
@@ -936,7 +933,7 @@ public class OpenStreetMapView extends View implements
 	/**
 	 * This class may return valid results until the underlying
 	 * {@link OpenStreetMapView} gets modified in any way (i.e. new center).
-	 * 
+	 *
 	 * @author Nicolas Gramlich
 	 * @author Manuel Stahl
 	 */
@@ -992,7 +989,7 @@ public class OpenStreetMapView extends View implements
 
 		/**
 		 * Converts x/y ScreenCoordinates to the underlying GeoPoint.
-		 * 
+		 *
 		 * @param x
 		 * @param y
 		 * @return GeoPoint under x/y.
@@ -1021,7 +1018,7 @@ public class OpenStreetMapView extends View implements
 		 * The Error on ZoomLevels higher than 7, the error is below
 		 * <code>1px</code>.<br/>
 		 * TODO: Add a linear interpolation to minimize this error.
-		 * 
+		 *
 		 * <PRE>
 		 * Zoom 	Error(m) 	Error(px)
 		 * 11 	6m 	1/12px
@@ -1030,7 +1027,7 @@ public class OpenStreetMapView extends View implements
 		 * 6 	6144m 	3px
 		 * 4 	98304m 	10px
 		 * </PRE>
-		 * 
+		 *
 		 * @param in
 		 *            the GeoPoint you want the onScreenCoordinates of.
 		 * @param reuse
@@ -1053,7 +1050,7 @@ public class OpenStreetMapView extends View implements
 		/**
 		 * Performs only the first computationally heavy part of the projection,
 		 * needToCall toMapPixelsTranslated to get final position.
-		 * 
+		 *
 		 * @param latituteE6
 		 *            the latitute of the point
 		 * @param longitudeE6
@@ -1078,7 +1075,7 @@ public class OpenStreetMapView extends View implements
 
 		/**
 		 * Performs the second computationally light part of the projection.
-		 * 
+		 *
 		 * @param in
 		 *            the Point calculated by the toMapPixelsProjected
 		 * @param reuse
@@ -1100,7 +1097,7 @@ public class OpenStreetMapView extends View implements
 		/**
 		 * Translates a rectangle from screen coordinates to intermediate
 		 * coordinates.
-		 * 
+		 *
 		 * @param in
 		 *            the rectangle in screen coordinates
 		 * @return a rectangle in intermediate coords.

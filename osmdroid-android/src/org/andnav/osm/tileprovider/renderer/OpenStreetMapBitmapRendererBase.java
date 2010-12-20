@@ -66,18 +66,22 @@ public class OpenStreetMapBitmapRendererBase implements
 		return mImageFilenameEnding;
 	}
 
+	@Override
 	public int getMinimumZoomLevel() {
 		return mMinimumZoomLevel;
 	}
 
+	@Override
 	public int getMaximumZoomLevel() {
 		return mMaximumZoomLevel;
 	}
 
+	@Override
 	public int getTileSizePixels() {
 		return mTileSizePixels;
 	}
 
+	@Override
 	public String localizedName(ResourceProxy proxy) {
 		return proxy.getString(mResourceId);
 	}

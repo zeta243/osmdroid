@@ -9,8 +9,6 @@ import org.andnav.osm.views.util.MyMath;
 import org.andnav.osm.views.util.constants.MathConstants;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
 
-import android.graphics.Point;
-
 /**
  *
  * @author Nicolas Gramlich
@@ -418,7 +416,7 @@ public class OpenStreetMapViewController implements OpenStreetMapViewConstants {
 			}
 		}
 	}
-	
+
 	private class ExponentialDeceleratingAnimationRunner extends AbstractAnimationRunner{
 
 		// ===========================================================

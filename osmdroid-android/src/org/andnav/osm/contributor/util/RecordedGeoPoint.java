@@ -9,10 +9,12 @@ import org.andnav.osm.util.GeoPoint;
  * @author Nicolas Gramlich
  */
 public class RecordedGeoPoint extends GeoPoint implements OpenStreetMapContributorConstants {
-	
+
 	// ===========================================================
 	// Constants
 	// ===========================================================
+
+	private static final long serialVersionUID = -7424878433352308860L;
 
 	// ===========================================================
 	// Fields
@@ -28,7 +30,7 @@ public class RecordedGeoPoint extends GeoPoint implements OpenStreetMapContribut
 	public RecordedGeoPoint(final int latitudeE6, final int longitudeE6) {
 		this(latitudeE6, longitudeE6, System.currentTimeMillis(), NOT_SET);
 	}
-	
+
 	public RecordedGeoPoint(final int latitudeE6, final int longitudeE6, final long aTimeStamp, final int aNumSatellites) {
 		super(latitudeE6, longitudeE6);
 		this.mTimeStamp = aTimeStamp;
@@ -38,19 +40,19 @@ public class RecordedGeoPoint extends GeoPoint implements OpenStreetMapContribut
 	// ===========================================================
 	// Getter & Setter
 	// ===========================================================
-	
+
 	public long getTimeStamp() {
 		return this.mTimeStamp;
 	}
-	
+
 	public double getLatitudeAsDouble(){
 		return this.getLatitudeE6() / 1E6;
 	}
-	
+
 	public double getLongitudeAsDouble(){
 		return this.getLongitudeE6() / 1E6;
 	}
-	
+
 	public int getNumSatellites(){
 		return this.mNumSatellites;
 	}
