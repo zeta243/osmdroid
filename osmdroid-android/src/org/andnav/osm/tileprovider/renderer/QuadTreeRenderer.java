@@ -1,24 +1,15 @@
 package org.andnav.osm.tileprovider.renderer;
 
-import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.ResourceProxy.string;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 
-class QuadTreeRenderer extends OpenStreetMapRendererBase {
-
-	private final ResourceProxy.string mResourceId;
+class QuadTreeRenderer extends OpenStreetMapOnlineTileRendererBase {
 
 	QuadTreeRenderer(String aName, string aResourceId, int aZoomMinLevel,
 			int aZoomMaxLevel, int aTileSizePixels,
 			String aImageFilenameEnding, String... aBaseUrl) {
-		super(aName, aZoomMinLevel, aZoomMaxLevel, aTileSizePixels,
-				aImageFilenameEnding, aBaseUrl);
-		mResourceId = aResourceId;
-	}
-
-	@Override
-	public String localizedName(ResourceProxy proxy) {
-		return proxy.getString(mResourceId);
+		super(aName, aResourceId, aZoomMinLevel, aZoomMaxLevel,
+				aTileSizePixels, aImageFilenameEnding, aBaseUrl);
 	}
 
 	@Override

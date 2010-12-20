@@ -4,19 +4,17 @@ import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.util.CloudmadeUtil;
 
-class CloudmadeRenderer extends OpenStreetMapRendererBase {
+class CloudmadeRenderer extends OpenStreetMapOnlineTileRendererBase {
 
-	private final ResourceProxy.string mResourceId;
 	private ICloudmadeTokenCallback mCloudmadeCallback;
 
 	CloudmadeRenderer(ICloudmadeTokenCallback cloudmadeCallback, String aName,
 			ResourceProxy.string aResourceId, int aZoomMinLevel,
 			int aZoomMaxLevel, int aTileSizePixels,
 			String aImageFilenameEnding, String... aBaseUrl) {
-		super(aName, aZoomMinLevel, aZoomMaxLevel, aTileSizePixels,
-				aImageFilenameEnding, aBaseUrl);
+		super(aName, aResourceId, aZoomMinLevel, aZoomMaxLevel,
+				aTileSizePixels, aImageFilenameEnding, aBaseUrl);
 		mCloudmadeCallback = cloudmadeCallback;
-		mResourceId = aResourceId;
 	}
 
 	@Override
@@ -26,11 +24,6 @@ class CloudmadeRenderer extends OpenStreetMapRendererBase {
 		} else {
 			return mName + mCloudmadeCallback.getCloudmadeStyle();
 		}
-	}
-
-	@Override
-	public String localizedName(ResourceProxy proxy) {
-		return proxy.getString(mResourceId);
 	}
 
 	@Override

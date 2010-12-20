@@ -63,16 +63,14 @@ public interface IOpenStreetMapRendererInfo {
 	Drawable getDrawable(InputStream aTileInputStream);
 
 	/**
-	 * Get the minimum zoom level this renderer represents (should be in
-	 * HTTPRenderBase)
+	 * Get the minimum zoom level this renderer represents
 	 * 
 	 * @return the minimum zoom level
 	 */
 	public int getMinimumZoomLevel();
 
 	/**
-	 * Get the maximum zoom level this renderer represents (should be in
-	 * HTTPRenderBase)
+	 * Get the maximum zoom level this renderer represents
 	 * 
 	 * @return the maximum zoom level
 	 */
@@ -84,14 +82,4 @@ public interface IOpenStreetMapRendererInfo {
 	 * @return the tile size in pixels
 	 */
 	public int getTileSizePixels();
-
-	/**
-	 * Gets a URL that can be used to download this tile (should be in
-	 * HTTPRenderBase)
-	 * 
-	 * @param aTile
-	 *            a tile
-	 * @return the URL
-	 */
-	public String getTileURLString(OpenStreetMapTile aTile);
 }
