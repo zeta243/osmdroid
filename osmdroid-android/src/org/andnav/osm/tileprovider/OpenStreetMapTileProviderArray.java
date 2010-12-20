@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.andnav.osm.tileprovider.modules.OpenStreetMapTileDownloader;
+import org.andnav.osm.tileprovider.modules.IPreferredRenderChangedReceiver;
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileModuleProviderBase;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.slf4j.Logger;
@@ -39,6 +39,8 @@ public class OpenStreetMapTileProviderArray extends
 			.getLogger(OpenStreetMapTileProviderArray.class);
 
 	protected final List<OpenStreetMapTileModuleProviderBase> mTileProviderList;
+
+	private IOpenStreetMapRendererInfo mPreferredRenderer;
 
 	/**
 	 * Creates an OpenStreetMapTileProviderArray with no tile providers.
@@ -183,13 +185,20 @@ public class OpenStreetMapTileProviderArray extends
 	}
 
 	@Override
-	public void setRenderer(IOpenStreetMapRendererInfo aRenderer) {
+	public IOpenStreetMapRendererInfo getPreferredRenderer() {
+		return mPreferredRenderer;
+	}
+
+	@Override
+	public void setPreferredRenderer(IOpenStreetMapRendererInfo aRenderer) {
+		mPreferredRenderer = aRenderer;
+
 		for (OpenStreetMapTileModuleProviderBase tileProvider : mTileProviderList) {
 			// We could identify tile providers by an Interface if we wanted to
 			// make this extensible.
-			if (tileProvider instanceof OpenStreetMapTileDownloader) {
-				((OpenStreetMapTileDownloader) tileProvider)
-						.setRenderer(aRenderer);
+			if (tileProvider instanceof IPreferredRenderChangedReceiver) {
+				((IPreferredRenderChangedReceiver) tileProvider)
+						.onPreferredRendererChanged(aRenderer);
 				clearTileCache();
 			}
 		}

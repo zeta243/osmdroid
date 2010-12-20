@@ -301,6 +301,10 @@ public class OpenStreetMapView extends View implements
 		return this.mOverlays;
 	}
 
+	public OpenStreetMapTileProviderBase getTileProvider() {
+		return mTileProvider;
+	}
+
 	public Scroller getScroller() {
 		return mScroller;
 	}
@@ -395,11 +399,11 @@ public class OpenStreetMapView extends View implements
 		}
 	}
 
-	public void setRenderer(final IOpenStreetMapRendererInfo aRenderer) {
-		mTileProvider.setRenderer(aRenderer);
+	public void setPreferredRenderer(final IOpenStreetMapRendererInfo aRenderer) {
+		mTileProvider.setPreferredRenderer(aRenderer);
 		mTileSizePixels = aRenderer.getTileSizePixels();
 		if (this.mMiniMap != null)
-			this.mMiniMap.setRenderer(aRenderer);
+			this.mMiniMap.setPreferredRenderer(aRenderer);
 		this.checkZoomButtons();
 		this.setZoomLevel(mZoomLevel); // revalidate zoom level
 		postInvalidate();
