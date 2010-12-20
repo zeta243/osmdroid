@@ -26,9 +26,9 @@ import android.graphics.drawable.Drawable;
  * result is passed to the base class. The ArrayProvider provides a mechanism so
  * that only one unique tile-request can be in the map tile request chain at a
  * time.
- * 
+ *
  * @author Marc Kurtz
- * 
+ *
  */
 public class OpenStreetMapTileProviderArray extends
 		OpenStreetMapTileProviderBase {
@@ -44,7 +44,7 @@ public class OpenStreetMapTileProviderArray extends
 
 	/**
 	 * Creates an OpenStreetMapTileProviderArray with no tile providers.
-	 * 
+	 *
 	 * @param aRegisterReceiver
 	 *            a RegisterReceiver
 	 */
@@ -56,7 +56,7 @@ public class OpenStreetMapTileProviderArray extends
 	/**
 	 * Creates an OpenStreetMapTileProviderArray with the specified tile
 	 * providers.
-	 * 
+	 *
 	 * @param aRegisterReceiver
 	 *            a RegisterReceiver
 	 * @param tileProviderArray
@@ -205,7 +205,7 @@ public class OpenStreetMapTileProviderArray extends
 	public void setPreferredRenderer(IOpenStreetMapRendererInfo aRenderer) {
 		mPreferredRenderer = aRenderer;
 
-		for (OpenStreetMapTileModuleProviderBase tileProvider : mTileProviderList) {
+		for (final OpenStreetMapTileModuleProviderBase tileProvider : mTileProviderList) {
 			// We could identify tile providers by an Interface if we wanted to
 			// make this extensible.
 			if (tileProvider instanceof IPreferredRenderChangedReceiver) {

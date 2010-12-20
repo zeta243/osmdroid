@@ -1,5 +1,7 @@
 package org.andnav.osm.tileprovider;
 
+import org.andnav.osm.tileprovider.modules.INetworkAvailablityCheck;
+import org.andnav.osm.tileprovider.modules.NetworkAvailabliltyCheck;
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileDownloader;
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileFileArchiveProvider;
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileFilesystemProvider;
@@ -27,27 +29,22 @@ public class OpenStreetMapTileProviderDirect extends
 
 	/**
 	 * Creates an OpenStreetMapTileProviderDirect.
-	 *
-	 * @param pContext
-	 *            a context
 	 */
-	public OpenStreetMapTileProviderDirect(final Context pContext) {
-		this(new SimpleRegisterReceiver(pContext));
+	public OpenStreetMapTileProviderDirect(final Context aContext) {
+		this(new SimpleRegisterReceiver(aContext), new NetworkAvailabliltyCheck(aContext));
 	}
 
 	/**
 	 * Creates an OpenStreetMapTileProviderDirect.
-	 *
-	 * @param aRegisterReceiver
-	 *            a RegisterReceiver
 	 */
 	public OpenStreetMapTileProviderDirect(
-			final IRegisterReceiver aRegisterReceiver) {
+			final IRegisterReceiver aRegisterReceiver,
+			final INetworkAvailablityCheck aNetworkAvailablityCheck) {
 		super(aRegisterReceiver);
 
 		final OpenStreetMapTileFilesystemProvider fileSystemProvider = new OpenStreetMapTileFilesystemProvider(aRegisterReceiver);
-		final OpenStreetMapTileFileArchiveProvider archiveProvider = new OpenStreetMapTileFileArchiveProvider(aRegisterReceiver);
-		final OpenStreetMapTileDownloader downloaderProvider = new OpenStreetMapTileDownloader(OpenStreetMapRendererFactory.DEFAULT_RENDERER, fileSystemProvider);
+		final OpenStreetMapTileFileArchiveProvider archiveProvider = new OpenStreetMapTileFileArchiveProvider(OpenStreetMapRendererFactory.DEFAULT_RENDERER, aRegisterReceiver);
+		final OpenStreetMapTileDownloader downloaderProvider = new OpenStreetMapTileDownloader(OpenStreetMapRendererFactory.DEFAULT_RENDERER, fileSystemProvider, aNetworkAvailablityCheck);
 
 		mTileProviderList.add(fileSystemProvider);
 		mTileProviderList.add(archiveProvider);

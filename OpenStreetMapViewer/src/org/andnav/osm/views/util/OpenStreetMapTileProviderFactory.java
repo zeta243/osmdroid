@@ -2,22 +2,18 @@
 package org.andnav.osm.views.util;
 
 import org.andnav.osm.services.IOpenStreetMapTileProviderService;
-import org.andnav.osm.tileprovider.IRegisterReceiver;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderBase;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.views.OpenStreetMapView;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
-
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.pm.ResolveInfo;
-import android.os.Handler;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ResolveInfo;
+import android.os.Handler;
 
 /**
  *

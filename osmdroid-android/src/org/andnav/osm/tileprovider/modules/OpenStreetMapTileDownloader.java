@@ -59,13 +59,13 @@ public class OpenStreetMapTileDownloader extends
 	// ===========================================================
 
 	public OpenStreetMapTileDownloader(
-			OpenStreetMapOnlineTileRendererBase pRendererInfo) {
+			final OpenStreetMapOnlineTileRendererBase pRendererInfo) {
 		this(pRendererInfo, null, null);
 	}
 
 	public OpenStreetMapTileDownloader(
-			OpenStreetMapOnlineTileRendererBase pRendererInfo,
-			IFilesystemCacheProvider pFilesystemCacheProvider) {
+			final OpenStreetMapOnlineTileRendererBase pRendererInfo,
+			final IFilesystemCacheProvider pFilesystemCacheProvider) {
 		this(pRendererInfo, pFilesystemCacheProvider, null);
 	}
 
@@ -84,6 +84,10 @@ public class OpenStreetMapTileDownloader extends
 	// ===========================================================
 	// Getter & Setter
 	// ===========================================================
+
+	public IOpenStreetMapRendererInfo getRenderer() {
+		return mRendererInfo;
+	}
 
 	// ===========================================================
 	// Methods from SuperClass/Interfaces
@@ -127,18 +131,6 @@ public class OpenStreetMapTileDownloader extends
 		return mRendererInfo.getMaximumZoomLevel();
 	}
 
-	// ===========================================================
-	// Methods
-	// ===========================================================
-
-	private String buildURL(final OpenStreetMapTile tile) {
-		return mRendererInfo.getTileURLString(tile);
-	}
-
-	public IOpenStreetMapRendererInfo getRenderer() {
-		return mRendererInfo;
-	}
-
 	@Override
 	public void onPreferredRendererChanged(final IOpenStreetMapRendererInfo renderer) {
 
@@ -161,6 +153,14 @@ public class OpenStreetMapTileDownloader extends
 								mRendererInfo.getMaximumZoomLevel());
 			}
 		}
+	}
+
+	// ===========================================================
+	// Methods
+	// ===========================================================
+
+	private String buildURL(final OpenStreetMapTile tile) {
+		return mRendererInfo.getTileURLString(tile);
 	}
 
 	// ===========================================================

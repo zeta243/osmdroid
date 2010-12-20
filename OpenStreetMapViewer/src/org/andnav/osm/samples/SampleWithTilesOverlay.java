@@ -1,6 +1,5 @@
 package org.andnav.osm.samples;
 
-import org.andnav.osm.tileprovider.IRegisterReceiver;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.CloudmadeUtil;
@@ -9,17 +8,14 @@ import org.andnav.osm.views.OpenStreetMapView;
 import org.andnav.osm.views.overlay.OpenStreetMapTilesOverlay;
 
 import android.app.Activity;
-import android.content.BroadcastReceiver;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
 /**
- * 
+ *
  * @author Alex van der Linden
- * 
+ *
  */
 public class SampleWithTilesOverlay extends Activity {
 
@@ -60,18 +56,7 @@ public class SampleWithTilesOverlay extends Activity {
 		this.mOsmv.getController().setCenter(new GeoPoint(51500000, 5400000));
 
 		// Add tiles layer
-		IRegisterReceiver registerReceiver = new IRegisterReceiver() {
-			@Override
-			public Intent registerReceiver(final BroadcastReceiver aReceiver,
-					final IntentFilter aFilter) {
-				return null;
-			}
-
-			@Override
-			public void unregisterReceiver(final BroadcastReceiver aReceiver) {
-			}
-		};
-		mProvider = new OpenStreetMapTileProviderDirect(registerReceiver);
+		mProvider = new OpenStreetMapTileProviderDirect(getApplicationContext());
 		mProvider
 				.setPreferredRenderer(OpenStreetMapRendererFactory.FIETS_OVERLAY_NL);
 		this.mTilesOverlay = new OpenStreetMapTilesOverlay(this.mOsmv,

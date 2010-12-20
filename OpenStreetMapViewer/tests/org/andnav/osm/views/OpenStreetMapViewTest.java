@@ -1,16 +1,14 @@
 package org.andnav.osm.views;
 
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderDirect;
-import org.andnav.osm.tileprovider.util.SimpleInvalidationHandler;
-import org.andnav.osm.tileprovider.util.SimpleRegisterReceiver;
 import org.andnav.osm.util.GeoPoint;
 import org.andnav.osm.views.OpenStreetMapView.OpenStreetMapViewProjection;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Point;
-import android.graphics.Bitmap.Config;
 import android.test.AndroidTestCase;
 import android.test.IsolatedContext;
 
