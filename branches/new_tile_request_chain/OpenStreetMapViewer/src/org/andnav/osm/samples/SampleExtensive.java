@@ -91,7 +91,7 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
 	        /* Create a ImageView with a zoomIn-Icon. */
 	        final ImageView ivZoomIn = new ImageView(this);
 	        ivZoomIn.setImageResource(R.drawable.zoom_in);
-	        /* Create RelativeLayoutParams, that position in in the top right corner. */
+	        /* Create RelativeLayoutParams, that position it in the top right corner. */
 	        final RelativeLayout.LayoutParams zoominParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 	        zoominParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 	        zoominParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
@@ -109,7 +109,7 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
 	        final ImageView ivZoomOut = new ImageView(this);
 	        ivZoomOut.setImageResource(R.drawable.zoom_out);
 
-	        /* Create RelativeLayoutParams, that position in in the top left corner. */
+	        /* Create RelativeLayoutParams, that position it in the top left corner. */
 	        final RelativeLayout.LayoutParams zoomoutParams = new RelativeLayout.LayoutParams(RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 	        zoomoutParams.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
 	        zoomoutParams.addRule(RelativeLayout.ALIGN_PARENT_TOP);
@@ -130,9 +130,8 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
 	        final int aZoomDiff = 3; // Use OpenStreetMapViewConstants.NOT_SET to disable autozooming of this minimap
 	        this.mOsmv.setMiniMap(mOsmvMinimap, aZoomDiff);
 
-
-	        /* Create RelativeLayout.LayoutParams that position the MiniMap on the top-right corner of the RelativeLayout. */
-	        RelativeLayout.LayoutParams minimapParams = new RelativeLayout.LayoutParams(90, 90);
+	        /* Create RelativeLayout.LayoutParams that position the MiniMap on the bottom-right corner of the RelativeLayout. */
+	        final RelativeLayout.LayoutParams minimapParams = new RelativeLayout.LayoutParams(90, 90);
 	        minimapParams.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
 	        minimapParams.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
 	        minimapParams.setMargins(5,5,5,5);
@@ -196,14 +195,14 @@ public class SampleExtensive extends OpenStreetMapActivity implements OpenStreet
 				return true;
 
 			case MENU_MINIMAP_ID:
-				switch(this.mOsmv.getOverrideMiniMapVisiblity()){
+				switch(this.mOsmv.getOverrideMiniMapVisibility()){
 					case View.VISIBLE:
-						this.mOsmv.setOverrideMiniMapVisiblity(View.INVISIBLE);
+						this.mOsmv.setOverrideMiniMapVisibility(View.INVISIBLE);
 						break;
 					case NOT_SET:
 					case View.INVISIBLE:
 					case View.GONE:
-						this.mOsmv.setOverrideMiniMapVisiblity(View.VISIBLE);
+						this.mOsmv.setOverrideMiniMapVisibility(View.VISIBLE);
 						break;
 				}
 				return true;
