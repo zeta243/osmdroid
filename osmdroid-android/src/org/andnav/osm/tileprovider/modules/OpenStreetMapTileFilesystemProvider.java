@@ -13,12 +13,7 @@ import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
-import android.os.Environment;
 
 /**
  * Implements a file system cache and provides cached tiles. This functions as a
@@ -32,7 +27,7 @@ import android.os.Environment;
  * 
  */
 public class OpenStreetMapTileFilesystemProvider extends
-		OpenStreetMapTileModuleProviderBase implements
+		OpenStreetMapTileFileStorageProviderBase implements
 		IFilesystemCacheProvider, OpenStreetMapTileProviderConstants {
 
 	// ===========================================================
@@ -45,13 +40,6 @@ public class OpenStreetMapTileFilesystemProvider extends
 	// ===========================================================
 	// Fields
 	// ===========================================================
-
-	/** whether the sdcard is mounted read/write */
-	private boolean mSdCardAvailable = true;
-
-	/** keep around to unregister when we're done */
-	private final IRegisterReceiver aRegisterReceiver;
-	private MyBroadcastReceiver mBroadcastReceiver;
 
 	private final long mMaximumCachedFileAge;
 
@@ -75,20 +63,9 @@ public class OpenStreetMapTileFilesystemProvider extends
 	public OpenStreetMapTileFilesystemProvider(
 			final IRegisterReceiver aRegisterReceiver, long maximumCachedFileAge) {
 		super(NUMBER_OF_TILE_FILESYSTEM_THREADS,
-				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, null);
+				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, aRegisterReceiver, null);
 
-		this.aRegisterReceiver = aRegisterReceiver;
-		this.mMaximumCachedFileAge = maximumCachedFileAge;
-		this.mBroadcastReceiver = new MyBroadcastReceiver();
-
-		checkSdCard();
-
-		final IntentFilter mediaFilter = new IntentFilter();
-		mediaFilter.addAction(Intent.ACTION_MEDIA_MOUNTED);
-		mediaFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
-		mediaFilter.addDataScheme("file");
-		aRegisterReceiver.registerReceiver(mBroadcastReceiver, mediaFilter);
-
+		mMaximumCachedFileAge = maximumCachedFileAge;
 		mTileWriter = new TileWriter();
 	}
 
@@ -121,15 +98,6 @@ public class OpenStreetMapTileFilesystemProvider extends
 	};
 
 	@Override
-	public void detach() {
-		if (mBroadcastReceiver != null) {
-			aRegisterReceiver.unregisterReceiver(mBroadcastReceiver);
-			mBroadcastReceiver = null;
-		}
-		super.detach();
-	}
-
-	@Override
 	public int getMinimumZoomLevel() {
 		return mTileWriter.getMinimumZoomLevel();
 	}
@@ -137,14 +105,6 @@ public class OpenStreetMapTileFilesystemProvider extends
 	@Override
 	public int getMaximumZoomLevel() {
 		return mTileWriter.getMaximumZoomLevel();
-	}
-
-	private void checkSdCard() {
-		final String state = Environment.getExternalStorageState();
-		logger.info("sdcard state: " + state);
-		mSdCardAvailable = Environment.MEDIA_MOUNTED.equals(state);
-		if (DEBUGMODE)
-			logger.debug("mSdcardAvailable=" + mSdCardAvailable);
 	}
 
 	// ===========================================================
@@ -171,7 +131,7 @@ public class OpenStreetMapTileFilesystemProvider extends
 			OpenStreetMapTile aTile = aState.getMapTile();
 
 			// if there's no sdcard then don't do anything
-			if (!mSdCardAvailable) {
+			if (!getSdCardAvailable()) {
 				if (DEBUGMODE)
 					logger.debug("No sdcard - do nothing for tile: " + aTile);
 				return null;
@@ -211,23 +171,6 @@ public class OpenStreetMapTileFilesystemProvider extends
 
 			// If we get here then there is no file in the file cache
 			return null;
-		}
-	}
-
-	/**
-	 * This broadcast receiver will recheck the sd card when the mount/unmount
-	 * messages happen
-	 * 
-	 */
-	private class MyBroadcastReceiver extends BroadcastReceiver {
-
-		@Override
-		public void onReceive(final Context aContext, final Intent aIntent) {
-
-			final String action = aIntent.getAction();
-			logger.info("onReceive: " + action);
-
-			checkSdCard();
 		}
 	}
 

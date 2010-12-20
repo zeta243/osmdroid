@@ -17,12 +17,7 @@ import org.andnav.osm.tileprovider.util.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.drawable.Drawable;
-import android.os.Environment;
 
 /**
  * 
@@ -30,7 +25,7 @@ import android.os.Environment;
  * 
  */
 public class OpenStreetMapTileFileArchiveProvider extends
-		OpenStreetMapTileModuleProviderBase {
+		OpenStreetMapTileFileStorageProviderBase {
 
 	// ===========================================================
 	// Constants
@@ -44,13 +39,6 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	// ===========================================================
 
 	private final ArrayList<ZipFile> mZipFiles = new ArrayList<ZipFile>();
-
-	/** whether the sdcard is mounted read/write */
-	private boolean mSdCardAvailable = true;
-
-	/** keep around to unregister when we're done */
-	private final IRegisterReceiver aRegisterReceiver;
-	private MyBroadcastReceiver mBroadcastReceiver;
 
 	private final IOpenStreetMapRendererInfo mRenderInfo;
 
@@ -76,22 +64,14 @@ public class OpenStreetMapTileFileArchiveProvider extends
 			IFilesystemCacheProvider pFilesystemCacheProvider,
 			int pMinimumZoomLevel, int pMaximumZoomLevel) {
 		super(NUMBER_OF_TILE_FILESYSTEM_THREADS,
-				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, pFilesystemCacheProvider);
+				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, pRegisterReceiver,
+				pFilesystemCacheProvider);
 		mRenderInfo = pRenderInfo;
 
-		this.aRegisterReceiver = pRegisterReceiver;
 		mMinimumZoomLevel = pMinimumZoomLevel;
 		mMaximumZoomLevel = pMaximumZoomLevel;
-		mBroadcastReceiver = new MyBroadcastReceiver();
 
-		checkSdCard();
 		findZipFiles();
-
-		final IntentFilter mediaFilter = new IntentFilter();
-		mediaFilter.addAction(Intent.ACTION_MEDIA_MOUNTED);
-		mediaFilter.addAction(Intent.ACTION_MEDIA_UNMOUNTED);
-		mediaFilter.addDataScheme("file");
-		aRegisterReceiver.registerReceiver(mBroadcastReceiver, mediaFilter);
 	}
 
 	// ===========================================================
@@ -120,15 +100,6 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	@Override
 	protected Runnable getTileLoader() {
 		return new TileLoader();
-	};
-
-	@Override
-	public void detach() {
-		if (mBroadcastReceiver != null) {
-			aRegisterReceiver.unregisterReceiver(mBroadcastReceiver);
-			mBroadcastReceiver = null;
-		}
-		super.detach();
 	}
 
 	@Override
@@ -141,9 +112,22 @@ public class OpenStreetMapTileFileArchiveProvider extends
 		return mMaximumZoomLevel;
 	}
 
+	@Override
+	protected void onMediaMounted() {
+		findZipFiles();
+	}
+
+	@Override
+	protected void onMediaUnmounted() {
+		findZipFiles();
+	}
+
 	private void findZipFiles() {
 
 		mZipFiles.clear();
+
+		if (!getSdCardAvailable())
+			return;
 
 		final File[] z = OSMDROID_PATH.listFiles(new FileFilter() {
 			@Override
@@ -180,17 +164,6 @@ public class OpenStreetMapTileFileArchiveProvider extends
 		return null;
 	}
 
-	private void checkSdCard() {
-		final String state = Environment.getExternalStorageState();
-		logger.info("sdcard state: " + state);
-		mSdCardAvailable = Environment.MEDIA_MOUNTED.equals(state);
-		if (DEBUGMODE)
-			logger.debug("mSdcardAvailable=" + mSdCardAvailable);
-		if (!mSdCardAvailable) {
-			mZipFiles.clear();
-		}
-	}
-
 	// ===========================================================
 	// Inner and Anonymous Classes
 	// ===========================================================
@@ -215,7 +188,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 			OpenStreetMapTile aTile = aState.getMapTile();
 
 			// if there's no sdcard then don't do anything
-			if (!mSdCardAvailable) {
+			if (!getSdCardAvailable()) {
 				if (DEBUGMODE)
 					logger.debug("No sdcard - do nothing for tile: " + aTile);
 				return null;
@@ -243,27 +216,6 @@ public class OpenStreetMapTileFileArchiveProvider extends
 			}
 
 			return null;
-		}
-	}
-
-	/**
-	 * This broadcast receiver will recheck the sd card when the mount/unmount
-	 * messages happen
-	 * 
-	 */
-	private class MyBroadcastReceiver extends BroadcastReceiver {
-
-		@Override
-		public void onReceive(final Context aContext, final Intent aIntent) {
-
-			final String action = aIntent.getAction();
-			logger.info("onReceive: " + action);
-
-			checkSdCard();
-
-			if (Intent.ACTION_MEDIA_MOUNTED.equals(action)) {
-				findZipFiles();
-			}
 		}
 	}
 }
