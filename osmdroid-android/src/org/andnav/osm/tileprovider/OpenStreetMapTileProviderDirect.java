@@ -46,7 +46,7 @@ public class OpenStreetMapTileProviderDirect extends
 		super(aRegisterReceiver);
 
 		final OpenStreetMapTileFilesystemProvider fileSystemProvider = new OpenStreetMapTileFilesystemProvider(aRegisterReceiver);
-		final OpenStreetMapTileFileArchiveProvider archiveProvider = new OpenStreetMapTileFileArchiveProvider(aRegisterReceiver, null);
+		final OpenStreetMapTileFileArchiveProvider archiveProvider = new OpenStreetMapTileFileArchiveProvider(aRegisterReceiver);
 		final OpenStreetMapTileDownloader downloaderProvider = new OpenStreetMapTileDownloader(OpenStreetMapRendererFactory.DEFAULT_RENDERER, fileSystemProvider);
 
 		mTileProviderList.add(fileSystemProvider);

@@ -57,8 +57,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	 * @param aRegisterReceiver
 	 */
 	public OpenStreetMapTileFileArchiveProvider(
-			final IRegisterReceiver pRegisterReceiver,
-			IFilesystemCacheProvider pFilesystemCacheProvider) {
+			final IRegisterReceiver pRegisterReceiver) {
 		super(NUMBER_OF_TILE_FILESYSTEM_THREADS,
 				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, pRegisterReceiver);
 
