@@ -4,16 +4,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 
-import org.andnav.osm.tileprovider.IRegisterReceiver;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileModuleProviderBase;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 
-import android.content.BroadcastReceiver;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.Bitmap.Config;
@@ -22,7 +18,6 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.os.RemoteException;
 import android.test.AndroidTestCase;
 
@@ -37,16 +32,7 @@ public class OpenStreetMapTileProviderDirectTest extends AndroidTestCase {
 	@Override
 	protected void setUp() throws Exception {
 
-		IRegisterReceiver registerReceiver = new IRegisterReceiver() {
-			@Override
-			public Intent registerReceiver(final BroadcastReceiver aReceiver, final IntentFilter aFilter) {
-				return null;
-			}
-			@Override
-			public void unregisterReceiver(final BroadcastReceiver aReceiver) {
-			}
-		};
-		mProvider = new OpenStreetMapTileProviderDirect(registerReceiver);
+		mProvider = new OpenStreetMapTileProviderDirect(getContext());
 
 		super.setUp();
 	}

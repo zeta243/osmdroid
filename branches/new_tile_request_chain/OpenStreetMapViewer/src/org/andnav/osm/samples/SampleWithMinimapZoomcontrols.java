@@ -2,11 +2,8 @@
 package org.andnav.osm.samples;
 
 import org.andnav.osm.R;
-import org.andnav.osm.tileprovider.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.CloudmadeUtil;
-import org.andnav.osm.tileprovider.util.SimpleInvalidationHandler;
-import org.andnav.osm.tileprovider.util.SimpleRegisterReceiver;
 import org.andnav.osm.views.OpenStreetMapView;
 
 import android.app.Activity;

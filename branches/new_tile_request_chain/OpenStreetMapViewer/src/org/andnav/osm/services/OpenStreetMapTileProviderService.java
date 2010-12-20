@@ -2,24 +2,18 @@ package org.andnav.osm.services;
 
 import org.andnav.osm.services.constants.OpenStreetMapServiceConstants;
 import org.andnav.osm.tileprovider.IOpenStreetMapTileProviderCallback;
-import org.andnav.osm.tileprovider.IRegisterReceiver;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
-
-import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
-import android.os.Handler;
-import android.os.IBinder;
-import android.os.RemoteException;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import android.app.Service;
+import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.drawable.Drawable;
+import android.os.IBinder;
+import android.os.RemoteException;
 
 /**
  * The OpenStreetMapTileProviderService can download map tiles from a server and
@@ -39,20 +33,7 @@ public class OpenStreetMapTileProviderService extends Service implements
 	@Override
 	public void onCreate() {
 		super.onCreate();
-		final Context applicationContext = this.getApplicationContext();
-		final IRegisterReceiver registerReceiver = new IRegisterReceiver() {
-			@Override
-			public Intent registerReceiver(final BroadcastReceiver aReceiver,
-					final IntentFilter aFilter) {
-				return applicationContext.registerReceiver(aReceiver, aFilter);
-			}
-
-			@Override
-			public void unregisterReceiver(final BroadcastReceiver aReceiver) {
-				applicationContext.unregisterReceiver(aReceiver);
-			}
-		};
-		mTileProvider = new OpenStreetMapTileProviderDirect(registerReceiver);
+		mTileProvider = new OpenStreetMapTileProviderDirect(getApplicationContext());
 	}
 
 	@Override
