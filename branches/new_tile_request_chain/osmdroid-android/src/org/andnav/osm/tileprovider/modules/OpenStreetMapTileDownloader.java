@@ -31,7 +31,8 @@ import android.graphics.drawable.Drawable;
  * 
  */
 public class OpenStreetMapTileDownloader extends
-		OpenStreetMapTileModuleProviderBase {
+		OpenStreetMapTileModuleProviderBase implements
+		IPreferredRenderChangedReceiver {
 
 	// ===========================================================
 	// Constants
@@ -74,7 +75,7 @@ public class OpenStreetMapTileDownloader extends
 				TILE_DOWNLOAD_MAXIMUM_QUEUE_SIZE, pFilesystemCacheProvider);
 		mFilesystemCacheProvider = pFilesystemCacheProvider;
 		mNetworkAvailablityCheck = pNetworkAvailablityCheck;
-		setRenderer(pRendererInfo);
+		onPreferredRendererChanged(pRendererInfo);
 	}
 
 	// ===========================================================
@@ -135,7 +136,7 @@ public class OpenStreetMapTileDownloader extends
 		return mRendererInfo;
 	}
 
-	public void setRenderer(IOpenStreetMapRendererInfo renderer) {
+	public void onPreferredRendererChanged(IOpenStreetMapRendererInfo renderer) {
 		if (mFilesystemCacheProvider != null) {
 			if ((mFilesystemCache != null) && (mRendererInfo != null))
 				mFilesystemCacheProvider

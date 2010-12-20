@@ -39,7 +39,10 @@ public abstract class OpenStreetMapTileProviderBase implements
 
 	public abstract int getMaximumZoomLevel();
 
-	public abstract void setRenderer(IOpenStreetMapRendererInfo renderer);
+	public abstract void setPreferredRenderer(
+			IOpenStreetMapRendererInfo renderer);
+
+	public abstract IOpenStreetMapRendererInfo getPreferredRenderer();
 
 	public OpenStreetMapTileProviderBase() {
 		this(null);
