@@ -148,16 +148,28 @@ public class OpenStreetMapTileProviderArray extends
 		}
 	}
 
+	/**
+	 * We want to not use a provider that doesn't exist anymore in the chain,
+	 * and we want to not use a provider that requires a data connection when
+	 * one is not available.
+	 */
 	private OpenStreetMapTileModuleProviderBase findNextAppropriateProvider(
 			final OpenStreetMapTileRequestState aState) {
 		OpenStreetMapTileModuleProviderBase provider = null;
 		// The logic of the while statement is
-		// "Keep looping until you get null, or a provider that has a data connection if it needs one"
+		// "Keep looping until you get null, or a provider that still exists and has a data connection if it needs one,"
 		do {
 			provider = aState.getNextProvider();
-		} while ((provider != null)
+		} while ((provider != null) && (!getProviderExists(provider))
 				&& (!useDataConnection() && provider.getUsesDataConnection()));
 		return provider;
+	}
+
+	public boolean getProviderExists(
+			OpenStreetMapTileModuleProviderBase provider) {
+		synchronized (mTileProviderList) {
+			return mTileProviderList.contains(provider);
+		}
 	}
 
 	@Override
