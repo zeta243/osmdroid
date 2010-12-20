@@ -251,7 +251,7 @@ public class OpenStreetMapView extends View implements
 	 * @return {@link View}.GONE or {@link View}.VISIBLE or {@link View}
 	 *         .INVISIBLE or {@link OpenStreetMapViewConstants}.NOT_SET
 	 * */
-	public int getOverrideMiniMapVisiblity() {
+	public int getOverrideMiniMapVisibility() {
 		return this.mMiniMapOverriddenVisibility;
 	}
 
@@ -261,22 +261,22 @@ public class OpenStreetMapView extends View implements
 	 * .INVISIBLE. Use {@link OpenStreetMapViewConstants}.NOT_SET to reset this
 	 * feature.
 	 *
-	 * @param aVisiblity
+	 * @param aVisibility
 	 */
-	public void setOverrideMiniMapVisiblity(final int aVisiblity) {
-		switch (aVisiblity) {
+	public void setOverrideMiniMapVisibility(final int aVisibility) {
+		switch (aVisibility) {
 		case View.GONE:
 		case View.VISIBLE:
 		case View.INVISIBLE:
 			if (this.mMiniMap != null)
-				this.mMiniMap.setVisibility(aVisiblity);
+				this.mMiniMap.setVisibility(aVisibility);
 		case NOT_SET:
 			this.setZoomLevel(this.mZoomLevel);
 			break;
 		default:
 			throw new IllegalArgumentException("See javadoc of this method !!!");
 		}
-		this.mMiniMapOverriddenVisibility = aVisiblity;
+		this.mMiniMapOverriddenVisibility = aVisibility;
 	}
 
 	private void setMaxiMap(final OpenStreetMapView aOsmvMaxiMap) {
@@ -768,7 +768,7 @@ public class OpenStreetMapView extends View implements
 
 		/* Draw background */
 		c.drawColor(Color.LTGRAY);
-		// This is to slow:
+		// This is too slow:
 		// final Rect r = c.getClipBounds();
 		// mPaint.setColor(Color.GRAY);
 		// mPaint.setPathEffect(new DashPathEffect(new float[] {1, 1}, 0));
