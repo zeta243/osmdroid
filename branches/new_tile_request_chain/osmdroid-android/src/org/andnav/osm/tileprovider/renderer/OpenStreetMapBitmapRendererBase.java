@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.Random;
 
+import org.andnav.osm.ResourceProxy;
+import org.andnav.osm.ResourceProxy.string;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.slf4j.Logger;
@@ -14,15 +16,14 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
-public abstract class OpenStreetMapRendererBase implements
+public class OpenStreetMapBitmapRendererBase implements
 		IOpenStreetMapRendererInfo, OpenStreetMapTileProviderConstants {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(OpenStreetMapRendererBase.class);
+			.getLogger(OpenStreetMapBitmapRendererBase.class);
 
 	private static int globalOrdinal = 0;
 
-	private final String mBaseUrls[];
 	private int mMinimumZoomLevel;
 	private int mMaximumZoomLevel;
 
@@ -33,16 +34,18 @@ public abstract class OpenStreetMapRendererBase implements
 
 	private final int mTileSizePixels;
 
-	public OpenStreetMapRendererBase(String aName, int aZoomMinLevel,
-			int aZoomMaxLevel, int aTileSizePixels,
-			String aImageFilenameEnding, final String... aBaseUrl) {
+	private final string mResourceId;
+
+	public OpenStreetMapBitmapRendererBase(String aName, string aResourceId,
+			int aZoomMinLevel, int aZoomMaxLevel, int aTileSizePixels,
+			String aImageFilenameEnding) {
+		mResourceId = aResourceId;
 		mOrdinal = globalOrdinal++;
 		mName = aName;
 		mMinimumZoomLevel = aZoomMinLevel;
 		mMaximumZoomLevel = aZoomMaxLevel;
 		mTileSizePixels = aTileSizePixels;
 		mImageFilenameEnding = aImageFilenameEnding;
-		mBaseUrls = aBaseUrl;
 	}
 
 	@Override
@@ -63,8 +66,6 @@ public abstract class OpenStreetMapRendererBase implements
 		return mImageFilenameEnding;
 	}
 
-	public abstract String getTileURLString(OpenStreetMapTile aTile);
-
 	public int getMinimumZoomLevel() {
 		return mMinimumZoomLevel;
 	}
@@ -77,11 +78,8 @@ public abstract class OpenStreetMapRendererBase implements
 		return mTileSizePixels;
 	}
 
-	/**
-	 * Get the base url, which will be a random one if there are more than one.
-	 */
-	protected String getBaseUrl() {
-		return mBaseUrls[random.nextInt(mBaseUrls.length)];
+	public String localizedName(ResourceProxy proxy) {
+		return proxy.getString(mResourceId);
 	}
 
 	@Override

@@ -15,6 +15,7 @@ import java.net.UnknownHostException;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
+import org.andnav.osm.tileprovider.renderer.OpenStreetMapOnlineTileRendererBase;
 import org.andnav.osm.tileprovider.util.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,7 @@ public class OpenStreetMapTileDownloader extends
 
 	private IFilesystemCache mFilesystemCache;
 
-	private IOpenStreetMapRendererInfo mRendererInfo;
+	private OpenStreetMapOnlineTileRendererBase mRendererInfo;
 
 	private final INetworkAvailablityCheck mNetworkAvailablityCheck;
 
@@ -57,22 +58,24 @@ public class OpenStreetMapTileDownloader extends
 	// Constructors
 	// ===========================================================
 
-	public OpenStreetMapTileDownloader(IOpenStreetMapRendererInfo pRendererInfo) {
+	public OpenStreetMapTileDownloader(
+			OpenStreetMapOnlineTileRendererBase pRendererInfo) {
 		this(pRendererInfo, null, null);
 	}
 
 	public OpenStreetMapTileDownloader(
-			IOpenStreetMapRendererInfo pRendererInfo,
+			OpenStreetMapOnlineTileRendererBase pRendererInfo,
 			IFilesystemCacheProvider pFilesystemCacheProvider) {
 		this(pRendererInfo, pFilesystemCacheProvider, null);
 	}
 
 	public OpenStreetMapTileDownloader(
-			IOpenStreetMapRendererInfo pRendererInfo,
+			OpenStreetMapOnlineTileRendererBase pRendererInfo,
 			IFilesystemCacheProvider pFilesystemCacheProvider,
 			INetworkAvailablityCheck pNetworkAvailablityCheck) {
 		super(NUMBER_OF_TILE_DOWNLOAD_THREADS,
 				TILE_DOWNLOAD_MAXIMUM_QUEUE_SIZE, pFilesystemCacheProvider);
+
 		mFilesystemCacheProvider = pFilesystemCacheProvider;
 		mNetworkAvailablityCheck = pNetworkAvailablityCheck;
 		onPreferredRendererChanged(pRendererInfo);
@@ -137,17 +140,25 @@ public class OpenStreetMapTileDownloader extends
 	}
 
 	public void onPreferredRendererChanged(IOpenStreetMapRendererInfo renderer) {
-		if (mFilesystemCacheProvider != null) {
-			if ((mFilesystemCache != null) && (mRendererInfo != null))
-				mFilesystemCacheProvider
-						.unregisterRendererForFilesystemAccess(mRendererInfo);
 
-			mRendererInfo = renderer;
+		// We are only interested in OpenStreetMapOnlineTileRendererBase
+		// renderers
+		if (renderer instanceof OpenStreetMapOnlineTileRendererBase) {
 
-			mFilesystemCache = mFilesystemCacheProvider
-					.registerRendererForFilesystemAccess(mRendererInfo,
-							mRendererInfo.getMinimumZoomLevel(),
-							mRendererInfo.getMaximumZoomLevel());
+			if (mFilesystemCacheProvider != null) {
+				if ((mFilesystemCache != null) && (mRendererInfo != null))
+					mFilesystemCacheProvider
+							.unregisterRendererForFilesystemAccess(mRendererInfo);
+			}
+
+			mRendererInfo = (OpenStreetMapOnlineTileRendererBase) renderer;
+
+			if (mFilesystemCacheProvider != null) {
+				mFilesystemCache = mFilesystemCacheProvider
+						.registerRendererForFilesystemAccess(mRendererInfo,
+								mRendererInfo.getMinimumZoomLevel(),
+								mRendererInfo.getMaximumZoomLevel());
+			}
 		}
 	}
 
