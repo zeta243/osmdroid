@@ -77,9 +77,9 @@ public abstract class OpenStreetMapTileModuleProviderBase implements
 	private final ConcurrentHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState> mWorking;
 	final LinkedHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState> mPending;
 
-	public OpenStreetMapTileModuleProviderBase(final int aThreadPoolSize,
-			final int aPendingQueueSize,
-			IFilesystemCacheProvider pFilesystemCacheProvider) {
+	public OpenStreetMapTileModuleProviderBase(
+			final int aThreadPoolSize,
+			final int aPendingQueueSize) {
 		mThreadPoolSize = aThreadPoolSize;
 		mWorking = new ConcurrentHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState>();
 		mPending = new LinkedHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState>(

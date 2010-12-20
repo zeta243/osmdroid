@@ -15,35 +15,33 @@ import android.net.NetworkInfo;
 
 public class NetworkAvailabliltyCheck implements INetworkAvailablityCheck {
 
-	private ConnectivityManager mConnectionManager;
+	private final ConnectivityManager mConnectionManager;
 
-	public NetworkAvailabliltyCheck(Context aContext) {
+	public NetworkAvailabliltyCheck(final Context aContext) {
 		mConnectionManager = (ConnectivityManager) aContext
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 	}
 
 	@Override
 	public boolean getNetworkAvailable() {
-		NetworkInfo networkInfo = mConnectionManager.getActiveNetworkInfo();
-		return (networkInfo != null && networkInfo.isAvailable());
+		final NetworkInfo networkInfo = mConnectionManager.getActiveNetworkInfo();
+		return networkInfo != null && networkInfo.isAvailable();
 	}
 
 	@Override
 	public boolean getWiFiNetworkAvailable() {
 		final NetworkInfo wifi = mConnectionManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
-		return wifi.isAvailable();
+		return wifi != null && wifi.isAvailable();
 	}
 
 	@Override
 	public boolean getCellularDataNetworkAvailable() {
 		final NetworkInfo mobile = mConnectionManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
-
-		return mobile.isAvailable();
+		return mobile != null && mobile.isAvailable();
 	}
 
 	@Override
-	public boolean getRouteToPathExists(int hostAddress) {
+	public boolean getRouteToPathExists(final int hostAddress) {
 		return (mConnectionManager.requestRouteToHost(
 				ConnectivityManager.TYPE_WIFI, hostAddress) || mConnectionManager
 				.requestRouteToHost(ConnectivityManager.TYPE_MOBILE,

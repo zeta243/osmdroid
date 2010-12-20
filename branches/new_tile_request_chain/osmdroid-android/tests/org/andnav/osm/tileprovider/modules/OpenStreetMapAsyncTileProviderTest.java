@@ -13,20 +13,23 @@ import android.graphics.drawable.Drawable;
 
 /**
  * @author Neil Boyd
- * 
+ *
  */
 public class OpenStreetMapAsyncTileProviderTest {
 
 	final IOpenStreetMapTileProviderCallback mTileProviderCallback = new IOpenStreetMapTileProviderCallback() {
 
+		@Override
 		public void mapTileRequestCompleted(
 				OpenStreetMapTileRequestState aState, Drawable aDrawable) {
 		}
 
+		@Override
 		public void mapTileRequestCandidate(
 				OpenStreetMapTileRequestState aState, Drawable aDrawable) {
 		}
 
+		@Override
 		public void mapTileRequestFailed(
 				final OpenStreetMapTileRequestState aState) {
 		}
@@ -37,8 +40,7 @@ public class OpenStreetMapAsyncTileProviderTest {
 		}
 	};
 
-	final OpenStreetMapTileModuleProviderBase mTileProvider = new OpenStreetMapTileModuleProviderBase(
-			1, 10, null) {
+	final OpenStreetMapTileModuleProviderBase mTileProvider = new OpenStreetMapTileModuleProviderBase(1, 10) {
 		@Override
 		protected String getThreadGroupName() {
 			return "OpenStreetMapAsyncTileProviderTest";
@@ -96,7 +98,7 @@ public class OpenStreetMapAsyncTileProviderTest {
 
 	/**
 	 * Test that the tiles are loaded in most recently accessed order.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 */
 	@Test
@@ -141,7 +143,7 @@ public class OpenStreetMapAsyncTileProviderTest {
 
 	/**
 	 * Test that adding the same tile more than once moves it up the queue.
-	 * 
+	 *
 	 * @throws InterruptedException
 	 */
 	@Test

@@ -8,14 +8,15 @@ import org.andnav.osm.tileprovider.modules.OpenStreetMapTileModuleProviderBase;
 
 public class OpenStreetMapTileRequestState {
 
-	final Queue<OpenStreetMapTileModuleProviderBase> mProviderQueue;
-	final OpenStreetMapTile mMapTile;
-	final IOpenStreetMapTileProviderCallback mCallback;
-	OpenStreetMapTileModuleProviderBase mCurrentProvider;
+	private final Queue<OpenStreetMapTileModuleProviderBase> mProviderQueue;
+	private final OpenStreetMapTile mMapTile;
+	private final IOpenStreetMapTileProviderCallback mCallback;
+	private OpenStreetMapTileModuleProviderBase mCurrentProvider;
 
-	public OpenStreetMapTileRequestState(OpenStreetMapTile mapTile,
-			OpenStreetMapTileModuleProviderBase[] providers,
-			IOpenStreetMapTileProviderCallback callback) {
+	public OpenStreetMapTileRequestState(
+			final OpenStreetMapTile mapTile,
+			final OpenStreetMapTileModuleProviderBase[] providers,
+			final IOpenStreetMapTileProviderCallback callback) {
 		mProviderQueue = new LinkedList<OpenStreetMapTileModuleProviderBase>();
 		Collections.addAll(mProviderQueue, providers);
 		mMapTile = mapTile;
