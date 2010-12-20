@@ -129,6 +129,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 		if (!getSdCardAvailable())
 			return;
 
+		// path should be optionally configurable
 		final File[] z = OSMDROID_PATH.listFiles(new FileFilter() {
 			@Override
 			public boolean accept(final File aFile) {
@@ -171,17 +172,6 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	private class TileLoader extends
 			OpenStreetMapTileModuleProviderBase.TileLoader {
 
-		/**
-		 * The tile loading policy for deciding which file to use... The order
-		 * of preferences is... prefer actual tiles over dummy tiles prefer
-		 * newest tile over older prefer local tiles over zip prefer zip files
-		 * in lexicographic order
-		 * 
-		 * When a dummy tile is generated it may be constructed from coarser
-		 * tiles from a lower resolution level.
-		 * 
-		 * aTile a tile to be constructed by the method.
-		 */
 		@Override
 		public Drawable loadTile(final OpenStreetMapTileRequestState aState) {
 
@@ -200,9 +190,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 					logger.debug("Tile doesn't exist: " + aTile);
 
 				fileFromZip = fileFromZip(aTile);
-				if (fileFromZip == null) {
-					// tileLoadedFailed(aState);
-				} else {
+				if (fileFromZip != null) {
 					if (DEBUGMODE)
 						logger.debug("Use tile from zip: " + aTile);
 					Drawable drawable = mRenderInfo.getDrawable(fileFromZip);
