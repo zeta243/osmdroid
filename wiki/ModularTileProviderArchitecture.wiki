@@ -1,5 +1,7 @@
 #summary Describes the modular tile provider architecture and how to use and extend it.
 
+= Note this is preliminary documentation. This code is not in the trunk yet, but it can be accessed from the branch if you want to start using it. =
+
 = Introduction =
 
 osmdroid has a modular and extendable tile provider architecture that allows tiles to be provided from a number of sources including online sources, local archive sources, and file store sources.
