@@ -6,15 +6,12 @@ import android.os.Environment;
 
 /**
  *
- * This class contains constants used by the service.
+ * This class contains constants used by the tile provider.
  *
  * @author Neil Boyd
  *
  */
 public interface OpenStreetMapTileProviderConstants {
-	// ===========================================================
-	// Final Fields
-	// ===========================================================
 
 	public static final boolean DEBUGMODE = false;
 
@@ -63,7 +60,4 @@ public interface OpenStreetMapTileProviderConstants {
 	/** 500 Mb */
 	public static final long TILE_TRIM_CACHE_SIZE_BYTES = 500L * 1024 * 1024;
 
-	// ===========================================================
-	// Methods
-	// ===========================================================
 }
