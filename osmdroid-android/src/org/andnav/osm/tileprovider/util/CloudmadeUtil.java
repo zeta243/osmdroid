@@ -29,15 +29,16 @@ public class CloudmadeUtil implements OpenStreetMapTileProviderConstants {
 	private static final Logger logger = LoggerFactory.getLogger(CloudmadeUtil.class);
 
 	/** the meta data key in the manifest */
-	public static final String CLOUDMADE_KEY = "CLOUDMADE_KEY";
+	private static final String CLOUDMADE_KEY = "CLOUDMADE_KEY";
 
 	private static String mAndroidId = Settings.Secure.ANDROID_ID; // will get real id later
 
+	private static String mCloudmadeKey = ""; // the key retrieved from the manifest
+
 	/**
-	 * Get the key from the manifest.
-	 * @return the key, or null if not found
+	 * Retrieve the key from the manifest and store it for later use.
 	 */
-	public static String getCloudmadeKey(final Context aContext) {
+	public static void retrieveCloudmadeKey(final Context aContext) {
 
 		mAndroidId = Settings.Secure.getString(aContext.getContentResolver(), Settings.Secure.ANDROID_ID);
 
@@ -46,16 +47,23 @@ public class CloudmadeUtil implements OpenStreetMapTileProviderConstants {
 			final ApplicationInfo info = pm.getApplicationInfo(aContext.getPackageName(), PackageManager.GET_META_DATA);
 			if (info.metaData != null) {
 				final String key = info.metaData.getString(CLOUDMADE_KEY);
-				if (key != null && key.trim().length() > 0) {
+				if (key != null) {
 					if (DEBUGMODE)
 						logger.debug("Cloudmade key: " + key);
-					return key.trim();
+					mCloudmadeKey = key.trim();
 				}
 			}
-		} catch (final NameNotFoundException e) {}
+		} catch (final NameNotFoundException e) {
+			logger.info("Cloudmade key not found in manifest", e);
+		}
+	}
 
-		logger.info("Cloudmade key not found in manifest");
-		return null;
+	/**
+	 * Get the key that was previously retrieved from the manifest.
+	 * @return the key, or empty string if not found
+	 */
+	public static String getCloudmadeKey() {
+		return mCloudmadeKey;
 	}
 
 	/**

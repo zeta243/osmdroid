@@ -4,7 +4,7 @@ package org.andnav.osm.views.util;
 import org.andnav.osm.services.IOpenStreetMapTileProviderService;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderBase;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderDirect;
-import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
+import org.andnav.osm.tileprovider.util.CloudmadeUtil;
 import org.andnav.osm.views.OpenStreetMapView;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
 import org.slf4j.Logger;
@@ -40,9 +40,8 @@ public class OpenStreetMapTileProviderFactory implements OpenStreetMapViewConsta
 		final ResolveInfo ri = aContext.getPackageManager().resolveService(intent, 0);
 		if (ri == null) {
 			logger.info( "Service not found - using direct tile provider");
-			final Context applicationContext = aContext.getApplicationContext();
-			OpenStreetMapRendererFactory.setCloudmadeKey(aCloudmadeKey);
-			return new OpenStreetMapTileProviderDirect(applicationContext);
+			CloudmadeUtil.retrieveCloudmadeKey(aContext);
+			return new OpenStreetMapTileProviderDirect(aContext.getApplicationContext());
 		} else {
 			logger.info( "Using tile provider service");
 			return new OpenStreetMapTileProviderService(aContext, aDownloadFinishedListener);

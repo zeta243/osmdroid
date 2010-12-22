@@ -2,7 +2,6 @@
 package org.andnav.osm.samples;
 
 import org.andnav.osm.R;
-import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.CloudmadeUtil;
 import org.andnav.osm.views.OpenStreetMapView;
 
@@ -41,8 +40,7 @@ public class SampleWithMinimapZoomcontrols extends Activity {
 
         final RelativeLayout rl = new RelativeLayout(this);
 
-		final String cloudmadeKey = CloudmadeUtil.getCloudmadeKey(getApplicationContext());
-		OpenStreetMapRendererFactory.setCloudmadeKey(cloudmadeKey);
+		CloudmadeUtil.retrieveCloudmadeKey(getApplicationContext());
 
         this.mOsmv = new OpenStreetMapView(this, 256);
         rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));

@@ -1,11 +1,13 @@
 package org.andnav.osm.tileprovider;
 
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileModuleProviderBase;
+import org.andnav.osm.views.overlay.OpenStreetMapTilesOverlay;
 
 /**
  * A map tile is distributed using the observer pattern.
  * The tile is delivered by a tile provider
- * (i.e. a descendant of {@link OpenStreetMapTileModuleProviderBase}  or {@link OpenStreetMapTileProviderBase}
+ * (i.e. a descendant of {@link OpenStreetMapTileModuleProviderBase}
+ * or {@link OpenStreetMapTileProviderBase}
  * to a consumer of tiles (e.g.  descendant of {@link OpenStreetMapTilesOverlay}).
  * Tiles are typically images (e.g. png or jpeg).
  */
@@ -47,7 +49,7 @@ public class OpenStreetMapTile {
 	public boolean equals(Object obj) {
 		if (obj == null) return false;
 		if (obj == this) return true;
-		if (obj.getClass() != getClass()) return false;
+		if (!(obj instanceof OpenStreetMapTile)) return false;
 		final OpenStreetMapTile rhs = (OpenStreetMapTile)obj;
 		return zoomLevel == rhs.zoomLevel && x == rhs.x && y == rhs.y;
 	}
@@ -60,7 +62,4 @@ public class OpenStreetMapTile {
 		code *= 37 + y;
 		return code;
 	}
-
-	// TODO implement equals and hashCode in renderer
-
 }

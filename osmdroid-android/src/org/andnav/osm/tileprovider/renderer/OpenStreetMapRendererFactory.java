@@ -4,16 +4,13 @@ import org.andnav.osm.ResourceProxy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import android.util.AttributeSet;
-
 public class OpenStreetMapRendererFactory {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(OpenStreetMapRendererFactory.class);
+	private static final Logger logger = LoggerFactory.getLogger(OpenStreetMapRendererFactory.class);
 
 	/**
 	 * Get the renderer with the specified name.
-	 * 
+	 *
 	 * @param aRendererId
 	 * @return the renderer
 	 * @throws IllegalArgumentException
@@ -32,7 +29,7 @@ public class OpenStreetMapRendererFactory {
 
 	/**
 	 * Get the renderer at the specified position.
-	 * 
+	 *
 	 * @param aOrdinal
 	 * @return the renderer
 	 * @throws IllegalArgumentException
@@ -45,82 +42,11 @@ public class OpenStreetMapRendererFactory {
 				return renderer;
 			}
 		}
-		throw new IllegalArgumentException("No renderer at position: "
-				+ aOrdinal);
-	}
-
-	/**
-	 * Get the renderer based on the attributes. TODO document the attribute
-	 * parameters - renderer and cloudmadeStyle
-	 * 
-	 * @param aRenderer
-	 *            the renderer to use, or null if it's specified in attributes
-	 * @param aAttributeSet
-	 * @return the renderer, or default renderer if not found
-	 */
-	public static IOpenStreetMapRendererInfo getRenderer(
-			final IOpenStreetMapRendererInfo aRenderer,
-			final AttributeSet aAttributeSet) {
-
-		IOpenStreetMapRendererInfo renderer = DEFAULT_RENDERER;
-
-		if (aRenderer != null) {
-			logger.info("Using renderer specified in parameter: " + aRenderer);
-			renderer = aRenderer;
-		} else {
-			if (aAttributeSet != null) {
-				final String rendererAttr = aAttributeSet.getAttributeValue(
-						null, "renderer");
-				if (rendererAttr != null) {
-					try {
-						final IOpenStreetMapRendererInfo r = OpenStreetMapRendererFactory
-								.getRenderer(rendererAttr);
-						logger.info("Using renderer specified in layout attributes: "
-								+ r);
-						renderer = r;
-					} catch (final IllegalArgumentException e) {
-						logger.warn("Invalid renderer specified in layout attributes: "
-								+ renderer);
-					}
-				}
-			}
-		}
-
-		if (aAttributeSet != null && renderer instanceof CloudmadeRenderer) {
-			final String style = aAttributeSet.getAttributeValue(null,
-					"cloudmadeStyle");
-			if (style == null) {
-				logger.info("Using default Cloudmade style: 1");
-			} else {
-				try {
-					final int s = Integer.valueOf(style);
-					logger.info("Using Cloudmade style specified in layout attributes: "
-							+ s);
-					OpenStreetMapRendererFactory.setCloudmadeStyle(s);
-				} catch (final NumberFormatException e) {
-					logger.warn("Invalid Cloudmade style specified in layout attributes: "
-							+ style);
-				}
-			}
-		}
-
-		logger.info("Using renderer : " + DEFAULT_RENDERER);
-		return renderer;
+		throw new IllegalArgumentException("No renderer at position: " + aOrdinal);
 	}
 
 	public static IOpenStreetMapRendererInfo[] getRenderers() {
 		return mRenderers;
-	}
-
-	private static CloudmadeDefaultTokenProvider mCloudmadeCallback = new CloudmadeDefaultTokenProvider(
-			"", 1);
-
-	public static void setCloudmadeKey(String aCloudmadeKey) {
-		mCloudmadeCallback.setCloudmadeKey(aCloudmadeKey);
-	}
-
-	public static void setCloudmadeStyle(int aCloudmadeStyle) {
-		mCloudmadeCallback.setCloudmadeStyle(aCloudmadeStyle);
 	}
 
 	public static final OpenStreetMapOnlineTileRendererBase OSMARENDER = new XYRenderer(
@@ -154,7 +80,7 @@ public class OpenStreetMapRendererFactory {
 			"http://topo.geofabrik.de/hills/");
 
 	public static final OpenStreetMapOnlineTileRendererBase CLOUDMADESTANDARDTILES = new CloudmadeRenderer(
-			mCloudmadeCallback, "CloudMadeStandardTiles",
+			"CloudMadeStandardTiles",
 			ResourceProxy.string.cloudmade_standard, 0, 18, 256, ".png",
 			"http://a.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s",
 			"http://b.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s",
@@ -162,7 +88,7 @@ public class OpenStreetMapRendererFactory {
 
 	// FYI - This renderer has a tileSize of "6"
 	public static final OpenStreetMapOnlineTileRendererBase CLOUDMADESMALLTILES = new CloudmadeRenderer(
-			mCloudmadeCallback, "CloudMadeSmallTiles",
+			"CloudMadeSmallTiles",
 			ResourceProxy.string.cloudmade_small, 0, 21, 64, ".png",
 			"http://a.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s",
 			"http://b.tile.cloudmade.com/%s/%d/%d/%d/%d/%d%s?token=%s",
