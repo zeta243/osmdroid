@@ -13,7 +13,6 @@ import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderBase;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
-import org.andnav.osm.tileprovider.renderer.OpenStreetMapOnlineTileRendererBase;
 import org.andnav.osm.tileprovider.util.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +25,7 @@ import android.graphics.drawable.Drawable;
  *
  */
 public class OpenStreetMapTileFileArchiveProvider extends
-		OpenStreetMapTileFileStorageProviderBase implements
-		IPreferredRenderChangedReceiver {
+		OpenStreetMapTileFileStorageProviderBase {
 
 	// ===========================================================
 	// Constants
@@ -57,7 +55,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	 * @param aRegisterReceiver
 	 */
 	public OpenStreetMapTileFileArchiveProvider(
-			final OpenStreetMapOnlineTileRendererBase pRendererInfo,
+			final IOpenStreetMapRendererInfo pRendererInfo,
 			final IRegisterReceiver pRegisterReceiver) {
 		super(NUMBER_OF_TILE_FILESYSTEM_THREADS,
 				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, pRegisterReceiver);
@@ -113,11 +111,6 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	@Override
 	protected void onMediaUnmounted() {
 		findZipFiles();
-	}
-
-	@Override
-	public void onPreferredRendererChanged(final IOpenStreetMapRendererInfo pRenderer) {
-		mRenderInfo = pRenderer;
 	}
 
 	// ===========================================================
