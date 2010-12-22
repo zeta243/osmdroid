@@ -199,8 +199,7 @@ public class OpenStreetMapTileDownloader extends
 						StreamUtils.IO_BUFFER_SIZE);
 
 				final ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
-				out = new BufferedOutputStream(dataStream,
-						StreamUtils.IO_BUFFER_SIZE);
+				out = new BufferedOutputStream(dataStream, StreamUtils.IO_BUFFER_SIZE);
 				StreamUtils.copy(in, out);
 				out.flush();
 				final byte[] data = dataStream.toByteArray();

@@ -98,8 +98,7 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
 
 		BufferedOutputStream outputStream = null;
 		try {
-			outputStream = new BufferedOutputStream(new FileOutputStream(
-					file.getPath()));
+			outputStream = new BufferedOutputStream(new FileOutputStream(file.getPath()), StreamUtils.IO_BUFFER_SIZE);
 			final long length = StreamUtils.copy(pStream, outputStream);
 
 			mUsedCacheSpace += length; // XXX should this be synchronized? or is it a single operation?

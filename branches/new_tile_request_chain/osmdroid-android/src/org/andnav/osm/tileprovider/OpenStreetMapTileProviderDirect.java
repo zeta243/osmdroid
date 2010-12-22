@@ -5,6 +5,8 @@ import org.andnav.osm.tileprovider.modules.NetworkAvailabliltyCheck;
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileDownloader;
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileFileArchiveProvider;
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileFilesystemProvider;
+import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
+import org.andnav.osm.tileprovider.renderer.OpenStreetMapOnlineTileRendererBase;
 import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.SimpleRegisterReceiver;
 import org.slf4j.Logger;
@@ -31,7 +33,18 @@ public class OpenStreetMapTileProviderDirect extends
 	 * Creates an OpenStreetMapTileProviderDirect.
 	 */
 	public OpenStreetMapTileProviderDirect(final Context aContext) {
-		this(new SimpleRegisterReceiver(aContext), new NetworkAvailabliltyCheck(aContext));
+		this(aContext, OpenStreetMapRendererFactory.DEFAULT_RENDERER);
+	}
+
+	/**
+	 * Creates an OpenStreetMapTileProviderDirect.
+	 */
+	public OpenStreetMapTileProviderDirect(
+			final Context aContext,
+			final IOpenStreetMapRendererInfo aRenderer) {
+		this(new SimpleRegisterReceiver(aContext),
+			 new NetworkAvailabliltyCheck(aContext),
+			 aRenderer);
 	}
 
 	/**
@@ -39,15 +52,23 @@ public class OpenStreetMapTileProviderDirect extends
 	 */
 	public OpenStreetMapTileProviderDirect(
 			final IRegisterReceiver aRegisterReceiver,
-			final INetworkAvailablityCheck aNetworkAvailablityCheck) {
+			final INetworkAvailablityCheck aNetworkAvailablityCheck,
+			final IOpenStreetMapRendererInfo aRenderer) {
 		super(aRegisterReceiver);
 
 		final OpenStreetMapTileFilesystemProvider fileSystemProvider = new OpenStreetMapTileFilesystemProvider(aRegisterReceiver);
-		final OpenStreetMapTileFileArchiveProvider archiveProvider = new OpenStreetMapTileFileArchiveProvider(OpenStreetMapRendererFactory.DEFAULT_RENDERER, aRegisterReceiver);
-		final OpenStreetMapTileDownloader downloaderProvider = new OpenStreetMapTileDownloader(OpenStreetMapRendererFactory.DEFAULT_RENDERER, fileSystemProvider, aNetworkAvailablityCheck);
-
 		mTileProviderList.add(fileSystemProvider);
+
+		final OpenStreetMapTileFileArchiveProvider archiveProvider = new OpenStreetMapTileFileArchiveProvider(aRenderer, aRegisterReceiver);
 		mTileProviderList.add(archiveProvider);
-		mTileProviderList.add(downloaderProvider);
+
+		if (aRenderer instanceof OpenStreetMapOnlineTileRendererBase) {
+			final OpenStreetMapTileDownloader downloaderProvider =
+				new OpenStreetMapTileDownloader(
+						(OpenStreetMapOnlineTileRendererBase)aRenderer,
+						fileSystemProvider,
+						aNetworkAvailablityCheck);
+			mTileProviderList.add(downloaderProvider);
+		}
 	}
 }

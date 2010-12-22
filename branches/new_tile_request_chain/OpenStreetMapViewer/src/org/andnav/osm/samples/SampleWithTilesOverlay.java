@@ -42,9 +42,7 @@ public class SampleWithTilesOverlay extends Activity {
 		// Setup base map
 		final RelativeLayout rl = new RelativeLayout(this);
 
-		final String cloudmadeKey = CloudmadeUtil
-				.getCloudmadeKey(getApplicationContext());
-		OpenStreetMapRendererFactory.setCloudmadeKey(cloudmadeKey);
+		CloudmadeUtil.retrieveCloudmadeKey(getApplicationContext());
 
 		this.mOsmv = new OpenStreetMapView(this, 256);
 		rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(

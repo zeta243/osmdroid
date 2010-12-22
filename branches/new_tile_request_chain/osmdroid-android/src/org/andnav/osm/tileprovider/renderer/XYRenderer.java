@@ -13,7 +13,7 @@ class XYRenderer extends OpenStreetMapOnlineTileRendererBase {
 	}
 
 	@Override
-	public String getTileURLString(OpenStreetMapTile aTile) {
+	public String getTileURLString(final OpenStreetMapTile aTile) {
 		return getBaseUrl() + aTile.getZoomLevel() + "/" + aTile.getX() + "/"
 				+ aTile.getY() + mImageFilenameEnding;
 	}

@@ -13,13 +13,13 @@ class QuadTreeRenderer extends OpenStreetMapOnlineTileRendererBase {
 	}
 
 	@Override
-	public String getTileURLString(OpenStreetMapTile aTile) {
+	public String getTileURLString(final OpenStreetMapTile aTile) {
 		return getBaseUrl() + quadTree(aTile) + mImageFilenameEnding;
 	}
 
 	/**
 	 * Converts TMS tile coordinates to QuadTree
-	 * 
+	 *
 	 * @param aTile
 	 *            The tile coordinates to convert
 	 * @return The QuadTree as String.

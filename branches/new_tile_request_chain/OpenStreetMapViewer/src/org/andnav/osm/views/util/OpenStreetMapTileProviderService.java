@@ -48,8 +48,7 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProviderB
 			final IBinder service) {
 		logger.debug("onServiceConnected(" + name + ")");
 
-		mTileService = IOpenStreetMapTileProviderService.Stub
-				.asInterface(service);
+		mTileService = IOpenStreetMapTileProviderService.Stub.asInterface(service);
 
 		try {
 			mTileService.setCallback(mServiceCallback);
@@ -58,8 +57,7 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProviderB
 		}
 
 		try {
-			mTileRequestCompleteHandler
-					.sendEmptyMessage(OpenStreetMapTile.MAPTILE_SUCCESS_ID);
+			mTileRequestCompleteHandler.sendEmptyMessage(OpenStreetMapTile.MAPTILE_SUCCESS_ID);
 		} catch (Exception e) {
 			logger.error("Error sending success message on connect", e);
 		}

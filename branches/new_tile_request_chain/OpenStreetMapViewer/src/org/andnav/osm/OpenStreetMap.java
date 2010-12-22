@@ -28,9 +28,9 @@ import android.widget.Toast;
 
 /**
  * Default map view activity.
- * 
+ *
  * @author Manuel Stahl
- * 
+ *
  */
 public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 	// ===========================================================
@@ -68,9 +68,7 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 
 		final RelativeLayout rl = new RelativeLayout(this);
 
-		final String cloudmadeKey = CloudmadeUtil
-				.getCloudmadeKey(getApplicationContext());
-		OpenStreetMapRendererFactory.setCloudmadeKey(cloudmadeKey);
+		CloudmadeUtil.retrieveCloudmadeKey(getApplicationContext());
 
 		this.mOsmv = new OpenStreetMapView(this, 256);
 		this.mOsmv.setResourceProxy(mResourceProxy);
@@ -111,8 +109,8 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		final String rendererName = mPrefs.getString(PREFS_RENDERER,
-				OpenStreetMapRendererFactory.DEFAULT_RENDERER.name());
+		final String rendererName = 
+			mPrefs.getString(PREFS_RENDERER, OpenStreetMapRendererFactory.DEFAULT_RENDERER.name());
 		try {
 			final IOpenStreetMapRendererInfo renderer = OpenStreetMapRendererFactory
 					.getRenderer(rendererName);

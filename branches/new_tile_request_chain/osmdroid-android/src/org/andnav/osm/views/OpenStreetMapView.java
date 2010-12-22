@@ -15,6 +15,8 @@ import org.andnav.osm.events.ZoomEvent;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderBase;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
+import org.andnav.osm.tileprovider.renderer.IStyledRenderer;
+import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
 import org.andnav.osm.tileprovider.util.SimpleInvalidationHandler;
 import org.andnav.osm.util.BoundingBoxE6;
 import org.andnav.osm.util.GeoPoint;
@@ -134,7 +136,8 @@ public class OpenStreetMapView extends View implements
 		this.mTileSizePixels = tileSizePixels;
 
 		if (tileProvider == null) {
-			tileProvider = new OpenStreetMapTileProviderDirect(context);
+			IOpenStreetMapRendererInfo renderer = getRendererFromAttributes(attrs);
+			tileProvider = new OpenStreetMapTileProviderDirect(context, renderer);
 		}
 
 		mTileRequestCompleteHandler =
@@ -920,8 +923,42 @@ public class OpenStreetMapView extends View implements
 	}
 
 	public void setMultiTouchControls(boolean on) {
-		mMultiTouchController = on ? new MultiTouchController<Object>(this,
-				false) : null;
+		mMultiTouchController = on ? new MultiTouchController<Object>(this, false) : null;
+	}
+
+	private IOpenStreetMapRendererInfo getRendererFromAttributes(final AttributeSet aAttributeSet) {
+
+		IOpenStreetMapRendererInfo renderer = OpenStreetMapRendererFactory.DEFAULT_RENDERER;
+
+		if (aAttributeSet != null) {
+			final String rendererAttr = aAttributeSet.getAttributeValue(null, "renderer");
+			if (rendererAttr != null) {
+				try {
+					final IOpenStreetMapRendererInfo r = OpenStreetMapRendererFactory.getRenderer(rendererAttr);
+					logger.info("Using renderer specified in layout attributes: " + r);
+					renderer = r;
+				} catch (final IllegalArgumentException e) {
+					logger.warn("Invalid renderer specified in layout attributes: " + renderer);
+				}
+			}
+		}
+
+		if (aAttributeSet != null && renderer instanceof IStyledRenderer) {
+			String style = aAttributeSet.getAttributeValue(null, "style");
+			if (style == null) {
+				// historic - old attribute name
+				style = aAttributeSet.getAttributeValue(null, "cloudmadeStyle");
+			}
+			if (style == null) {
+				logger.info("Using default style: 1");
+			} else {
+				logger.info("Using style specified in layout attributes: " + style);
+				((IStyledRenderer)renderer).setStyle(style);
+			}
+		}
+
+		logger.info("Using renderer : " + renderer);
+		return renderer;
 	}
 
 	// ===========================================================
