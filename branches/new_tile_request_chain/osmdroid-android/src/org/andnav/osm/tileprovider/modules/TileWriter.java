@@ -92,9 +92,12 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
 
 		addZoomLevel(pTile.getZoomLevel());
 
-		File file = new File(TILE_PATH_BASE,
-				pRenderInfo.getTileRelativeFilenameString(pTile));
-		createFolderAndCheckIfExists(file.getParentFile());
+		final File file = new File(TILE_PATH_BASE, pRenderInfo.getTileRelativeFilenameString(pTile));
+
+		final File parent = file.getParentFile();
+		if (!parent.exists() && !createFolderAndCheckIfExists(parent)) {
+			return false;
+		}
 
 		BufferedOutputStream outputStream = null;
 		try {
@@ -105,7 +108,7 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
 			if (mUsedCacheSpace > TILE_MAX_CACHE_SIZE_BYTES) {
 				cutCurrentCache();
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			return false;
 		} finally {
 			if (outputStream != null)
