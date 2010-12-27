@@ -1,6 +1,8 @@
 package org.andnav.osm.tileprovider.modules;
 
 import org.andnav.osm.tileprovider.IRegisterReceiver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,6 +12,8 @@ import android.os.Environment;
 
 public abstract class OpenStreetMapTileFileStorageProviderBase extends
 		OpenStreetMapTileModuleProviderBase {
+
+	private static final Logger logger = LoggerFactory.getLogger(OpenStreetMapTileFileStorageProviderBase.class);
 
 	/** whether the sdcard is mounted read/write */
 	private boolean mSdCardAvailable = true;
@@ -37,6 +41,7 @@ public abstract class OpenStreetMapTileFileStorageProviderBase extends
 
 	private void checkSdCard() {
 		final String state = Environment.getExternalStorageState();
+		logger.info("sdcard state: " + state);
 		mSdCardAvailable = Environment.MEDIA_MOUNTED.equals(state);
 	}
 
