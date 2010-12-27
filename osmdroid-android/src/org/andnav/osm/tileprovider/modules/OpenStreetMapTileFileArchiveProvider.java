@@ -5,9 +5,6 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -47,7 +44,10 @@ public class OpenStreetMapTileFileArchiveProvider extends
 
 	private final ArrayList<ZipFile> mZipFiles = new ArrayList<ZipFile>();
 
-	private IOpenStreetMapRendererInfo[] mRenderInfoArray;
+	private final IOpenStreetMapRendererInfo[] mRenderInfoArray;
+	private int mMinimumZoomLevel = Integer.MAX_VALUE;
+	private int mMaximumZoomLevel = Integer.MIN_VALUE;
+
 
 	// ===========================================================
 	// Constructors
@@ -68,6 +68,15 @@ public class OpenStreetMapTileFileArchiveProvider extends
 				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, pRegisterReceiver);
 
 		mRenderInfoArray = pRendererInfoArray;
+
+		for(final IOpenStreetMapRendererInfo renderer : pRendererInfoArray) {
+			if (mMinimumZoomLevel > renderer.getMinimumZoomLevel()) {
+				mMinimumZoomLevel = renderer.getMinimumZoomLevel();
+			}
+			if (mMaximumZoomLevel < renderer.getMaximumZoomLevel()) {
+				mMaximumZoomLevel = renderer.getMaximumZoomLevel();
+			}
+		}
 
 		findZipFiles();
 	}
@@ -109,14 +118,12 @@ public class OpenStreetMapTileFileArchiveProvider extends
 
 	@Override
 	public int getMinimumZoomLevel() {
-		return Collections.min(Arrays.asList(mRenderInfoArray),
-				mRendererMinimumZoomLevelComparator).getMinimumZoomLevel();
+		return mMinimumZoomLevel;
 	}
 
 	@Override
 	public int getMaximumZoomLevel() {
-		return Collections.max(Arrays.asList(mRenderInfoArray),
-				mRendererMaximumZoomLevelComparator).getMaximumZoomLevel();
+		return mMaximumZoomLevel;
 	}
 
 	@Override
@@ -223,18 +230,4 @@ public class OpenStreetMapTileFileArchiveProvider extends
 			return null;
 		}
 	}
-
-	private Comparator<IOpenStreetMapRendererInfo> mRendererMinimumZoomLevelComparator = new Comparator<IOpenStreetMapRendererInfo>() {
-		@Override
-		public int compare(final IOpenStreetMapRendererInfo obj1, final IOpenStreetMapRendererInfo obj2) {
-			return obj1.getMinimumZoomLevel() - obj2.getMinimumZoomLevel();
-		}
-	};
-
-	private Comparator<IOpenStreetMapRendererInfo> mRendererMaximumZoomLevelComparator = new Comparator<IOpenStreetMapRendererInfo>() {
-		@Override
-		public int compare(final IOpenStreetMapRendererInfo obj1, final IOpenStreetMapRendererInfo obj2) {
-			return obj1.getMaximumZoomLevel() - obj2.getMaximumZoomLevel();
-		}
-	};
 }
