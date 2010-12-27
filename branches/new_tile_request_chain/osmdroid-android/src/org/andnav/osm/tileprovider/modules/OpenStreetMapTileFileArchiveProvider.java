@@ -26,10 +26,10 @@ import android.graphics.drawable.Drawable;
  * A tile provider that can serve tiles from a Zip archive. The provider accepts
  * one or more renderers to use to find tiles in the archives. The tile provider
  * will automatically find existing archives and use each one that it finds.
- * 
+ *
  * @author Marc Kurtz
  * @author Nicolas Gramlich
- * 
+ *
  */
 public class OpenStreetMapTileFileArchiveProvider extends
 		OpenStreetMapTileFileStorageProviderBase {
@@ -57,7 +57,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	 * The tiles may be found on several media. This one works with tiles stored
 	 * on the file system. It and its friends are typically created and
 	 * controlled by {@link OpenStreetMapTileProviderBase}.
-	 * 
+	 *
 	 * @param aCallback
 	 * @param aRegisterReceiver
 	 */
@@ -109,7 +109,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 
 	@Override
 	public int getMinimumZoomLevel() {
-		return Collections.max(Arrays.asList(mRenderInfoArray),
+		return Collections.min(Arrays.asList(mRenderInfoArray),
 				mRendererMinimumZoomLevelComparator).getMinimumZoomLevel();
 	}
 
@@ -162,7 +162,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 
 	/**
 	 * Checks each renderer to see if its tile exists in an archive
-	 * 
+	 *
 	 * @param aTile
 	 *            the tile to obtain
 	 * @return a Drawable
@@ -227,14 +227,14 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	private Comparator<IOpenStreetMapRendererInfo> mRendererMinimumZoomLevelComparator = new Comparator<IOpenStreetMapRendererInfo>() {
 		@Override
 		public int compare(final IOpenStreetMapRendererInfo obj1, final IOpenStreetMapRendererInfo obj2) {
-			return obj2.getMinimumZoomLevel() - obj1.getMinimumZoomLevel();
+			return obj1.getMinimumZoomLevel() - obj2.getMinimumZoomLevel();
 		}
 	};
 
 	private Comparator<IOpenStreetMapRendererInfo> mRendererMaximumZoomLevelComparator = new Comparator<IOpenStreetMapRendererInfo>() {
 		@Override
 		public int compare(final IOpenStreetMapRendererInfo obj1, final IOpenStreetMapRendererInfo obj2) {
-			return obj2.getMaximumZoomLevel() - obj1.getMaximumZoomLevel();
+			return obj1.getMaximumZoomLevel() - obj2.getMaximumZoomLevel();
 		}
 	};
 }
