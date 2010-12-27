@@ -225,30 +225,16 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	}
 
 	private Comparator<IOpenStreetMapRendererInfo> mRendererMinimumZoomLevelComparator = new Comparator<IOpenStreetMapRendererInfo>() {
-
 		@Override
-		public int compare(IOpenStreetMapRendererInfo pO1,
-				IOpenStreetMapRendererInfo pO2) {
-			if (pO1.getMinimumZoomLevel() < pO2.getMinimumZoomLevel())
-				return -1;
-			else if (pO1.getMinimumZoomLevel() > pO2.getMinimumZoomLevel())
-				return 1;
-			else
-				return 0;
+		public int compare(final IOpenStreetMapRendererInfo obj1, final IOpenStreetMapRendererInfo obj2) {
+			return obj2.getMinimumZoomLevel() - obj1.getMinimumZoomLevel();
 		}
 	};
 
 	private Comparator<IOpenStreetMapRendererInfo> mRendererMaximumZoomLevelComparator = new Comparator<IOpenStreetMapRendererInfo>() {
-
 		@Override
-		public int compare(IOpenStreetMapRendererInfo pO1,
-				IOpenStreetMapRendererInfo pO2) {
-			if (pO1.getMaximumZoomLevel() < pO2.getMaximumZoomLevel())
-				return -1;
-			else if (pO1.getMaximumZoomLevel() > pO2.getMaximumZoomLevel())
-				return 1;
-			else
-				return 0;
+		public int compare(final IOpenStreetMapRendererInfo obj1, final IOpenStreetMapRendererInfo obj2) {
+			return obj2.getMaximumZoomLevel() - obj1.getMaximumZoomLevel();
 		}
 	};
 }
