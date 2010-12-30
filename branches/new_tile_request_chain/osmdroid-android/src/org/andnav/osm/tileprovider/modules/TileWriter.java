@@ -18,20 +18,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An implementation of {@link IFilesystemCache}.
- * It writes tiles to the file system cache.
- * If the cache exceeds 600 Mb then it will be trimmed to 500 Mb.
- *
+ * An implementation of {@link IFilesystemCache}. It writes tiles to the file
+ * system cache. If the cache exceeds 600 Mb then it will be trimmed to 500 Mb.
+ * 
  * @author Neil Boyd
- *
+ * 
  */
-public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderConstants {
+public class TileWriter implements IFilesystemCache,
+		OpenStreetMapTileProviderConstants {
 
 	// ===========================================================
 	// Constants
 	// ===========================================================
 
-	private static final Logger logger = LoggerFactory.getLogger(TileWriter.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(TileWriter.class);
 
 	// ===========================================================
 	// Fields
@@ -39,9 +40,6 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
 
 	/** amount of disk space used by tile cache **/
 	private static long mUsedCacheSpace;
-
-	private int mMinimumZoomLevel = Integer.MAX_VALUE;
-	private int mMaximumZoomLevel = Integer.MIN_VALUE;
 
 	// ===========================================================
 	// Constructors
@@ -60,26 +58,11 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
 
 	/**
 	 * Get the amount of disk space used by the tile cache.
+	 * 
 	 * @return size in bytes
 	 */
 	public static long getUsedCacheSpace() {
 		return mUsedCacheSpace;
-	}
-
-	public int getMinimumZoomLevel() {
-		return mMinimumZoomLevel;
-	}
-
-	public int getMaximumZoomLevel() {
-		return mMaximumZoomLevel;
-	}
-
-	public void addZoomLevel(final int pZoomLevel) {
-		if (pZoomLevel < mMinimumZoomLevel)
-			mMinimumZoomLevel = pZoomLevel;
-
-		if (pZoomLevel > mMaximumZoomLevel)
-			mMaximumZoomLevel = pZoomLevel;
 	}
 
 	// ===========================================================
@@ -90,9 +73,8 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
 	public boolean saveFile(final IOpenStreetMapRendererInfo pRenderInfo,
 			final OpenStreetMapTile pTile, final InputStream pStream) {
 
-		addZoomLevel(pTile.getZoomLevel());
-
-		final File file = new File(TILE_PATH_BASE, pRenderInfo.getTileRelativeFilenameString(pTile));
+		final File file = new File(TILE_PATH_BASE,
+				pRenderInfo.getTileRelativeFilenameString(pTile));
 
 		final File parent = file.getParentFile();
 		if (!parent.exists() && !createFolderAndCheckIfExists(parent)) {
@@ -101,10 +83,12 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
 
 		BufferedOutputStream outputStream = null;
 		try {
-			outputStream = new BufferedOutputStream(new FileOutputStream(file.getPath()), StreamUtils.IO_BUFFER_SIZE);
+			outputStream = new BufferedOutputStream(new FileOutputStream(
+					file.getPath()), StreamUtils.IO_BUFFER_SIZE);
 			final long length = StreamUtils.copy(pStream, outputStream);
 
-			mUsedCacheSpace += length; // XXX should this be synchronized? or is it a single operation?
+			mUsedCacheSpace += length; // XXX should this be synchronized? or is
+										// it a single operation?
 			if (mUsedCacheSpace > TILE_MAX_CACHE_SIZE_BYTES) {
 				cutCurrentCache();
 			}
@@ -126,7 +110,8 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
 			return true;
 		}
 		if (DEBUGMODE)
-			logger.debug("Failed to create " + pFile + " - wait and check again");
+			logger.debug("Failed to create " + pFile
+					+ " - wait and check again");
 
 		// if create failed, wait a bit in case another thread created it
 		try {
@@ -182,8 +167,9 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
 	}
 
 	/**
-	 * If the cache size is greater than the max then trim it down to the trim level.
-	 * This method is synchronized so that only one thread can run it at a time.
+	 * If the cache size is greater than the max then trim it down to the trim
+	 * level. This method is synchronized so that only one thread can run it at
+	 * a time.
 	 */
 	private void cutCurrentCache() {
 
@@ -191,26 +177,28 @@ public class TileWriter implements IFilesystemCache, OpenStreetMapTileProviderCo
 
 			if (mUsedCacheSpace > TILE_TRIM_CACHE_SIZE_BYTES) {
 
-				logger.info("Trimming tile cache from " + mUsedCacheSpace + " to " + TILE_TRIM_CACHE_SIZE_BYTES);
+				logger.info("Trimming tile cache from " + mUsedCacheSpace
+						+ " to " + TILE_TRIM_CACHE_SIZE_BYTES);
 
 				final List<File> z = getDirectoryFileList(TILE_PATH_BASE);
 
 				// order list by files day created from old to new
 				final File[] files = z.toArray(new File[0]);
-				Arrays.sort(files, new Comparator<File>(){
-						@Override
-						public int compare(final File f1, final File f2)
-						{
-							return Long.valueOf(f1.lastModified()).compareTo(f2.lastModified());
-						} });
+				Arrays.sort(files, new Comparator<File>() {
+					@Override
+					public int compare(final File f1, final File f2) {
+						return Long.valueOf(f1.lastModified()).compareTo(
+								f2.lastModified());
+					}
+				});
 
 				for (final File file : files) {
-					if (mUsedCacheSpace <= TILE_TRIM_CACHE_SIZE_BYTES){
+					if (mUsedCacheSpace <= TILE_TRIM_CACHE_SIZE_BYTES) {
 						break;
 					}
 
 					final long length = file.length();
-					if(file.delete()) {
+					if (file.delete()) {
 						mUsedCacheSpace -= length;
 					}
 				}
