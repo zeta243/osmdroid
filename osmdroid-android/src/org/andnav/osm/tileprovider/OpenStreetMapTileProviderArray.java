@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.andnav.osm.tileprovider.modules.IPreferredRenderChangedReceiver;
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileModuleProviderBase;
 import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 import org.slf4j.Logger;
@@ -26,9 +25,9 @@ import android.graphics.drawable.Drawable;
  * result is passed to the base class. The ArrayProvider provides a mechanism so
  * that only one unique tile-request can be in the map tile request chain at a
  * time.
- *
+ * 
  * @author Marc Kurtz
- *
+ * 
  */
 public class OpenStreetMapTileProviderArray extends
 		OpenStreetMapTileProviderBase {
@@ -40,11 +39,9 @@ public class OpenStreetMapTileProviderArray extends
 
 	protected final List<OpenStreetMapTileModuleProviderBase> mTileProviderList;
 
-	private IOpenStreetMapRendererInfo mPreferredRenderer;
-
 	/**
 	 * Creates an OpenStreetMapTileProviderArray with no tile providers.
-	 *
+	 * 
 	 * @param aRegisterReceiver
 	 *            a RegisterReceiver
 	 */
@@ -56,7 +53,7 @@ public class OpenStreetMapTileProviderArray extends
 	/**
 	 * Creates an OpenStreetMapTileProviderArray with the specified tile
 	 * providers.
-	 *
+	 * 
 	 * @param aRegisterReceiver
 	 *            a RegisterReceiver
 	 * @param tileProviderArray
@@ -197,22 +194,12 @@ public class OpenStreetMapTileProviderArray extends
 	}
 
 	@Override
-	public IOpenStreetMapRendererInfo getPreferredRenderer() {
-		return mPreferredRenderer;
-	}
-
-	@Override
-	public void setPreferredRenderer(IOpenStreetMapRendererInfo aRenderer) {
-		mPreferredRenderer = aRenderer;
+	public void setRenderer(IOpenStreetMapRendererInfo aRenderer) {
+		super.setRenderer(aRenderer);
 
 		for (final OpenStreetMapTileModuleProviderBase tileProvider : mTileProviderList) {
-			// We could identify tile providers by an Interface if we wanted to
-			// make this extensible.
-			if (tileProvider instanceof IPreferredRenderChangedReceiver) {
-				((IPreferredRenderChangedReceiver) tileProvider)
-						.onPreferredRendererChanged(aRenderer);
-				clearTileCache();
-			}
+			tileProvider.setRenderer(aRenderer);
+			clearTileCache();
 		}
 	}
 }

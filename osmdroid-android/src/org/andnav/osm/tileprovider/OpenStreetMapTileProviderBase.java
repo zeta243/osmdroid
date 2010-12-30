@@ -17,9 +17,10 @@ import android.os.Handler;
  * </ul>
  * see {@link OpenStreetMapTile} for an overview of how tiles are served by this
  * provider.
- *
+ * 
+ * @author Marc Kurtz
  * @author Nicolas Gramlich
- *
+ * 
  */
 public abstract class OpenStreetMapTileProviderBase implements
 		IOpenStreetMapTileProviderCallback, OpenStreetMapViewConstants {
@@ -31,18 +32,44 @@ public abstract class OpenStreetMapTileProviderBase implements
 	protected Handler mTileRequestCompleteHandler;
 	protected boolean mUseDataConnection = true;
 
+	private IOpenStreetMapRendererInfo mRenderer;
+
 	public abstract Drawable getMapTile(OpenStreetMapTile pTile);
 
 	public abstract void detach();
 
+	/**
+	 * Gets the minimum zoom level this tile provider can provide
+	 * 
+	 * @return the minimum zoom level
+	 */
 	public abstract int getMinimumZoomLevel();
 
+	/**
+	 * Gets the maximum zoom level this tile provider can provide
+	 * 
+	 * @return the maximum zoom level
+	 */
 	public abstract int getMaximumZoomLevel();
 
-	public abstract void setPreferredRenderer(
-			IOpenStreetMapRendererInfo renderer);
+	/**
+	 * Sets the renderer for this tile provider.
+	 * 
+	 * @param renderer
+	 *            the renderer
+	 */
+	public void setRenderer(IOpenStreetMapRendererInfo renderer) {
+		mRenderer = renderer;
+	}
 
-	public abstract IOpenStreetMapRendererInfo getPreferredRenderer();
+	/**
+	 * Gets the renderer for this tile provider.
+	 * 
+	 * @return the renderer
+	 */
+	public IOpenStreetMapRendererInfo getRenderer() {
+		return mRenderer;
+	}
 
 	public OpenStreetMapTileProviderBase() {
 		this(null);
@@ -57,7 +84,7 @@ public abstract class OpenStreetMapTileProviderBase implements
 	 * Called by implementation class methods indicating that they have
 	 * completed the request as best it can. The tile is added to the cache, and
 	 * a MAPTILE_SUCCESS_ID message is sent.
-	 *
+	 * 
 	 * @param pState
 	 *            the map tile request state object
 	 * @param pDrawable
@@ -82,7 +109,7 @@ public abstract class OpenStreetMapTileProviderBase implements
 
 	/**
 	 * Default implementation is to call mapTileRequestCompleted
-	 *
+	 * 
 	 * @param pState
 	 *            the map tile request state object
 	 * @param pDrawable
@@ -97,7 +124,7 @@ public abstract class OpenStreetMapTileProviderBase implements
 	/**
 	 * Called by implementation class methods indicating that they have failed
 	 * to retrieve the requested map tile. a MAPTILE_FAIL_ID message is sent.
-	 *
+	 * 
 	 * @param pState
 	 *            the map tile request state object
 	 */
@@ -134,7 +161,7 @@ public abstract class OpenStreetMapTileProviderBase implements
 
 	/**
 	 * Set whether to use the network connection if it's available.
-	 *
+	 * 
 	 * @param aMode
 	 *            if true use the network connection if it's available. if false
 	 *            don't use the network connection even if it's available.

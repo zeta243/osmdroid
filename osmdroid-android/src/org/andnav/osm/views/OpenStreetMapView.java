@@ -137,20 +137,22 @@ public class OpenStreetMapView extends View implements
 
 		if (tileProvider == null) {
 			IOpenStreetMapRendererInfo renderer = getRendererFromAttributes(attrs);
-			tileProvider = new OpenStreetMapTileProviderDirect(context, renderer);
+			tileProvider = new OpenStreetMapTileProviderDirect(context,
+					renderer);
 		}
 
-		mTileRequestCompleteHandler =
-			tileRequestCompleteHandler == null ?
-					new SimpleInvalidationHandler(this) :
-						tileRequestCompleteHandler;
+		mTileRequestCompleteHandler = tileRequestCompleteHandler == null ? new SimpleInvalidationHandler(
+				this) : tileRequestCompleteHandler;
 		mTileProvider = tileProvider;
-		mTileProvider.setTileRequestCompleteHandler(mTileRequestCompleteHandler);
+		mTileProvider
+				.setTileRequestCompleteHandler(mTileRequestCompleteHandler);
 
-		this.mMapOverlay = new OpenStreetMapTilesOverlay(this, mTileProvider, mResourceProxy);
+		this.mMapOverlay = new OpenStreetMapTilesOverlay(this, mTileProvider,
+				mResourceProxy);
 		mOverlays.add(this.mMapOverlay);
 		this.mZoomController = new ZoomButtonsController(this);
-		this.mZoomController.setOnZoomListener(new OpenStreetMapViewZoomListener());
+		this.mZoomController
+				.setOnZoomListener(new OpenStreetMapViewZoomListener());
 
 		mZoomInAnimation = new ScaleAnimation(1, 2, 1, 2,
 				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
@@ -165,7 +167,8 @@ public class OpenStreetMapView extends View implements
 
 		mGestureDetector = new GestureDetector(context,
 				new OpenStreetMapViewGestureDetectorListener());
-		mGestureDetector.setOnDoubleTapListener(new OpenStreetMapViewDoubleClickListener());
+		mGestureDetector
+				.setOnDoubleTapListener(new OpenStreetMapViewDoubleClickListener());
 	}
 
 	public void detach() {
@@ -199,7 +202,7 @@ public class OpenStreetMapView extends View implements
 	}
 
 	/**
-	 *
+	 * 
 	 * @param context
 	 * @param osmv
 	 *            another {@link OpenStreetMapView}, to share the TileProvider
@@ -226,7 +229,7 @@ public class OpenStreetMapView extends View implements
 	 * I.e. it zooms it to x levels less than itself and centers it the same
 	 * coords.<br />
 	 * Its pretty useful when the MiniMap uses the same TileProvider.
-	 *
+	 * 
 	 * @see OpenStreetMapView.OpenStreetMapView(
 	 * @param aOsmvMinimap
 	 * @param aZoomDiff
@@ -263,7 +266,7 @@ public class OpenStreetMapView extends View implements
 	 * never. Use {@link View}.GONE , {@link View}.VISIBLE, {@link View}
 	 * .INVISIBLE. Use {@link OpenStreetMapViewConstants}.NOT_SET to reset this
 	 * feature.
-	 *
+	 * 
 	 * @param aVisibility
 	 */
 	public void setOverrideMiniMapVisibility(final int aVisibility) {
@@ -360,7 +363,7 @@ public class OpenStreetMapView extends View implements
 	/**
 	 * This class is only meant to be used during on call of onDraw(). Otherwise
 	 * it may produce strange results.
-	 *
+	 * 
 	 * @return
 	 */
 	public OpenStreetMapViewProjection getProjection() {
@@ -398,7 +401,7 @@ public class OpenStreetMapView extends View implements
 	}
 
 	public void setPreferredRenderer(final IOpenStreetMapRendererInfo aRenderer) {
-		mTileProvider.setPreferredRenderer(aRenderer);
+		mTileProvider.setRenderer(aRenderer);
 		mTileSizePixels = aRenderer.getTileSizePixels();
 		if (this.mMiniMap != null)
 			this.mMiniMap.setPreferredRenderer(aRenderer);
@@ -468,7 +471,7 @@ public class OpenStreetMapView extends View implements
 
 	/**
 	 * Get the current ZoomLevel for the map tiles.
-	 *
+	 * 
 	 * @return the current ZoomLevel between 0 (equator) and 18/19(closest),
 	 *         depending on the Renderer chosen.
 	 */
@@ -478,7 +481,7 @@ public class OpenStreetMapView extends View implements
 
 	/**
 	 * Get the current ZoomLevel for the map tiles.
-	 *
+	 * 
 	 * @param aPending
 	 *            if true and we're animating then return the zoom level that
 	 *            we're animating towards, otherwise return the current zoom
@@ -496,7 +499,7 @@ public class OpenStreetMapView extends View implements
 
 	/*
 	 * Returns the minimum zoom level for the point currently at the center.
-	 *
+	 * 
 	 * @return The minimum zoom level for the map's current center.
 	 */
 	public int getMinimumZoomLevel() {
@@ -505,7 +508,7 @@ public class OpenStreetMapView extends View implements
 
 	/*
 	 * Returns the maximum zoom level for the point currently at the center.
-	 *
+	 * 
 	 * @return The maximum zoom level for the map's current center.
 	 */
 	public int getMaximumZoomLevel() {
@@ -626,7 +629,7 @@ public class OpenStreetMapView extends View implements
 
 	/**
 	 * Set whether to use the network connection if it's available.
-	 *
+	 * 
 	 * @param aMode
 	 *            if true use the network connection if it's available. if false
 	 *            don't use the network connection even if it's available.
@@ -923,22 +926,28 @@ public class OpenStreetMapView extends View implements
 	}
 
 	public void setMultiTouchControls(boolean on) {
-		mMultiTouchController = on ? new MultiTouchController<Object>(this, false) : null;
+		mMultiTouchController = on ? new MultiTouchController<Object>(this,
+				false) : null;
 	}
 
-	private IOpenStreetMapRendererInfo getRendererFromAttributes(final AttributeSet aAttributeSet) {
+	private IOpenStreetMapRendererInfo getRendererFromAttributes(
+			final AttributeSet aAttributeSet) {
 
 		IOpenStreetMapRendererInfo renderer = OpenStreetMapRendererFactory.DEFAULT_RENDERER;
 
 		if (aAttributeSet != null) {
-			final String rendererAttr = aAttributeSet.getAttributeValue(null, "renderer");
+			final String rendererAttr = aAttributeSet.getAttributeValue(null,
+					"renderer");
 			if (rendererAttr != null) {
 				try {
-					final IOpenStreetMapRendererInfo r = OpenStreetMapRendererFactory.getRenderer(rendererAttr);
-					logger.info("Using renderer specified in layout attributes: " + r);
+					final IOpenStreetMapRendererInfo r = OpenStreetMapRendererFactory
+							.getRenderer(rendererAttr);
+					logger.info("Using renderer specified in layout attributes: "
+							+ r);
 					renderer = r;
 				} catch (final IllegalArgumentException e) {
-					logger.warn("Invalid renderer specified in layout attributes: " + renderer);
+					logger.warn("Invalid renderer specified in layout attributes: "
+							+ renderer);
 				}
 			}
 		}
@@ -952,8 +961,9 @@ public class OpenStreetMapView extends View implements
 			if (style == null) {
 				logger.info("Using default style: 1");
 			} else {
-				logger.info("Using style specified in layout attributes: " + style);
-				((IStyledRenderer)renderer).setStyle(style);
+				logger.info("Using style specified in layout attributes: "
+						+ style);
+				((IStyledRenderer) renderer).setStyle(style);
 			}
 		}
 
@@ -968,7 +978,7 @@ public class OpenStreetMapView extends View implements
 	/**
 	 * This class may return valid results until the underlying
 	 * {@link OpenStreetMapView} gets modified in any way (i.e. new center).
-	 *
+	 * 
 	 * @author Nicolas Gramlich
 	 * @author Manuel Stahl
 	 */
@@ -1024,7 +1034,7 @@ public class OpenStreetMapView extends View implements
 
 		/**
 		 * Converts x/y ScreenCoordinates to the underlying GeoPoint.
-		 *
+		 * 
 		 * @param x
 		 * @param y
 		 * @return GeoPoint under x/y.
@@ -1053,7 +1063,7 @@ public class OpenStreetMapView extends View implements
 		 * The Error on ZoomLevels higher than 7, the error is below
 		 * <code>1px</code>.<br/>
 		 * TODO: Add a linear interpolation to minimize this error.
-		 *
+		 * 
 		 * <PRE>
 		 * Zoom 	Error(m) 	Error(px)
 		 * 11 	6m 	1/12px
@@ -1062,7 +1072,7 @@ public class OpenStreetMapView extends View implements
 		 * 6 	6144m 	3px
 		 * 4 	98304m 	10px
 		 * </PRE>
-		 *
+		 * 
 		 * @param in
 		 *            the GeoPoint you want the onScreenCoordinates of.
 		 * @param reuse
@@ -1085,7 +1095,7 @@ public class OpenStreetMapView extends View implements
 		/**
 		 * Performs only the first computationally heavy part of the projection,
 		 * needToCall toMapPixelsTranslated to get final position.
-		 *
+		 * 
 		 * @param latituteE6
 		 *            the latitute of the point
 		 * @param longitudeE6
@@ -1110,7 +1120,7 @@ public class OpenStreetMapView extends View implements
 
 		/**
 		 * Performs the second computationally light part of the projection.
-		 *
+		 * 
 		 * @param in
 		 *            the Point calculated by the toMapPixelsProjected
 		 * @param reuse
@@ -1132,7 +1142,7 @@ public class OpenStreetMapView extends View implements
 		/**
 		 * Translates a rectangle from screen coordinates to intermediate
 		 * coordinates.
-		 *
+		 * 
 		 * @param in
 		 *            the rectangle in screen coordinates
 		 * @return a rectangle in intermediate coords.

@@ -23,17 +23,16 @@ import org.slf4j.LoggerFactory;
 import android.graphics.drawable.Drawable;
 
 /**
- * The OpenStreetMapTileDownloader loads tiles from an HTTP server. It
- * subscribes to a FilesystemCacheProvider if available and saves data in it.
- *
+ * The OpenStreetMapTileDownloader loads tiles from an HTTP server. It saves
+ * downloaded tiles to an IFilesystemCache if available.
+ * 
  * @author Marc Kurtz
  * @author Nicolas Gramlich
  * @author Manuel Stahl
- *
+ * 
  */
 public class OpenStreetMapTileDownloader extends
-		OpenStreetMapTileModuleProviderBase implements
-		IPreferredRenderChangedReceiver {
+		OpenStreetMapTileModuleProviderBase {
 
 	// ===========================================================
 	// Constants
@@ -46,9 +45,7 @@ public class OpenStreetMapTileDownloader extends
 	// Fields
 	// ===========================================================
 
-	private final IFilesystemCacheProvider mFilesystemCacheProvider;
-
-	private IFilesystemCache mFilesystemCache;
+	private final IFilesystemCache mFilesystemCache;
 
 	private OpenStreetMapOnlineTileRendererBase mRendererInfo;
 
@@ -59,26 +56,25 @@ public class OpenStreetMapTileDownloader extends
 	// ===========================================================
 
 	public OpenStreetMapTileDownloader(
-			final OpenStreetMapOnlineTileRendererBase pRendererInfo) {
+			final IOpenStreetMapRendererInfo pRendererInfo) {
 		this(pRendererInfo, null, null);
 	}
 
 	public OpenStreetMapTileDownloader(
-			final OpenStreetMapOnlineTileRendererBase pRendererInfo,
-			final IFilesystemCacheProvider pFilesystemCacheProvider) {
-		this(pRendererInfo, pFilesystemCacheProvider, null);
+			final IOpenStreetMapRendererInfo pRendererInfo,
+			final IFilesystemCache pFilesystemCache) {
+		this(pRendererInfo, pFilesystemCache, null);
 	}
 
 	public OpenStreetMapTileDownloader(
-			final OpenStreetMapOnlineTileRendererBase pRendererInfo,
-			final IFilesystemCacheProvider pFilesystemCacheProvider,
+			final IOpenStreetMapRendererInfo pRendererInfo,
+			final IFilesystemCache pFilesystemCache,
 			final INetworkAvailablityCheck pNetworkAvailablityCheck) {
-		super(NUMBER_OF_TILE_DOWNLOAD_THREADS,
-				TILE_DOWNLOAD_MAXIMUM_QUEUE_SIZE);
+		super(NUMBER_OF_TILE_DOWNLOAD_THREADS, TILE_DOWNLOAD_MAXIMUM_QUEUE_SIZE);
 
-		mFilesystemCacheProvider = pFilesystemCacheProvider;
+		mFilesystemCache = pFilesystemCache;
 		mNetworkAvailablityCheck = pNetworkAvailablityCheck;
-		onPreferredRendererChanged(pRendererInfo);
+		setRenderer(pRendererInfo);
 	}
 
 	// ===========================================================
@@ -114,53 +110,26 @@ public class OpenStreetMapTileDownloader extends
 	};
 
 	@Override
-	public void detach() {
-		if (mFilesystemCacheProvider != null)
-			mFilesystemCacheProvider
-					.unregisterRendererForFilesystemAccess(mRendererInfo);
-		super.detach();
-	}
-
-	@Override
 	public int getMinimumZoomLevel() {
-		return mRendererInfo.getMinimumZoomLevel();
+		return (mRendererInfo != null ? mRendererInfo.getMinimumZoomLevel()
+				: Integer.MAX_VALUE);
 	}
 
 	@Override
 	public int getMaximumZoomLevel() {
-		return mRendererInfo.getMaximumZoomLevel();
+		return (mRendererInfo != null ? mRendererInfo.getMaximumZoomLevel()
+				: Integer.MIN_VALUE);
 	}
 
 	@Override
-	public void onPreferredRendererChanged(final IOpenStreetMapRendererInfo renderer) {
-
+	public void setRenderer(final IOpenStreetMapRendererInfo renderer) {
 		// We are only interested in OpenStreetMapOnlineTileRendererBase
 		// renderers
 		if (renderer instanceof OpenStreetMapOnlineTileRendererBase) {
-
-			if (mFilesystemCacheProvider != null) {
-				if ((mFilesystemCache != null) && (mRendererInfo != null))
-					mFilesystemCacheProvider
-							.unregisterRendererForFilesystemAccess(mRendererInfo);
-			}
-
 			mRendererInfo = (OpenStreetMapOnlineTileRendererBase) renderer;
-
-			if (mFilesystemCacheProvider != null) {
-				mFilesystemCache = mFilesystemCacheProvider
-						.registerRendererForFilesystemAccess(mRendererInfo,
-								mRendererInfo.getMinimumZoomLevel(),
-								mRendererInfo.getMaximumZoomLevel());
-			}
-		}
-	}
-
-	// ===========================================================
-	// Methods
-	// ===========================================================
-
-	private String buildURL(final OpenStreetMapTile tile) {
-		return mRendererInfo.getTileURLString(tile);
+		} else
+			// Otherwise shut down the tile downloader
+			mRendererInfo = null;
 	}
 
 	// ===========================================================
@@ -173,6 +142,9 @@ public class OpenStreetMapTileDownloader extends
 		@Override
 		public Drawable loadTile(final OpenStreetMapTileRequestState aState)
 				throws CantContinueException {
+
+			if (mRendererInfo == null)
+				return null;
 
 			InputStream in = null;
 			OutputStream out = null;
@@ -188,7 +160,8 @@ public class OpenStreetMapTileDownloader extends
 					return null;
 				}
 
-				final String tileURLString = buildURL(tile);
+				final String tileURLString = mRendererInfo
+						.getTileURLString(tile);
 
 				if (DEBUGMODE)
 					logger.debug("Downloading Maptile from url: "
@@ -199,7 +172,8 @@ public class OpenStreetMapTileDownloader extends
 						StreamUtils.IO_BUFFER_SIZE);
 
 				final ByteArrayOutputStream dataStream = new ByteArrayOutputStream();
-				out = new BufferedOutputStream(dataStream, StreamUtils.IO_BUFFER_SIZE);
+				out = new BufferedOutputStream(dataStream,
+						StreamUtils.IO_BUFFER_SIZE);
 				StreamUtils.copy(in, out);
 				out.flush();
 				final byte[] data = dataStream.toByteArray();

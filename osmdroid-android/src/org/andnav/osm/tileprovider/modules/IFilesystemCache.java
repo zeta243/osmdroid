@@ -8,7 +8,7 @@ import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
 /**
  * Represents a write-only interface into a file system cache.
  * 
- * @author Marc
+ * @author Marc Kurtz
  * 
  */
 public interface IFilesystemCache {

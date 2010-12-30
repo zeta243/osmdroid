@@ -10,6 +10,7 @@ import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
  * @author Marc Kurtz
  * 
  */
+@Deprecated
 public interface IFilesystemCacheProvider {
 	IFilesystemCache registerRendererForFilesystemAccess(
 			IOpenStreetMapRendererInfo pRendererInfo, int minimumZoomLevel,
