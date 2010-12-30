@@ -28,9 +28,9 @@ import android.widget.Toast;
 
 /**
  * Default map view activity.
- *
+ * 
  * @author Manuel Stahl
- *
+ * 
  */
 public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 	// ===========================================================
@@ -90,8 +90,8 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 	@Override
 	protected void onPause() {
 		SharedPreferences.Editor edit = mPrefs.edit();
-		edit.putString(PREFS_RENDERER, mOsmv.getTileProvider()
-				.getPreferredRenderer().name());
+		edit.putString(PREFS_RENDERER, mOsmv.getTileProvider().getRenderer()
+				.name());
 		edit.putInt(PREFS_SCROLL_X, mOsmv.getScrollX());
 		edit.putInt(PREFS_SCROLL_Y, mOsmv.getScrollY());
 		edit.putInt(PREFS_ZOOM_LEVEL, mOsmv.getZoomLevel());
@@ -109,8 +109,8 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 	@Override
 	protected void onResume() {
 		super.onResume();
-		final String rendererName = 
-			mPrefs.getString(PREFS_RENDERER, OpenStreetMapRendererFactory.DEFAULT_RENDERER.name());
+		final String rendererName = mPrefs.getString(PREFS_RENDERER,
+				OpenStreetMapRendererFactory.DEFAULT_RENDERER.name());
 		try {
 			final IOpenStreetMapRendererInfo renderer = OpenStreetMapRendererFactory
 					.getRenderer(rendererName);
@@ -155,7 +155,7 @@ public class OpenStreetMap extends Activity implements OpenStreetMapConstants {
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		int ordinal = mOsmv.getTileProvider().getPreferredRenderer().ordinal();
+		int ordinal = mOsmv.getTileProvider().getRenderer().ordinal();
 		menu.findItem(1000 + ordinal).setChecked(true);
 		return true;
 	}

@@ -21,8 +21,9 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-public class OpenStreetMapTileProviderService extends OpenStreetMapTileProviderBase
-		implements ServiceConnection, IOpenStreetMapTileProviderCallback {
+public class OpenStreetMapTileProviderService extends
+		OpenStreetMapTileProviderBase implements ServiceConnection,
+		IOpenStreetMapTileProviderCallback {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(OpenStreetMapTileProviderService.class);
@@ -48,7 +49,8 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProviderB
 			final IBinder service) {
 		logger.debug("onServiceConnected(" + name + ")");
 
-		mTileService = IOpenStreetMapTileProviderService.Stub.asInterface(service);
+		mTileService = IOpenStreetMapTileProviderService.Stub
+				.asInterface(service);
 
 		try {
 			mTileService.setCallback(mServiceCallback);
@@ -57,7 +59,8 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProviderB
 		}
 
 		try {
-			mTileRequestCompleteHandler.sendEmptyMessage(OpenStreetMapTile.MAPTILE_SUCCESS_ID);
+			mTileRequestCompleteHandler
+					.sendEmptyMessage(OpenStreetMapTile.MAPTILE_SUCCESS_ID);
 		} catch (Exception e) {
 			logger.error("Error sending success message on connect", e);
 		}
@@ -177,16 +180,5 @@ public class OpenStreetMapTileProviderService extends OpenStreetMapTileProviderB
 	@Override
 	public int getMaximumZoomLevel() {
 		return 18;
-	}
-
-	@Override
-	public IOpenStreetMapRendererInfo getPreferredRenderer() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setPreferredRenderer(IOpenStreetMapRendererInfo pRenderer) {
-		// TODO Auto-generated method stub
 	}
 }

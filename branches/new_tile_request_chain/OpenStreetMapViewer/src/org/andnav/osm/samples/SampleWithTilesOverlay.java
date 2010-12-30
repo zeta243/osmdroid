@@ -13,9 +13,9 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
 /**
- *
+ * 
  * @author Alex van der Linden
- *
+ * 
  */
 public class SampleWithTilesOverlay extends Activity {
 
@@ -55,8 +55,7 @@ public class SampleWithTilesOverlay extends Activity {
 
 		// Add tiles layer
 		mProvider = new OpenStreetMapTileProviderDirect(getApplicationContext());
-		mProvider
-				.setPreferredRenderer(OpenStreetMapRendererFactory.FIETS_OVERLAY_NL);
+		mProvider.setRenderer(OpenStreetMapRendererFactory.FIETS_OVERLAY_NL);
 		this.mTilesOverlay = new OpenStreetMapTilesOverlay(this.mOsmv,
 				mProvider, this.getBaseContext());
 		this.mOsmv.getOverlays().add(this.mTilesOverlay);
