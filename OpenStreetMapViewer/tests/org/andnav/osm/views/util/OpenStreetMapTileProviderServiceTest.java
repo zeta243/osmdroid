@@ -5,7 +5,7 @@ import java.io.FileOutputStream;
 import java.nio.ByteBuffer;
 
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
-import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
+import org.andnav.osm.tileprovider.tilesource.TileSourceFactory;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -58,7 +58,7 @@ public class OpenStreetMapTileProviderServiceTest extends AndroidTestCase {
 		final FileOutputStream fos = new FileOutputStream(path);
 		bitmap1.compress(CompressFormat.PNG, 100, fos);
 
-		mProvider.mServiceCallback.mapTileRequestCompleted(OpenStreetMapRendererFactory.MAPNIK.name(), tile.getZoomLevel(), tile.getX(), tile.getY(), path);
+		mProvider.mServiceCallback.mapTileRequestCompleted(TileSourceFactory.MAPNIK.name(), tile.getZoomLevel(), tile.getX(), tile.getY(), path);
 
 		// do the test
 		final Drawable drawable = mProvider.getMapTile(tile);
