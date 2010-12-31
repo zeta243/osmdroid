@@ -1,7 +1,7 @@
 // Created by plusminus on 21:46:22 - 25.09.2008
 package org.andnav.osm.tileprovider;
 
-import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
+import org.andnav.osm.tileprovider.tilesource.ITileSource;
 import org.andnav.osm.views.util.constants.OpenStreetMapViewConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,15 +15,14 @@ import android.os.Handler;
  * <li>determining if a map tile is available,</li>
  * <li>notifying the client, via a callback handler</li>
  * </ul>
- * see {@link OpenStreetMapTile} for an overview of how tiles are served by this
- * provider.
+ * see {@link OpenStreetMapTile} for an overview of how tiles are served by this provider.
  * 
  * @author Marc Kurtz
  * @author Nicolas Gramlich
  * 
  */
-public abstract class OpenStreetMapTileProviderBase implements
-		IOpenStreetMapTileProviderCallback, OpenStreetMapViewConstants {
+public abstract class OpenStreetMapTileProviderBase implements IOpenStreetMapTileProviderCallback,
+		OpenStreetMapViewConstants {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(OpenStreetMapTileProviderBase.class);
@@ -32,7 +31,7 @@ public abstract class OpenStreetMapTileProviderBase implements
 	protected Handler mTileRequestCompleteHandler;
 	protected boolean mUseDataConnection = true;
 
-	private IOpenStreetMapRendererInfo mRenderer;
+	private ITileSource mTileSource;
 
 	public abstract Drawable getMapTile(OpenStreetMapTile pTile);
 
@@ -53,22 +52,22 @@ public abstract class OpenStreetMapTileProviderBase implements
 	public abstract int getMaximumZoomLevel();
 
 	/**
-	 * Sets the renderer for this tile provider.
+	 * Sets the tile source for this tile provider.
 	 * 
-	 * @param renderer
-	 *            the renderer
+	 * @param tileSource
+	 *            the tile source
 	 */
-	public void setRenderer(IOpenStreetMapRendererInfo renderer) {
-		mRenderer = renderer;
+	public void setTileSource(ITileSource tileSource) {
+		mTileSource = tileSource;
 	}
 
 	/**
-	 * Gets the renderer for this tile provider.
+	 * Gets the tile source for this tile provider.
 	 * 
-	 * @return the renderer
+	 * @return the tile source
 	 */
-	public IOpenStreetMapRendererInfo getRenderer() {
-		return mRenderer;
+	public ITileSource getTileSource() {
+		return mTileSource;
 	}
 
 	public OpenStreetMapTileProviderBase() {
@@ -81,9 +80,8 @@ public abstract class OpenStreetMapTileProviderBase implements
 	}
 
 	/**
-	 * Called by implementation class methods indicating that they have
-	 * completed the request as best it can. The tile is added to the cache, and
-	 * a MAPTILE_SUCCESS_ID message is sent.
+	 * Called by implementation class methods indicating that they have completed the request as
+	 * best it can. The tile is added to the cache, and a MAPTILE_SUCCESS_ID message is sent.
 	 * 
 	 * @param pState
 	 *            the map tile request state object
@@ -91,8 +89,8 @@ public abstract class OpenStreetMapTileProviderBase implements
 	 *            the Drawable of the map tile
 	 */
 	@Override
-	public void mapTileRequestCompleted(
-			final OpenStreetMapTileRequestState pState, final Drawable pDrawable) {
+	public void mapTileRequestCompleted(final OpenStreetMapTileRequestState pState,
+			final Drawable pDrawable) {
 		OpenStreetMapTile tile = pState.getMapTile();
 		if (pDrawable != null) {
 			mTileCache.putTile(tile, pDrawable);
@@ -100,8 +98,7 @@ public abstract class OpenStreetMapTileProviderBase implements
 
 		// tell our caller we've finished and it should update its view
 		if (mTileRequestCompleteHandler != null)
-			mTileRequestCompleteHandler
-					.sendEmptyMessage(OpenStreetMapTile.MAPTILE_SUCCESS_ID);
+			mTileRequestCompleteHandler.sendEmptyMessage(OpenStreetMapTile.MAPTILE_SUCCESS_ID);
 
 		if (DEBUGMODE)
 			logger.debug("MapTile request complete: " + tile);
@@ -122,8 +119,8 @@ public abstract class OpenStreetMapTileProviderBase implements
 	}
 
 	/**
-	 * Called by implementation class methods indicating that they have failed
-	 * to retrieve the requested map tile. a MAPTILE_FAIL_ID message is sent.
+	 * Called by implementation class methods indicating that they have failed to retrieve the
+	 * requested map tile. a MAPTILE_FAIL_ID message is sent.
 	 * 
 	 * @param pState
 	 *            the map tile request state object
@@ -132,8 +129,7 @@ public abstract class OpenStreetMapTileProviderBase implements
 	public void mapTileRequestFailed(final OpenStreetMapTileRequestState pState) {
 		OpenStreetMapTile tile = pState.getMapTile();
 		if (mTileRequestCompleteHandler != null)
-			mTileRequestCompleteHandler
-					.sendEmptyMessage(OpenStreetMapTile.MAPTILE_FAIL_ID);
+			mTileRequestCompleteHandler.sendEmptyMessage(OpenStreetMapTile.MAPTILE_FAIL_ID);
 
 		if (DEBUGMODE)
 			logger.debug("MapTile request failed: " + tile);
@@ -163,8 +159,8 @@ public abstract class OpenStreetMapTileProviderBase implements
 	 * Set whether to use the network connection if it's available.
 	 * 
 	 * @param aMode
-	 *            if true use the network connection if it's available. if false
-	 *            don't use the network connection even if it's available.
+	 *            if true use the network connection if it's available. if false don't use the
+	 *            network connection even if it's available.
 	 */
 	public void setUseDataConnection(boolean aMode) {
 		mUseDataConnection = aMode;

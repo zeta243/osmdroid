@@ -7,7 +7,7 @@ public interface ResourceProxy {
 
 	public static enum string {
 
-		// renderers
+		// tile sources
 		osmarender,
 		mapnik,
 		cyclemap,
@@ -52,7 +52,7 @@ public interface ResourceProxy {
 	}
 
 	String getString(string pResId);
-	
+
 	/**
 	 * Use a string resource as a format definition, and format using the supplied format arguments.
 	 * @param pResId

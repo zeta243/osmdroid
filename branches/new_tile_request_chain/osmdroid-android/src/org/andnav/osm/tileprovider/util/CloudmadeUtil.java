@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
-import org.andnav.osm.tileprovider.renderer.CloudmadeException;
+import org.andnav.osm.tileprovider.tilesource.CloudmadeException;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;

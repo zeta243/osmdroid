@@ -1,14 +1,14 @@
-package org.andnav.osm.tileprovider.renderer;
+package org.andnav.osm.tileprovider.tilesource;
 
 import org.andnav.osm.ResourceProxy.string;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 
-public abstract class OpenStreetMapOnlineTileRendererBase extends
-		OpenStreetMapBitmapRendererBase {
+public abstract class OnlineTileSourceBase extends
+		BitmapTileSourceBase {
 
 	private final String mBaseUrls[];
 
-	public OpenStreetMapOnlineTileRendererBase(String aName,
+	public OnlineTileSourceBase(String aName,
 			string aResourceId, int aZoomMinLevel, int aZoomMaxLevel,
 			int aTileSizePixels, String aImageFilenameEnding,
 			String... aBaseUrl) {

@@ -1,4 +1,4 @@
-package org.andnav.osm.tileprovider.renderer;
+package org.andnav.osm.tileprovider.tilesource;
 
 import java.io.File;
 import java.io.InputStream;
@@ -16,11 +16,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 
-public class OpenStreetMapBitmapRendererBase implements
-		IOpenStreetMapRendererInfo, OpenStreetMapTileProviderConstants {
+public class BitmapTileSourceBase implements
+		ITileSource, OpenStreetMapTileProviderConstants {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(OpenStreetMapBitmapRendererBase.class);
+			.getLogger(BitmapTileSourceBase.class);
 
 	private static int globalOrdinal = 0;
 
@@ -36,7 +36,7 @@ public class OpenStreetMapBitmapRendererBase implements
 
 	private final string mResourceId;
 
-	public OpenStreetMapBitmapRendererBase(String aName, string aResourceId,
+	public BitmapTileSourceBase(String aName, string aResourceId,
 			int aZoomMinLevel, int aZoomMaxLevel, int aTileSizePixels,
 			String aImageFilenameEnding) {
 		mResourceId = aResourceId;

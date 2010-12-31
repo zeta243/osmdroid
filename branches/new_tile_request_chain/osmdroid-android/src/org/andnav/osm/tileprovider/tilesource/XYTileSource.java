@@ -1,11 +1,11 @@
-package org.andnav.osm.tileprovider.renderer;
+package org.andnav.osm.tileprovider.tilesource;
 
 import org.andnav.osm.ResourceProxy.string;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 
-class XYRenderer extends OpenStreetMapOnlineTileRendererBase {
+class XYTileSource extends OnlineTileSourceBase {
 
-	XYRenderer(String aName, string aResourceId, int aZoomMinLevel,
+	XYTileSource(String aName, string aResourceId, int aZoomMinLevel,
 			int aZoomMaxLevel, int aTileSizePixels,
 			String aImageFilenameEnding, String... aBaseUrl) {
 		super(aName, aResourceId, aZoomMinLevel, aZoomMaxLevel,

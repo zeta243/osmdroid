@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
-import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
+import org.andnav.osm.tileprovider.tilesource.ITileSource;
 import org.andnav.osm.tileprovider.util.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,7 +70,7 @@ public class TileWriter implements IFilesystemCache,
 	// ===========================================================
 
 	@Override
-	public boolean saveFile(final IOpenStreetMapRendererInfo pRenderInfo,
+	public boolean saveFile(final ITileSource pRenderInfo,
 			final OpenStreetMapTile pTile, final InputStream pStream) {
 
 		final File file = new File(TILE_PATH_BASE,

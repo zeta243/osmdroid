@@ -9,7 +9,7 @@ import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
 import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileModuleProviderBase.CantContinueException;
-import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
+import org.andnav.osm.tileprovider.tilesource.ITileSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,18 +39,17 @@ public abstract class OpenStreetMapTileModuleProviderBase implements
 	protected abstract String getThreadGroupName();
 
 	/**
-	 * It is expected that the implementation will construct an internal member
-	 * which internally implements a {@link TileLoader}. This method is expected
-	 * to return a that internal member to methods of the parent methods.
+	 * It is expected that the implementation will construct an internal member which internally
+	 * implements a {@link TileLoader}. This method is expected to return a that internal member to
+	 * methods of the parent methods.
 	 * 
 	 * @return the internal member of this tile provider.
 	 */
 	protected abstract Runnable getTileLoader();
 
 	/**
-	 * Returns true if implementation uses a data connection, false otherwise.
-	 * This value is used to determine if this provider should be skipped if
-	 * there is no data connection.
+	 * Returns true if implementation uses a data connection, false otherwise. This value is used to
+	 * determine if this provider should be skipped if there is no data connection.
 	 * 
 	 * @return true if implementation uses a data connection, false otherwise
 	 */
@@ -71,19 +70,18 @@ public abstract class OpenStreetMapTileModuleProviderBase implements
 	public abstract int getMaximumZoomLevel();
 
 	/**
-	 * Sets the renderer for this tile provider.
+	 * Sets the tile source for this tile provider.
 	 * 
-	 * @param renderer
-	 *            the renderer
+	 * @param tileSource
+	 *            the tile source
 	 */
-	public abstract void setRenderer(IOpenStreetMapRendererInfo renderer);
+	public abstract void setTileSource(ITileSource tileSource);
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(OpenStreetMapTileModuleProviderBase.class);
 
 	private final int mThreadPoolSize;
-	private final ThreadGroup mThreadPool = new ThreadGroup(
-			getThreadGroupName());
+	private final ThreadGroup mThreadPool = new ThreadGroup(getThreadGroupName());
 	private final ConcurrentHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState> mWorking;
 	final LinkedHashMap<OpenStreetMapTile, OpenStreetMapTileRequestState> mPending;
 
@@ -138,10 +136,9 @@ public abstract class OpenStreetMapTileModuleProviderBase implements
 	}
 
 	/**
-	 * Load the requested tile. An abstract internal class whose objects are
-	 * used by worker threads to acquire tiles from servers. It processes tiles
-	 * from the 'pending' set to the 'working' set as they become available. The
-	 * key unimplemented method is 'loadTile'.
+	 * Load the requested tile. An abstract internal class whose objects are used by worker threads
+	 * to acquire tiles from servers. It processes tiles from the 'pending' set to the 'working' set
+	 * as they become available. The key unimplemented method is 'loadTile'.
 	 * 
 	 * @param aTile
 	 *            the tile to load
@@ -153,13 +150,12 @@ public abstract class OpenStreetMapTileModuleProviderBase implements
 		/**
 		 * The key unimplemented method.
 		 * 
-		 * @return true if the tile was loaded successfully and other tile
-		 *         providers need not be called, false otherwise
+		 * @return true if the tile was loaded successfully and other tile providers need not be
+		 *         called, false otherwise
 		 * @param aTile
 		 * @throws {@link CantContinueException}
 		 */
-		protected abstract Drawable loadTile(
-				OpenStreetMapTileRequestState aState)
+		protected abstract Drawable loadTile(OpenStreetMapTileRequestState aState)
 				throws CantContinueException;
 
 		private OpenStreetMapTileRequestState nextTile() {
@@ -170,8 +166,7 @@ public abstract class OpenStreetMapTileModuleProviderBase implements
 				// get the most recently accessed tile
 				// - the last item in the iterator that's not already being
 				// processed
-				Iterator<OpenStreetMapTile> iterator = mPending.keySet()
-						.iterator();
+				Iterator<OpenStreetMapTile> iterator = mPending.keySet().iterator();
 
 				// TODO this iterates the whole list, make this faster...
 				while (iterator.hasNext()) {
@@ -210,15 +205,13 @@ public abstract class OpenStreetMapTileModuleProviderBase implements
 		 * @param aTileInputStream
 		 *            the input stream of the file.
 		 */
-		private void tileLoaded(final OpenStreetMapTileRequestState aState,
-				final Drawable aDrawable) {
+		private void tileLoaded(final OpenStreetMapTileRequestState aState, final Drawable aDrawable) {
 			removeTileFromQueues(aState.getMapTile());
 
 			aState.getCallback().mapTileRequestCompleted(aState, aDrawable);
 		}
 
-		protected void tileCandidateLoaded(
-				final OpenStreetMapTileRequestState aState,
+		protected void tileCandidateLoaded(final OpenStreetMapTileRequestState aState,
 				final Drawable aDrawable) {
 			aState.getCallback().mapTileRequestCandidate(aState, aDrawable);
 		}
@@ -230,8 +223,7 @@ public abstract class OpenStreetMapTileModuleProviderBase implements
 		}
 
 		/**
-		 * This is a functor class of type Runnable. The run method is the
-		 * encapsulated function.
+		 * This is a functor class of type Runnable. The run method is the encapsulated function.
 		 */
 		@Override
 		final public void run() {

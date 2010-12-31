@@ -3,7 +3,7 @@ package org.andnav.osm.tileprovider.modules;
 import java.io.InputStream;
 
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
-import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
+import org.andnav.osm.tileprovider.tilesource.ITileSource;
 
 /**
  * Represents a write-only interface into a file system cache.
@@ -13,17 +13,17 @@ import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
  */
 public interface IFilesystemCache {
 	/**
-	 * Save an InputStream as the specified tile in the file system cache for
-	 * the specified renderer.
+	 * Save an InputStream as the specified tile in the file system cache for the specified tile
+	 * source.
 	 * 
-	 * @param pRenderInfo
-	 *            a renderer
+	 * @param pTileSourceInfo
+	 *            a tile source
 	 * @param pTile
 	 *            a tile
 	 * @param pStream
 	 *            an InputStream
 	 * @return
 	 */
-	boolean saveFile(final IOpenStreetMapRendererInfo pRenderInfo,
-			OpenStreetMapTile pTile, final InputStream pStream);
+	boolean saveFile(final ITileSource pTileSourceInfo, OpenStreetMapTile pTile,
+			final InputStream pStream);
 }

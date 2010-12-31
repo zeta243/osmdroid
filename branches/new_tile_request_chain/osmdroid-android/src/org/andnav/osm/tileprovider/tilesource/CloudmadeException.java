@@ -1,4 +1,4 @@
-package org.andnav.osm.tileprovider.renderer;
+package org.andnav.osm.tileprovider.tilesource;
 
 public class CloudmadeException extends Exception {
 
