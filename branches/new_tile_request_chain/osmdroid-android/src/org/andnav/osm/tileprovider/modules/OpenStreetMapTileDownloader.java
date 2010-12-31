@@ -25,11 +25,11 @@ import android.graphics.drawable.Drawable;
 /**
  * The OpenStreetMapTileDownloader loads tiles from an HTTP server. It saves downloaded tiles to an
  * IFilesystemCache if available.
- * 
+ *
  * @author Marc Kurtz
  * @author Nicolas Gramlich
  * @author Manuel Stahl
- * 
+ *
  */
 public class OpenStreetMapTileDownloader extends OpenStreetMapTileModuleProviderBase {
 
@@ -154,6 +154,9 @@ public class OpenStreetMapTileDownloader extends OpenStreetMapTileModuleProvider
 
 				if (DEBUGMODE)
 					logger.debug("Downloading Maptile from url: " + tileURLString);
+
+				// TODO consider using apache HttpClient instead of openStream()
+				// - see http://groups.google.com/d/msg/osmdroid/uDK_SUNeyhs/obv4V2w3cZoJ
 
 				in = new BufferedInputStream(new URL(tileURLString).openStream(),
 						StreamUtils.IO_BUFFER_SIZE);
