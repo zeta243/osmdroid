@@ -14,9 +14,9 @@ import org.andnav.osm.events.ScrollEvent;
 import org.andnav.osm.events.ZoomEvent;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderBase;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderDirect;
-import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
-import org.andnav.osm.tileprovider.renderer.IStyledRenderer;
-import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
+import org.andnav.osm.tileprovider.tilesource.IStyledTileSource;
+import org.andnav.osm.tileprovider.tilesource.ITileSource;
+import org.andnav.osm.tileprovider.tilesource.TileSourceFactory;
 import org.andnav.osm.tileprovider.util.SimpleInvalidationHandler;
 import org.andnav.osm.util.BoundingBoxE6;
 import org.andnav.osm.util.GeoPoint;
@@ -55,24 +55,22 @@ import android.view.animation.Animation.AnimationListener;
 import android.view.animation.ScaleAnimation;
 import android.widget.Scroller;
 
-public class OpenStreetMapView extends View implements
-		OpenStreetMapViewConstants, MultiTouchObjectCanvas<Object> {
+public class OpenStreetMapView extends View implements OpenStreetMapViewConstants,
+		MultiTouchObjectCanvas<Object> {
 
 	// ===========================================================
 	// Constants
 	// ===========================================================
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(OpenStreetMapView.class);
+	private static final Logger logger = LoggerFactory.getLogger(OpenStreetMapView.class);
 
-	final static String BUNDLE_RENDERER = "org.andnav.osm.views.OpenStreetMapView.RENDERER";
+	final static String BUNDLE_TILE_SOURCE = "org.andnav.osm.views.OpenStreetMapView.TILE_SOURCE";
 	final static String BUNDLE_SCROLL_X = "org.andnav.osm.views.OpenStreetMapView.SCROLL_X";
 	final static String BUNDLE_SCROLL_Y = "org.andnav.osm.views.OpenStreetMapView.SCROLL_Y";
 	final static String BUNDLE_ZOOM_LEVEL = "org.andnav.osm.views.OpenStreetMapView.ZOOM";
 
 	private static final double ZOOM_SENSITIVITY = 1.3;
-	private static final double ZOOM_LOG_BASE_INV = 1.0 / Math
-			.log(2.0 / ZOOM_SENSITIVITY);
+	private static final double ZOOM_LOG_BASE_INV = 1.0 / Math.log(2.0 / ZOOM_SENSITIVITY);
 
 	// ===========================================================
 	// Fields
@@ -126,9 +124,9 @@ public class OpenStreetMapView extends View implements
 	// Constructors
 	// ===========================================================
 
-	private OpenStreetMapView(final Context context,
-			final Handler tileRequestCompleteHandler, final AttributeSet attrs,
-			final int tileSizePixels, OpenStreetMapTileProviderBase tileProvider) {
+	private OpenStreetMapView(final Context context, final Handler tileRequestCompleteHandler,
+			final AttributeSet attrs, final int tileSizePixels,
+			OpenStreetMapTileProviderBase tileProvider) {
 		super(context, attrs);
 		mResourceProxy = new DefaultResourceProxyImpl(context);
 		this.mController = new OpenStreetMapViewController(this);
@@ -136,30 +134,24 @@ public class OpenStreetMapView extends View implements
 		this.mTileSizePixels = tileSizePixels;
 
 		if (tileProvider == null) {
-			IOpenStreetMapRendererInfo renderer = getRendererFromAttributes(attrs);
-			tileProvider = new OpenStreetMapTileProviderDirect(context,
-					renderer);
+			ITileSource tileSource = getTileSourceFromAttributes(attrs);
+			tileProvider = new OpenStreetMapTileProviderDirect(context, tileSource);
 		}
 
 		mTileRequestCompleteHandler = tileRequestCompleteHandler == null ? new SimpleInvalidationHandler(
 				this) : tileRequestCompleteHandler;
 		mTileProvider = tileProvider;
-		mTileProvider
-				.setTileRequestCompleteHandler(mTileRequestCompleteHandler);
+		mTileProvider.setTileRequestCompleteHandler(mTileRequestCompleteHandler);
 
-		this.mMapOverlay = new OpenStreetMapTilesOverlay(this, mTileProvider,
-				mResourceProxy);
+		this.mMapOverlay = new OpenStreetMapTilesOverlay(this, mTileProvider, mResourceProxy);
 		mOverlays.add(this.mMapOverlay);
 		this.mZoomController = new ZoomButtonsController(this);
-		this.mZoomController
-				.setOnZoomListener(new OpenStreetMapViewZoomListener());
+		this.mZoomController.setOnZoomListener(new OpenStreetMapViewZoomListener());
 
-		mZoomInAnimation = new ScaleAnimation(1, 2, 1, 2,
-				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
-				0.5f);
-		mZoomOutAnimation = new ScaleAnimation(1, 0.5f, 1, 0.5f,
-				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF,
-				0.5f);
+		mZoomInAnimation = new ScaleAnimation(1, 2, 1, 2, Animation.RELATIVE_TO_SELF, 0.5f,
+				Animation.RELATIVE_TO_SELF, 0.5f);
+		mZoomOutAnimation = new ScaleAnimation(1, 0.5f, 1, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f,
+				Animation.RELATIVE_TO_SELF, 0.5f);
 		mZoomInAnimation.setDuration(ANIMATION_DURATION_SHORT);
 		mZoomOutAnimation.setDuration(ANIMATION_DURATION_SHORT);
 		mZoomInAnimation.setAnimationListener(mAnimationListener);
@@ -167,8 +159,7 @@ public class OpenStreetMapView extends View implements
 
 		mGestureDetector = new GestureDetector(context,
 				new OpenStreetMapViewGestureDetectorListener());
-		mGestureDetector
-				.setOnDoubleTapListener(new OpenStreetMapViewDoubleClickListener());
+		mGestureDetector.setOnDoubleTapListener(new OpenStreetMapViewDoubleClickListener());
 	}
 
 	public void detach() {
@@ -176,7 +167,7 @@ public class OpenStreetMapView extends View implements
 	}
 
 	/**
-	 * Constructor used by XML layout resource (uses default renderer).
+	 * Constructor used by XML layout resource (uses default tile source).
 	 */
 	public OpenStreetMapView(Context context, AttributeSet attrs) {
 		this(context, null, attrs, 256, null);
@@ -194,28 +185,23 @@ public class OpenStreetMapView extends View implements
 		this(context, null, null, tileSizePixels, null);
 	}
 
-	public OpenStreetMapView(final Context context,
-			final Handler tileRequestCompleteHandler, final int tileSizePixels,
-			OpenStreetMapTileProviderBase aTileProvider) {
-		this(context, tileRequestCompleteHandler, null, tileSizePixels,
-				aTileProvider);
+	public OpenStreetMapView(final Context context, final Handler tileRequestCompleteHandler,
+			final int tileSizePixels, OpenStreetMapTileProviderBase aTileProvider) {
+		this(context, tileRequestCompleteHandler, null, tileSizePixels, aTileProvider);
 	}
 
 	/**
 	 * 
 	 * @param context
 	 * @param osmv
-	 *            another {@link OpenStreetMapView}, to share the TileProvider
-	 *            with.<br/>
-	 *            May significantly improve the render speed, when using the
-	 *            same {@link IOpenStreetMapRendererInfo}.
+	 *            another {@link OpenStreetMapView}, to share the TileProvider with.<br/>
+	 *            May significantly improve the render speed, when using the same
+	 *            {@link ITileSource}.
 	 */
 	public OpenStreetMapView(final Context context,
 			final OpenStreetMapView aMapToShareTheTileProviderWith) {
-		this(context,
-				aMapToShareTheTileProviderWith.mTileRequestCompleteHandler,
-				null, aMapToShareTheTileProviderWith.getProjection()
-						.getTileSizePixels(),
+		this(context, aMapToShareTheTileProviderWith.mTileRequestCompleteHandler, null,
+				aMapToShareTheTileProviderWith.getProjection().getTileSizePixels(),
 				aMapToShareTheTileProviderWith.mTileProvider);
 	}
 
@@ -224,20 +210,17 @@ public class OpenStreetMapView extends View implements
 	// ===========================================================
 
 	/**
-	 * This MapView takes control of the {@link OpenStreetMapView} passed as
-	 * parameter.<br />
-	 * I.e. it zooms it to x levels less than itself and centers it the same
-	 * coords.<br />
+	 * This MapView takes control of the {@link OpenStreetMapView} passed as parameter.<br />
+	 * I.e. it zooms it to x levels less than itself and centers it the same coords.<br />
 	 * Its pretty useful when the MiniMap uses the same TileProvider.
 	 * 
 	 * @see OpenStreetMapView.OpenStreetMapView(
 	 * @param aOsmvMinimap
 	 * @param aZoomDiff
-	 *            3 is a good Value. Pass {@link OpenStreetMapViewConstants}
-	 *            .NOT_SET to disable autozooming of the minimap.
+	 *            3 is a good Value. Pass {@link OpenStreetMapViewConstants} .NOT_SET to disable
+	 *            autozooming of the minimap.
 	 */
-	public void setMiniMap(final OpenStreetMapView aOsmvMinimap,
-			final int aZoomDiff) {
+	public void setMiniMap(final OpenStreetMapView aOsmvMinimap, final int aZoomDiff) {
 		this.mMiniMapZoomDiff = aZoomDiff;
 		this.mMiniMap = aOsmvMinimap;
 		aOsmvMinimap.setMaxiMap(this);
@@ -254,18 +237,17 @@ public class OpenStreetMapView extends View implements
 	}
 
 	/**
-	 * @return {@link View}.GONE or {@link View}.VISIBLE or {@link View}
-	 *         .INVISIBLE or {@link OpenStreetMapViewConstants}.NOT_SET
+	 * @return {@link View}.GONE or {@link View}.VISIBLE or {@link View} .INVISIBLE or
+	 *         {@link OpenStreetMapViewConstants}.NOT_SET
 	 * */
 	public int getOverrideMiniMapVisibility() {
 		return this.mMiniMapOverriddenVisibility;
 	}
 
 	/**
-	 * Use this method if you want to make the MiniMap visible i.e.: always or
-	 * never. Use {@link View}.GONE , {@link View}.VISIBLE, {@link View}
-	 * .INVISIBLE. Use {@link OpenStreetMapViewConstants}.NOT_SET to reset this
-	 * feature.
+	 * Use this method if you want to make the MiniMap visible i.e.: always or never. Use
+	 * {@link View}.GONE , {@link View}.VISIBLE, {@link View} .INVISIBLE. Use
+	 * {@link OpenStreetMapViewConstants}.NOT_SET to reset this feature.
 	 * 
 	 * @param aVisibility
 	 */
@@ -294,9 +276,8 @@ public class OpenStreetMapView extends View implements
 	}
 
 	/**
-	 * You can add/remove/reorder your Overlays using the List of
-	 * {@link OpenStreetMapViewOverlay}. The first (index 0) Overlay gets drawn
-	 * first, the one with the highest as the last one.
+	 * You can add/remove/reorder your Overlays using the List of {@link OpenStreetMapViewOverlay}.
+	 * The first (index 0) Overlay gets drawn first, the one with the highest as the last one.
 	 */
 	public List<OpenStreetMapViewOverlay> getOverlays() {
 		return this.mOverlays;
@@ -347,8 +328,7 @@ public class OpenStreetMapView extends View implements
 		return a - 1;
 	}
 
-	private BoundingBoxE6 getBoundingBox(final int pViewWidth,
-			final int pViewHeight) {
+	private BoundingBoxE6 getBoundingBox(final int pViewWidth, final int pViewHeight) {
 		final int mapTileZoom = getMapTileZoom(mTileSizePixels);
 		final int world_2 = (1 << mZoomLevel + mapTileZoom - 1);
 		final int north = world_2 + getScrollY() - getHeight() / 2;
@@ -356,13 +336,13 @@ public class OpenStreetMapView extends View implements
 		final int west = world_2 + getScrollX() - getWidth() / 2;
 		final int east = world_2 + getScrollX() + getWidth() / 2;
 
-		return Mercator.getBoundingBoxFromCoords(west, north, east, south,
-				mZoomLevel + mapTileZoom);
+		return Mercator
+				.getBoundingBoxFromCoords(west, north, east, south, mZoomLevel + mapTileZoom);
 	}
 
 	/**
-	 * This class is only meant to be used during on call of onDraw(). Otherwise
-	 * it may produce strange results.
+	 * This class is only meant to be used during on call of onDraw(). Otherwise it may produce
+	 * strange results.
 	 * 
 	 * @return
 	 */
@@ -380,31 +360,29 @@ public class OpenStreetMapView extends View implements
 		this.setMapCenter(aLatitudeE6, aLongitudeE6, true);
 	}
 
-	void setMapCenter(final int aLatitudeE6, final int aLongitudeE6,
-			final boolean doPassFurther) {
+	void setMapCenter(final int aLatitudeE6, final int aLongitudeE6, final boolean doPassFurther) {
 		if (doPassFurther && this.mMiniMap != null)
 			this.mMiniMap.setMapCenter(aLatitudeE6, aLongitudeE6, false);
 		else if (doPassFurther && this.mMaxiMap != null)
 			this.mMaxiMap.setMapCenter(aLatitudeE6, aLongitudeE6, false);
 
-		final int[] coords = Mercator.projectGeoPoint(aLatitudeE6,
-				aLongitudeE6, getPixelZoomLevel(), null);
+		final int[] coords = Mercator.projectGeoPoint(aLatitudeE6, aLongitudeE6,
+				getPixelZoomLevel(), null);
 		final int worldSize_2 = getWorldSizePx() / 2;
 		if (getAnimation() == null || getAnimation().hasEnded()) {
 			logger.debug("StartScroll");
-			mScroller.startScroll(getScrollX(), getScrollY(),
-					coords[MAPTILE_LONGITUDE_INDEX] - worldSize_2
-							- getScrollX(), coords[MAPTILE_LATITUDE_INDEX]
-							- worldSize_2 - getScrollY(), 500);
+			mScroller.startScroll(getScrollX(), getScrollY(), coords[MAPTILE_LONGITUDE_INDEX]
+					- worldSize_2 - getScrollX(), coords[MAPTILE_LATITUDE_INDEX] - worldSize_2
+					- getScrollY(), 500);
 			postInvalidate();
 		}
 	}
 
-	public void setPreferredRenderer(final IOpenStreetMapRendererInfo aRenderer) {
-		mTileProvider.setRenderer(aRenderer);
-		mTileSizePixels = aRenderer.getTileSizePixels();
+	public void setTileSource(final ITileSource aTileSource) {
+		mTileProvider.setTileSource(aTileSource);
+		mTileSizePixels = aTileSource.getTileSizePixels();
 		if (this.mMiniMap != null)
-			this.mMiniMap.setPreferredRenderer(aRenderer);
+			this.mMiniMap.setTileSource(aTileSource);
 		this.checkZoomButtons();
 		this.setZoomLevel(mZoomLevel); // revalidate zoom level
 		postInvalidate();
@@ -412,15 +390,13 @@ public class OpenStreetMapView extends View implements
 
 	/**
 	 * @param aZoomLevel
-	 *            between 0 (equator) and 18/19(closest), depending on the
-	 *            Renderer chosen.
+	 *            the zoom level bound by the tile source
 	 */
 	int setZoomLevel(final int aZoomLevel) {
 		final int minZoomLevel = getMinimumZoomLevel();
 		final int maxZoomLevel = getMaximumZoomLevel();
 
-		final int newZoomLevel = Math.max(minZoomLevel,
-				Math.min(maxZoomLevel, aZoomLevel));
+		final int newZoomLevel = Math.max(minZoomLevel, Math.min(maxZoomLevel, aZoomLevel));
 		final int curZoomLevel = this.mZoomLevel;
 
 		if (this.mMiniMap != null) {
@@ -433,8 +409,7 @@ public class OpenStreetMapView extends View implements
 					this.mMiniMap.setVisibility(View.VISIBLE);
 				}
 				if (this.mMiniMapZoomDiff != NOT_SET)
-					this.mMiniMap.setZoomLevel(this.mZoomLevel
-							- this.mMiniMapZoomDiff);
+					this.mMiniMap.setZoomLevel(this.mZoomLevel - this.mMiniMapZoomDiff);
 			}
 		}
 
@@ -455,8 +430,8 @@ public class OpenStreetMapView extends View implements
 		// here?
 		for (OpenStreetMapViewOverlay osmvo : this.mOverlays) {
 			if (osmvo instanceof Snappable
-					&& ((Snappable) osmvo).onSnapToItem(getScrollX(),
-							getScrollY(), snapPoint, this)) {
+					&& ((Snappable) osmvo)
+							.onSnapToItem(getScrollX(), getScrollY(), snapPoint, this)) {
 				scrollTo(snapPoint.x, snapPoint.y);
 			}
 		}
@@ -472,8 +447,8 @@ public class OpenStreetMapView extends View implements
 	/**
 	 * Get the current ZoomLevel for the map tiles.
 	 * 
-	 * @return the current ZoomLevel between 0 (equator) and 18/19(closest),
-	 *         depending on the Renderer chosen.
+	 * @return the current ZoomLevel between 0 (equator) and 18/19(closest), depending on the tile
+	 *         source chosen.
 	 */
 	public int getZoomLevel() {
 		return getZoomLevel(true);
@@ -483,11 +458,9 @@ public class OpenStreetMapView extends View implements
 	 * Get the current ZoomLevel for the map tiles.
 	 * 
 	 * @param aPending
-	 *            if true and we're animating then return the zoom level that
-	 *            we're animating towards, otherwise return the current zoom
-	 *            level
-	 * @return the current ZoomLevel between 0 (equator) and 18/19(closest),
-	 *         depending on the Renderer chosen.
+	 *            if true and we're animating then return the zoom level that we're animating
+	 *            towards, otherwise return the current zoom level
+	 * @return the zoom level
 	 */
 	public int getZoomLevel(final boolean aPending) {
 		if (aPending && mAnimationListener.animating) {
@@ -497,7 +470,7 @@ public class OpenStreetMapView extends View implements
 		}
 	}
 
-	/*
+	/**
 	 * Returns the minimum zoom level for the point currently at the center.
 	 * 
 	 * @return The minimum zoom level for the map's current center.
@@ -506,7 +479,7 @@ public class OpenStreetMapView extends View implements
 		return mMapOverlay.getMinimumZoomLevel();
 	}
 
-	/*
+	/**
 	 * Returns the maximum zoom level for the point currently at the center.
 	 * 
 	 * @return The maximum zoom level for the map's current center.
@@ -520,8 +493,7 @@ public class OpenStreetMapView extends View implements
 		if (mZoomLevel >= maxZoomLevel) {
 			return false;
 		}
-		if (mAnimationListener.animating
-				&& mAnimationListener.targetZoomLevel >= maxZoomLevel) {
+		if (mAnimationListener.animating && mAnimationListener.targetZoomLevel >= maxZoomLevel) {
 			return false;
 		}
 		return true;
@@ -532,8 +504,7 @@ public class OpenStreetMapView extends View implements
 		if (mZoomLevel <= minZoomLevel) {
 			return false;
 		}
-		if (mAnimationListener.animating
-				&& mAnimationListener.targetZoomLevel <= minZoomLevel) {
+		if (mAnimationListener.animating && mAnimationListener.targetZoomLevel <= minZoomLevel) {
 			return false;
 		}
 		return true;
@@ -594,13 +565,11 @@ public class OpenStreetMapView extends View implements
 	}
 
 	public int getMapCenterLatitudeE6() {
-		return (int) (Mercator.tile2lat(getScrollY() + getWorldSizePx() / 2,
-				getPixelZoomLevel()) * 1E6);
+		return (int) (Mercator.tile2lat(getScrollY() + getWorldSizePx() / 2, getPixelZoomLevel()) * 1E6);
 	}
 
 	public int getMapCenterLongitudeE6() {
-		return (int) (Mercator.tile2lon(getScrollX() + getWorldSizePx() / 2,
-				getPixelZoomLevel()) * 1E6);
+		return (int) (Mercator.tile2lon(getScrollX() + getWorldSizePx() / 2, getPixelZoomLevel()) * 1E6);
 	}
 
 	public void setResourceProxy(final ResourceProxy pResourceProxy) {
@@ -616,8 +585,7 @@ public class OpenStreetMapView extends View implements
 	public void onRestoreInstanceState(Bundle state) {
 
 		setZoomLevel(state.getInt(BUNDLE_ZOOM_LEVEL, 1));
-		scrollTo(state.getInt(BUNDLE_SCROLL_X, 0),
-				state.getInt(BUNDLE_SCROLL_Y, 0));
+		scrollTo(state.getInt(BUNDLE_SCROLL_X, 0), state.getInt(BUNDLE_SCROLL_Y, 0));
 	}
 
 	/**
@@ -631,8 +599,8 @@ public class OpenStreetMapView extends View implements
 	 * Set whether to use the network connection if it's available.
 	 * 
 	 * @param aMode
-	 *            if true use the network connection if it's available. if false
-	 *            don't use the network connection even if it's available.
+	 *            if true use the network connection if it's available. if false don't use the
+	 *            network connection even if it's available.
 	 */
 	public void setUseDataConnection(boolean aMode) {
 		mMapOverlay.setUseDataConnection(aMode);
@@ -706,8 +674,7 @@ public class OpenStreetMapView extends View implements
 				return true;
 			}
 
-		if (mMultiTouchController != null
-				&& mMultiTouchController.onTouchEvent(event)) {
+		if (mMultiTouchController != null && mMultiTouchController.onTouchEvent(event)) {
 			if (DEBUGMODE)
 				logger.debug("mMultiTouchController handled onTouchEvent");
 			return true;
@@ -767,8 +734,7 @@ public class OpenStreetMapView extends View implements
 		} else {
 			c.getMatrix(mMatrix);
 			mMatrix.postTranslate(getWidth() / 2, getHeight() / 2);
-			mMatrix.preScale(mMultiTouchScale, mMultiTouchScale, getScrollX(),
-					getScrollY());
+			mMatrix.preScale(mMultiTouchScale, mMultiTouchScale, getScrollX(), getScrollY());
 			c.setMatrix(mMatrix);
 		}
 
@@ -818,10 +784,8 @@ public class OpenStreetMapView extends View implements
 	}
 
 	@Override
-	public void getPositionAndScale(final Object obj,
-			final PositionAndScale objPosAndScaleOut) {
-		objPosAndScaleOut.set(0, 0, true, mMultiTouchScale, false, 0, 0, false,
-				0);
+	public void getPositionAndScale(final Object obj, final PositionAndScale objPosAndScaleOut) {
+		objPosAndScaleOut.set(0, 0, true, mMultiTouchScale, false, 0, 0, false, 0);
 	}
 
 	@Override
@@ -841,8 +805,7 @@ public class OpenStreetMapView extends View implements
 	}
 
 	@Override
-	public boolean setPositionAndScale(final Object obj,
-			final PositionAndScale aNewObjPosAndScale,
+	public boolean setPositionAndScale(final Object obj, final PositionAndScale aNewObjPosAndScale,
 			final PointInfo aTouchPoint) {
 		mMultiTouchScale = aNewObjPosAndScale.getScale();
 		invalidate(); // redraw
@@ -905,9 +868,8 @@ public class OpenStreetMapView extends View implements
 	 * @param reuse
 	 *            just pass null if you do not have a Point to be 'recycled'.
 	 */
-	private Point getUpperLeftCornerOfCenterMapTileInScreen(
-			final int[] centerMapTileCoords, final int tileSizePx,
-			final Point reuse) {
+	private Point getUpperLeftCornerOfCenterMapTileInScreen(final int[] centerMapTileCoords,
+			final int tileSizePx, final Point reuse) {
 		final Point out = (reuse != null) ? reuse : new Point();
 
 		final int worldTiles_2 = 1 << (mZoomLevel - 1);
@@ -926,33 +888,27 @@ public class OpenStreetMapView extends View implements
 	}
 
 	public void setMultiTouchControls(boolean on) {
-		mMultiTouchController = on ? new MultiTouchController<Object>(this,
-				false) : null;
+		mMultiTouchController = on ? new MultiTouchController<Object>(this, false) : null;
 	}
 
-	private IOpenStreetMapRendererInfo getRendererFromAttributes(
-			final AttributeSet aAttributeSet) {
+	private ITileSource getTileSourceFromAttributes(final AttributeSet aAttributeSet) {
 
-		IOpenStreetMapRendererInfo renderer = OpenStreetMapRendererFactory.DEFAULT_RENDERER;
+		ITileSource tileSource = TileSourceFactory.DEFAULT_TILE_SOURCE;
 
 		if (aAttributeSet != null) {
-			final String rendererAttr = aAttributeSet.getAttributeValue(null,
-					"renderer");
-			if (rendererAttr != null) {
+			final String tileSourceAttr = aAttributeSet.getAttributeValue(null, "tilesource");
+			if (tileSourceAttr != null) {
 				try {
-					final IOpenStreetMapRendererInfo r = OpenStreetMapRendererFactory
-							.getRenderer(rendererAttr);
-					logger.info("Using renderer specified in layout attributes: "
-							+ r);
-					renderer = r;
+					final ITileSource r = TileSourceFactory.getTileSource(tileSourceAttr);
+					logger.info("Using tile source specified in layout attributes: " + r);
+					tileSource = r;
 				} catch (final IllegalArgumentException e) {
-					logger.warn("Invalid renderer specified in layout attributes: "
-							+ renderer);
+					logger.warn("Invalid tile souce specified in layout attributes: " + tileSource);
 				}
 			}
 		}
 
-		if (aAttributeSet != null && renderer instanceof IStyledRenderer) {
+		if (aAttributeSet != null && tileSource instanceof IStyledTileSource) {
 			String style = aAttributeSet.getAttributeValue(null, "style");
 			if (style == null) {
 				// historic - old attribute name
@@ -961,14 +917,13 @@ public class OpenStreetMapView extends View implements
 			if (style == null) {
 				logger.info("Using default style: 1");
 			} else {
-				logger.info("Using style specified in layout attributes: "
-						+ style);
-				((IStyledRenderer) renderer).setStyle(style);
+				logger.info("Using style specified in layout attributes: " + style);
+				((IStyledTileSource) tileSource).setStyle(style);
 			}
 		}
 
-		logger.info("Using renderer : " + renderer);
-		return renderer;
+		logger.info("Using tile source: " + tileSource);
+		return tileSource;
 	}
 
 	// ===========================================================
@@ -976,8 +931,8 @@ public class OpenStreetMapView extends View implements
 	// ===========================================================
 
 	/**
-	 * This class may return valid results until the underlying
-	 * {@link OpenStreetMapView} gets modified in any way (i.e. new center).
+	 * This class may return valid results until the underlying {@link OpenStreetMapView} gets
+	 * modified in any way (i.e. new center).
 	 * 
 	 * @author Nicolas Gramlich
 	 * @author Manuel Stahl
@@ -1002,8 +957,7 @@ public class OpenStreetMapView extends View implements
 		private OpenStreetMapViewProjection() {
 
 			/*
-			 * Do some calculations and drag attributes to local variables to
-			 * save some performance.
+			 * Do some calculations and drag attributes to local variables to save some performance.
 			 */
 			zoomLevel = OpenStreetMapView.this.mZoomLevel; // TODO Draw to
 			// attributes and so
@@ -1014,8 +968,7 @@ public class OpenStreetMapView extends View implements
 			tileMapZoom = getMapTileZoom(tileSizePx);
 
 			/*
-			 * Get the center MapTile which is above this.mLatitudeE6 and
-			 * this.mLongitudeE6 .
+			 * Get the center MapTile which is above this.mLatitudeE6 and this.mLongitudeE6 .
 			 */
 			centerMapTileCoords = getCenterMapTileCoords();
 			upperLeftCornerOfCenterMapTile = getUpperLeftCornerOfCenterMapTileInScreen(
@@ -1040,8 +993,8 @@ public class OpenStreetMapView extends View implements
 		 * @return GeoPoint under x/y.
 		 */
 		public GeoPoint fromPixels(float x, float y) {
-			return bb.getGeoPointOfRelativePositionWithLinearInterpolation(x
-					/ getWidth(), y / getHeight());
+			return bb.getGeoPointOfRelativePositionWithLinearInterpolation(x / getWidth(), y
+					/ getHeight());
 		}
 
 		public Point fromMapPixels(int x, int y, Point reuse) {
@@ -1058,10 +1011,8 @@ public class OpenStreetMapView extends View implements
 		/**
 		 * Converts a GeoPoint to its ScreenCoordinates. <br/>
 		 * <br/>
-		 * <b>CAUTION</b> ! Conversion currently has a large error on
-		 * <code>zoomLevels <= 7</code>.<br/>
-		 * The Error on ZoomLevels higher than 7, the error is below
-		 * <code>1px</code>.<br/>
+		 * <b>CAUTION</b> ! Conversion currently has a large error on <code>zoomLevels <= 7</code>.<br/>
+		 * The Error on ZoomLevels higher than 7, the error is below <code>1px</code>.<br/>
 		 * TODO: Add a linear interpolation to minimize this error.
 		 * 
 		 * <PRE>
@@ -1076,45 +1027,39 @@ public class OpenStreetMapView extends View implements
 		 * @param in
 		 *            the GeoPoint you want the onScreenCoordinates of.
 		 * @param reuse
-		 *            just pass null if you do not have a Point to be
-		 *            'recycled'.
-		 * @return the Point containing the approximated ScreenCoordinates of
-		 *         the GeoPoint passed.
+		 *            just pass null if you do not have a Point to be 'recycled'.
+		 * @return the Point containing the approximated ScreenCoordinates of the GeoPoint passed.
 		 */
 		public Point toMapPixels(final GeoPoint in, final Point reuse) {
 			final Point out = (reuse != null) ? reuse : new Point();
 
-			final int[] coords = Mercator.projectGeoPoint(in.getLatitudeE6(),
-					in.getLongitudeE6(), getPixelZoomLevel(), null);
-			out.set(coords[MAPTILE_LONGITUDE_INDEX],
-					coords[MAPTILE_LATITUDE_INDEX]);
+			final int[] coords = Mercator.projectGeoPoint(in.getLatitudeE6(), in.getLongitudeE6(),
+					getPixelZoomLevel(), null);
+			out.set(coords[MAPTILE_LONGITUDE_INDEX], coords[MAPTILE_LATITUDE_INDEX]);
 			out.offset(offsetX, offsetY);
 			return out;
 		}
 
 		/**
-		 * Performs only the first computationally heavy part of the projection,
-		 * needToCall toMapPixelsTranslated to get final position.
+		 * Performs only the first computationally heavy part of the projection, needToCall
+		 * toMapPixelsTranslated to get final position.
 		 * 
 		 * @param latituteE6
 		 *            the latitute of the point
 		 * @param longitudeE6
 		 *            the longitude of the point
 		 * @param reuse
-		 *            just pass null if you do not have a Point to be
-		 *            'recycled'.
-		 * @return intermediate value to be stored and passed to
-		 *         toMapPixelsTranslated on paint.
+		 *            just pass null if you do not have a Point to be 'recycled'.
+		 * @return intermediate value to be stored and passed to toMapPixelsTranslated on paint.
 		 */
-		public Point toMapPixelsProjected(final int latituteE6,
-				final int longitudeE6, final Point reuse) {
+		public Point toMapPixelsProjected(final int latituteE6, final int longitudeE6,
+				final Point reuse) {
 			final Point out = (reuse != null) ? reuse : new Point();
 
 			// 26 is the biggest zoomlevel we can project
-			final int[] coords = Mercator.projectGeoPoint(latituteE6,
-					longitudeE6, 28, this.reuseInt2);
-			out.set(coords[MAPTILE_LONGITUDE_INDEX],
-					coords[MAPTILE_LATITUDE_INDEX]);
+			final int[] coords = Mercator.projectGeoPoint(latituteE6, longitudeE6, 28,
+					this.reuseInt2);
+			out.set(coords[MAPTILE_LONGITUDE_INDEX], coords[MAPTILE_LATITUDE_INDEX]);
 			return out;
 		}
 
@@ -1124,24 +1069,21 @@ public class OpenStreetMapView extends View implements
 		 * @param in
 		 *            the Point calculated by the toMapPixelsProjected
 		 * @param reuse
-		 *            just pass null if you do not have a Point to be
-		 *            'recycled'.
-		 * @return the Point containing the approximated ScreenCoordinates of
-		 *         the initial GeoPoint passed to the toMapPixelsProjected.
+		 *            just pass null if you do not have a Point to be 'recycled'.
+		 * @return the Point containing the approximated ScreenCoordinates of the initial GeoPoint
+		 *         passed to the toMapPixelsProjected.
 		 */
 		public Point toMapPixelsTranslated(final Point in, final Point reuse) {
 			final Point out = (reuse != null) ? reuse : new Point();
 
 			// 26 is the biggest zoomlevel we can project
 			int zoomDifference = 28 - getPixelZoomLevel();
-			out.set((in.x >> zoomDifference) + offsetX,
-					(in.y >> zoomDifference) + offsetY);
+			out.set((in.x >> zoomDifference) + offsetX, (in.y >> zoomDifference) + offsetY);
 			return out;
 		}
 
 		/**
-		 * Translates a rectangle from screen coordinates to intermediate
-		 * coordinates.
+		 * Translates a rectangle from screen coordinates to intermediate coordinates.
 		 * 
 		 * @param in
 		 *            the rectangle in screen coordinates
@@ -1158,8 +1100,7 @@ public class OpenStreetMapView extends View implements
 			int y0 = (in.bottom - offsetX) << zoomDifference;
 			int y1 = (in.top - offsetX) << zoomDifference;
 
-			result.set(Math.min(x0, x1), Math.min(y0, y1), Math.max(x0, x1),
-					Math.max(y0, y1));
+			result.set(Math.min(x0, x1), Math.min(y0, y1), Math.max(x0, x1), Math.max(y0, y1));
 			return result;
 		}
 
@@ -1186,38 +1127,36 @@ public class OpenStreetMapView extends View implements
 
 			final Point reuse = new Point();
 
-			toMapPixels(new GeoPoint(pBoundingBoxE6.getLatNorthE6(),
-					pBoundingBoxE6.getLonWestE6()), reuse);
+			toMapPixels(
+					new GeoPoint(pBoundingBoxE6.getLatNorthE6(), pBoundingBoxE6.getLonWestE6()),
+					reuse);
 			rect.left = reuse.x;
 			rect.top = reuse.y;
 
-			toMapPixels(new GeoPoint(pBoundingBoxE6.getLatSouthE6(),
-					pBoundingBoxE6.getLonEastE6()), reuse);
+			toMapPixels(
+					new GeoPoint(pBoundingBoxE6.getLatSouthE6(), pBoundingBoxE6.getLonEastE6()),
+					reuse);
 			rect.right = reuse.x;
 			rect.bottom = reuse.y;
 
 			return rect;
 		}
 
-		protected Path toPixels(final List<? extends GeoPoint> in,
-				final Path reuse, final boolean doGudermann)
-				throws IllegalArgumentException {
+		protected Path toPixels(final List<? extends GeoPoint> in, final Path reuse,
+				final boolean doGudermann) throws IllegalArgumentException {
 			if (in.size() < 2)
-				throw new IllegalArgumentException(
-						"List of GeoPoints needs to be at least 2.");
+				throw new IllegalArgumentException("List of GeoPoints needs to be at least 2.");
 
 			final Path out = (reuse != null) ? reuse : new Path();
 			out.incReserve(in.size());
 
 			boolean first = true;
 			for (GeoPoint gp : in) {
-				final int[] underGeopointTileCoords = Mercator.projectGeoPoint(
-						gp.getLatitudeE6(), gp.getLongitudeE6(), zoomLevel,
-						null);
+				final int[] underGeopointTileCoords = Mercator.projectGeoPoint(gp.getLatitudeE6(),
+						gp.getLongitudeE6(), zoomLevel, null);
 
 				/*
-				 * Calculate the Latitude/Longitude on the left-upper
-				 * ScreenCoords of the MapTile.
+				 * Calculate the Latitude/Longitude on the left-upper ScreenCoords of the MapTile.
 				 */
 				final BoundingBoxE6 bb = Mercator.getBoundingBoxFromMapTile(
 						underGeopointTileCoords, zoomLevel);
@@ -1226,13 +1165,11 @@ public class OpenStreetMapView extends View implements
 				if (doGudermann && zoomLevel < 7)
 					relativePositionInCenterMapTile = bb
 							.getRelativePositionOfGeoPointInBoundingBoxWithExactGudermannInterpolation(
-									gp.getLatitudeE6(), gp.getLongitudeE6(),
-									null);
+									gp.getLatitudeE6(), gp.getLongitudeE6(), null);
 				else
 					relativePositionInCenterMapTile = bb
 							.getRelativePositionOfGeoPointInBoundingBoxWithLinearInterpolation(
-									gp.getLatitudeE6(), gp.getLongitudeE6(),
-									null);
+									gp.getLatitudeE6(), gp.getLongitudeE6(), null);
 
 				final int tileDiffX = centerMapTileCoords[MAPTILE_LONGITUDE_INDEX]
 						- underGeopointTileCoords[MAPTILE_LONGITUDE_INDEX];
@@ -1262,8 +1199,7 @@ public class OpenStreetMapView extends View implements
 		}
 	}
 
-	private class OpenStreetMapViewGestureDetectorListener implements
-			OnGestureListener {
+	private class OpenStreetMapViewGestureDetectorListener implements OnGestureListener {
 
 		@Override
 		public boolean onDown(MotionEvent e) {
@@ -1272,12 +1208,10 @@ public class OpenStreetMapView extends View implements
 		}
 
 		@Override
-		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX,
-				float velocityY) {
+		public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
 			final int worldSize = getWorldSizePx();
-			mScroller.fling(getScrollX(), getScrollY(), (int) -velocityX,
-					(int) -velocityY, -worldSize, worldSize, -worldSize,
-					worldSize);
+			mScroller.fling(getScrollX(), getScrollY(), (int) -velocityX, (int) -velocityY,
+					-worldSize, worldSize, -worldSize, worldSize);
 			return true;
 		}
 
@@ -1287,8 +1221,7 @@ public class OpenStreetMapView extends View implements
 		}
 
 		@Override
-		public boolean onScroll(MotionEvent e1, MotionEvent e2,
-				float distanceX, float distanceY) {
+		public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
 			scrollBy((int) distanceX, (int) distanceY);
 			return true;
 		}
@@ -1308,8 +1241,7 @@ public class OpenStreetMapView extends View implements
 			GestureDetector.OnDoubleTapListener {
 		@Override
 		public boolean onDoubleTap(final MotionEvent e) {
-			final GeoPoint center = getProjection().fromPixels(e.getX(),
-					e.getY());
+			final GeoPoint center = getProjection().fromPixels(e.getX(), e.getY());
 			return zoomInFixing(center);
 		}
 

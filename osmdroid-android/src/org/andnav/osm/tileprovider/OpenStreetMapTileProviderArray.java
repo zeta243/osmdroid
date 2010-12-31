@@ -6,31 +6,28 @@ import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileModuleProviderBase;
-import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
+import org.andnav.osm.tileprovider.tilesource.ITileSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import android.graphics.drawable.Drawable;
 
 /**
- * This top-level tile provider allows a consumer to provide an array of modular
- * asynchronous tile providers to be used to obtain map tiles. When a tile is
- * requested, the ArrayProvider first checks the MapTileCache (synchronously)
- * and returns the tile if available. If not, then the ArrayProvider returns
- * null and sends the tile request through the asynchronous tile request chain.
- * Each asynchronous tile provider returns success/failure to the ArrayProvider.
- * If successful, the ArrayProvider passes the result to the base class. If
- * failed, then the next asynchronous tile provider is called in the chain. If
- * there are no more asynchronous tile providers in the chain, then the failure
- * result is passed to the base class. The ArrayProvider provides a mechanism so
- * that only one unique tile-request can be in the map tile request chain at a
- * time.
+ * This top-level tile provider allows a consumer to provide an array of modular asynchronous tile
+ * providers to be used to obtain map tiles. When a tile is requested, the ArrayProvider first
+ * checks the MapTileCache (synchronously) and returns the tile if available. If not, then the
+ * ArrayProvider returns null and sends the tile request through the asynchronous tile request
+ * chain. Each asynchronous tile provider returns success/failure to the ArrayProvider. If
+ * successful, the ArrayProvider passes the result to the base class. If failed, then the next
+ * asynchronous tile provider is called in the chain. If there are no more asynchronous tile
+ * providers in the chain, then the failure result is passed to the base class. The ArrayProvider
+ * provides a mechanism so that only one unique tile-request can be in the map tile request chain at
+ * a time.
  * 
  * @author Marc Kurtz
  * 
  */
-public class OpenStreetMapTileProviderArray extends
-		OpenStreetMapTileProviderBase {
+public class OpenStreetMapTileProviderArray extends OpenStreetMapTileProviderBase {
 
 	private final ConcurrentHashMap<OpenStreetMapTileRequestState, OpenStreetMapTile> mWorking;
 
@@ -45,22 +42,19 @@ public class OpenStreetMapTileProviderArray extends
 	 * @param aRegisterReceiver
 	 *            a RegisterReceiver
 	 */
-	protected OpenStreetMapTileProviderArray(
-			final IRegisterReceiver aRegisterReceiver) {
+	protected OpenStreetMapTileProviderArray(final IRegisterReceiver aRegisterReceiver) {
 		this(aRegisterReceiver, new OpenStreetMapTileModuleProviderBase[0]);
 	}
 
 	/**
-	 * Creates an OpenStreetMapTileProviderArray with the specified tile
-	 * providers.
+	 * Creates an OpenStreetMapTileProviderArray with the specified tile providers.
 	 * 
 	 * @param aRegisterReceiver
 	 *            a RegisterReceiver
 	 * @param tileProviderArray
 	 *            an array of OpenStreetMapTileModuleProviderBase
 	 */
-	public OpenStreetMapTileProviderArray(
-			final IRegisterReceiver aRegisterReceiver,
+	public OpenStreetMapTileProviderArray(final IRegisterReceiver aRegisterReceiver,
 			final OpenStreetMapTileModuleProviderBase[] tileProviderArray) {
 		super();
 
@@ -93,8 +87,7 @@ public class OpenStreetMapTileProviderArray extends
 
 			if (!alreadyInProgress) {
 				if (DEBUGMODE)
-					logger.debug("Cache failed, trying from async providers: "
-							+ pTile);
+					logger.debug("Cache failed, trying from async providers: " + pTile);
 
 				OpenStreetMapTileRequestState state;
 				synchronized (mTileProviderList) {
@@ -146,9 +139,8 @@ public class OpenStreetMapTileProviderArray extends
 	}
 
 	/**
-	 * We want to not use a provider that doesn't exist anymore in the chain,
-	 * and we want to not use a provider that requires a data connection when
-	 * one is not available.
+	 * We want to not use a provider that doesn't exist anymore in the chain, and we want to not use
+	 * a provider that requires a data connection when one is not available.
 	 */
 	private OpenStreetMapTileModuleProviderBase findNextAppropriateProvider(
 			final OpenStreetMapTileRequestState aState) {
@@ -162,8 +154,7 @@ public class OpenStreetMapTileProviderArray extends
 		return provider;
 	}
 
-	public boolean getProviderExists(
-			OpenStreetMapTileModuleProviderBase provider) {
+	public boolean getProviderExists(OpenStreetMapTileModuleProviderBase provider) {
 		synchronized (mTileProviderList) {
 			return mTileProviderList.contains(provider);
 		}
@@ -194,11 +185,11 @@ public class OpenStreetMapTileProviderArray extends
 	}
 
 	@Override
-	public void setRenderer(IOpenStreetMapRendererInfo aRenderer) {
-		super.setRenderer(aRenderer);
+	public void setTileSource(ITileSource aTileSource) {
+		super.setTileSource(aTileSource);
 
 		for (final OpenStreetMapTileModuleProviderBase tileProvider : mTileProviderList) {
-			tileProvider.setRenderer(aRenderer);
+			tileProvider.setTileSource(aTileSource);
 			clearTileCache();
 		}
 	}

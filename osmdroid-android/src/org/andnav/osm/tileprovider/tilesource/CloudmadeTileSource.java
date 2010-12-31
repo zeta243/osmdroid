@@ -1,4 +1,4 @@
-package org.andnav.osm.tileprovider.renderer;
+package org.andnav.osm.tileprovider.tilesource;
 
 import org.andnav.osm.ResourceProxy;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
@@ -6,15 +6,15 @@ import org.andnav.osm.tileprovider.util.CloudmadeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class CloudmadeRenderer extends OpenStreetMapOnlineTileRendererBase implements IStyledRenderer {
+class CloudmadeTileSource extends OnlineTileSourceBase implements IStyledTileSource {
 
-	private static final Logger logger = LoggerFactory.getLogger(CloudmadeRenderer.class);
+	private static final Logger logger = LoggerFactory.getLogger(CloudmadeTileSource.class);
 
 	private String mKey;
 	private String mToken;
 	private int mStyle = 1;
 
-	CloudmadeRenderer(final String aName,
+	CloudmadeTileSource(final String aName,
 			ResourceProxy.string aResourceId, int aZoomMinLevel,
 			int aZoomMaxLevel, int aTileSizePixels,
 			String aImageFilenameEnding, String... aBaseUrl) {

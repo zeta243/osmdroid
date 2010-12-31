@@ -7,24 +7,23 @@ import org.andnav.osm.tileprovider.IRegisterReceiver;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
 import org.andnav.osm.tileprovider.constants.OpenStreetMapTileProviderConstants;
-import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
-import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
+import org.andnav.osm.tileprovider.tilesource.ITileSource;
+import org.andnav.osm.tileprovider.tilesource.TileSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import android.graphics.drawable.Drawable;
 
 /**
- * Implements a file system cache and provides cached tiles. This functions as a
- * tile provider by serving cached tiles for the supplied renderer.
+ * Implements a file system cache and provides cached tiles. This functions as a tile provider by
+ * serving cached tiles for the supplied tile source.
  * 
  * @author Marc Kurtz
  * @author Nicolas Gramlich
  * 
  */
-public class OpenStreetMapTileFilesystemProvider extends
-		OpenStreetMapTileFileStorageProviderBase implements
-		OpenStreetMapTileProviderConstants {
+public class OpenStreetMapTileFilesystemProvider extends OpenStreetMapTileFileStorageProviderBase
+		implements OpenStreetMapTileProviderConstants {
 
 	// ===========================================================
 	// Constants
@@ -39,36 +38,32 @@ public class OpenStreetMapTileFilesystemProvider extends
 
 	private final long mMaximumCachedFileAge;
 
-	private IOpenStreetMapRendererInfo mRendererInfo;
+	private ITileSource mTileSource;
 
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 
-	public OpenStreetMapTileFilesystemProvider(
-			final IRegisterReceiver aRegisterReceiver) {
-		this(aRegisterReceiver, OpenStreetMapRendererFactory.DEFAULT_RENDERER);
+	public OpenStreetMapTileFilesystemProvider(final IRegisterReceiver aRegisterReceiver) {
+		this(aRegisterReceiver, TileSourceFactory.DEFAULT_TILE_SOURCE);
 	}
 
-	public OpenStreetMapTileFilesystemProvider(
-			final IRegisterReceiver aRegisterReceiver,
-			final IOpenStreetMapRendererInfo aRenderer) {
-		this(aRegisterReceiver, aRenderer, DEFAULT_MAXIMUM_CACHED_FILE_AGE);
+	public OpenStreetMapTileFilesystemProvider(final IRegisterReceiver aRegisterReceiver,
+			final ITileSource aTileSource) {
+		this(aRegisterReceiver, aTileSource, DEFAULT_MAXIMUM_CACHED_FILE_AGE);
 	}
 
 	/**
-	 * Provides a file system based cache tile provider. Other providers can
-	 * register and store data in the cache.
+	 * Provides a file system based cache tile provider. Other providers can register and store data
+	 * in the cache.
 	 * 
 	 * @param aRegisterReceiver
 	 */
-	public OpenStreetMapTileFilesystemProvider(
-			final IRegisterReceiver aRegisterReceiver,
-			final IOpenStreetMapRendererInfo aRenderer,
-			final long maximumCachedFileAge) {
-		super(NUMBER_OF_TILE_FILESYSTEM_THREADS,
-				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, aRegisterReceiver);
-		mRendererInfo = aRenderer;
+	public OpenStreetMapTileFilesystemProvider(final IRegisterReceiver aRegisterReceiver,
+			final ITileSource aTileSource, final long maximumCachedFileAge) {
+		super(NUMBER_OF_TILE_FILESYSTEM_THREADS, TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE,
+				aRegisterReceiver);
+		mTileSource = aTileSource;
 
 		mMaximumCachedFileAge = maximumCachedFileAge;
 	}
@@ -103,32 +98,29 @@ public class OpenStreetMapTileFilesystemProvider extends
 
 	@Override
 	public int getMinimumZoomLevel() {
-		return (mRendererInfo != null ? mRendererInfo.getMinimumZoomLevel()
-				: Integer.MAX_VALUE);
+		return (mTileSource != null ? mTileSource.getMinimumZoomLevel() : Integer.MAX_VALUE);
 	}
 
 	@Override
 	public int getMaximumZoomLevel() {
-		return (mRendererInfo != null ? mRendererInfo.getMaximumZoomLevel()
-				: Integer.MIN_VALUE);
+		return (mTileSource != null ? mTileSource.getMaximumZoomLevel() : Integer.MIN_VALUE);
 	}
 
 	@Override
-	public void setRenderer(IOpenStreetMapRendererInfo pRenderer) {
-		mRendererInfo = pRenderer;
+	public void setTileSource(ITileSource pTileSource) {
+		mTileSource = pTileSource;
 	}
 
 	// ===========================================================
 	// Inner and Anonymous Classes
 	// ===========================================================
 
-	private class TileLoader extends
-			OpenStreetMapTileModuleProviderBase.TileLoader {
+	private class TileLoader extends OpenStreetMapTileModuleProviderBase.TileLoader {
 
 		@Override
 		public Drawable loadTile(final OpenStreetMapTileRequestState aState) {
 
-			if (mRendererInfo == null)
+			if (mTileSource == null)
 				return null;
 
 			final OpenStreetMapTile aTile = aState.getMapTile();
@@ -140,31 +132,26 @@ public class OpenStreetMapTileFilesystemProvider extends
 				return null;
 			}
 
-			// Check the renderer to see if its file is available
-			// and if so, then render the drawable and return the tile
+			// Check the tile source to see if its file is available and if so, then render the
+			// drawable and return the tile
 			final File file = new File(TILE_PATH_BASE,
-					mRendererInfo.getTileRelativeFilenameString(aTile));
+					mTileSource.getTileRelativeFilenameString(aTile));
 			if (file.exists()) {
 
 				// Check to see if file has expired
 				final long now = System.currentTimeMillis();
 				final long lastModified = file.lastModified();
-				final boolean fileExpired = lastModified < now
-						- mMaximumCachedFileAge;
+				final boolean fileExpired = lastModified < now - mMaximumCachedFileAge;
 
 				if (!fileExpired) {
-					// If the file has not expired, then render it and
-					// return it!
-					final Drawable drawable = mRendererInfo.getDrawable(file
-							.getPath());
+					// If the file has not expired, then render it and return it!
+					final Drawable drawable = mTileSource.getDrawable(file.getPath());
 					return drawable;
 				} else {
-					// If the file has expired then we render it, but we
-					// return it as a candidate and then fail on the
-					// request. This allows the tile to be loaded, but also
+					// If the file has expired then we render it, but we return it as a candidate
+					// and then fail on the request. This allows the tile to be loaded, but also
 					// allows other tile providers to do a better job.
-					final Drawable drawable = mRendererInfo.getDrawable(file
-							.getPath());
+					final Drawable drawable = mTileSource.getDrawable(file.getPath());
 					tileCandidateLoaded(aState, drawable);
 					return null;
 				}

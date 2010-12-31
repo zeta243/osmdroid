@@ -12,7 +12,7 @@ import org.andnav.osm.tileprovider.IRegisterReceiver;
 import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderBase;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
-import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
+import org.andnav.osm.tileprovider.tilesource.ITileSource;
 import org.andnav.osm.tileprovider.util.StreamUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,16 +20,14 @@ import org.slf4j.LoggerFactory;
 import android.graphics.drawable.Drawable;
 
 /**
- * A tile provider that can serve tiles from a Zip archive using the supplied
- * renderer. The tile provider will automatically find existing archives and use
- * each one that it finds.
+ * A tile provider that can serve tiles from a Zip archive using the supplied tile source. The tile
+ * provider will automatically find existing archives and use each one that it finds.
  * 
  * @author Marc Kurtz
  * @author Nicolas Gramlich
  * 
  */
-public class OpenStreetMapTileFileArchiveProvider extends
-		OpenStreetMapTileFileStorageProviderBase {
+public class OpenStreetMapTileFileArchiveProvider extends OpenStreetMapTileFileStorageProviderBase {
 
 	// ===========================================================
 	// Constants
@@ -44,27 +42,26 @@ public class OpenStreetMapTileFileArchiveProvider extends
 
 	private final ArrayList<ZipFile> mZipFiles = new ArrayList<ZipFile>();
 
-	private IOpenStreetMapRendererInfo mRendererInfo;
+	private ITileSource mTileSource;
 
 	// ===========================================================
 	// Constructors
 	// ===========================================================
 
 	/**
-	 * The tiles may be found on several media. This one works with tiles stored
-	 * on the file system. It and its friends are typically created and
-	 * controlled by {@link OpenStreetMapTileProviderBase}.
+	 * The tiles may be found on several media. This one works with tiles stored on the file system.
+	 * It and its friends are typically created and controlled by
+	 * {@link OpenStreetMapTileProviderBase}.
 	 * 
 	 * @param aCallback
 	 * @param aRegisterReceiver
 	 */
-	public OpenStreetMapTileFileArchiveProvider(
-			final IOpenStreetMapRendererInfo pRendererInfo,
+	public OpenStreetMapTileFileArchiveProvider(final ITileSource pTileSource,
 			final IRegisterReceiver pRegisterReceiver) {
-		super(NUMBER_OF_TILE_FILESYSTEM_THREADS,
-				TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE, pRegisterReceiver);
+		super(NUMBER_OF_TILE_FILESYSTEM_THREADS, TILE_FILESYSTEM_MAXIMUM_QUEUE_SIZE,
+				pRegisterReceiver);
 
-		mRendererInfo = pRendererInfo;
+		mTileSource = pTileSource;
 
 		findZipFiles();
 	}
@@ -99,14 +96,12 @@ public class OpenStreetMapTileFileArchiveProvider extends
 
 	@Override
 	public int getMinimumZoomLevel() {
-		return (mRendererInfo != null ? mRendererInfo.getMinimumZoomLevel()
-				: Integer.MAX_VALUE);
+		return (mTileSource != null ? mTileSource.getMinimumZoomLevel() : Integer.MAX_VALUE);
 	}
 
 	@Override
 	public int getMaximumZoomLevel() {
-		return (mRendererInfo != null ? mRendererInfo.getMaximumZoomLevel()
-				: Integer.MIN_VALUE);
+		return (mTileSource != null ? mTileSource.getMaximumZoomLevel() : Integer.MIN_VALUE);
 	}
 
 	@Override
@@ -120,8 +115,8 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	}
 
 	@Override
-	public void setRenderer(IOpenStreetMapRendererInfo pRenderer) {
-		mRendererInfo = pRenderer;
+	public void setTileSource(ITileSource pTileSource) {
+		mTileSource = pTileSource;
 	}
 
 	// ===========================================================
@@ -155,7 +150,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	}
 
 	private synchronized InputStream fileFromZip(final OpenStreetMapTile aTile) {
-		final String path = mRendererInfo.getTileRelativeFilenameString(aTile);
+		final String path = mTileSource.getTileRelativeFilenameString(aTile);
 		for (final ZipFile zipFile : mZipFiles) {
 			try {
 				final ZipEntry entry = zipFile.getEntry(path);
@@ -175,13 +170,12 @@ public class OpenStreetMapTileFileArchiveProvider extends
 	// Inner and Anonymous Classes
 	// ===========================================================
 
-	private class TileLoader extends
-			OpenStreetMapTileModuleProviderBase.TileLoader {
+	private class TileLoader extends OpenStreetMapTileModuleProviderBase.TileLoader {
 
 		@Override
 		public Drawable loadTile(final OpenStreetMapTileRequestState aState) {
 
-			if (mRendererInfo == null)
+			if (mTileSource == null)
 				return null;
 
 			final OpenStreetMapTile aTile = aState.getMapTile();
@@ -202,8 +196,7 @@ public class OpenStreetMapTileFileArchiveProvider extends
 				if (fileFromZip != null) {
 					if (DEBUGMODE)
 						logger.debug("Use tile from zip: " + aTile);
-					final Drawable drawable = mRendererInfo
-							.getDrawable(fileFromZip);
+					final Drawable drawable = mTileSource.getDrawable(fileFromZip);
 					return drawable;
 				}
 			} catch (final Throwable e) {
