@@ -8,7 +8,7 @@ import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderDirect;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileModuleProviderBase;
-import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
+import org.andnav.osm.tileprovider.tilesource.TileSourceFactory;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -58,7 +58,7 @@ public class OpenStreetMapTileProviderDirectTest extends AndroidTestCase {
 		bitmap1.compress(CompressFormat.PNG, 100, fos);
 
 		OpenStreetMapTileRequestState state = new OpenStreetMapTileRequestState(tile, new OpenStreetMapTileModuleProviderBase[] {}, mProvider);
-		mProvider.mapTileRequestCompleted(state, OpenStreetMapRendererFactory.MAPNIK.getDrawable(path));
+		mProvider.mapTileRequestCompleted(state, TileSourceFactory.MAPNIK.getDrawable(path));
 
 		// do the test
 		final Drawable drawable = mProvider.getMapTile(tile);

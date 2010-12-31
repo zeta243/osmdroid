@@ -1,7 +1,7 @@
 package org.andnav.osm.samples;
 
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderDirect;
-import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
+import org.andnav.osm.tileprovider.tilesource.TileSourceFactory;
 import org.andnav.osm.tileprovider.util.CloudmadeUtil;
 import org.andnav.osm.util.GeoPoint;
 import org.andnav.osm.views.OpenStreetMapView;
@@ -45,8 +45,8 @@ public class SampleWithTilesOverlay extends Activity {
 		CloudmadeUtil.retrieveCloudmadeKey(getApplicationContext());
 
 		this.mOsmv = new OpenStreetMapView(this, 256);
-		rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(
-				LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+		rl.addView(this.mOsmv, new RelativeLayout.LayoutParams(LayoutParams.FILL_PARENT,
+				LayoutParams.FILL_PARENT));
 		this.mOsmv.setBuiltInZoomControls(true);
 
 		// zoom to the netherlands
@@ -55,9 +55,9 @@ public class SampleWithTilesOverlay extends Activity {
 
 		// Add tiles layer
 		mProvider = new OpenStreetMapTileProviderDirect(getApplicationContext());
-		mProvider.setRenderer(OpenStreetMapRendererFactory.FIETS_OVERLAY_NL);
-		this.mTilesOverlay = new OpenStreetMapTilesOverlay(this.mOsmv,
-				mProvider, this.getBaseContext());
+		mProvider.setTileSource(TileSourceFactory.FIETS_OVERLAY_NL);
+		this.mTilesOverlay = new OpenStreetMapTilesOverlay(this.mOsmv, mProvider,
+				this.getBaseContext());
 		this.mOsmv.getOverlays().add(this.mTilesOverlay);
 
 		this.setContentView(rl);

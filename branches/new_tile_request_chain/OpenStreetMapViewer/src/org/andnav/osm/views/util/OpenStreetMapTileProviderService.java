@@ -7,8 +7,8 @@ import org.andnav.osm.tileprovider.OpenStreetMapTile;
 import org.andnav.osm.tileprovider.OpenStreetMapTileProviderBase;
 import org.andnav.osm.tileprovider.OpenStreetMapTileRequestState;
 import org.andnav.osm.tileprovider.modules.OpenStreetMapTileModuleProviderBase;
-import org.andnav.osm.tileprovider.renderer.IOpenStreetMapRendererInfo;
-import org.andnav.osm.tileprovider.renderer.OpenStreetMapRendererFactory;
+import org.andnav.osm.tileprovider.tilesource.ITileSource;
+import org.andnav.osm.tileprovider.tilesource.TileSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +21,8 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.RemoteException;
 
-public class OpenStreetMapTileProviderService extends
-		OpenStreetMapTileProviderBase implements ServiceConnection,
-		IOpenStreetMapTileProviderCallback {
+public class OpenStreetMapTileProviderService extends OpenStreetMapTileProviderBase implements
+		ServiceConnection, IOpenStreetMapTileProviderCallback {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(OpenStreetMapTileProviderService.class);
@@ -45,12 +44,10 @@ public class OpenStreetMapTileProviderService extends
 	}
 
 	@Override
-	public void onServiceConnected(final ComponentName name,
-			final IBinder service) {
+	public void onServiceConnected(final ComponentName name, final IBinder service) {
 		logger.debug("onServiceConnected(" + name + ")");
 
-		mTileService = IOpenStreetMapTileProviderService.Stub
-				.asInterface(service);
+		mTileService = IOpenStreetMapTileProviderService.Stub.asInterface(service);
 
 		try {
 			mTileService.setCallback(mServiceCallback);
@@ -59,8 +56,7 @@ public class OpenStreetMapTileProviderService extends
 		}
 
 		try {
-			mTileRequestCompleteHandler
-					.sendEmptyMessage(OpenStreetMapTile.MAPTILE_SUCCESS_ID);
+			mTileRequestCompleteHandler.sendEmptyMessage(OpenStreetMapTile.MAPTILE_SUCCESS_ID);
 		} catch (Exception e) {
 			logger.error("Error sending success message on connect", e);
 		}
@@ -73,11 +69,10 @@ public class OpenStreetMapTileProviderService extends
 	}
 
 	/**
-	 * Get the tile from the cache. If it's in the cache then it will be
-	 * returned. If not it will return null and request it from the service. In
-	 * turn, the service will request it from the file system. If it's found in
-	 * the file system it will notify the callback. If not it will initiate a
-	 * download. When the download has finished it will notify the callback.
+	 * Get the tile from the cache. If it's in the cache then it will be returned. If not it will
+	 * return null and request it from the service. In turn, the service will request it from the
+	 * file system. If it's found in the file system it will notify the callback. If not it will
+	 * initiate a download. When the download has finished it will notify the callback.
 	 * 
 	 * @param aTile
 	 *            the tile being requested
@@ -94,12 +89,10 @@ public class OpenStreetMapTileProviderService extends
 				if (DEBUGMODE)
 					logger.debug("Cache failed, trying from FS: " + aTile);
 				try {
-					mTileService.requestMapTile(
-							OpenStreetMapRendererFactory.MAPNIK.name(),
+					mTileService.requestMapTile(TileSourceFactory.MAPNIK.name(),
 							aTile.getZoomLevel(), aTile.getX(), aTile.getY());
 				} catch (Throwable e) {
-					logger.error("Error getting map tile from tile service: "
-							+ aTile, e);
+					logger.error("Error getting map tile from tile service: " + aTile, e);
 				}
 			} else {
 				// try to reconnect, but the connection will take time.
@@ -109,8 +102,7 @@ public class OpenStreetMapTileProviderService extends
 								+ aTile);
 				} else {
 					if (DEBUGMODE)
-						logger.debug("Cache failed, tile service still not woken up: "
-								+ aTile);
+						logger.debug("Cache failed, tile service still not woken up: " + aTile);
 				}
 			}
 
@@ -135,13 +127,12 @@ public class OpenStreetMapTileProviderService extends
 		if (mServiceBound)
 			return true;
 
-		boolean success = mContext.bindService(new Intent(
-				IOpenStreetMapTileProviderService.class.getName()), this,
+		boolean success = mContext.bindService(
+				new Intent(IOpenStreetMapTileProviderService.class.getName()), this,
 				Context.BIND_AUTO_CREATE);
 
 		if (!success)
-			logger.error("Could not bind to "
-					+ IOpenStreetMapTileProviderService.class.getName());
+			logger.error("Could not bind to " + IOpenStreetMapTileProviderService.class.getName());
 
 		mServiceBound = success;
 
@@ -155,20 +146,16 @@ public class OpenStreetMapTileProviderService extends
 
 	IOpenStreetMapTileProviderServiceCallback mServiceCallback = new IOpenStreetMapTileProviderServiceCallback.Stub() {
 		@Override
-		public void mapTileRequestCompleted(final String aRendererName,
-				final int aZoomLevel, final int aTileX, final int aTileY,
-				final String aTilePath) throws RemoteException {
-			// TODO this will go wrong if you use a renderer that the factory
-			// doesn't know about
-			final IOpenStreetMapRendererInfo renderer = OpenStreetMapRendererFactory
-					.getRenderer(aRendererName);
-			final OpenStreetMapTile tile = new OpenStreetMapTile(aZoomLevel,
-					aTileX, aTileY);
-			final OpenStreetMapTileRequestState state = new OpenStreetMapTileRequestState(
-					tile, new OpenStreetMapTileModuleProviderBase[] {},
+		public void mapTileRequestCompleted(final String aTileSourceName, final int aZoomLevel,
+				final int aTileX, final int aTileY, final String aTilePath) throws RemoteException {
+			// TODO this will go wrong if you use a tile source that the factory doesn't know about
+			final ITileSource tileSource = TileSourceFactory.getTileSource(aTileSourceName);
+			final OpenStreetMapTile tile = new OpenStreetMapTile(aZoomLevel, aTileX, aTileY);
+			final OpenStreetMapTileRequestState state = new OpenStreetMapTileRequestState(tile,
+					new OpenStreetMapTileModuleProviderBase[] {},
 					OpenStreetMapTileProviderService.this);
-			OpenStreetMapTileProviderService.this.mapTileRequestCompleted(
-					state, renderer.getDrawable(aTilePath));
+			OpenStreetMapTileProviderService.this.mapTileRequestCompleted(state,
+					tileSource.getDrawable(aTilePath));
 		}
 	};
 

@@ -124,7 +124,7 @@ public class OpenStreetMapTileProviderService extends Service implements
 		}
 
 		@Override
-		public void requestMapTile(String rendererName, int zoomLevel,
+		public void requestMapTile(String tileSourceName, int zoomLevel,
 				int tileX, int tileY) throws RemoteException {
 			OpenStreetMapTile tile = new OpenStreetMapTile(zoomLevel,
 					tileX, tileY);
