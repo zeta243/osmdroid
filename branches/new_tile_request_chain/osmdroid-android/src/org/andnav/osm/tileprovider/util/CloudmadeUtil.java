@@ -68,11 +68,14 @@ public class CloudmadeUtil implements OpenStreetMapTileProviderConstants {
 
 	/**
 	 * Get the token from the Cloudmade server.
-	 * @param aKey the cloudmade key
+	 * @param aKey the cloudmade key obtained with a call to {@link retrieveCloudmadeKey(Context)}
 	 * @return the token returned from the server, or null if not found
 	 * @throws CloudmadeException
 	 */
 	public static String getCloudmadeToken(final String aKey) throws CloudmadeException {
+
+		// TODO see issue 75 - persist key and token - if key hasn't changed then return the previous token
+
 		final String url = "http://auth.cloudmade.com/token/" + aKey + "?userid=" + mAndroidId;
 		final HttpClient httpClient = new DefaultHttpClient();
 		final HttpPost httpPost = new HttpPost(url);
