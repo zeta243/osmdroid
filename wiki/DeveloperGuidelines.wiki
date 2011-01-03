@@ -10,8 +10,11 @@ This page is to list some of the more important guidelines for developers contri
  * Use tabs for intending, not spaces
  * Make variables final where possible
  * Prefix member variables with m
- * Prefix method arguments with a
+ * Prefix method arguments with p
  * Use org.slf4j.Logger, not android.util.Log
+ * Use 100 character line width
+ * Use final wherever possible, especially parameters
+
 
 == Guidelines for osmdroid-android project ==
 
