@@ -38,4 +38,4 @@ The asynchronous tile request chain works as such:
 
 = File System Cache Model =
 
-To provide a universal file system cache for use to all providers, an !IFilesystemCacheProvider is used. This can be used by tile providers if they wish to cache their tiles in a filesystem cache for quicker retrieval next time the tile is requested. This interface is fully implemented in the !MapTileFilesystemProvider.
+To provide a universal file system cache for use to all providers, an !IFilesystemCacheProvider is used. This can be used by tile providers if they wish to cache their tiles in a filesystem cache for quicker retrieval next time the tile is requested.
