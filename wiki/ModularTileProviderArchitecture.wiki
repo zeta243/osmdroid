@@ -24,7 +24,7 @@ The !MapTileProviderArray is the basis for the modular tile architecture and is 
 
 = Tile Sources =
 
-Tile providers use tile sources classes to encapsulate information about the type of tiles the provider serves. A tile source also provides rendering services to create Drawables. Tile sources that provide raster images (bitmap, jpg, png, gif, etc...) can extend the BitmapTileSourceBase class. If the tile source is online (accessible via HTTP), then they can extend the OnlineTileSourceBase. OnlineTileSourceBase classes are the only tile sources that the MapTileDownloader can serve.
+Tile providers use tile sources classes to encapsulate information about the type of tiles the provider serves. A tile source also provides rendering services to create Drawables. Tile sources that provide raster images (bitmap, jpg, png, gif, etc...) can extend the !BitmapTileSourceBase class. If the tile source is online (accessible via HTTP), then they can extend the !OnlineTileSourceBase. !OnlineTileSourceBase classes are the only tile sources that the !MapTileDownloader can serve.
 
 = Asynchronous Tile Request Chain Details =
 
