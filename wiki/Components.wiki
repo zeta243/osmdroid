@@ -1,5 +1,9 @@
 #summary Components of osmdroid
 
+= Deprecated =
+
+This information is outdated, and is marked for deletion.
+
 = Services =
 
 The service API of osmdroid is not finished yet. There are several possibilities to achieve the separation of tile storage & retrieval and an app. Here is a comparison:
