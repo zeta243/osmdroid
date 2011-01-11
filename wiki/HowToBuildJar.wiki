@@ -1,3 +1,0 @@
-#summary Instructions how to build the .jar from source
-
-_Placeholder until instructions are written_
