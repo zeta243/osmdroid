@@ -32,10 +32,10 @@ If you know of any inaccuracies or additions to this page, please add a comment.
  * [http://opensatnav.org/ OpenSatNav]
  * [http://android.ranitos.de/ GeOrg]
  * [http://opengpx.sf.net/ OpenGPX]
- * [http://code.google.com/p/geohunter/ GeoHunter] (osmdroid feature not yet released)
  * [http://wigle.net/ WigleWifi]
  * [http://www.softoutfit.com/openflightmap/disclaimer.html OpenFlight Map]
-
+ * [http://github.com/Drakuwa/aBusTripMK aBusTripMK]
+ * [http://code.google.com/p/geohunter/ GeoHunter] (osmdroid feature not yet released)
 
 == Projects using their own implementation similar to osmdroid ==
 
