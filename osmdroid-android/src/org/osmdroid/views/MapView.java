@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 
 import android.content.Context;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.Rect;
@@ -48,13 +47,14 @@ import android.view.GestureDetector;
 import android.view.GestureDetector.OnGestureListener;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
+import android.view.animation.Transformation;
 import android.widget.Scroller;
 
-public class MapView extends View implements IMapView, MapViewConstants,
+public class MapView extends MapSurfaceView implements IMapView, MapViewConstants,
 		MultiTouchObjectCanvas<Object> {
 
 	// ===========================================================
@@ -111,6 +111,8 @@ public class MapView extends View implements IMapView, MapViewConstants,
 
 	// for speed (avoiding allocations)
 	private final Matrix mMatrix = new Matrix();
+	private final Transformation mTransformation = new Transformation();
+
 	private final MapTileProviderBase mTileProvider;
 
 	private final Handler mTileRequestCompleteHandler;
@@ -153,6 +155,15 @@ public class MapView extends View implements IMapView, MapViewConstants,
 
 		mGestureDetector = new GestureDetector(context, new MapViewGestureDetectorListener());
 		mGestureDetector.setOnDoubleTapListener(new MapViewDoubleClickListener());
+		// setOnTouchListener(new View.OnTouchListener() {
+		//
+		// @Override
+		// public boolean onTouch(View pV, MotionEvent pEvent) {
+		// if (mGestureDetector.onTouchEvent(pEvent))
+		// return true;
+		// return false;
+		// }
+		// });
 	}
 
 	/**
@@ -651,7 +662,25 @@ public class MapView extends View implements IMapView, MapViewConstants,
 		mProjection = new Projection();
 
 		if (mMultiTouchScale == 1.0f) {
-			c.translate(getWidth() / 2, getHeight() / 2);
+
+			c.getMatrix(mMatrix);
+			mMatrix.postTranslate((getWidth() / 2) - getScrollX(), (getHeight() / 2) - getScrollY());
+
+			if (isAnimating()) {
+				Animation animation = getAnimation();
+				if (animation != null) {
+					animation.getTransformation(AnimationUtils.currentAnimationTimeMillis(),
+							mTransformation);
+					if ((mTransformation.getTransformationType() & Transformation.TYPE_ALPHA) != 0) {
+						// Not supported yet
+					}
+					if ((mTransformation.getTransformationType() & Transformation.TYPE_MATRIX) != 0) {
+						mMatrix.postConcat(mTransformation.getMatrix());
+					}
+				}
+			}
+
+			c.setMatrix(mMatrix);
 		} else {
 			c.getMatrix(mMatrix);
 			mMatrix.postTranslate(getWidth() / 2, getHeight() / 2);
@@ -660,7 +689,7 @@ public class MapView extends View implements IMapView, MapViewConstants,
 		}
 
 		/* Draw background */
-		c.drawColor(Color.LTGRAY);
+		// c.drawColor(Color.LTGRAY);
 		// This is too slow:
 		// final Rect r = c.getClipBounds();
 		// mPaint.setColor(Color.GRAY);
@@ -682,7 +711,14 @@ public class MapView extends View implements IMapView, MapViewConstants,
 	}
 
 	@Override
+	protected void onAttachedToWindow() {
+		resume();
+		super.onAttachedToWindow();
+	}
+
+	@Override
 	protected void onDetachedFromWindow() {
+		pause();
 		this.mZoomController.setVisible(false);
 		this.onDetach();
 		super.onDetachedFromWindow();
@@ -1151,7 +1187,12 @@ public class MapView extends View implements IMapView, MapViewConstants,
 		@Override
 		public void onAnimationEnd(final Animation aAnimation) {
 			animating = false;
-			setZoomLevel(targetZoomLevel);
+			MapView.this.post(new Runnable() {
+				@Override
+				public void run() {
+					setZoomLevel(targetZoomLevel);
+				}
+			});
 		}
 
 		@Override
