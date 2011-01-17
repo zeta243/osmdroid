@@ -49,6 +49,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.animation.Animation;
 import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationSet;
 import android.view.animation.AnimationUtils;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.Transformation;
@@ -91,9 +92,10 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 	/** Handles map scrolling */
 	private final Scroller mScroller;
 
-	private final ScaleAnimation mZoomInAnimation;
-	private final ScaleAnimation mZoomOutAnimation;
+	// private final ScaleAnimation mZoomInAnimation;
+	// private final ScaleAnimation mZoomOutAnimation;
 	private final MyAnimationListener mAnimationListener = new MyAnimationListener();
+	private final AnimationSet mAnimationSet;
 
 	private final MapController mController;
 
@@ -144,26 +146,38 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 		this.mZoomController = new ZoomButtonsController(this);
 		this.mZoomController.setOnZoomListener(new MapViewZoomListener());
 
-		mZoomInAnimation = new ScaleAnimation(1, 2, 1, 2, Animation.RELATIVE_TO_SELF, 0.5f,
-				Animation.RELATIVE_TO_SELF, 0.5f);
-		mZoomOutAnimation = new ScaleAnimation(1, 0.5f, 1, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f,
-				Animation.RELATIVE_TO_SELF, 0.5f);
-		mZoomInAnimation.setDuration(ANIMATION_DURATION_SHORT);
-		mZoomOutAnimation.setDuration(ANIMATION_DURATION_SHORT);
-		mZoomInAnimation.setAnimationListener(mAnimationListener);
-		mZoomOutAnimation.setAnimationListener(mAnimationListener);
+		// mZoomInAnimation = new ScaleAnimation(1, 2, 1, 2, Animation.RELATIVE_TO_SELF, 0.5f,
+		// Animation.RELATIVE_TO_SELF, 0.5f);
+		// mZoomOutAnimation = new ScaleAnimation(1, 0.5f, 1, 0.5f, Animation.RELATIVE_TO_SELF,
+		// 0.5f,
+		// Animation.RELATIVE_TO_SELF, 0.5f);
+		// mZoomInAnimation.setDuration(ANIMATION_DURATION_SHORT);
+		// mZoomOutAnimation.setDuration(ANIMATION_DURATION_SHORT);
+		// mZoomInAnimation.setAnimationListener(mAnimationListener);
+		// mZoomOutAnimation.setAnimationListener(mAnimationListener);
+
+		mAnimationSet = new AnimationSet(false);
 
 		mGestureDetector = new GestureDetector(context, new MapViewGestureDetectorListener());
 		mGestureDetector.setOnDoubleTapListener(new MapViewDoubleClickListener());
-		// setOnTouchListener(new View.OnTouchListener() {
-		//
-		// @Override
-		// public boolean onTouch(View pV, MotionEvent pEvent) {
-		// if (mGestureDetector.onTouchEvent(pEvent))
-		// return true;
-		// return false;
-		// }
-		// });
+	}
+
+	private void postZoomInAnimation() {
+		ScaleAnimation zoomInAnimation = new ScaleAnimation(1, 2, 1, 2, Animation.RELATIVE_TO_SELF,
+				0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+		zoomInAnimation.setDuration(ANIMATION_DURATION_SHORT);
+		zoomInAnimation.setAnimationListener(mAnimationListener);
+		mAnimationSet.addAnimation(zoomInAnimation);
+		startAnimation(mAnimationSet);
+	}
+
+	private void postZoomOutAnimation() {
+		ScaleAnimation zoomOutAnimation = new ScaleAnimation(1, 0.5f, 1, 0.5f,
+				Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+		zoomOutAnimation.setDuration(ANIMATION_DURATION_SHORT);
+		zoomOutAnimation.setAnimationListener(mAnimationListener);
+		mAnimationSet.addAnimation(zoomOutAnimation);
+		startAnimation(mAnimationSet);
 	}
 
 	/**
@@ -427,7 +441,8 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 			} else {
 				mAnimationListener.targetZoomLevel = mZoomLevel + 1;
 				mAnimationListener.animating = true;
-				startAnimation(mZoomInAnimation);
+				postZoomInAnimation();
+				// startAnimation(mZoomInAnimation);
 				return true;
 			}
 		} else {
@@ -457,7 +472,8 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 			} else {
 				mAnimationListener.targetZoomLevel = mZoomLevel - 1;
 				mAnimationListener.animating = true;
-				startAnimation(mZoomOutAnimation);
+				postZoomOutAnimation();
+				// startAnimation(mZoomOutAnimation);
 				return true;
 			}
 		} else {
@@ -667,7 +683,7 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 			mMatrix.postTranslate((getWidth() / 2) - getScrollX(), (getHeight() / 2) - getScrollY());
 
 			if (isAnimating()) {
-				Animation animation = getAnimation();
+				Animation animation = mAnimationSet;// getAnimation();
 				if (animation != null) {
 					animation.getTransformation(AnimationUtils.currentAnimationTimeMillis(),
 							mTransformation);
@@ -1187,6 +1203,7 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 		@Override
 		public void onAnimationEnd(final Animation aAnimation) {
 			animating = false;
+			mAnimationSet.getAnimations().remove(aAnimation);
 			MapView.this.post(new Runnable() {
 				@Override
 				public void run() {
