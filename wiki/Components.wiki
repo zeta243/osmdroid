@@ -1,4 +1,5 @@
 #summary Components of osmdroid
+#labels Deprecated
 
 = Deprecated =
 
