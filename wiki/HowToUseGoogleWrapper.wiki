@@ -1,0 +1,12 @@
+#summary How to use the osmdroid-google-wrapper package.
+
+= Introduction =
+
+TODO.
+
+Basically it allows you to easily switch between a Google !MapView and an osmdroid !MapView by letting the application refer to the IMapView interface instead of the specific implementation.
+
+
+= Details =
+
+TODO.
