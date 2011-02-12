@@ -8,6 +8,7 @@ import org.osmdroid.DefaultResourceProxyImpl;
 import org.osmdroid.ResourceProxy;
 import org.osmdroid.api.IMyLocationOverlay;
 import org.osmdroid.util.GeoPoint;
+import org.osmdroid.util.LocationUtils;
 import org.osmdroid.util.NetworkLocationIgnorer;
 import org.osmdroid.views.MapController;
 import org.osmdroid.views.MapView;
@@ -17,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -26,6 +28,7 @@ import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Picture;
 import android.graphics.Point;
+import android.graphics.PointF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -35,17 +38,17 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.location.LocationProvider;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 
-
 /**
- *
+ * 
  * @author Manuel Stahl
- *
+ * 
  */
-public class MyLocationOverlay
-extends Overlay
-implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable {
+public class MyLocationOverlay extends Overlay implements IMyLocationOverlay, SensorEventListener,
+		LocationListener, Snappable {
 
 	private static final Logger logger = LoggerFactory.getLogger(MyLocationOverlay.class);
 
@@ -81,8 +84,8 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 
 	private final Matrix directionRotater = new Matrix();
 
-	/** Coordinates the feet of the person are located. */
-	protected final android.graphics.Point PERSON_HOTSPOT = new android.graphics.Point(24, 39);
+	/** Coordinates the feet of the person are located scaled for display density. */
+	protected final PointF PERSON_HOTSPOT;
 
 	private final float DIRECTION_ARROW_CENTER_X;
 	private final float DIRECTION_ARROW_CENTER_Y;
@@ -107,6 +110,9 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 	private final float COMPASS_FRAME_CENTER_Y;
 	private final float COMPASS_ROSE_CENTER_X;
 	private final float COMPASS_ROSE_CENTER_Y;
+
+	public static final int MENU_MY_LOCATION = getSafeMenuId();
+	public static final int MENU_COMPASS = getSafeMenuId();
 
 	private float mScale = 1.0f;
 
@@ -141,6 +147,9 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 
 		mScale = ctx.getResources().getDisplayMetrics().density;
 
+		// Calculate position of person icon's feet, scaled to screen density
+		PERSON_HOTSPOT = new PointF(24.0f * mScale + 0.5f, 39.0f * mScale + 0.5f);
+
 		createCompassFramePicture();
 		createCompassRosePicture();
 
@@ -150,7 +159,7 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 		COMPASS_ROSE_CENTER_Y = mCompassRose.getHeight() / 2 - 0.5f;
 
 		final List<Sensor> mOrientationSensors = mSensorManager
-		.getSensorList(Sensor.TYPE_ORIENTATION);
+				.getSensorList(Sensor.TYPE_ORIENTATION);
 		mOrientationSensorAvailable = !mOrientationSensors.isEmpty();
 	}
 
@@ -200,7 +209,7 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 	 * Set the minimum interval for location updates. See {@link
 	 * LocationManager.requestLocationUpdates(String, long, float, LocationListener)}. Note that you
 	 * should call this before calling {@link enableMyLocation()}.
-	 *
+	 * 
 	 * @param milliSeconds
 	 */
 	public void setLocationUpdateMinTime(final long milliSeconds) {
@@ -215,7 +224,7 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 	 * Set the minimum distance for location updates. See
 	 * {@link LocationManager.requestLocationUpdates}. Note that you should call this before calling
 	 * {@link enableMyLocation()}.
-	 *
+	 * 
 	 * @param meters
 	 */
 	public void setLocationUpdateMinDistance(final float meters) {
@@ -237,7 +246,19 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 
 	@Override
 	public void onDraw(final Canvas c, final MapView osmv) {
-		if (this.mLocation != null) {
+
+		// Note - all azimuths are offset by -90 when in landscape mode. This is because the
+		// hardware does not change orientation when physically flipped, but Android changes the
+		// screen coordinates therefore it will be off by 90 degrees. This assumes that Android only
+		// allows two screen rotations - 0 degrees (portrait) and 90 degrees (landscape) and does
+		// not permit 180 or 270 degrees (upside-down portrait and upside-down landscape
+		// respectively). This is probably a bad assumption, so maybe there is a better way to do
+		// this. SensorManager.remapCoordinateSystem might be able to help.
+
+		final int azimuthRotationOffset = (osmv.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE ? -90
+				: 0);
+
+		if ((mMyLocationEnabled) && (this.mLocation != null)) {
 			final Projection pj = osmv.getProjection();
 			mGeoPoint.setCoordsE6((int) (mLocation.getLatitude() * 1E6),
 					(int) (mLocation.getLongitude() * 1E6));
@@ -258,9 +279,9 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 
 			if (DEBUGMODE) {
 				final float tx = (-mMatrixValues[Matrix.MTRANS_X] + 20)
-				/ mMatrixValues[Matrix.MSCALE_X];
+						/ mMatrixValues[Matrix.MSCALE_X];
 				final float ty = (-mMatrixValues[Matrix.MTRANS_Y] + 90)
-				/ mMatrixValues[Matrix.MSCALE_Y];
+						/ mMatrixValues[Matrix.MSCALE_Y];
 				c.drawText("Lat: " + mLocation.getLatitude(), tx, ty + 5, this.mPaint);
 				c.drawText("Lon: " + mLocation.getLongitude(), tx, ty + 20, this.mPaint);
 				c.drawText("Alt: " + mLocation.getAltitude(), tx, ty + 35, this.mPaint);
@@ -268,10 +289,10 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 			}
 
 			float bearing = -1.0f;
-			if (mLocation.getProvider().equals(LocationManager.GPS_PROVIDER) && (mAzimuth >= 0.0f)) {
+			if (mLocation.getProvider().equals(LocationManager.GPS_PROVIDER) && mAzimuth >= 0.0f) {
 				// if GPS and compass is available, use compass value
 				bearing = mAzimuth;
-			} else if (mLocation.hasSpeed() && (mLocation.getSpeed() > 1) && mLocation.hasBearing()) {
+			} else if (mLocation.hasSpeed() && mLocation.getSpeed() > 1 && mLocation.hasBearing()) {
 				// use bearing if available and if we're actually moving
 				// XXX do we really need to test for speed > 1, or maybe better
 				// some number other than 1
@@ -283,8 +304,9 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 				 * Rotate the direction-Arrow according to the bearing we are driving. And draw it
 				 * to the canvas.
 				 */
-				this.directionRotater.setRotate(bearing, DIRECTION_ARROW_CENTER_X,
-						DIRECTION_ARROW_CENTER_Y);
+				this.directionRotater.setRotate(-bearing + azimuthRotationOffset,
+						DIRECTION_ARROW_CENTER_X, DIRECTION_ARROW_CENTER_Y);
+
 				this.directionRotater.postTranslate(-DIRECTION_ARROW_CENTER_X,
 						-DIRECTION_ARROW_CENTER_Y);
 				this.directionRotater.postScale(1 / mMatrixValues[Matrix.MSCALE_X],
@@ -300,7 +322,7 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 			}
 		}
 
-		if (mAzimuth >= 0.0f) {
+		if ((mCompassEnabled) && (mAzimuth >= 0.0f)) {
 			final float centerX = mCompassCenterX * mScale;
 			final float centerY = mCompassCenterY * mScale + (c.getHeight() - mMapView.getHeight());
 
@@ -311,7 +333,8 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 			c.setMatrix(mCompassMatrix);
 			c.drawPicture(mCompassFrame);
 
-			this.mCompassMatrix.setRotate(-mAzimuth, COMPASS_ROSE_CENTER_X, COMPASS_ROSE_CENTER_Y);
+			this.mCompassMatrix.setRotate(-mAzimuth + azimuthRotationOffset, COMPASS_ROSE_CENTER_X,
+					COMPASS_ROSE_CENTER_Y);
 			this.mCompassMatrix.postTranslate(-COMPASS_ROSE_CENTER_X, -COMPASS_ROSE_CENTER_Y);
 			this.mCompassMatrix.postTranslate(centerX, centerY);
 
@@ -366,14 +389,15 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 	}
 
 	@Override
-	public boolean onSnapToItem(final int x, final int y, final Point snapPoint, final MapView mapView) {
+	public boolean onSnapToItem(final int x, final int y, final Point snapPoint,
+			final MapView mapView) {
 		if (this.mLocation != null) {
 			final Projection pj = mapView.getProjection();
 			pj.toMapPixels(new GeoPoint(mLocation), mMapCoords);
 			snapPoint.x = mMapCoords.x;
 			snapPoint.y = mMapCoords.y;
-			final double xDiff = (x - mMapCoords.x);
-			final double yDiff = (y - mMapCoords.y);
+			final double xDiff = x - mMapCoords.x;
+			final double yDiff = y - mMapCoords.y;
 			final boolean snap = xDiff * xDiff + yDiff * yDiff < 64;
 			if (DEBUGMODE) {
 				logger.debug("snap=" + snap);
@@ -410,6 +434,51 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 		}
 	}
 
+	@Override
+	public boolean onCreateOptionsMenu(Menu pMenu, int pMenuIdOffset, MapView pMapView) {
+		pMenu.add(0, MENU_MY_LOCATION + pMenuIdOffset, Menu.NONE,
+				mResourceProxy.getString(ResourceProxy.string.my_location)).setIcon(
+				mResourceProxy.getDrawable(ResourceProxy.bitmap.ic_menu_mylocation));
+
+		pMenu.add(0, MENU_COMPASS + pMenuIdOffset, Menu.NONE,
+				mResourceProxy.getString(ResourceProxy.string.compass)).setIcon(
+				mResourceProxy.getDrawable(ResourceProxy.bitmap.ic_menu_compass));
+
+		super.onCreateOptionsMenu(pMenu, pMenuIdOffset, pMapView);
+
+		return true;
+	}
+
+	@Override
+	public boolean onMenuItemSelected(int pFeatureId, MenuItem pItem, int pMenuIdOffset,
+			MapView pMapView) {
+		final int menuId = pItem.getItemId() - pMenuIdOffset;
+		if (menuId == MENU_MY_LOCATION) {
+			if (this.isMyLocationEnabled()) {
+				this.disableMyLocation();
+			} else {
+				this.enableMyLocation();
+				final Location lastFix = this.getLastFix();
+				if (lastFix != null) {
+					pMapView.getController().setCenter(new GeoPoint(lastFix));
+				}
+			}
+			// Toast.makeText(
+			// this,
+			// this.mLocationOverlay.isMyLocationEnabled() ? R.string.set_mode_show_me
+			// : R.string.set_mode_hide_me, Toast.LENGTH_LONG).show();
+			return true;
+		} else if (menuId == MENU_COMPASS) {
+			if (this.isCompassEnabled()) {
+				this.disableCompass();
+			} else {
+				this.enableCompass();
+			}
+			return true;
+		} else
+			return super.onMenuItemSelected(pFeatureId, pItem, pMenuIdOffset, pMapView);
+	}
+
 	// ===========================================================
 	// Methods
 	// ===========================================================
@@ -417,7 +486,12 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 	@Override
 	public void disableMyLocation() {
 		mLocationManager.removeUpdates(this);
+		mFollow = false;
 		mMyLocationEnabled = false;
+
+		// Update the screen to see changes take effect
+		if (mMapView != null)
+			mMapView.invalidate();
 	}
 
 	/**
@@ -434,6 +508,19 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 			mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,
 					mLocationUpdateMinTime, mLocationUpdateMinDistance, this);
 		}
+
+		// set initial location when enabled
+		mLocation = LocationUtils.getLastKnownLocation(mLocationManager);
+		if (mLocation != null) {
+			mMapController.animateTo(new GeoPoint(mLocation));
+		}
+
+		mFollow = true;
+
+		// Update the screen to see changes take effect
+		if (mMapView != null)
+			mMapView.invalidate();
+
 		return mMyLocationEnabled = true;
 	}
 
@@ -451,10 +538,15 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 		if (mOrientationSensorAvailable) {
 			if (!mCompassEnabled) {
 				final Sensor sensorOrientation = this.mSensorManager
-				.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+						.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 				mSensorManager.registerListener(this, sensorOrientation,
 						SensorManager.SENSOR_DELAY_UI);
 			}
+
+			// Update the screen to see changes take effect
+			if (mMapView != null)
+				mMapView.invalidate();
+
 			return mCompassEnabled = true;
 		} else {
 			return mCompassEnabled = false;
@@ -469,6 +561,10 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 			// Reset azimuth value
 			mAzimuth = -1.0f;
 		}
+
+		// Update the screen to see changes take effect
+		if (mMapView != null)
+			mMapView.invalidate();
 	}
 
 	public boolean toggleCompass() {
@@ -482,7 +578,7 @@ implements IMyLocationOverlay, SensorEventListener, LocationListener, Snappable 
 
 	@Override
 	public boolean runOnFirstFix(final Runnable runnable) {
-		if (mMyLocationEnabled && (mLocation != null)) {
+		if (mMyLocationEnabled && mLocation != null) {
 			runnable.run();
 			return true;
 		} else {

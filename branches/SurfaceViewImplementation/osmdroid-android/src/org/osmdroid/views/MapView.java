@@ -1,7 +1,6 @@
 // Created by plusminus on 17:45:56 - 25.09.2008
 package org.osmdroid.views;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import net.wigle.wigleandroid.ZoomButtonsController;
@@ -28,7 +27,7 @@ import org.osmdroid.util.BoundingBoxE6;
 import org.osmdroid.util.GeoPoint;
 import org.osmdroid.util.constants.GeoConstants;
 import org.osmdroid.views.overlay.Overlay;
-import org.osmdroid.views.overlay.Overlay.Snappable;
+import org.osmdroid.views.overlay.OverlayManager;
 import org.osmdroid.views.overlay.TilesOverlay;
 import org.osmdroid.views.util.Mercator;
 import org.osmdroid.views.util.constants.MapViewConstants;
@@ -81,7 +80,7 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 
 	private int mTileSizePixels = 0;
 
-	private final LinkedList<Overlay> mOverlays = new LinkedList<Overlay>();
+	private final OverlayManager mOverlayManager;
 
 	private Projection mProjection;
 
@@ -123,10 +122,11 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 	// Constructors
 	// ===========================================================
 
-	private MapView(final Context context, final Handler tileRequestCompleteHandler,
-			final AttributeSet attrs, final int tileSizePixels, MapTileProviderBase tileProvider) {
+	private MapView(final Context context, final int tileSizePixels,
+			final ResourceProxy resourceProxy, MapTileProviderBase tileProvider,
+			final Handler tileRequestCompleteHandler, final AttributeSet attrs) {
 		super(context, attrs);
-		mResourceProxy = new DefaultResourceProxyImpl(context);
+		mResourceProxy = resourceProxy;
 		this.mController = new MapController(this);
 		this.mScroller = new Scroller(context);
 		this.mTileSizePixels = tileSizePixels;
@@ -142,7 +142,8 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 		mTileProvider.setTileRequestCompleteHandler(mTileRequestCompleteHandler);
 
 		this.mMapOverlay = new TilesOverlay(mTileProvider, mResourceProxy);
-		mOverlays.add(this.mMapOverlay);
+		mOverlayManager = new OverlayManager(mMapOverlay);
+
 		this.mZoomController = new ZoomButtonsController(this);
 		this.mZoomController.setOnZoomListener(new MapViewZoomListener());
 
@@ -184,24 +185,31 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 	 * Constructor used by XML layout resource (uses default tile source).
 	 */
 	public MapView(final Context context, final AttributeSet attrs) {
-		this(context, null, attrs, 256, null);
+		this(context, 256, new DefaultResourceProxyImpl(context), null, null, attrs);
 	}
 
 	/**
 	 * Standard Constructor.
 	 */
-	public MapView(final Context context, final int tileSizePixels,
-			final MapTileProviderBase aTileProvider) {
-		this(context, null, null, tileSizePixels, aTileProvider);
-	}
-
 	public MapView(final Context context, final int tileSizePixels) {
-		this(context, null, null, tileSizePixels, null);
+		this(context, tileSizePixels, new DefaultResourceProxyImpl(context));
 	}
 
-	public MapView(final Context context, final Handler tileRequestCompleteHandler,
-			final int tileSizePixels, final MapTileProviderBase aTileProvider) {
-		this(context, tileRequestCompleteHandler, null, tileSizePixels, aTileProvider);
+	public MapView(final Context context, final int tileSizePixels,
+			final ResourceProxy resourceProxy) {
+		this(context, tileSizePixels, resourceProxy, null);
+	}
+
+	public MapView(final Context context, final int tileSizePixels,
+			final ResourceProxy resourceProxy, final MapTileProviderBase aTileProvider) {
+		this(context, tileSizePixels, resourceProxy, aTileProvider, null);
+	}
+
+	public MapView(final Context context, final int tileSizePixels,
+			final ResourceProxy resourceProxy, final MapTileProviderBase aTileProvider,
+			final Handler tileRequestCompleteHandler) {
+		this(context, tileSizePixels, resourceProxy, aTileProvider, tileRequestCompleteHandler,
+				null);
 	}
 
 	// ===========================================================
@@ -218,7 +226,11 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 	 * 0) Overlay gets drawn first, the one with the highest as the last one.
 	 */
 	public List<Overlay> getOverlays() {
-		return this.mOverlays;
+		return mOverlayManager;
+	}
+
+	public OverlayManager getOverlayManager() {
+		return mOverlayManager;
 	}
 
 	public MapTileProviderBase getTileProvider() {
@@ -317,8 +329,8 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 	 *            the zoom level bound by the tile source
 	 */
 	int setZoomLevel(final int aZoomLevel) {
-		final int minZoomLevel = getMinimumZoomLevel();
-		final int maxZoomLevel = getMaximumZoomLevel();
+		final int minZoomLevel = getMinZoomLevel();
+		final int maxZoomLevel = getMaxZoomLevel();
 
 		final int newZoomLevel = Math.max(minZoomLevel, Math.min(maxZoomLevel, aZoomLevel));
 		final int curZoomLevel = this.mZoomLevel;
@@ -338,12 +350,8 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 		final Point snapPoint = new Point();
 		// XXX why do we need a new projection here?
 		mProjection = new Projection();
-		for (int i = mOverlays.size() - 1; i >= 0; i--)
-			if (mOverlays.get(i) instanceof Snappable
-					&& ((Snappable) mOverlays.get(i)).onSnapToItem(getScrollX(), getScrollY(),
-							snapPoint, this)) {
-				scrollTo(snapPoint.x, snapPoint.y);
-			}
+		if (mOverlayManager.onSnapToItem(getScrollX(), getScrollY(), snapPoint, this))
+			scrollTo(snapPoint.x, snapPoint.y);
 
 		// do callback on listener
 		if (newZoomLevel != curZoomLevel && mListener != null) {
@@ -385,16 +393,8 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 	 * 
 	 * @return The minimum zoom level for the map's current center.
 	 */
-	public int getMinimumZoomLevel() {
+	public int getMinZoomLevel() {
 		return mMapOverlay.getMinimumZoomLevel();
-	}
-
-	/**
-	 * @deprecated Replaced by {@link #getMaxZoomLevel()}
-	 */
-	@Deprecated
-	public int getMaximumZoomLevel() {
-		return mMapOverlay.getMaximumZoomLevel();
 	}
 
 	/**
@@ -419,7 +419,7 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 	}
 
 	public boolean canZoomOut() {
-		final int minZoomLevel = getMinimumZoomLevel();
+		final int minZoomLevel = getMinZoomLevel();
 		if (mZoomLevel <= minZoomLevel) {
 			return false;
 		}
@@ -504,8 +504,8 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 		return (int) (Mercator.tile2lon(getScrollX() + getWorldSizePx() / 2, getPixelZoomLevel()) * 1E6);
 	}
 
-	public void setResourceProxy(final ResourceProxy pResourceProxy) {
-		mResourceProxy = pResourceProxy;
+	public ResourceProxy getResourceProxy() {
+		return mResourceProxy;
 	}
 
 	public void onSaveInstanceState(final Bundle state) {
@@ -553,49 +553,28 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 	// ===========================================================
 
 	public void onDetach() {
-		for (int i = mOverlays.size() - 1; i >= 0; i--)
-			mOverlays.get(i).onDetach(this);
-	}
-
-	public void onLongPress(final MotionEvent e) {
-		for (int i = mOverlays.size() - 1; i >= 0; i--)
-			if (mOverlays.get(i).onLongPress(e, this))
-				return;
-	}
-
-	public boolean onSingleTapUp(final MotionEvent e) {
-		for (int i = mOverlays.size() - 1; i >= 0; i--)
-			if (mOverlays.get(i).onSingleTapUp(e, this)) {
-				postInvalidate();
-				return true;
-			}
-
-		return false;
+		mOverlayManager.onDetach(this);
 	}
 
 	@Override
 	public boolean onKeyDown(final int keyCode, final KeyEvent event) {
-		for (int i = mOverlays.size() - 1; i >= 0; i--)
-			if (mOverlays.get(i).onKeyDown(keyCode, event, this))
-				return true;
+		boolean result = mOverlayManager.onKeyDown(keyCode, event, this);
 
-		return super.onKeyDown(keyCode, event);
+		return result || super.onKeyDown(keyCode, event);
 	}
 
 	@Override
 	public boolean onKeyUp(final int keyCode, final KeyEvent event) {
-		for (int i = mOverlays.size() - 1; i >= 0; i--)
-			if (mOverlays.get(i).onKeyUp(keyCode, event, this))
-				return true;
+		boolean result = mOverlayManager.onKeyUp(keyCode, event, this);
 
-		return super.onKeyUp(keyCode, event);
+		return result || super.onKeyUp(keyCode, event);
 	}
 
 	@Override
 	public boolean onTrackballEvent(final MotionEvent event) {
-		for (int i = mOverlays.size() - 1; i >= 0; i--)
-			if (mOverlays.get(i).onTrackballEvent(event, this))
-				return true;
+
+		if (mOverlayManager.onTrackballEvent(event, this))
+			return true;
 
 		scrollBy((int) (event.getX() * 25), (int) (event.getY() * 25));
 
@@ -609,13 +588,8 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 			logger.debug("onTouchEvent(" + event + ")");
 		}
 
-		for (int i = mOverlays.size() - 1; i >= 0; i--)
-			if (mOverlays.get(i).onTouchEvent(event, this)) {
-				if (DEBUGMODE) {
-					logger.debug("overlay handled onTouchEvent");
-				}
-				return true;
-			}
+		if (mOverlayManager.onTouchEvent(event, this))
+			return true;
 
 		if (mMultiTouchController != null && mMultiTouchController.onTouchEvent(event)) {
 			if (DEBUGMODE) {
@@ -648,6 +622,7 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 	public void computeScroll() {
 		if (mScroller.computeScrollOffset()) {
 			if (mScroller.isFinished()) {
+				// This will facilitate snapping-to any Snappable points.
 				setZoomLevel(mZoomLevel);
 			} else {
 				scrollTo(mScroller.getCurrX(), mScroller.getCurrY());
@@ -669,6 +644,12 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 			final ScrollEvent event = new ScrollEvent(this, x, y);
 			mListener.onScroll(event);
 		}
+	}
+
+	@Override
+	public void setBackgroundColor(final int pColor) {
+		mMapOverlay.setLoadingBackgroundColor(pColor);
+		invalidate();
 	}
 
 	@Override
@@ -705,20 +686,10 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 		}
 
 		/* Draw background */
-		// c.drawColor(Color.LTGRAY);
-		// This is too slow:
-		// final Rect r = c.getClipBounds();
-		// mPaint.setColor(Color.GRAY);
-		// mPaint.setPathEffect(new DashPathEffect(new float[] {1, 1}, 0));
-		// for (int x = r.left; x < r.right; x += 20)
-		// c.drawLine(x, r.top, x, r.bottom, mPaint);
-		// for (int y = r.top; y < r.bottom; y += 20)
-		// c.drawLine(r.left, y, r.right, y, mPaint);
+		// c.drawColor(mBackgroundColor);
 
-		/* Draw all Overlays. Avoid allocation by not doing enhanced loop. */
-		for (int i = 0; i < mOverlays.size(); i++) {
-			mOverlays.get(i).onManagedDraw(c, this);
-		}
+		/* Draw all Overlays. */
+		mOverlayManager.onDraw(c, this);
 
 		final long endMs = System.currentTimeMillis();
 		if (DEBUGMODE) {
@@ -773,7 +744,15 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 	@Override
 	public boolean setPositionAndScale(final Object obj, final PositionAndScale aNewObjPosAndScale,
 			final PointInfo aTouchPoint) {
-		mMultiTouchScale = aNewObjPosAndScale.getScale();
+		float multiTouchScale = aNewObjPosAndScale.getScale();
+		// If we are at the first or last zoom level, prevent pinching/expanding
+		if ((multiTouchScale > 1) && !canZoomIn()) {
+			multiTouchScale = 1;
+		}
+		if ((multiTouchScale < 1) && !canZoomOut()) {
+			multiTouchScale = 1;
+		}
+		mMultiTouchScale = multiTouchScale;
 		invalidate(); // redraw
 		return true;
 	}
@@ -1123,6 +1102,9 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 
 		@Override
 		public boolean onDown(final MotionEvent e) {
+			if (MapView.this.mOverlayManager.onDown(e, MapView.this))
+				return true;
+
 			mZoomController.setVisible(mEnableZoomController);
 			return true;
 		}
@@ -1130,6 +1112,9 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 		@Override
 		public boolean onFling(final MotionEvent e1, final MotionEvent e2, final float velocityX,
 				final float velocityY) {
+			if (MapView.this.mOverlayManager.onFling(e1, e2, velocityX, velocityY, MapView.this))
+				return true;
+
 			final int worldSize = getWorldSizePx();
 			mScroller.fling(getScrollX(), getScrollY(), (int) -velocityX, (int) -velocityY,
 					-worldSize, worldSize, -worldSize, worldSize);
@@ -1138,23 +1123,30 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 
 		@Override
 		public void onLongPress(final MotionEvent e) {
-			MapView.this.onLongPress(e);
+			MapView.this.mOverlayManager.onLongPress(e, MapView.this);
 		}
 
 		@Override
 		public boolean onScroll(final MotionEvent e1, final MotionEvent e2, final float distanceX,
 				final float distanceY) {
+			if (MapView.this.mOverlayManager.onScroll(e1, e2, distanceX, distanceY, MapView.this))
+				return true;
+
 			scrollBy((int) distanceX, (int) distanceY);
 			return true;
 		}
 
 		@Override
 		public void onShowPress(final MotionEvent e) {
+			MapView.this.mOverlayManager.onShowPress(e, MapView.this);
 		}
 
 		@Override
 		public boolean onSingleTapUp(final MotionEvent e) {
-			return MapView.this.onSingleTapUp(e);
+			if (MapView.this.mOverlayManager.onSingleTapUp(e, MapView.this))
+				return true;
+
+			return false;
 		}
 
 	}
@@ -1162,9 +1154,8 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 	private class MapViewDoubleClickListener implements GestureDetector.OnDoubleTapListener {
 		@Override
 		public boolean onDoubleTap(final MotionEvent e) {
-			for (int i = mOverlays.size() - 1; i >= 0; i--)
-				if (mOverlays.get(i).onDoubleTapUp(e, MapView.this))
-					return true;
+			if (mOverlayManager.onDoubleTap(e, MapView.this))
+				return true;
 
 			final GeoPoint center = getProjection().fromPixels(e.getX(), e.getY());
 			return zoomInFixing(center);
@@ -1172,11 +1163,17 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 
 		@Override
 		public boolean onDoubleTapEvent(final MotionEvent e) {
+			if (mOverlayManager.onDoubleTapEvent(e, MapView.this))
+				return true;
+
 			return false;
 		}
 
 		@Override
 		public boolean onSingleTapConfirmed(final MotionEvent e) {
+			if (mOverlayManager.onSingleTapConfirmed(e, MapView.this))
+				return true;
+
 			return false;
 		}
 	}
@@ -1203,10 +1200,14 @@ public class MapView extends MapSurfaceView implements IMapView, MapViewConstant
 		@Override
 		public void onAnimationEnd(final Animation aAnimation) {
 			animating = false;
-			mAnimationSet.getAnimations().remove(aAnimation);
 			MapView.this.post(new Runnable() {
 				@Override
 				public void run() {
+					// This is necessary because (as of API 1.5) when onAnimationEnd is dispatched
+					// there still is some residual scaling going on and this will cause a frame of
+					// the new zoom level while the canvas is still being scaled as part of the
+					// animation and we don't want that.
+					clearAnimation();
 					setZoomLevel(targetZoomLevel);
 				}
 			});

@@ -42,8 +42,9 @@ public class MapTileProviderArray extends MapTileProviderBase {
 	 * @param aRegisterReceiver
 	 *            a {@link IRegisterReceiver}
 	 */
-	protected MapTileProviderArray(final IRegisterReceiver aRegisterReceiver) {
-		this(aRegisterReceiver, new MapTileModuleProviderBase[0]);
+	protected MapTileProviderArray(final ITileSource pTileSource,
+			final IRegisterReceiver pRegisterReceiver) {
+		this(pTileSource, pRegisterReceiver, new MapTileModuleProviderBase[0]);
 	}
 
 	/**
@@ -54,14 +55,15 @@ public class MapTileProviderArray extends MapTileProviderBase {
 	 * @param tileProviderArray
 	 *            an array of {@link MapTileModuleProviderBase}
 	 */
-	public MapTileProviderArray(final IRegisterReceiver aRegisterReceiver,
-			final MapTileModuleProviderBase[] tileProviderArray) {
-		super();
+	public MapTileProviderArray(final ITileSource pTileSource,
+			final IRegisterReceiver aRegisterReceiver,
+			final MapTileModuleProviderBase[] pTileProviderArray) {
+		super(pTileSource);
 
 		mWorking = new ConcurrentHashMap<MapTileRequestState, MapTile>();
 
 		mTileProviderList = new ArrayList<MapTileModuleProviderBase>();
-		Collections.addAll(mTileProviderList, tileProviderArray);
+		Collections.addAll(mTileProviderList, pTileProviderArray);
 	}
 
 	@Override
@@ -147,8 +149,9 @@ public class MapTileProviderArray extends MapTileProviderBase {
 		// "Keep looping until you get null, or a provider that still exists and has a data connection if it needs one,"
 		do {
 			provider = aState.getNextProvider();
-		} while ((provider != null) && (!getProviderExists(provider))
-				&& (!useDataConnection() && provider.getUsesDataConnection()));
+		} while ((provider != null)
+				&& (!getProviderExists(provider) || (!useDataConnection() && provider
+						.getUsesDataConnection())));
 		return provider;
 	}
 
@@ -160,7 +163,7 @@ public class MapTileProviderArray extends MapTileProviderBase {
 
 	@Override
 	public int getMinimumZoomLevel() {
-		int result = Integer.MAX_VALUE;
+		int result = MAXIMUM_ZOOMLEVEL;
 		synchronized (mTileProviderList) {
 			for (final MapTileModuleProviderBase tileProvider : mTileProviderList) {
 				if (tileProvider.getMinimumZoomLevel() < result)
@@ -172,7 +175,7 @@ public class MapTileProviderArray extends MapTileProviderBase {
 
 	@Override
 	public int getMaximumZoomLevel() {
-		int result = Integer.MIN_VALUE;
+		int result = MINIMUM_ZOOMLEVEL;
 		synchronized (mTileProviderList) {
 			for (final MapTileModuleProviderBase tileProvider : mTileProviderList) {
 				if (tileProvider.getMaximumZoomLevel() > result)
