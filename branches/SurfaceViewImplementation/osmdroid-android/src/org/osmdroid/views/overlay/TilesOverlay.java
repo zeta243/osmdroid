@@ -27,9 +27,9 @@ import android.view.SubMenu;
 
 /**
  * These objects are the principle consumer of map tiles.
- *
+ * 
  * see {@link MapTile} for an overview of how tiles are acquired by this overlay.
- *
+ * 
  */
 
 public class TilesOverlay extends Overlay {
@@ -95,7 +95,7 @@ public class TilesOverlay extends Overlay {
 
 	/**
 	 * Set whether to use the network connection if it's available.
-	 *
+	 * 
 	 * @param aMode
 	 *            if true use the network connection if it's available. if false don't use the
 	 *            network connection even if it's available.
@@ -162,13 +162,12 @@ public class TilesOverlay extends Overlay {
 
 				Drawable currentMapTile = mTileProvider.getMapTile(tile);
 				if (currentMapTile == null) {
-					currentMapTile = getLoadingTile();
+					// currentMapTile = getLoadingTile();
 				}
 
 				if (currentMapTile != null) {
-					mTileRect.set(
-							x * tileSizePx, y * tileSizePx,
-							x * tileSizePx + tileSizePx, y * tileSizePx + tileSizePx);
+					mTileRect.set(x * tileSizePx, y * tileSizePx, x * tileSizePx + tileSizePx, y
+							* tileSizePx + tileSizePx);
 					onTileReadyToDraw(c, currentMapTile, mTileRect);
 				}
 
@@ -208,7 +207,8 @@ public class TilesOverlay extends Overlay {
 	}
 
 	@Override
-	public boolean onCreateOptionsMenu(final Menu pMenu, final int pMenuIdOffset, final MapView pMapView) {
+	public boolean onCreateOptionsMenu(final Menu pMenu, final int pMenuIdOffset,
+			final MapView pMapView) {
 		final SubMenu mapMenu = pMenu.addSubMenu(0, MENU_MAP_MODE + pMenuIdOffset, Menu.NONE,
 				mResourceProxy.getString(ResourceProxy.string.map_mode)).setIcon(
 				mResourceProxy.getDrawable(ResourceProxy.bitmap.ic_menu_mapmode));
@@ -231,7 +231,8 @@ public class TilesOverlay extends Overlay {
 	}
 
 	@Override
-	public boolean onPrepareOptionsMenu(final Menu pMenu, final int pMenuIdOffset, final MapView pMapView) {
+	public boolean onPrepareOptionsMenu(final Menu pMenu, final int pMenuIdOffset,
+			final MapView pMapView) {
 		final int index = TileSourceFactory.getTileSources().indexOf(
 				pMapView.getTileProvider().getTileSource());
 		if (index >= 0) {
@@ -247,8 +248,8 @@ public class TilesOverlay extends Overlay {
 	}
 
 	@Override
-	public boolean onMenuItemSelected(final int pFeatureId, final MenuItem pItem, final int pMenuIdOffset,
-			final MapView pMapView) {
+	public boolean onMenuItemSelected(final int pFeatureId, final MenuItem pItem,
+			final int pMenuIdOffset, final MapView pMapView) {
 
 		final int menuId = pItem.getItemId() - pMenuIdOffset;
 		if ((menuId >= MENU_TILE_SOURCE_STARTING_ID)
@@ -291,9 +292,10 @@ public class TilesOverlay extends Overlay {
 	private Drawable getLoadingTile() {
 		if (mLoadingTile == null) {
 			try {
-				final int tileSize = mTileProvider.getTileSource() != null ?
-						mTileProvider.getTileSource().getTileSizePixels() : 256;
-				final Bitmap bitmap = Bitmap.createBitmap(tileSize, tileSize, Bitmap.Config.RGB_565);
+				final int tileSize = mTileProvider.getTileSource() != null ? mTileProvider
+						.getTileSource().getTileSizePixels() : 256;
+				final Bitmap bitmap = Bitmap
+						.createBitmap(tileSize, tileSize, Bitmap.Config.RGB_565);
 				final Canvas canvas = new Canvas(bitmap);
 				final Paint paint = new Paint();
 				canvas.drawColor(mLoadingBackgroundColor);
