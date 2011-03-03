@@ -4,7 +4,7 @@
 
 This page explains how to use osmdroid in your own application.
 
-osmdroid's !OpenStreetMapView is basically a replacement for Google's <a href="http://code.google.com/android/add-ons/google-apis/maps-overview.html">!MapView</a> class.
+osmdroid's !MapView is basically a replacement for Google's <a href="http://code.google.com/android/add-ons/google-apis/maps-overview.html">!MapView</a> class.
 In order to use it you should include osmdroid-android-x.xx.jar and its dependent files into your project.
 
 
@@ -27,8 +27,8 @@ If you are going to use OSMUploader then you must also include apache-mime4j-0.6
 
 == Using it ==
 
-Now you can just use !OpenStreetMapView in much the same way as the Google <a href="http://code.google.com/android/add-ons/google-apis/maps-overview.html">!MapView</a>.
-You can also use any overlays that you wish from the org.andnav.osm.views.overlay package. There are many samples activities included with osmdroid.
+Now you can just use !MapView in much the same way as the Google <a href="http://code.google.com/android/add-ons/google-apis/maps-overview.html">!MapView</a>.
+You can also use any overlays that you wish from the org.osmdroid.views.overlay package. There are many samples activities included with osmdroid.
 
 
 == Manifest ==
@@ -53,4 +53,4 @@ If you want to use the <a href="http://cloudmade.com/signup">Cloudmade</a> tiles
 
 All resources used by osmdroid are included in the jar.  However, if you wish you can use your own resources.  You will especially want to do this in order to localise your application.
 
-To see an example of using resources from the application, have a look at !OpenStreetMap.java and its use of !ResourceProxyImpl.java.
+To see an example of using resources from the application, have a look at !MapActivity.java and its use of !ResourceProxyImpl.java.
