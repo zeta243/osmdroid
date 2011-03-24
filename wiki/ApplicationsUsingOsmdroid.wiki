@@ -22,7 +22,8 @@ If you know of any inaccuracies or additions to this page, please add a comment.
  * [http://sweng.epfl.ch/project EPFL Pocket Campus]
  * [http://itravelfree.net/ iTravelFree]
  * [http://bikenode.wordpress.com/about BikeNode]
- * [https://market.android.com/details?id=cz.dul.platform.cz.prague Prague Minos Guide]
+ * [http://market.android.com/details?id=cz.dul.platform.cz.prague Prague Minos Guide]
+ * [http://code.google.com/p/geopaparazzi/ geopaparazzi]
  * [http://www.cyclestreets.net/mobile/ CycleStreets] (Android version not yet released)
 
 
