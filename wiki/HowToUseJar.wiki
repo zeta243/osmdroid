@@ -43,7 +43,7 @@ You will need the following permissions in your manifest file:
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 }}}
 
-If you want to use the <a href="http://cloudmade.com/signup">Cloudmade</a> tiles you'll need to include the following meta data:
+If you want to use the <a href="http://developers.cloudmade.com/projects/show/tiles">Cloudmade</a> tiles you'll need to include the following meta data:
 {{{
 <meta-data android:name="CLOUDMADE_KEY" android:value="your API key" />
 }}}
