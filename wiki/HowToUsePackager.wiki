@@ -56,8 +56,9 @@ Here's what the parameters mean:<br />
 ||{{{-zmax}}}||{{{18}}}||Maximum zoom level to download tiles for.||
 
 The -d parameter is optional, in which case it won't create a zip file.  In that case it also won't delete the temp files, since these are actually the required result.
+You can also use a .gemf or .sqlite extension in which case it will create an archive of the corresponding type.
 
 
 == Using the output ==
 
-If you specify the renderer name as the {{{-d}}} parameter then osmdroid can use the zip files directly. Just copy the zip to the osmdroid/tiles folder on your device.
+Just copy the zip to /sdcard/osmdroid on your device.
