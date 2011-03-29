@@ -40,8 +40,13 @@ Download osmdroid-packager-x.xx.jar.
 Here is an example command line to download the area selected in the example above:
 
 {{{
-set classpath=osmdroid-android-3.0.3.jar;osmdroid-packager-3.0.3.jar;slf4j-android-1.5.8.jar
+set classpath=osmdroid-android-3.0.3.jar;osmdroid-packager-3.0.3.jar;slf4j-android-1.5.8.jar;sqlitejdbc-v056.jar
 java org.andnav2.osm.mtp.OSMMapTilePackager -u http://tile.openstreetmap.org/%d/%d/%d.png -t Mapnik -d haarlem.zip -zmax 18 -n 52.4244 -s 52.3388 -e 4.6746 -w 4.5949
+}}}
+or
+{{{
+set classpath=osmdroid-android-3.0.4.jar;osmdroid-packager-3.0.4.jar;slf4j-android-1.5.8.jar;sqlitejdbc-v056.jar
+java org.osmdroid.mtp.OSMMapTilePackager -u http://tile.openstreetmap.org/%d/%d/%d.png -t Mapnik -d haarlem.zip -zmax 18 -n 52.4244 -s 52.3388 -e 4.6746 -w 4.5949
 }}}
 
 Here's what the parameters mean:<br />
