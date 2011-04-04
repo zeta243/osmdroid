@@ -40,6 +40,7 @@ public class MapActivity extends Activity implements OpenStreetMapConstants {
 	private static final int MENU_ABOUT = MENU_SAMPLES + 1;
 
 	private static final int MENU_LAST_ID = MENU_ABOUT + 1; // Always set to last unused id
+	private static final int MENU_ROTATE = 999;
 
 	private static final int DIALOG_ABOUT_ID = 1;
 
@@ -51,7 +52,8 @@ public class MapActivity extends Activity implements OpenStreetMapConstants {
 	private MapView mOsmv;
 	private MyLocationOverlay mLocationOverlay;
 	private ResourceProxy mResourceProxy;
-
+	private int currentOrientation = 0;
+	
 	// ===========================================================
 	// Constructors
 	// ===========================================================
@@ -154,7 +156,10 @@ public class MapActivity extends Activity implements OpenStreetMapConstants {
 		// Put "About" menu item last
 		pMenu.add(0, MENU_ABOUT, Menu.NONE, R.string.about).setIcon(
 				android.R.drawable.ic_menu_info_details);
-
+		
+		// Add "Rotation" menu item at the very end
+		pMenu.add(0, 999, Menu.NONE, "rotate by 45°");
+		
 		return true;
 	}
 
@@ -187,6 +192,10 @@ public class MapActivity extends Activity implements OpenStreetMapConstants {
 
 		case MENU_ABOUT:
 			showDialog(DIALOG_ABOUT_ID);
+			return true;
+			
+		case MENU_ROTATE:
+			mOsmv.setMapOrientation(currentOrientation += 45);
 			return true;
 
 		default:
