@@ -34,6 +34,7 @@ public class SampleWithMinimapItemizedoverlay extends Activity {
 
 	private static final int MENU_ZOOMIN_ID = Menu.FIRST;
 	private static final int MENU_ZOOMOUT_ID = MENU_ZOOMIN_ID + 1;
+	private static final int MENU_ROTATE = 999;
 
 	// ===========================================================
 	// Fields
@@ -42,7 +43,8 @@ public class SampleWithMinimapItemizedoverlay extends Activity {
 	private MapView mOsmv;
 	private ItemizedOverlay<OverlayItem> mMyLocationOverlay;
 	private ResourceProxy mResourceProxy;
-
+	private int currentOrientation = 0;
+	
 	// ===========================================================
 	// Constructors
 	// ===========================================================
@@ -120,7 +122,8 @@ public class SampleWithMinimapItemizedoverlay extends Activity {
 	public boolean onCreateOptionsMenu(final Menu pMenu) {
 		pMenu.add(0, MENU_ZOOMIN_ID, Menu.NONE, "ZoomIn");
 		pMenu.add(0, MENU_ZOOMOUT_ID, Menu.NONE, "ZoomOut");
-
+		pMenu.add(0, 999, Menu.NONE, "rotate by 45°");
+		
 		return true;
 	}
 
@@ -133,6 +136,10 @@ public class SampleWithMinimapItemizedoverlay extends Activity {
 
 		case MENU_ZOOMOUT_ID:
 			this.mOsmv.getController().zoomOut();
+			return true;
+			
+		case MENU_ROTATE:
+			mOsmv.setMapOrientation(currentOrientation  += 45);
 			return true;
 		}
 		return false;
