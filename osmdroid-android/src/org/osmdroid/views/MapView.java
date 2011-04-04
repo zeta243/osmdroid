@@ -101,6 +101,9 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
 	private float mMultiTouchScale = 1.0f;
 
 	protected MapListener mListener;
+	
+	private int mapOrientation = 0;
+	private Matrix mReverse = new Matrix();
 
 	// for speed (avoiding allocations)
 	private final Matrix mMatrix = new Matrix();
@@ -487,6 +490,17 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
 	public ResourceProxy getResourceProxy() {
 		return mResourceProxy;
 	}
+	
+	public void setMapOrientation(int mapOrientation) {
+		this.mapOrientation = mapOrientation;
+		mReverse.reset();
+		mReverse.postRotate(-getMapOrientation());
+		this.invalidate();
+	}
+	
+	public int getMapOrientation(){
+		return mapOrientation;
+	}
 
 	/**
 	 * Whether to use the network connection if it's available.
@@ -741,6 +755,15 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
 			return true;
 		}
 
+		if (mapOrientation != 0) {
+			final float[] temp  = new float[2];
+			temp[0] = event.getX() - this.getWidth()/2f;
+			temp[1] = event.getY() - this.getHeight()/2f;
+			mReverse.mapPoints(temp);
+			
+			event.setLocation(temp[0] + this.getWidth()/2f, temp[1]+this.getHeight()/2f);
+		}
+
 		final boolean r = super.dispatchTouchEvent(event);
 
 		if (mGestureDetector.onTouchEvent(event)) {
@@ -822,6 +845,16 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
 
 		/* Draw background */
 		// c.drawColor(mBackgroundColor);
+
+		/* rotate Canvas */
+		final Point centerPoint = mProjection.toMapPixels(this.getMapCenter(), null);
+		c.save();
+		if (mapOrientation != 0){
+			c.rotate(mapOrientation , centerPoint.x, centerPoint.y);
+			mMapOverlay.setFilterBitmap(true);
+		} else {
+			mMapOverlay.setFilterBitmap(false);
+		}
 
 		/* Draw all Overlays. */
 		mOverlayManager.onDraw(c, this);

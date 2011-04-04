@@ -81,6 +81,10 @@ public class TilesOverlay extends Overlay implements IOverlayMenuProvider {
 	public void setAlpha(final int a) {
 		this.mPaint.setAlpha(a);
 	}
+	
+	public void setFilterBitmap(boolean filter){
+		this.mPaint.setFilterBitmap(filter);
+	}
 
 	public int getMinimumZoomLevel() {
 		return mTileProvider.getMinimumZoomLevel();
