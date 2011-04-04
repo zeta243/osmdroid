@@ -491,8 +491,8 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
 		return mResourceProxy;
 	}
 	
-	public void setMapOrientation(int mapOrientation) {
-		this.mapOrientation = mapOrientation;
+	public void setMapOrientation(int degrees) {
+		this.mapOrientation = degrees % 360;
 		mReverse.reset();
 		mReverse.postRotate(-getMapOrientation());
 		this.invalidate();
@@ -569,7 +569,7 @@ public class MapView extends ViewGroup implements IMapView, MapViewConstants,
 		int maxHeight = 0;
 		int maxWidth = 0;
 
-		// Find out how big everyone wants to be
+		// Find out how big everyone wants to beO
 		measureChildren(widthMeasureSpec, heightMeasureSpec);
 
 		// Find rightmost and bottom-most child
