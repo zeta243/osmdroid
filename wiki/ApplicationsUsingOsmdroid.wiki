@@ -26,6 +26,7 @@ If you know of any inaccuracies or additions to this page, please add a comment.
  * [http://market.android.com/details?id=nl.rulex.hikenode HikeNode]
  * [http://market.android.com/details?id=cz.dul.platform.cz.prague Prague Minos Guide]
  * [http://code.google.com/p/geopaparazzi/ geopaparazzi]
+ * [http://market.android.com/details?id=com.weuni.myuni.free My Uni]
  * [http://www.cyclestreets.net/mobile/ CycleStreets] (Android version not yet released)
 
 
