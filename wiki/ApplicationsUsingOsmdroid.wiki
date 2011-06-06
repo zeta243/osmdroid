@@ -18,6 +18,7 @@ If you know of any inaccuracies or additions to this page, please add a comment.
  * [http://code.google.com/p/bikeroute/ BikeRoute]
  * [http://mapzen.cloudmade.com/mapzen-poi-collector Mapzen POI Collector]
  * [http://code.google.com/p/open-gpstracker/ Open GPS Tracker]
+ * [http://market.android.com/details?id=org.fla.smarttracker SmartTracker]
  * [http://github.com/gkfabs/AndRoad/ AndRoad]
  * [http://market.android.com/details?id=com.integralblue.callerid CallerID]
  * [http://sweng.epfl.ch/project EPFL Pocket Campus]
