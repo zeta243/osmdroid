@@ -16,3 +16,5 @@ TODO make this a bit more wordy! These are just the main points.
  * Click 'Create atlas'.
 
  * Copy the resulting atlas file to /sdcard/osmdroid/
+
+*Note*: the presence of zips files in this folder will increase the startup time of osmdroid.
