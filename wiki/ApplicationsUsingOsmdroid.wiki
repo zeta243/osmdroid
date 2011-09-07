@@ -41,6 +41,7 @@ If you know of any inaccuracies or additions to this page, please add a comment.
  * [http://opengpx.sf.net/ OpenGPX]
  * [http://wigle.net/ WigleWifi]
  * [http://www.softoutfit.com/openflightmap/disclaimer.html OpenFlight Map]
+ * [http://www.itinerennes.fr/ ItinéRennes]
  * [http://github.com/Drakuwa/aBusTripMK aBusTripMK]
  * [http://sxsw.com/ SXSW GO]
  * [http://code.google.com/p/geohunter/ GeoHunter] (osmdroid feature not yet released)
