@@ -22,6 +22,7 @@ If you know of any inaccuracies or additions to this page, please add a comment.
  * [http://market.android.com/details?id=com.turboirc.tgps.v2 Turbo GPS 2]
  * [http://github.com/gkfabs/AndRoad/ AndRoad]
  * [http://market.android.com/details?id=com.integralblue.callerid CallerID]
+ * [http://cellsearcher.net/ CellSearcher]
  * [http://sweng.epfl.ch/project EPFL Pocket Campus]
  * [http://itravelfree.net/ iTravelFree]
  * [http://market.android.com/details?id=nl.rulex.bikenode BikeNode]
