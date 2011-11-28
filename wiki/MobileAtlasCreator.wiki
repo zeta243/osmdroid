@@ -2,7 +2,7 @@
 
 = Introduction =
 
-This page explains how to use <a href="http://mobac.dnsalias.org/">Mobile Atlas Creator</a> to create tile packs for use by ApplicationsUsingOsmdroid.
+This page explains how to use <a href="http://mobac.sourceforge.net/">Mobile Atlas Creator</a> to create tile packs for use by ApplicationsUsingOsmdroid.
 
 
 = Details =
