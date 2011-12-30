@@ -8,7 +8,7 @@
     <property environment="env"/>
     <property name="osmdroid-android-src.link" value="../osmdroid-android/src"/>
     <property name="ANDROID_SDK_PLATFORM" value="C:/android-sdk-windows/platforms/android-3"/>
-    <property name="GOOGLE_SDK_PLATFORM" value="C:/android-sdk-windows/add-ons/addon_google_apis_google_inc_3/libs"/>
+    <property name="GOOGLE_SDK_PLATFORM" value="C:/android-sdk-windows/add-ons/google_apis-3-r03/libs"/>
     <property name="ECLIPSE_HOME" value="C:/eclipse"/>
     <property name="debuglevel" value="source,lines,vars"/>
     <property name="target" value="1.6"/>
@@ -23,6 +23,7 @@
         <pathelement location="lib/apache-mime4j-0.6.jar"/>
         <pathelement location="lib/httpmime-4.0.1.jar"/>
         <pathelement location="lib/slf4j-android-1.5.8.jar"/>
+        <pathelement location="lib/mapsforge-map-0.2.4.jar"/>
         <path refid="JUnit 4.libraryclasspath"/>
         <pathelement location="${ANDROID_SDK_PLATFORM}/android.jar"/>
         <pathelement location="${GOOGLE_SDK_PLATFORM}/maps.jar"/>
