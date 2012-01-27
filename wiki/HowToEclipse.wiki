@@ -1,6 +1,9 @@
 #summary How to compile and run using Eclipse
 #labels Phase-Deploy
 
+*TODO update to use Maven*
+
+
 == Install the Android SDK == 
 Install the Android SDK, including Eclipse & the Android Eclipse 
 extension, as described in the official documentation: 
