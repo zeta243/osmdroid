@@ -1,5 +1,7 @@
 #summary How to use osmdroid in your application.
 
+*TODO update to use Maven*
+
 = Introduction =
 
 This page explains how to use osmdroid in your own application.
