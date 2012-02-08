@@ -1,6 +1,8 @@
 #summary How to use osmdroid in your application.
 
 *TODO update to use Maven*
+-
+get jar from [https://oss.sonatype.org/content/groups/public/org/osmdroid/ Maven repository]
 
 = Introduction =
 
