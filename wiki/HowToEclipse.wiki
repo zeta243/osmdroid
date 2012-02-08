@@ -2,6 +2,8 @@
 #labels Phase-Deploy
 
 *TODO update to use Maven*
+-
+get jar from [https://oss.sonatype.org/content/groups/public/org/osmdroid/ Maven repository]
 
 
 == Install the Android SDK == 
