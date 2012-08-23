@@ -1,0 +1,28 @@
+#summary How to use in Maven projects and how to build osmdroid using Maven.
+
+= Introduction =
+
+This document is a begin of some documentation.  Still very much in progress.  See issue 199.
+
+
+= How to use osmdroid in your Maven project =
+
+If your project already uses Maven and you want to include osmdroid then it's as simple as
+
+{{{
+<dependency>
+  <groupId>org.osmdroid</groupId>
+  <artifactId>osmdroid-android</artifactId>
+  <version>3.0.8</version>
+</dependency>
+}}}
+
+
+= How to use osmdroid in your non-Maven project =
+
+If you are not yet using Maven you can include osmdroid by downloading from the link on the home page or directly from [https://oss.sonatype.org/content/groups/public/org/osmdroid/ Maven Central] and then include the jar in your libs folder.
+
+
+= How to build osmdroid using Eclipse =
+
+TODO
