@@ -26,3 +26,5 @@ If you are not yet using Maven you can include osmdroid by downloading from the 
 = How to build osmdroid using Eclipse =
 
 TODO
+
+http://www.sonatype.com/books/m2eclipse-book/reference/
