@@ -31,7 +31,9 @@ http://www.sonatype.com/books/m2eclipse-book/reference/
 
 Some basic steps:
 
- # Install Maven support in Eclipse. Add http://download.eclipse.org/technology/m2e/releases as a software install repo and install the m2e support package.
- # Install Maven Android support in Eclipse. Add https://svn.codespot.com/a/eclipselabs.org/m2eclipse-android-integration/updates/m2eclipse-android-integration/ and install package.
+ # Install Maven http://maven.apache.org/download.html
+ # Install Maven support in Eclipse. Add http://download.eclipse.org/technology/m2e/releases as a software install repo and install the m2e support package. Can also be installed from Eclipse Marketplace.
+ # Install Android configurator for Maven from Eclipse Marketplace. Follow instructions to deploy android sdk package to local repository.
  # Download the osmdroid source from subversion to a local folder. If you want to download within Maven, you will need to install a 3rd party svn plugin from http://subclipse.tigris.org/m2eclipse/1.0/
  # In Eclipse Import -> Maven -> Existing Maven project. Import osmdroid.
+ # Download Android SDK dependency using Android SDK Deployer https://github.com/mosabua/maven-android-sdk-deployer
