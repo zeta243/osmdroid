@@ -37,3 +37,6 @@ Some basic steps:
  # Download the osmdroid source from subversion to a local folder. If you want to download within Maven, you will need to install a 3rd party svn plugin from http://subclipse.tigris.org/m2eclipse/1.0/
  # In Eclipse Import -> Maven -> Existing Maven project. Import osmdroid.
  # Download Android SDK dependency using Android SDK Deployer https://github.com/mosabua/maven-android-sdk-deployer  Follow instructions to deploy android sdk package to local repository. You may need to delete and reinstall parts of the SDK if it cannot find the correct folder names (apparently the SDK changed the names of some folders and you may still have them named under the old folder names).
+ # Right click on osmdroid-parent project. Click Maven->Update Project and make sure all projects are checked. Click OK.
+
+The project should then build successfully.
