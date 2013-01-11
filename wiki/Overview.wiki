@@ -2,4 +2,4 @@
 
 
 API for Google Maps:
-http://code.google.com/android/add-ons/google-apis/reference/index.html
+https://developers.google.com/maps/documentation/android/v1/
