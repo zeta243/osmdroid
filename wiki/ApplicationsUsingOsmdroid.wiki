@@ -2,9 +2,9 @@
 
 = Introduction =
 
-osmdroid was originally created by [http://code.google.com/u/NicolasGramlich/ Nicolas Gramlich], and he is still the project owner.  His focus moved to [http://andnav.org/ AndNav], which is either the parent or the child of osmdroid, depending on how you look at it.
+osmdroid was originally created by [http://code.google.com/u/114668890951081743763/ Nicolas Gramlich], and he is still the project owner.  His focus moved to [http://andnav.org/ AndNav], which is either the parent or the child of osmdroid, depending on how you look at it. These days he's mostly busy with [https://github.com/nicolasgramlich/AndEngine AndEngine].
 
-osmdroid was originally used by other projects by copying the source.  It was later converted to a simple jar that can be added as a library.
+osmdroid was originally used by other projects by copying the source.  It was later converted to a simple jar that can be added as a library. Finally it moved to Maven.
 
 This page lists projects that use osmdroid, separated into those that use the jar and those that use the source (and most likely they have their own branch based on an old version of osmdroid source).  Also listed are projects that are similar to osmdroid but have their own implementation.
 
@@ -14,6 +14,7 @@ If you know of any inaccuracies or additions to this page, please add a comment.
 == Projects using osmdroid jar ==
 
  * [http://l6n.org/myspeed/ MySpeed]
+ * [http://code.google.com/p/openaviationmap/ Open Avation Maps]
  * [http://code.google.com/p/osmtracker-android/ osmtracker-android]
  * [http://code.google.com/p/bikeroute/ BikeRoute]
  * [http://mapzen.cloudmade.com/mapzen-poi-collector Mapzen POI Collector]
