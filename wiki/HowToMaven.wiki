@@ -30,14 +30,11 @@ If you are not yet using Maven you can include osmdroid by downloading from the 
  # Checkout the osmdroid source from svn to a local folder.
  # In Eclipse Import -> Maven -> Existing Maven project. Import all the osmdroid projects.
  # Download Android SDK dependency using Android SDK Deployer https://github.com/mosabua/maven-android-sdk-deployer  Follow instructions to deploy android sdk package to local repository.
- # Download and place mapsforge pom and jar file in your local maven repository.
  # Right click on osmdroid-parent project. Click Run as --> Maven install.
 
 The project should then build successfully.
 
 
 TODO
-
-Add more info on how to download mapsforge into local maven repository.
 
 http://www.sonatype.com/books/m2eclipse-book/reference/
