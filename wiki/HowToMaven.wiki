@@ -33,8 +33,3 @@ If you are not yet using Maven you can include osmdroid by downloading from the 
  # Right click on osmdroid-parent project. Click Run as --> Maven install.
 
 The project should then build successfully.
-
-
-TODO
-
-http://www.sonatype.com/books/m2eclipse-book/reference/
