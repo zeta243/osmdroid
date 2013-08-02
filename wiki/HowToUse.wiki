@@ -1,4 +1,5 @@
 #summary How to include osmdroid source in your application.
+#labels Deprecated
 
 = Introduction =
 
