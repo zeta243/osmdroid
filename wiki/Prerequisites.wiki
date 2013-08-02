@@ -9,6 +9,8 @@ osmdroid requires the slf4j-android logging library. If you are using Maven then
 
 === Manifest additions ===
 
+You should be targeting the latest API in your project. We support API compatibility back to API 4.
+
 osmdroid requires certain permissions in the Android project manifest to perform correctly.
 
 You will need to add the following permissions in your manifest file:
