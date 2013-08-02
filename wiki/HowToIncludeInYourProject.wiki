@@ -1,0 +1,11 @@
+#summary How to include osmdroid in your project
+
+== Using Maven ==
+
+If you are using Maven then adding osmdroid is easy. See [HowToMaven] for details.
+
+== Using a jar ==
+
+You can include osmdroid in your project by downloading the latest jar file from the downloads page and placing it into your libs folder.
+
+You will also need the slf4j-android jar from http://www.slf4j.org/android/ in your libs folder.
