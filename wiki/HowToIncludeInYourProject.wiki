@@ -10,6 +10,6 @@ You can include osmdroid in your project by downloading the latest jar file from
 
 You will also need the slf4j-android jar from http://www.slf4j.org/android/ in your libs folder.
 
-== Adding a MapView ==
+== Adding a !MapView ==
 
 TODO
