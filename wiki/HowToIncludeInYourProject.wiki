@@ -60,7 +60,7 @@ final NetworkAvailabliltyCheck networkAvailabliltyCheck = new NetworkAvailablilt
 final MapTileDownloader downloaderProvider = new MapTileDownloader(tileSource, tileWriter, networkAvailablityCheck);
 
 // Create a custom tile provider array with the custom tile source and the custom tile providers
-final MapTileProviderArray tileProviderArray = new MapTileProviderArray(tileSource, registerReceiver, new MapTileModuleProviderBase[] { fileSystemProvider, fileArchiveProvider,  downloaderProvider });
+final MapTileProviderArray tileProviderArray = new MapTileProviderArray(tileSource, registerReceiver, new MapTileModuleProviderBase[] { fileSystemProvider, fileArchiveProvider, downloaderProvider });
 
 // Create the mapview with the custom tile provider array
 mMapView = new MapView(context, 256, new DefaultResourceProxyImpl(context), tileProviderArray);
