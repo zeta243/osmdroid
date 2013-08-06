@@ -1,5 +1,9 @@
 #summary How to include osmdroid in your project
 
+== Prerequisites ==
+
+Before doing anything make sure you read the [Prerequisites] page.
+
 == Using Maven ==
 
 If you are using Maven then adding osmdroid is easy. See [HowToMaven] for details.
