@@ -75,6 +75,6 @@ mMapView = new MapView(context, 256, new DefaultResourceProxyImpl(context), tile
 
 }}}
 
-
+== Use offline tiles ==
 
 TODO
