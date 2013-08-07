@@ -18,6 +18,8 @@ You will also need the slf4j-android jar from http://www.slf4j.org/android/ in y
 
 = How to use the osmdroid library =
 
+The best example of how to use the osmdroid library is our [https://code.google.com/p/osmdroid/source/browse/#svn/trunk/OpenStreetMapViewer OpenStreetMapViewer] sample project. It contains a basic osmdroid application plus a few special-use examples. It is recommended you use this project as a starting point for building your application.
+
 == Adding a !MapView ==
 
 You can add a MapView to your xml layout using:
@@ -76,5 +78,9 @@ mMapView = new MapView(context, 256, new DefaultResourceProxyImpl(context), tile
 }}}
 
 == Use offline tiles ==
+
+TODO
+
+== Convert between latitude/longitude and pixels ==
 
 TODO
