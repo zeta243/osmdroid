@@ -81,6 +81,10 @@ mMapView = new MapView(context, 256, new DefaultResourceProxyImpl(context), tile
 
 TODO
 
+== Use overlays ==
+
+TODO
+
 == Convert between latitude/longitude and pixels ==
 
 TODO
