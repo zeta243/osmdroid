@@ -1,9 +1,15 @@
-#summary OpenStreetMap tools on Android FAQ
+#summary osmdroid FAQ
 
-= Introduction =
+= FAQ =
 
-To be populated with questions as they become popular.
+== Map tiles dont seem to load in my application ==
 
-= Map tiles dont seem to load in my application =
+Make sure your !AndroidManifest.xml file has the android.permission.INTERNET permission. See [Prerequisites].
 
-    Make sure your AndroidManifest.xml file has the android.permission.INTERNET permission
+== The map will not scroll when I drag my finger on the screen ==
+
+Make sure you don't set the !MapView to be "clickable". If you are using xml layouts make sure you *don't* have `android:clickable="true"` or if you are creating your !MapView programmatically make sure you *don't* have `mMapView.setClickable(true);`.
+
+== The map is drawing incorrectly/misaligned ==
+
+Turn off hardware acceleration in your manifest.
