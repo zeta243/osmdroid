@@ -8,7 +8,7 @@ This list only includes major highlights or breaking changes. Check the [https:/
 
   * Added fix to ignore MapView 'clickable' setting that can prevent scrolling.
   * Added http client factory to MapTileDownloader.
-  * Issue 408, 427, 437, 438, 441, 442, 447, 450, 451.
+  * Issue 408, issue 427, issue 437, issue 438, issue 441, issue 442, issue 447, issue 450, issue 451.
 
 == 3.0.10 ==
 
