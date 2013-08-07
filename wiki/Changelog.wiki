@@ -1,0 +1,16 @@
+#summary A simple changelog to keep track of what is changing.
+
+= Changelog =
+
+This list only includes major highlights or breaking changes. Check the [https://code.google.com/p/osmdroid/source/list changes list] for full commit logs.
+
+== 3.0.11 ==
+
+  * Added fix to ignore MapView 'clickable' setting that can prevent scrolling.
+  * Added http client factory to MapTileDownloader.
+
+== 3.0.10 ==
+
+  * Added limited scrolling area
+  * Added simple setable min/max zoomlevel on the MapView that overrides the values returned by the tile provider.
+  * New samples project with modern Fragments.
