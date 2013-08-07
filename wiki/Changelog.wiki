@@ -6,12 +6,12 @@ This list only includes major highlights or breaking changes. Check the [https:/
 
 == 3.0.11 ==
 
-  * Added fix to ignore MapView 'clickable' setting that can prevent scrolling.
-  * Added http client factory to MapTileDownloader.
+  * Added fix to ignore !MapView 'clickable' setting that can prevent scrolling.
+  * Added http client factory to !MapTileDownloader.
   * Issue 408, issue 427, issue 437, issue 438, issue 441, issue 442, issue 447, issue 450, issue 451.
 
 == 3.0.10 ==
 
   * Added limited scrolling area
-  * Added simple setable min/max zoomlevel on the MapView that overrides the values returned by the tile provider.
+  * Added simple setable min/max zoomlevel on the !MapView that overrides the values returned by the tile provider.
   * New samples project with modern Fragments.
