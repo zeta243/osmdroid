@@ -63,7 +63,8 @@ final TileWriter tileWriter = new TileWriter();
 final MapTileFilesystemProvider fileSystemProvider = new MapTileFilesystemProvider(registerReceiver, tileSource);
 
 // Create an archive file modular tile provider
-MapTileFileArchiveProvider fileArchiveProvider = new MapTileFileArchiveProvider(registerReceiver, tileSource, new IArchiveFile[] { gemfFileArchive });
+gemfFileArchive = GEMFFileArchive.getGEMFFileArchive(mGemfArchiveFilename);
+MapTileFileArchiveProvider fileArchiveProvider = new MapTileFileArchiveProvider(registerReceiver, tileSource, new IArchiveFile[] { mGemfArchiveFilename });
 
 // Create a download modular tile provider
 final NetworkAvailabliltyCheck networkAvailabliltyCheck = new NetworkAvailabliltyCheck(context);
