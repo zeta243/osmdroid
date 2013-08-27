@@ -14,4 +14,5 @@ This list only includes major highlights or breaking changes. Check the [https:/
 
   * Added limited scrolling area
   * Added simple setable min/max zoomlevel on the !MapView that overrides the values returned by the tile provider.
+  * Pinch-to-zoom is relative to the pinch point, not the center of the screen.
   * New samples project with modern Fragments.
