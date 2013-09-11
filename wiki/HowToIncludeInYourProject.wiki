@@ -32,7 +32,7 @@ You can add a MapView to your xml layout using:
         />
 }}}
 
-This will allow you to configure the tile source imagery for your MapView but not much else.
+This will allow you to configure the tile source imagery for your !MapView but not much else.
 
 However, for more control over your !MapView, you will want to create a !MapView programmatically.
 
