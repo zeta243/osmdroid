@@ -34,7 +34,7 @@ You can add a MapView to your xml layout using:
 
 This will allow you to configure the tile source imagery for your MapView but not much else.
 
-However, for more control over your MapView, you will want to create a MapView programmatically.
+However, for more control over your !MapView, you will want to create a !MapView programmatically.
 
 {{{
     @Override
@@ -48,7 +48,7 @@ However, for more control over your MapView, you will want to create a MapView p
 
 == Creating a tile provider chain ==
 
-One of the features of osmdroid is the customizable tile provider chain. This provides the ability to mix and match various tile provider modules to create a specific tile retrieval strategy. The MapTileProviderBasic tile provider provides a default set of tile provider modules that includes a file cache, an archive provider, and a download provider. For most users this covers the basics, but you can build you own custom tile provider chain.
+One of the features of osmdroid is the customizable tile provider chain. This provides the ability to mix and match various tile provider modules to create a specific tile retrieval strategy. The !MapTileProviderBasic tile provider provides a default set of tile provider modules that includes a file cache, an archive provider, and a download provider. For most users this covers the basics, but you can build you own custom tile provider chain.
 
 {{{
 final Context context = getActivity();
