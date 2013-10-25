@@ -7,6 +7,7 @@ This list only includes major highlights or breaking changes. Check the [https:/
 == 4.0 ==
 
   * Added compatibility layer for Google Maps API v2.
+  * Added BitmapPool to reuse MapTiles and prevent constant Bitmap allocation during scrolling.
   * Added fix to ignore !MapView 'clickable' setting that can prevent scrolling.
   * Added http client factory to !MapTileDownloader.
   * Some changes to clean up the !MapController. See issue 471.
