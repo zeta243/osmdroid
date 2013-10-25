@@ -4,8 +4,9 @@
 
 This list only includes major highlights or breaking changes. Check the [https://code.google.com/p/osmdroid/source/list changes list] for full commit logs.
 
-== 3.0.11 (upcoming) ==
+== 4.0 ==
 
+  * Added compatibility layer for Google Maps API v2.
   * Added fix to ignore !MapView 'clickable' setting that can prevent scrolling.
   * Added http client factory to !MapTileDownloader.
   * Some changes to clean up the !MapController. See issue 471.
