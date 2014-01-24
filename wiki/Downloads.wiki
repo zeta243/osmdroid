@@ -13,7 +13,7 @@ If you use Maven then you can include osmdroid in your project by referencing th
 <dependency>
   <groupId>org.osmdroid</groupId>
   <artifactId>osmdroid-android</artifactId>
-  <version>4.0</version>
+  <version>4.1</version>
 </dependency>
 }}}
 
@@ -23,7 +23,7 @@ and also optionally
 <dependency>
   <groupId>org.osmdroid</groupId>
   <artifactId>osmdroid-third-party</artifactId>
-  <version>4.0</version>
+  <version>4.1</version>
 </dependency>
 }}}
 
@@ -32,12 +32,12 @@ and also optionally
 If you're not using Maven then you can download the files directly from
 [https://oss.sonatype.org/content/groups/public/org/osmdroid/ Maven Central]
 
-  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-android/4.0/osmdroid-android-4.0.jar osmdroid-android-4.0.jar]
-  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-android/4.0/osmdroid-android-4.0-sources.jar osmdroid-android-4.0-sources.jar]
-  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-android/4.0/osmdroid-android-4.0-javadoc.jar osmdroid-android-4.0-javadoc.jar]
-  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-third-party/4.0/osmdroid-third-party-4.0.jar osmdroid-third-party-4.0.jar]
-  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-third-party/4.0/osmdroid-third-party-4.0-sources.jar osmdroid-third-party-4.0-sources.jar]
-  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-third-party/4.0/osmdroid-third-party-4.0-javadoc.jar osmdroid-third-party-4.0-javadoc.jar]
-  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-packager/4.0/osmdroid-packager-4.0.jar osmdroid-packager-4.0.jar]
-  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-packager/4.0/osmdroid-packager-4.0-sources.jar osmdroid-packager-4.0-sources.jar]
-  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-packager/4.0/osmdroid-packager-4.0-javadoc.jar osmdroid-packager-4.0-javadoc.jar]
+  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-android/4.1/osmdroid-android-4.1.jar osmdroid-android-4.1.jar]
+  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-android/4.1/osmdroid-android-4.1-sources.jar osmdroid-android-4.1-sources.jar]
+  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-android/4.1/osmdroid-android-4.1-javadoc.jar osmdroid-android-4.1-javadoc.jar]
+  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-third-party/4.1/osmdroid-third-party-4.1.jar osmdroid-third-party-4.1.jar]
+  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-third-party/4.1/osmdroid-third-party-4.1-sources.jar osmdroid-third-party-4.1-sources.jar]
+  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-third-party/4.1/osmdroid-third-party-4.1-javadoc.jar osmdroid-third-party-4.1-javadoc.jar]
+  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-packager/4.1/osmdroid-packager-4.1.jar osmdroid-packager-4.1.jar]
+  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-packager/4.1/osmdroid-packager-4.1-sources.jar osmdroid-packager-4.1-sources.jar]
+  * [https://oss.sonatype.org/content/groups/public/org/osmdroid/osmdroid-packager/4.1/osmdroid-packager-4.1-javadoc.jar osmdroid-packager-4.1-javadoc.jar]
