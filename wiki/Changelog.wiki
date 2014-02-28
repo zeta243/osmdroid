@@ -4,6 +4,16 @@
 
 This list only includes major highlights or breaking changes. Check the [https://code.google.com/p/osmdroid/source/list changes list] for full commit logs.
 
+== 4.2 (upcoming) ==
+
+  * Added experimental HW-acceleration support. See issue 413.
+  * Issue 426, issue 479, issue 489, issue 520, issue 521.
+
+== 4.1 ==
+
+  * Fix issue with OSM tile servers rejecting GETs due to missing user-agent. See issue 515.
+  * Issue 417, issue 477, issue 489, issue 491, issue 498, issue 500, issue 507.
+
 == 4.0 ==
 
   * Added compatibility layer for Google Maps API v2.
@@ -12,7 +22,7 @@ This list only includes major highlights or breaking changes. Check the [https:/
   * Added http client factory to !MapTileDownloader.
   * Some changes to clean up the !MapController. See issue 471.
   * Changed zoom animations to match pinch-to-zoom animations for consistency and to allow overlays to prevent their contents from scrolling. See issue 453.
-  * Issue 298, issue 408, issue 427, issue 437, issue 438, issue 441, issue 442, issue 447, issue 450, issue 451.
+  * Issue 298, issue 408, issue 427, issue 437, issue 438, issue 441, issue 442, issue 447, issue 450, issue 451, issue 483.
 
 == 3.0.10 ==
 
