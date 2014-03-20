@@ -2,7 +2,7 @@
 
 = Introduction =
 
-This Wiki has migrated to [https://github.com/osmdroid/osmdroid/wiki/HowToMaven GitHub].
+*This Wiki has migrated to [https://github.com/osmdroid/osmdroid/wiki/HowToMaven GitHub].*
 
 This document is a begin of some documentation.  Still very much in progress.  See issue 199.
 
