@@ -2,6 +2,8 @@
 
 = Introduction =
 
+*This Wiki has migrated to [https://github.com/osmdroid/osmdroid/wiki/DeveloperGuidelines GitHub].*
+
 This page is to list some of the more important guidelines for developers contributing code to osmdroid.  This is not intended to strictly enforce a particular style - more to keep the code internally consistent.
 
 
