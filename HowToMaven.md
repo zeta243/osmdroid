@@ -1,0 +1,1 @@
+This Wiki has migrated to [GitHub](https://github.com/osmdroid/osmdroid/wiki/HowToMaven).
